@@ -14,6 +14,20 @@ module.exports = {
   },
   sections: [
     {
+      name: 'Supporter API Helpers',
+      content: 'source/api/Readme.md',
+      sections: [
+        {
+          name: 'Leaderboard',
+          content: 'source/api/leaderboard/Readme.md'
+        },
+        {
+          name: 'Pages',
+          content: 'source/api/pages/Readme.md'
+        }
+      ]
+    },
+    {
       name: 'Components',
       components: () => ([
         path.resolve(__dirname, 'source/components/leaderboard', 'index.js'),
