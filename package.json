@@ -4,12 +4,16 @@
   "description": "A libary to handle fetching data from Supporter",
   "main": "index.js",
   "scripts": {
+    "start": "styleguidist server",
     "test:lint": "standard -d source",
     "test:unit": "mocha source/**/**/__tests__/*.js --compilers js:babel-register",
     "test": "npm run test:lint && npm run test:unit",
-    "start": "styleguidist server",
-    "build:styleguide": "styleguidist build",
-    "deploy:styleguide": "npm run build:styleguide && gh-pages -d styleguide"
+    "book:prepare": "gitbook install",
+    "book:watch": "npm run book:prepare && gitbook serve",
+    "book:build": "npm run book:prepare && rm -rf styleguide/book && gitbook build . styleguide/book",
+    "styleguide:build": "styleguidist build",
+    "docs:build": "npm run styleguide:build && npm run book:build",
+    "docs:deploy": "npm run docs:build && gh-pages -d styleguide"
   },
   "author": "Dan Henderson <danhenderson.web@gmail.com>",
   "license": "ISC",
@@ -19,6 +23,7 @@
     "babel-preset-stage-0": "^6.22.0",
     "babel-register": "^6.22.0",
     "chai": "^3.5.0",
+    "gitbook-cli": "^2.3.0",
     "minimal.css": "^1.0.1",
     "mocha": "^3.2.0",
     "moxios": "^0.3.0",

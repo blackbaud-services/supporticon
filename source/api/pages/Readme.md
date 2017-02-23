@@ -1,37 +1,74 @@
-### fetchPages
+# Goal
+
+Helpers related to fetching pages sorted by funds raised.
+
+- [Configuration](#configuration)
+- [fetchPages](#fetchpages)
+- [fetchPagesAction](#fetchpagesaction)
+- [pagesReducer](#pagesreducer)
+
+## Configuration
+
+- `namespace` - app/pages
+- `endpoint` - api/v2/pages
+
+## `fetchPages`
+
+**Purpose**
 
 Fetch supporter pages
 
-```html
-fetchPages(options)
+**Params**
+
+- `params` (Object) see [paramater list](../readme.md#availableparameters)
+
+**Example**
+
+```javascript
+fetchPages({
+  campaign: 'au-123'
+})
 ```
 
----
+See [details on fetch functions](../readme.md#1-fetchresource)
 
-### fetchPagesAction
+## `fetchPagesAction`
 
-Return a thunk which, when dispatched, will fetch the pages and fire off the necessary actions
+**Purpose**
 
-```html
-fetchPagesAction(params, options)
+Calls `fetchPages` and dispatches the relevant Redux actions.
+
+**Params**
+
+- `params` (Object) used to call `fetchPages`
+- `options` (Object) configure the dispatched actions
+
+**Example**
+
+```javascript
+dispatch(fetchPagesAction({
+  campaign: 'au-123'
+}))
 ```
 
----
+See [details on action creators](../readme.md#2-fetchresourceaction)
 
-### PagesReducer
+## `pagesReducer`
 
-Returns simple reducer that will respond to the above actions
+**Purpose**
 
-```html
-pagesReducer(options)
+Creates a reducer that manages state involving pages requests.
+
+**Params**
+
+- `options` (Object) configure the reducer
+
+**Example**
+
+```javascript
+combineReducers({
+  pages: pagesReducer()
+})
 ```
 
----
-
-### deserializePages
-
-A simple default deserializer a page
-
-```html
-deserializePage(page)
-```
+See [details on reducer creators](../readme.md#3-resourcereducer)

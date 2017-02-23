@@ -6,6 +6,7 @@ const { version } = require('./package.json')
 module.exports = {
   title: `Supporticon | ${version}`,
   template: './styleguide.template.html',
+  styleguideDir: 'styleguide/components',
   getComponentPathLine: (componentPath) => {
     const dirname = path.dirname(componentPath, '.js')
     const name = dirname.split('/').slice(-1)[0]
@@ -13,20 +14,6 @@ module.exports = {
     return 'import ' + componentName + ' from \'supporticon/components/' + name + '\''
   },
   sections: [
-    {
-      name: 'Supporter API Helpers',
-      content: 'source/api/Readme.md',
-      sections: [
-        {
-          name: 'Leaderboard',
-          content: 'source/api/leaderboard/Readme.md'
-        },
-        {
-          name: 'Pages',
-          content: 'source/api/pages/Readme.md'
-        }
-      ]
-    },
     {
       name: 'Components',
       components: () => ([
