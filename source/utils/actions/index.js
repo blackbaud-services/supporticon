@@ -17,9 +17,8 @@ const defaultFetchFailure = (type, error) => ({
 
 export const createAction = ({
   fetcher = required(),
-  params = required(),
   namespace = required(),
-  options = {}
+  actionDispatchers = {}
 }) => (dispatch) => {
   const c = {
     FETCH: `${namespace}/FETCH`,
@@ -31,11 +30,11 @@ export const createAction = ({
     fetch = defaultFetch,
     fetchSuccess = defaultFetchSuccess,
     fetchFailure = defaultFetchFailure
-  } = options
+  } = actionDispatchers
 
-  dispatch(fetch(c.FETCH, params))
+  dispatch(fetch(c.FETCH))
 
-  return fetcher(params)
+  return fetcher
     .then((data) => {
       dispatch(fetchSuccess(c.FETCH_SUCCESS, data))
       return Promise.resolve(data)

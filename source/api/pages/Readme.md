@@ -1,11 +1,10 @@
 # Goal
 
-Helpers related to fetching pages sorted by funds raised.
+Helpers related to fetching supporter pages
 
 - [Configuration](#configuration)
-- [fetchPages](#fetchpages)
-- [fetchPagesAction](#fetchpagesaction)
-- [pagesReducer](#pagesreducer)
+- [fetchLeaderboard](#fetchleaderboard)
+- [deserializeLeaaderboard](#deserializeleaderboard)
 
 ## Configuration
 
@@ -16,59 +15,50 @@ Helpers related to fetching pages sorted by funds raised.
 
 **Purpose**
 
-Fetch supporter pages
+Fetch pages from Supporter.
 
 **Params**
 
 - `params` (Object) see [paramater list](../readme.md#availableparameters)
 
+**Returns**
+
+A pending promise that will either resolve to:
+
+- Success: the data returned from the request
+- Failure: the error encountered
+
 **Example**
 
 ```javascript
+import { fetchPages } from 'supporticon/api/pages'
+
 fetchPages({
   campaign: 'au-123'
 })
 ```
 
-See [details on fetch functions](../readme.md#1-fetchresource)
+## `deserializePage`
 
-## `fetchPagesAction`
-
-**Purpose**
-
-Calls `fetchPages` and dispatches the relevant Redux actions.
+A default deserializer for deserializing supporter pages
 
 **Params**
 
-- `params` (Object) used to call `fetchPages`
-- `options` (Object) configure the dispatched actions
+- `data` {Object} a single supporter page to deserialize
+
+**Returns**
+
+The deserialized supporter page
 
 **Example**
 
 ```javascript
-dispatch(fetchPagesAction({
-  campaign: 'au-123'
-}))
+import { deserializePage } from 'supporticon/api/pages'
+
+// ...
+
+return {
+  status: 'fetched',
+  data: payload.data.map(deserializePage)
+}
 ```
-
-See [details on action creators](../readme.md#2-fetchresourceaction)
-
-## `pagesReducer`
-
-**Purpose**
-
-Creates a reducer that manages state involving pages requests.
-
-**Params**
-
-- `options` (Object) configure the reducer
-
-**Example**
-
-```javascript
-combineReducers({
-  pages: pagesReducer()
-})
-```
-
-See [details on reducer creators](../readme.md#3-resourcereducer)

@@ -13,15 +13,6 @@ describe('Utils | Action Creator', () => {
 
   it ('should throw if no fetcher is passed in', () => {
     const test = () => createAction({
-      params: {},
-      namespace: 'app/test'
-    })
-    expect(test).to.throw
-  })
-
-  it ('should throw if no params are passed in', () => {
-    const test = () => createAction({
-      fetcher: () => {},
       namespace: 'app/test'
     })
     expect(test).to.throw
@@ -29,16 +20,14 @@ describe('Utils | Action Creator', () => {
 
   it ('should throw if no namespace is passed in', () => {
     const test = () => createAction({
-      fetcher: () => {},
-      params: {}
+      fetcher: Promise.resolve({})
     })
     expect(test).to.throw
   })
 
   it ('should return a thunk', () => {
     const action = createAction({
-      fetcher: () => {},
-      params: {},
+      fetcher: Promise.resolve({}),
       namespace: 'app/test'
     })
     expect(typeof action).to.eql('function')
@@ -46,8 +35,7 @@ describe('Utils | Action Creator', () => {
 
   it ('should resolve to the fetched data', (done) => {
     dispatch(createAction({
-      fetcher: () => Promise.resolve({ foo: 'bar' }),
-      params: {},
+      fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test'
     }))
     .then((data) => {
@@ -58,8 +46,7 @@ describe('Utils | Action Creator', () => {
 
   it ('should reject with an error response', (done) => {
     dispatch(createAction({
-      fetcher: () => Promise.reject({ status: 404 }),
-      params: {},
+      fetcher: Promise.reject({ status: 404 }),
       namespace: 'app/test'
     }))
     .catch((error) => {
@@ -70,8 +57,7 @@ describe('Utils | Action Creator', () => {
 
   it ('should dispatch two actions', (done) => {
     dispatch(createAction({
-      fetcher: () => Promise.resolve({ foo: 'bar' }),
-      params: {},
+      fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test'
     }))
     .then(() => {
@@ -82,8 +68,7 @@ describe('Utils | Action Creator', () => {
 
   it ('should dispatch a fetching action', (done) => {
     dispatch(createAction({
-      fetcher: () => Promise.resolve({ foo: 'bar' }),
-      params: {},
+      fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test'
     }))
     .then((data) => {
@@ -95,8 +80,7 @@ describe('Utils | Action Creator', () => {
 
   it ('should dispatch a fetched action', (done) => {
     dispatch(createAction({
-      fetcher: () => Promise.resolve({ foo: 'bar' }),
-      params: {},
+      fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test'
     }))
     .then((data) => {
@@ -109,8 +93,7 @@ describe('Utils | Action Creator', () => {
 
   it ('should dispatch a failure action', (done) => {
     dispatch(createAction({
-      fetcher: () => Promise.reject({ status: 404 }),
-      params: {},
+      fetcher: Promise.reject({ status: 404 }),
       namespace: 'app/test'
     }))
     .catch((error) => {
@@ -123,10 +106,9 @@ describe('Utils | Action Creator', () => {
 
   it ('should allow an override of the fetch function', (done) => {
     dispatch(createAction({
-      fetcher: () => Promise.resolve({ foo: 'bar' }),
-      params: {},
+      fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test',
-      options: {
+      actionDispatchers: {
         fetch: (c, params) => ({
           type: 'test'
         })
@@ -141,10 +123,9 @@ describe('Utils | Action Creator', () => {
 
   it ('should allow an override of the fetch success function', (done) => {
     dispatch(createAction({
-      fetcher: () => Promise.resolve({ foo: 'bar' }),
-      params: {},
+      fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test',
-      options: {
+      actionDispatchers: {
         fetchSuccess: (c, params) => ({
           type: 'test/success'
         })
@@ -159,10 +140,9 @@ describe('Utils | Action Creator', () => {
 
   it ('should allow an override of the fetch failure function', (done) => {
     dispatch(createAction({
-      fetcher: () => Promise.reject({ status: 404 }),
-      params: {},
+      fetcher: Promise.reject({ status: 404 }),
       namespace: 'app/test',
-      options: {
+      actionDispatchers: {
         fetchFailure: (c, params) => ({
           type: 'test/failure'
         })

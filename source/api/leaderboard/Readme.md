@@ -4,8 +4,7 @@ Helpers related to fetching pages sorted by funds raised.
 
 - [Configuration](#configuration)
 - [fetchLeaderboard](#fetchleaderboard)
-- [fetchLeaderboardAction](#fetchleaderboardaction)
-- [leaderboardReducer](#leaderboardreducer)
+- [deserializeLeaaderboard](#deserializeleaderboard)
 
 ## Configuration
 
@@ -22,53 +21,44 @@ Fetch pages from Supporter sorted by funds raised.
 
 - `params` (Object) see [paramater list](../readme.md#availableparameters)
 
+**Returns**
+
+A pending promise that will either resolve to:
+
+- Success: the data returned from the request
+- Failure: the error encountered
+
 **Example**
 
 ```javascript
+import { fetchLeaderboard } from 'supporticon/api/leaderboard'
+
 fetchLeaderboard({
   campaign: 'au-123'
 })
 ```
 
-See [details on fetch functions](../readme.md#1-fetchresource)
+## `deserializeLeaderboard`
 
-## `fetchLeaderboardAction`
-
-**Purpose**
-
-Calls `fetchLeaderboard` and dispatches the relevant Redux actions.
+A default deserializer for deserializing supporter leaderboard pages
 
 **Params**
 
-- `params` (Object) used to call `fetchLeaderboard`
-- `options` (Object) configure the dispatched actions
+- `data` {Object} a single supporter page to deserialize
+
+**Returns**
+
+The deserialized supporter page
 
 **Example**
 
 ```javascript
-dispatch(fetchLeaderboardAction({
-  campaign: 'au-123'
-}))
+import { deserializeLeaderboard } from 'supporticon/api/leaderboard'
+
+// ...
+
+return {
+  status: 'fetched',
+  data: payload.data.map(deserializeLeaderboard)
+}
 ```
-
-See [details on action creators](../readme.md#2-fetchresourceaction)
-
-## `leaderboardReducer`
-
-**Purpose**
-
-Creates a reducer that manages state involving leaderboard requests.
-
-**Params**
-
-- `options` (Object) configure the reducer
-
-**Example**
-
-```javascript
-combineReducers({
-  leaderboard: leaderboardReducer()
-})
-```
-
-See [details on reducer creators](../readme.md#3-resourcereducer)
