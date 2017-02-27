@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Supporter API Helpers | Supporticon</title>
+        <title>Supporter API | Supporticon</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.5.2">
@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1" data-chapter-title="Supporter API Helpers" data-filepath="source/api/readme.md" data-basepath="../.." data-revision="Thu Feb 23 2017 13:37:14 GMT+1000 (AEST)">
+    <div class="book" data-level="1" data-chapter-title="Supporter API" data-filepath="source/api/readme.md" data-basepath="../.." data-revision="Tue Feb 28 2017 08:18:33 GMT+1000 (AEST)">
     
 
 <div class="book-summary">
@@ -85,7 +85,7 @@
                         
                             <b>1.</b>
                         
-                        Supporter API Helpers
+                        Supporter API
                     </a>
             
             
@@ -127,14 +127,65 @@
             
         </li>
     
-        <li class="chapter " data-level="2" data-path="source/components/readme.html">
+        <li class="chapter " data-level="2" data-path="source/utils/readme.html">
+            
+                
+                    <a href="../../source/utils/readme.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Utilities
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="source/utils/actions/readme.html">
+            
+                
+                    <a href="../../source/utils/actions/readme.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        Actions
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="source/utils/reducers/readme.html">
+            
+                
+                    <a href="../../source/utils/reducers/readme.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        Reducers
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="source/components/readme.html">
             
                 
                     <a href="../../source/components/readme.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>2.</b>
+                            <b>3.</b>
                         
                         Components
                     </a>
@@ -188,63 +239,6 @@
 <li><code>limit</code> (Integer) the number of results to fetch</li>
 <li><code>page</code> (Integer) the page of results to fetch</li>
 </ul>
-<h2 id="helpers">Helpers</h2>
-<p>There are 4 primary types of helpers used throughout the library.</p>
-<ol>
-<li><a href="#1-fetchresource">fetch{Resource}</a></li>
-<li><a href="#2-fetchresourceaction">fetch{Resource}Action</a></li>
-<li><a href="#3-resourcereducer">{resource}Reducer</a></li>
-</ol>
-<h3 id="1-fetchresource">1. <code>fetch{Resource}</code></h3>
-<p><strong>Purpose</strong></p>
-<p>Request data from the Supporter API</p>
-<p><strong>Params</strong></p>
-<ul>
-<li><code>params</code> (Object) takes an object containing the parameters to include in the request e.g. campaign, charity, limit</li>
-</ul>
-<p><strong>Returns</strong></p>
-<p>A pending promise that will either resolve to:</p>
-<ul>
-<li>Success: the data returned from the request</li>
-<li>Failure: the error encountered</li>
-</ul>
-<h3 id="2-fetchresourceaction">2. <code>fetch{Resource}Action</code></h3>
-<p><strong>Purpose</strong></p>
-<p>Fetch data from the supporter API and dispatch the relevant Redux actions.</p>
-<ul>
-<li><code>app/{resource}/FETCH</code> - payload {}</li>
-<li><code>app/{resource}/FETCH_SUCCESS</code> - payload { data }</li>
-<li><code>app/{resource}/FETCH_FAILURE</code> - payload { error }</li>
-</ul>
-<p><strong>Params</strong></p>
-<ul>
-<li><code>params</code> (Object) takes an object containing the parameters to include in the request e.g. campaign, charity, limit</li>
-<li><code>options</code> (Object) options related to the Redux actions that will be fired, that can be overridden if needed<ul>
-<li><code>namespace</code> (String) will determine the action types e.g. <code>app/campaign/FETCH</code></li>
-<li><code>fetch</code> (Function) will be the function called to dispatch the <code>FETCH</code> action</li>
-<li><code>fetchSuccess</code> (Function) will be the function called to dispatch the <code>FETCH_SUCCESS</code> action</li>
-<li><code>fetchFailure</code> (Function) will be the function called to dispatch the <code>FETCH_FAILURE</code> action</li>
-</ul>
-</li>
-</ul>
-<p><strong>Returns</strong></p>
-<p>Returns a thunk that will be dispatched by Redux Thunk middleware if installed.</p>
-<h3 id="3-resourcereducer">3. <code>{resource}Reducer</code></h3>
-<p><strong>Purpose</strong></p>
-<p>Creates a simple reducer that listens to the related Redux actions and stores the state of the requests.</p>
-<p>These functions are made to work nicely with their related <code>fetch{Resource}Action</code> functions.</p>
-<p><strong>Params</strong></p>
-<ul>
-<li><code>options</code> (Object) configurable and overridable options to set up your reducer.<ul>
-<li><code>namespace</code> (String) will determine the action types to respond to e.g. <code>app/campaign/FETCH</code></li>
-<li><code>initialState</code> (Object) if you would like to configure the initial state of your reducer</li>
-<li><code>handlers</code> (Object) can contain fetch, fetchSuccess, fetchFailure handlers</li>
-<li><code>deserialize</code> (Function) pass in a function to deserialize returned data in the <code>FETCH_SUCCESS</code> handler</li>
-</ul>
-</li>
-</ul>
-<p><strong>Returns</strong></p>
-<p>A reducer function that takes 2 parameters, the state and a dispatched action.</p>
 
                     
                     </section>

@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.1" data-chapter-title="Leaderboard" data-filepath="source/api/leaderboard/readme.md" data-basepath="../../.." data-revision="Thu Feb 23 2017 13:37:14 GMT+1000 (AEST)">
+    <div class="book" data-level="1.1" data-chapter-title="Leaderboard" data-filepath="source/api/leaderboard/readme.md" data-basepath="../../.." data-revision="Tue Feb 28 2017 08:18:33 GMT+1000 (AEST)">
     
 
 <div class="book-summary">
@@ -85,7 +85,7 @@
                         
                             <b>1.</b>
                         
-                        Supporter API Helpers
+                        Supporter API
                     </a>
             
             
@@ -127,14 +127,65 @@
             
         </li>
     
-        <li class="chapter " data-level="2" data-path="source/components/readme.html">
+        <li class="chapter " data-level="2" data-path="source/utils/readme.html">
+            
+                
+                    <a href="../../../source/utils/readme.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Utilities
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="source/utils/actions/readme.html">
+            
+                
+                    <a href="../../../source/utils/actions/readme.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        Actions
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="source/utils/reducers/readme.html">
+            
+                
+                    <a href="../../../source/utils/reducers/readme.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        Reducers
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="source/components/readme.html">
             
                 
                     <a href="../../../source/components/readme.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>2.</b>
+                            <b>3.</b>
                         
                         Components
                     </a>
@@ -180,8 +231,7 @@
 <ul>
 <li><a href="#configuration">Configuration</a></li>
 <li><a href="#fetchleaderboard">fetchLeaderboard</a></li>
-<li><a href="#fetchleaderboardaction">fetchLeaderboardAction</a></li>
-<li><a href="#leaderboardreducer">leaderboardReducer</a></li>
+<li><a href="#deserializeleaderboard">deserializeLeaaderboard</a></li>
 </ul>
 <h2 id="configuration">Configuration</h2>
 <ul>
@@ -195,39 +245,37 @@
 <ul>
 <li><code>params</code> (Object) see <a href="../readme.html#availableparameters">paramater list</a></li>
 </ul>
+<p><strong>Returns</strong></p>
+<p>A pending promise that will either resolve to:</p>
+<ul>
+<li>Success: the data returned from the request</li>
+<li>Failure: the error encountered</li>
+</ul>
 <p><strong>Example</strong></p>
-<pre><code class="lang-javascript">fetchLeaderboard({
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { fetchLeaderboard } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/leaderboard&apos;</span>
+
+fetchLeaderboard({
   campaign: <span class="hljs-string">&apos;au-123&apos;</span>
 })
 </code></pre>
-<p>See <a href="../readme.html#1-fetchresource">details on fetch functions</a></p>
-<h2 id="fetchleaderboardaction"><code>fetchLeaderboardAction</code></h2>
-<p><strong>Purpose</strong></p>
-<p>Calls <code>fetchLeaderboard</code> and dispatches the relevant Redux actions.</p>
+<h2 id="deserializeleaderboard"><code>deserializeLeaderboard</code></h2>
+<p>A default deserializer for deserializing supporter leaderboard pages</p>
 <p><strong>Params</strong></p>
 <ul>
-<li><code>params</code> (Object) used to call <code>fetchLeaderboard</code></li>
-<li><code>options</code> (Object) configure the dispatched actions</li>
+<li><code>data</code> {Object} a single supporter page to deserialize</li>
 </ul>
+<p><strong>Returns</strong></p>
+<p>The deserialized supporter page</p>
 <p><strong>Example</strong></p>
-<pre><code class="lang-javascript">dispatch(fetchLeaderboardAction({
-  campaign: <span class="hljs-string">&apos;au-123&apos;</span>
-}))
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { deserializeLeaderboard } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/leaderboard&apos;</span>
+
+// ...
+
+return {
+  status: <span class="hljs-string">&apos;fetched&apos;</span>,
+  data: payload.data.map(deserializeLeaderboard)
+}
 </code></pre>
-<p>See <a href="../readme.html#2-fetchresourceaction">details on action creators</a></p>
-<h2 id="leaderboardreducer"><code>leaderboardReducer</code></h2>
-<p><strong>Purpose</strong></p>
-<p>Creates a reducer that manages state involving leaderboard requests.</p>
-<p><strong>Params</strong></p>
-<ul>
-<li><code>options</code> (Object) configure the reducer</li>
-</ul>
-<p><strong>Example</strong></p>
-<pre><code class="lang-javascript">combineReducers({
-  leaderboard: leaderboardReducer()
-})
-</code></pre>
-<p>See <a href="../readme.html#3-resourcereducer">details on reducer creators</a></p>
 
                     
                     </section>
@@ -238,7 +286,7 @@
         </div>
 
         
-        <a href="../../../source/api/readme.html" class="navigation navigation-prev " aria-label="Previous page: Supporter API Helpers"><i class="fa fa-angle-left"></i></a>
+        <a href="../../../source/api/readme.html" class="navigation navigation-prev " aria-label="Previous page: Supporter API"><i class="fa fa-angle-left"></i></a>
         
         
         <a href="../../../source/api/pages/readme.html" class="navigation navigation-next " aria-label="Next page: Pages"><i class="fa fa-angle-right"></i></a>
