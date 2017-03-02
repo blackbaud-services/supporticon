@@ -15,8 +15,14 @@
     "styleguide:build": "styleguidist build",
     "docs:build": "npm run styleguide:build && npm run book:build",
     "docs:deploy": "npm run docs:build && gh-pages -d styleguide",
-    "deploy:prepare": "gulp npm-prepare",
-    "prepublish": "npm run test && npm run build && npm run deploy:prepare"
+    "deploy:prepare": "gulp npm-prepare"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/everydayhero/supporticon.git"
+  },
+  "bugs": {
+    "url": "https://github.com/everydayhero/supporticon/issues"
   },
   "author": "Dan Henderson <danhenderson.web@gmail.com>",
   "license": "ISC",
@@ -29,6 +35,7 @@
     "babel-preset-stage-0": "^6.22.0",
     "babel-register": "^6.22.0",
     "chai": "^3.5.0",
+    "gh-pages": "^0.12.0",
     "gitbook-cli": "^2.3.0",
     "gulp": "^3.9.1",
     "minimal.css": "^1.0.1",
@@ -44,7 +51,6 @@
   "dependencies": {
     "axios": "^0.15.3",
     "constructicon": "0.3.1",
-    "gh-pages": "^0.12.0",
     "numbro": "^1.9.3"
   },
   "standard": {
