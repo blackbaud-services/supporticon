@@ -1,10 +1,11 @@
 {
   "name": "supporticon",
-  "version": "0.0.1",
+  "version": "0.0.2-1",
   "description": "A libary to handle fetching data from Supporter",
   "main": "index.js",
   "scripts": {
     "start": "styleguidist server",
+    "build": "babel source -d dist",
     "test:lint": "standard -d source",
     "test:unit": "mocha source/**/**/__tests__/*.js --compilers js:babel-register",
     "test": "npm run test:lint && npm run test:unit",
@@ -13,17 +14,30 @@
     "book:build": "npm run book:prepare && rm -rf styleguide/book && gitbook build . styleguide/book",
     "styleguide:build": "styleguidist build",
     "docs:build": "npm run styleguide:build && npm run book:build",
-    "docs:deploy": "npm run docs:build && gh-pages -d styleguide"
+    "docs:deploy": "npm run docs:build && gh-pages -d styleguide",
+    "deploy:prepare": "gulp npm-prepare"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/everydayhero/supporticon.git"
+  },
+  "bugs": {
+    "url": "https://github.com/everydayhero/supporticon/issues"
   },
   "author": "Dan Henderson <danhenderson.web@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.22.0",
     "babel-register": "^6.22.0",
     "chai": "^3.5.0",
+    "gh-pages": "^0.12.0",
     "gitbook-cli": "^2.3.0",
+    "gulp": "^3.9.1",
     "minimal.css": "^1.0.1",
     "mocha": "^3.2.0",
     "moxios": "^0.3.0",
@@ -37,7 +51,6 @@
   "dependencies": {
     "axios": "^0.15.3",
     "constructicon": "0.3.1",
-    "gh-pages": "^0.12.0",
     "numbro": "^1.9.3"
   },
   "standard": {
@@ -45,7 +58,8 @@
       "**/__tests__/",
       "/test/",
       "/dist/",
-      "styleguide.config.js"
+      "styleguide.config.js",
+      "gulpfile.js"
     ]
   },
   "babel": {
