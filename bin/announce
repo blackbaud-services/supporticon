@@ -17,7 +17,7 @@ ${SLACK_WEBHOOK_URL} \
 {
   "text": "Supporticon version ${PACKAGE_VERSION} released :tada:",
   "channel": "#profs-dev",
-  "username": "Constructicon",
+  "username": "Supporticon",
   "icon_emoji": ":${SLACK_ANNOUNCE_EMOJI}:"
 }
 JSON
