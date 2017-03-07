@@ -2,9 +2,15 @@ import axios from 'axios'
 import { required } from '../params'
 import map from '../map'
 
-export const instance = axios.create({
-  baseURL: 'https://everydayhero-staging.com'
+export let instance = axios.create({
+  baseURL: 'https://everydayhero.com'
 })
+
+export const updateBaseUrl = (baseURL) => {
+  instance = axios.create({
+    baseURL
+  })
+}
 
 export default (
   endpoint = required(),

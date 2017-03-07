@@ -17,7 +17,7 @@ describe ('Fetch Leaderboards', () => {
     fetchLeaderboard({ campaign_id: 'au-6839', group_value: 'group123' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/search/pages_total')
+      expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
       expect(request.url).to.contain('campaign_id=au-6839')
       expect(request.url).to.contain('group_value=group123')
       done()
@@ -33,7 +33,7 @@ describe ('Fetch Leaderboards', () => {
     fetchLeaderboard({ campaign: 'au-6839' })
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/search/pages_total')
+      expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
       expect(request.url).to.contain('campaign_id=au-6839')
       done()
     })
@@ -43,7 +43,7 @@ describe ('Fetch Leaderboards', () => {
     fetchLeaderboard({ campaign: ['au-6839', 'au-6840']})
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/search/pages_total')
+      expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
       expect(request.url).to.contain('campaign_id[]=au-6839')
       expect(request.url).to.contain('campaign_id[]=au-6840')
       done()
@@ -54,7 +54,7 @@ describe ('Fetch Leaderboards', () => {
     fetchLeaderboard({ charity: 'au-28' })
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/search/pages_total')
+      expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
       expect(request.url).to.contain('charity_id=au-28')
       done()
     })
@@ -64,7 +64,7 @@ describe ('Fetch Leaderboards', () => {
     fetchLeaderboard({ charity: ['au-28', 'au-29'] })
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/search/pages_total')
+      expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
       expect(request.url).to.contain('charity_id[]=au-28')
       expect(request.url).to.contain('charity_id[]=au-29')
       done()
@@ -75,7 +75,7 @@ describe ('Fetch Leaderboards', () => {
     fetchLeaderboard({ type: 'team' })
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/search/pages_total')
+      expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
       expect(request.url).to.contain('group_by=teams')
       done()
     })

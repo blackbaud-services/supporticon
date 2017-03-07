@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Pages | Supporticon</title>
+        <title>Totals | Supporticon</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.5.2">
@@ -37,10 +37,10 @@
         
     
     
-    <link rel="next" href="../../../source/api/totals/readme.html" />
+    <link rel="next" href="../../../source/utils/readme.html" />
     
     
-    <link rel="prev" href="../../../source/api/leaderboard/readme.html" />
+    <link rel="prev" href="../../../source/api/pages/readme.html" />
     
 
         
@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.2" data-chapter-title="Pages" data-filepath="source/api/pages/readme.md" data-basepath="../../.." data-revision="Tue Mar 07 2017 02:43:59 GMT+0000 (UTC)">
+    <div class="book" data-level="1.3" data-chapter-title="Totals" data-filepath="source/api/totals/readme.md" data-basepath="../../.." data-revision="Tue Mar 07 2017 02:43:59 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -107,7 +107,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.2" data-path="source/api/pages/readme.html">
+        <li class="chapter " data-level="1.2" data-path="source/api/pages/readme.html">
             
                 
                     <a href="../../../source/api/pages/readme.html">
@@ -122,7 +122,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3" data-path="source/api/totals/readme.html">
+        <li class="chapter active" data-level="1.3" data-path="source/api/totals/readme.html">
             
                 
                     <a href="../../../source/api/totals/readme.html">
@@ -242,20 +242,20 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="goal">Goal</h1>
-<p>Helpers related to fetching supporter pages</p>
+<p>Helpers related to fetching totals</p>
 <ul>
 <li><a href="#configuration">Configuration</a></li>
-<li><a href="#fetchleaderboard">fetchLeaderboard</a></li>
-<li><a href="#deserializeleaderboard">deserializeLeaaderboard</a></li>
+<li><a href="#fetchtotals">fetchTotals</a></li>
+<li><a href="#deserializetotals">deserializeTotals</a></li>
 </ul>
 <h2 id="configuration">Configuration</h2>
 <ul>
-<li><code>namespace</code> - app/pages</li>
-<li><code>endpoint</code> - api/v2/pages</li>
+<li><code>namespace</code> - app/totals</li>
+<li><code>endpoint</code> - api/v2/search/totals</li>
 </ul>
-<h2 id="fetchpages"><code>fetchPages</code></h2>
+<h2 id="fetchtotals"><code>fetchTotals</code></h2>
 <p><strong>Purpose</strong></p>
-<p>Fetch pages from Supporter.</p>
+<p>Fetch totals from Supporter.</p>
 <p><strong>Params</strong></p>
 <ul>
 <li><code>params</code> (Object) see <a href="../readme.html#availableparameters">paramater list</a></li>
@@ -267,28 +267,28 @@
 <li>Failure: the error encountered</li>
 </ul>
 <p><strong>Example</strong></p>
-<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { fetchPages } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/pages&apos;</span>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { fetchTotals } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/totals&apos;</span>
 
-fetchPages({
+fetchTotals({
   campaign: <span class="hljs-string">&apos;au-123&apos;</span>
 })
 </code></pre>
-<h2 id="deserializepage"><code>deserializePage</code></h2>
-<p>A default deserializer for deserializing supporter pages</p>
+<h2 id="deserializetotals"><code>deserializeTotals</code></h2>
+<p>A default deserializer for deserializing totals</p>
 <p><strong>Params</strong></p>
 <ul>
-<li><code>data</code> {Object} a single supporter page to deserialize</li>
+<li><code>data</code> {Object} a totals object to deserialize</li>
 </ul>
 <p><strong>Returns</strong></p>
-<p>The deserialized supporter page</p>
+<p>The deserialized totals</p>
 <p><strong>Example</strong></p>
-<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { deserializePage } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/pages&apos;</span>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { deserializeTotals } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/totals&apos;</span>
 
 // ...
 
 return {
   status: <span class="hljs-string">&apos;fetched&apos;</span>,
-  data: payload.data.map(deserializePage)
+  data: deserializeTotals(payload.data)
 }
 </code></pre>
 
@@ -301,10 +301,10 @@ return {
         </div>
 
         
-        <a href="../../../source/api/leaderboard/readme.html" class="navigation navigation-prev " aria-label="Previous page: Leaderboard"><i class="fa fa-angle-left"></i></a>
+        <a href="../../../source/api/pages/readme.html" class="navigation navigation-prev " aria-label="Previous page: Pages"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../../../source/api/totals/readme.html" class="navigation navigation-next " aria-label="Next page: Totals"><i class="fa fa-angle-right"></i></a>
+        <a href="../../../source/utils/readme.html" class="navigation navigation-next " aria-label="Next page: Utilities"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

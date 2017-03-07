@@ -17,7 +17,7 @@ describe ('Fetch Pages', () => {
     fetchPages({ campaign_id: 'au-6839' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/search/pages')
+      expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages')
       expect(request.url).to.contain('campaign_id=au-6839')
       done()
     })

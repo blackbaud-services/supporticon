@@ -1,4 +1,4 @@
-import fetch, { instance } from '..'
+import fetch, { instance, updateBaseUrl } from '..'
 import moxios from 'moxios'
 
 describe ('Utils | Fetch', () => {
@@ -20,7 +20,7 @@ describe ('Utils | Fetch', () => {
     fetch('api/v2/campaigns', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/campaigns')
+      expect(request.url).to.contain('https://everydayhero.com/api/v2/campaigns')
       expect(request.url).to.contain('foo=bar')
       expect(request.config.method).to.eql('get')
       done()
@@ -82,5 +82,15 @@ describe ('Utils | Fetch', () => {
   it ('should throw if no endpoint is supplied', () => {
     const test = () => fetch()
     expect(test).to.throw
+  })
+
+  it ('should allow us to update the base url', () => {
+    updateBaseUrl('https://everydayhero-staging.com')
+    fetch('api/v2/campaigns', { foo: 'bar' })
+    moxios.wait(() => {
+      const request = moxios.requests.mostRecent()
+      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/campaigns')
+      done()
+    })
   })
 })
