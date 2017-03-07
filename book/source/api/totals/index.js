@@ -10,5 +10,4 @@ export const deserializeTotals = (totals) => totals
 
 export const fetchTotals = (params = required()) => {
   return fetch(c.ENDPOINT, params)
-    .then((response) => response.data)
 }
