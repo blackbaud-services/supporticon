@@ -6,8 +6,11 @@ export const c = {
   NAMESPACE: 'app/totals'
 }
 
-export const deserializeTotals = (totals) => totals
+export const deserializeDonationTotals = (totals) => ({
+  raised: totals.total_amount_cents.sum,
+  donations: totals.total_amount_cents.count
+})
 
-export const fetchTotals = (params = required()) => {
+export const fetchDonationTotals = (params = required()) => {
   return fetch(c.ENDPOINT, params)
 }

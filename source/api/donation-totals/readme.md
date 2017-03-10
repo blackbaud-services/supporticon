@@ -1,21 +1,21 @@
 # Goal
 
-Helpers related to fetching totals
+Helpers related to fetching donation totals for charities, campaigns etc.
 
 - [Configuration](#configuration)
-- [fetchTotals](#fetchtotals)
-- [deserializeTotals](#deserializetotals)
+- [fetchDonationTotals](#fetchdonationtotals)
+- [deserializeDonationTotals](#deserializedonationtotals)
 
 ## Configuration
 
 - `namespace` - app/totals
 - `endpoint` - api/v2/search/totals
 
-## `fetchTotals`
+## `fetchDonationTotals`
 
 **Purpose**
 
-Fetch totals from Supporter.
+Fetch donation totals from Supporter.
 
 **Params**
 
@@ -31,16 +31,16 @@ A pending promise that will either resolve to:
 **Example**
 
 ```javascript
-import { fetchTotals } from 'supporticon/api/totals'
+import { fetchDonationTotals } from 'supporticon/api/donation-totals'
 
-fetchTotals({
+fetchDonationTotals({
   campaign: 'au-123'
 })
 ```
 
-## `deserializeTotals`
+## `deserializeDonationTotals`
 
-A default deserializer for deserializing totals
+A default deserializer for deserializing donation totals
 
 **Params**
 
@@ -53,12 +53,12 @@ The deserialized totals
 **Example**
 
 ```javascript
-import { deserializeTotals } from 'supporticon/api/totals'
+import { deserializeDonationTotals } from 'supporticon/api/donation-totals'
 
 // ...
 
 return {
   status: 'fetched',
-  data: deserializeTotals(payload.data)
+  data: deserializeDonationTotals(payload.data)
 }
 ```
