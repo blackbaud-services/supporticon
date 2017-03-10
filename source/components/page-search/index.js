@@ -109,7 +109,7 @@ PageSearch.propTypes = {
   /**
   * The campaign uid to fetch pages for
   */
-  campaign: PropTypes.oneOf([
+  campaign: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array
   ]),
@@ -117,7 +117,7 @@ PageSearch.propTypes = {
   /**
   * The charity uid to fetch pages for
   */
-  charity: PropTypes.oneOf([
+  charity: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array
   ]),
@@ -160,7 +160,7 @@ PageSearch.propTypes = {
 
 PageSearch.defaultProps = {
   limit: 10,
-  type: 'team'
+  type: 'individual'
 }
 
 export default PageSearch
