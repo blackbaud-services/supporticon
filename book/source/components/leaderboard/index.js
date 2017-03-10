@@ -112,7 +112,7 @@ Leaderboard.propTypes = {
   /**
   * The campaign uid to fetch pages for
   */
-  campaign: PropTypes.oneOf([
+  campaign: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array
   ]),
@@ -120,7 +120,7 @@ Leaderboard.propTypes = {
   /**
   * The charity uid to fetch pages for
   */
-  charity: PropTypes.oneOf([
+  charity: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array
   ]),
@@ -133,7 +133,7 @@ Leaderboard.propTypes = {
   /**
   * The group value(s) to filter by
   */
-  group: PropTypes.oneOf([
+  group: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array
   ]),

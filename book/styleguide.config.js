@@ -20,6 +20,14 @@ module.exports = {
         path.resolve(__dirname, 'source/components/leaderboard', 'index.js'),
         path.resolve(__dirname, 'source/components/page-search', 'index.js')
       ])
+    },
+    {
+      name: 'Metrics',
+      components: () => ([
+        path.resolve(__dirname, 'source/components/total-donations', 'index.js'),
+        path.resolve(__dirname, 'source/components/total-funds-raised', 'index.js'),
+        path.resolve(__dirname, 'source/components/total-supporters', 'index.js')
+      ])
     }
   ],
   updateWebpackConfig: (webpackConfig) => {
