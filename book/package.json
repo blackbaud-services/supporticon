@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "axios": "^0.15.3",
-    "constructicon": "0.5.0",
+    "constructicon": "^0.5.1",
     "numbro": "^1.9.3"
   },
   "standard": {
