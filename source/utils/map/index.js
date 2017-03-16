@@ -3,7 +3,9 @@ const defaultMappings = {
   charity: 'charity_id',
   group: 'group_value',
   type: 'group_by',
-  filter: 'q'
+  filter: 'q',
+  startDate: 'start_at',
+  endDate: 'end_date'
 }
 
 const defaultTransforms = {}
