@@ -143,7 +143,6 @@ TotalDonations.propTypes = {
 
 TotalDonations.defaultProps = {
   label: 'Donations',
-  icon: 'dollar',
   offset: 0
 }
 
