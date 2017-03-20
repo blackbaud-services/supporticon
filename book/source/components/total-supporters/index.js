@@ -146,7 +146,6 @@ TotalSupporters.propTypes = {
 
 TotalSupporters.defaultProps = {
   label: 'Supporters',
-  icon: 'star',
   offset: 0,
   type: 'individual'
 }

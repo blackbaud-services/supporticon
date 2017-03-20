@@ -143,7 +143,6 @@ TotalFundsRaised.propTypes = {
 
 TotalFundsRaised.defaultProps = {
   label: 'Funds Raised',
-  icon: 'heart',
   offset: 0
 }
 

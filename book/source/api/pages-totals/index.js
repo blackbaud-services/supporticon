@@ -13,7 +13,11 @@ export const fetchPagesTotals = (params = required()) => {
     limit: 1
   }
 
-  const mappings = { type: 'type' }
+  const mappings = {
+    type: 'type',
+    startDate: 'start_updated_at',
+    endDate: 'end_updated_at'
+  }
 
   return fetch(c.ENDPOINT, finalParams, { mappings }).then((results) => results.meta.count)
 }
