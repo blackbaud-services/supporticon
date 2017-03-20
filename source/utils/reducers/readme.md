@@ -19,7 +19,7 @@ A valid reducer that can be easily added to `combineReducers`
 ## Examples
 
 ```javascript
-import { createReducer } from 'supporticon/utils/actions'
+import { createReducer } from 'supporticon/utils/reducers'
 import { deserializeLeaderboard } from 'supporticon/api/leaderboard'
 
 // ...
