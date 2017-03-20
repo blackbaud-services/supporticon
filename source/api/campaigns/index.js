@@ -24,6 +24,11 @@ export const fetchCampaign = (id = required()) => {
     .then((response) => response.campaign)
 }
 
+export const fetchCampaignGroups = (id = required()) => {
+  return fetch(`${c.ENDPOINT}/${id}/groups`)
+    .then((response) => response.campaign_groups)
+}
+
 export const deserializeCampaign = (campaign) => ({
   name: campaign.name,
   id: campaign.id,
