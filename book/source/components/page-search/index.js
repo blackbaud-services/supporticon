@@ -38,6 +38,7 @@ class PageSearch extends Component {
       campaign: this.props.campaign,
       charity: this.props.charity,
       type: this.props.type,
+      group: this.props.group,
       limit: this.props.limit,
       page: this.props.page
     })
@@ -126,6 +127,14 @@ PageSearch.propTypes = {
   * The type of page to include in the leaderboard
   */
   type: PropTypes.oneOf([ 'individual', 'team' ]),
+
+  /**
+  * The group value(s) to filter by
+  */
+  group: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.array
+  ]),
 
   /**
   * The number of records to fetch
