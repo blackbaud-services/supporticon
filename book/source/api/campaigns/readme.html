@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.1" data-chapter-title="Campaigns" data-filepath="source/api/campaigns/readme.md" data-basepath="../../.." data-revision="Mon Mar 20 2017 06:56:43 GMT+0000 (UTC)">
+    <div class="book" data-level="1.1" data-chapter-title="Campaigns" data-filepath="source/api/campaigns/readme.md" data-basepath="../../.." data-revision="Tue Mar 21 2017 00:26:45 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -277,6 +277,7 @@
 <li><a href="#configuration">Configuration</a></li>
 <li><a href="#fetchcampaigns">fetchCampaigns</a></li>
 <li><a href="#fetchcampaign">fetchCampaign</a></li>
+<li><a href="#fetchcampaigngroups">fetchCampaignGroups</a></li>
 <li><a href="#deserializecampaign">deserializeCampaign</a></li>
 </ul>
 <h2 id="configuration">Configuration</h2>
@@ -321,6 +322,24 @@ fetchCampaigns({
 <pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { fetchCampaign } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/campaigns&apos;</span>
 
 fetchCampaign(<span class="hljs-string">&apos;au-6839&apos;</span>)
+</code></pre>
+<h2 id="fetchcampaigngroups"><code>fetchCampaignGroups</code></h2>
+<p><strong>Purpose</strong></p>
+<p>Fetch the groups for a campaign.</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><code>id</code> The id of the campaign</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A pending promise that will either resolve to:</p>
+<ul>
+<li>Success: the data returned from the request</li>
+<li>Failure: the error encountered</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { fetchCampaignGroups } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/campaigns&apos;</span>
+
+fetchCampaignGroups(<span class="hljs-string">&apos;au-6839&apos;</span>)
 </code></pre>
 <h2 id="deserializecampaign"><code>deserializeCampaign</code></h2>
 <p>A default deserializer for deserializing campaigns</p>
