@@ -5,6 +5,7 @@ Helpers related to fetching campaigns
 - [Configuration](#configuration)
 - [fetchCampaigns](#fetchcampaigns)
 - [fetchCampaign](#fetchcampaign)
+- [fetchCampaignGroups](#fetchcampaigngroups)
 - [deserializeCampaign](#deserializecampaign)
 
 ## Configuration
@@ -62,6 +63,31 @@ A pending promise that will either resolve to:
 import { fetchCampaign } from 'supporticon/api/campaigns'
 
 fetchCampaign('au-6839')
+```
+
+## `fetchCampaignGroups`
+
+**Purpose**
+
+Fetch the groups for a campaign.
+
+**Params**
+
+- `id` The id of the campaign
+
+**Returns**
+
+A pending promise that will either resolve to:
+
+- Success: the data returned from the request
+- Failure: the error encountered
+
+**Example**
+
+```javascript
+import { fetchCampaignGroups } from 'supporticon/api/campaigns'
+
+fetchCampaignGroups('au-6839')
 ```
 
 ## `deserializeCampaign`
