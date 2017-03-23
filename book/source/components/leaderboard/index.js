@@ -12,13 +12,20 @@ import {
 class Leaderboard extends Component {
   constructor () {
     super()
-    this.filterLeader = this.filterLeader.bind(this)
     this.setFilter = this.setFilter.bind(this)
     this.renderLeader = this.renderLeader.bind(this)
     this.state = { status: 'fetching' }
   }
 
   componentDidMount () {
+    this.fetchLeaderboard()
+  }
+
+  setFilter (q) {
+    this.fetchLeaderboard(q)
+  }
+
+  fetchLeaderboard (q) {
     const {
       campaign,
       charity,
@@ -38,7 +45,8 @@ class Leaderboard extends Component {
       startDate,
       endDate,
       limit,
-      page
+      page,
+      q
     })
       .then((data) => {
         this.setState({
@@ -52,12 +60,6 @@ class Leaderboard extends Component {
         })
         return Promise.reject(error)
       })
-  }
-
-  setFilter (q) {
-    this.setState({
-      q
-    })
   }
 
   render () {
@@ -77,18 +79,11 @@ class Leaderboard extends Component {
         <LeaderboardWrapper
           loading={status === 'fetching'}
           error={status === 'failed'}
-          children={data
-            .filter(this.filterLeader)
-            .map(this.renderLeader)}
+          children={data.map(this.renderLeader)}
           {...leaderboard}
         />
       </div>
     )
-  }
-
-  filterLeader (leader) {
-    const { q } = this.state
-    return !q || leader.name.toLowerCase().indexOf(q.toLowerCase()) !== -1
   }
 
   renderLeader (leader, i) {
