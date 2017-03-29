@@ -24,6 +24,7 @@ module.exports = {
     {
       name: 'Metrics',
       components: () => ([
+        path.resolve(__dirname, 'source/components/total-distance', 'index.js'),
         path.resolve(__dirname, 'source/components/total-donations', 'index.js'),
         path.resolve(__dirname, 'source/components/total-funds-raised', 'index.js'),
         path.resolve(__dirname, 'source/components/total-supporters', 'index.js')
