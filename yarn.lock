@@ -1579,13 +1579,13 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constructicon@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-0.6.0.tgz#edfb0a887677fd1622ac846eaa3810c3f7033ca6"
+constructicon@^0.7.8:
+  version "0.7.8"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-0.7.8.tgz#8258248d80befd7398f03e9b0cda5251121f1207"
   dependencies:
     cxsync "^1.0.9"
     lodash "^4.17.4"
-    minimal.css "^1.0.0"
+    minimal.css "^1.0.1"
     react-modal "^1.6.5"
     react-slick "^0.14.5"
 
@@ -4077,7 +4077,7 @@ mimeparse@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/mimeparse/-/mimeparse-0.1.4.tgz#dafb02752370fd226093ae3152c271af01ac254a"
 
-minimal.css@^1.0.0, minimal.css@^1.0.1:
+minimal.css@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/minimal.css/-/minimal.css-1.0.1.tgz#89bf8dd56b212561691dde2761f712bde657ee9c"
 

@@ -86,22 +86,11 @@ class PageSearch extends Component {
             title={page.name}
             subtitle={page.charity.name}
             image={page.image}
-            children={this.renderLink(page)}
+            url={page.url}
             {...this.props.searchResult}
           />
         ))}
       </SearchResults>
-    )
-  }
-
-  renderLink (page) {
-    return (
-      <Button
-        tag='a'
-        href={page.url}
-        children='Support'
-        {...this.props.button}
-      />
     )
   }
 }
