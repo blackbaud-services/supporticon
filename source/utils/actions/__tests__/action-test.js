@@ -11,21 +11,21 @@ describe('Utils | Action Creator', () => {
     }
   })
 
-  it ('should throw if no fetcher is passed in', () => {
+  it ('throws if no fetcher is passed in', () => {
     const test = () => createAction({
       namespace: 'app/test'
     })
     expect(test).to.throw
   })
 
-  it ('should throw if no namespace is passed in', () => {
+  it ('throws if no namespace is passed in', () => {
     const test = () => createAction({
       fetcher: Promise.resolve({})
     })
     expect(test).to.throw
   })
 
-  it ('should return a thunk', () => {
+  it ('returns a thunk', () => {
     const action = createAction({
       fetcher: Promise.resolve({}),
       namespace: 'app/test'
@@ -33,7 +33,7 @@ describe('Utils | Action Creator', () => {
     expect(typeof action).to.eql('function')
   })
 
-  it ('should resolve to the fetched data', (done) => {
+  it ('resolves to the fetched data', (done) => {
     dispatch(createAction({
       fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test'
@@ -44,7 +44,7 @@ describe('Utils | Action Creator', () => {
     })
   })
 
-  it ('should reject with an error response', (done) => {
+  it ('rejects with an error response', (done) => {
     dispatch(createAction({
       fetcher: Promise.reject({ status: 404 }),
       namespace: 'app/test'
@@ -55,7 +55,7 @@ describe('Utils | Action Creator', () => {
     })
   })
 
-  it ('should dispatch two actions', (done) => {
+  it ('dispatches two actions', (done) => {
     dispatch(createAction({
       fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test'
@@ -66,7 +66,7 @@ describe('Utils | Action Creator', () => {
     })
   })
 
-  it ('should dispatch a fetching action', (done) => {
+  it ('dispatches a fetching action', (done) => {
     dispatch(createAction({
       fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test'
@@ -78,7 +78,7 @@ describe('Utils | Action Creator', () => {
     })
   })
 
-  it ('should dispatch a fetched action', (done) => {
+  it ('dispatches a fetched action', (done) => {
     dispatch(createAction({
       fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test'
@@ -91,7 +91,7 @@ describe('Utils | Action Creator', () => {
     })
   })
 
-  it ('should dispatch a failure action', (done) => {
+  it ('dispatches a failure action', (done) => {
     dispatch(createAction({
       fetcher: Promise.reject({ status: 404 }),
       namespace: 'app/test'
@@ -104,7 +104,7 @@ describe('Utils | Action Creator', () => {
     })
   })
 
-  it ('should allow an override of the fetch function', (done) => {
+  it ('allows an override of the fetch function', (done) => {
     dispatch(createAction({
       fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test',
@@ -121,7 +121,7 @@ describe('Utils | Action Creator', () => {
     })
   })
 
-  it ('should allow an override of the fetch success function', (done) => {
+  it ('allows an override of the fetch success function', (done) => {
     dispatch(createAction({
       fetcher: Promise.resolve({ foo: 'bar' }),
       namespace: 'app/test',
@@ -138,7 +138,7 @@ describe('Utils | Action Creator', () => {
     })
   })
 
-  it ('should allow an override of the fetch failure function', (done) => {
+  it ('allows an override of the fetch failure function', (done) => {
     dispatch(createAction({
       fetcher: Promise.reject({ status: 404 }),
       namespace: 'app/test',

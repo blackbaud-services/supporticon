@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react'
-import Button from 'constructicon/button'
 import SearchForm from 'constructicon/search-form'
 import SearchResult from 'constructicon/search-result'
 import SearchResults from 'constructicon/search-results'

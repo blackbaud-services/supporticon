@@ -1,7 +1,4 @@
 import moxios from 'moxios'
-import { instance } from '../../../utils/fetch'
-import * as actions from '../../../utils/actions'
-
 import {
   fetchCampaigns,
   fetchCampaign,
@@ -10,11 +7,11 @@ import {
 
 describe ('Fetch Campaigns', () => {
   beforeEach (() => {
-    moxios.install(instance)
+    moxios.install()
   })
 
   afterEach (() => {
-    moxios.uninstall(instance)
+    moxios.uninstall()
   })
 
   it ('fetches campaigns using the provided params', (done) => {

@@ -1,19 +1,16 @@
 import moxios from 'moxios'
-import { instance } from '../../../utils/fetch'
-import * as actions from '../../../utils/actions'
-
 import { fetchDonationTotals } from '..'
 
 describe ('Fetch Donation Totals', () => {
   beforeEach (() => {
-    moxios.install(instance)
+    moxios.install()
   })
 
   afterEach (() => {
-    moxios.uninstall(instance)
+    moxios.uninstall()
   })
 
-  it ('should use the correct url to fetch totals for a campaign', (done) => {
+  it ('uses the correct url to fetch totals for a campaign', (done) => {
     fetchDonationTotals({ campaign_id: 'au-6839' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
@@ -23,7 +20,7 @@ describe ('Fetch Donation Totals', () => {
     })
   })
 
-  it ('should use the correct url to fetch totals for a charity', (done) => {
+  it ('uses the correct url to fetch totals for a charity', (done) => {
     fetchDonationTotals({ charity_id: 'au-28' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
@@ -33,7 +30,7 @@ describe ('Fetch Donation Totals', () => {
     })
   })
 
-  it ('should throw if no params are passed in', () => {
+  it ('throws if no params are passed in', () => {
     const test = () => fetchDonationTotals()
     expect(test).to.throw
   })

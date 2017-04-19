@@ -1,7 +1,7 @@
 import map from '..'
 
 describe ('Utils | Param Maps', () => {
-  it ('should perform default mappings', () => {
+  it ('performs default mappings', () => {
     const finalParams = map({
       campaign: 'au-1',
       charity: 'au-2',
@@ -14,7 +14,7 @@ describe ('Utils | Param Maps', () => {
     expect(finalParams.group_value).to.eql('group123')
   })
 
-  it ('should keep unmapped keys', () => {
+  it ('keeps unmapped keys', () => {
     const finalParams = map({
       campaign: 'au-1',
       custom: '123'
@@ -25,13 +25,13 @@ describe ('Utils | Param Maps', () => {
     expect(finalParams.custom).to.eql('123')
   })
 
-  it ('should allow us to pass in custom fields', () => {
+  it ('allows us to pass in custom fields', () => {
     const finalParams = map({ campaign: 'au-1' }, { campaign: 'campaignUID' })
     expect(Object.keys(finalParams).length).to.eql(1)
     expect(finalParams.campaignUID).to.eql('au-1')
   })
 
-  it ('should perform transforms on values', () => {
+  it ('performs transforms on values', () => {
     const finalParams = map(
       { type: 'team' },
       { type: 'group_by' },

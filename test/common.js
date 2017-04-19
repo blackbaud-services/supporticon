@@ -15,3 +15,11 @@ global.fetchStub = (endpoint, params = {}) => {
   const queryString = Object.keys(params).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&')
   return Promise.resolve().then(() => `https://everydayhero-staging.com/${endpoint}?${queryString}`)
 }
+
+global.enzyme = require('enzyme')
+global.shallow = enzyme.shallow
+global.mount = enzyme.mount
+
+global.utils = require('./utils')
+
+require('./testdom')('<html><body></body></html>')
