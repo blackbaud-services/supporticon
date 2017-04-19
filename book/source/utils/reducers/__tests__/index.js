@@ -1,31 +1,31 @@
 import { createReducer } from '..'
 
 describe('Utils | Reducer', () => {
-  it('should create us a simple reducer function', () => {
+  it('creates us a simple reducer function', () => {
     const reducer = createReducer({ namespace: 'app/test' })
     expect(typeof reducer).to.eql('function')
   })
 
-  it('should handle FETCH', () => {
+  it('handles FETCH', () => {
     const reducer = createReducer({ namespace: 'app/test' })
     const state = reducer({}, { type: 'app/test/FETCH' })
     expect(state.status).to.eql('fetching')
   })
 
-  it('should handle FETCH_SUCCESS', () => {
+  it('handles FETCH_SUCCESS', () => {
     const reducer = createReducer({ namespace: 'app/test' })
     const state = reducer({}, { type: 'app/test/FETCH_SUCCESS', payload: { data: { foo: 'bar' }}})
     expect(state.status).to.eql('fetched')
     expect(state.data.foo).to.eql('bar')
   })
 
-  it('should handle FETCH_FAILURE', () => {
+  it('handles FETCH_FAILURE', () => {
     const reducer = createReducer({ namespace: 'app/test' })
     const state = reducer({}, { type: 'app/test/FETCH_FAILURE' })
     expect(state.status).to.eql('failed')
   })
 
-  it('should allow you to override FETCH', () => {
+  it('allows you to override FETCH', () => {
     const reducer = createReducer({
       namespace: 'app/test',
       handlers: {
@@ -38,7 +38,7 @@ describe('Utils | Reducer', () => {
     expect(state.status).to.eql('custom-handler')
   })
 
-  it('should allow you to override FETCH_SUCCESS', () => {
+  it('allows you to override FETCH_SUCCESS', () => {
     const reducer = createReducer({
       namespace: 'app/test',
       handlers: {
@@ -51,7 +51,7 @@ describe('Utils | Reducer', () => {
     expect(state.status).to.eql('custom-handler')
   })
 
-  it('should allow you to override FETCH_FAILURE', () => {
+  it('allows you to override FETCH_FAILURE', () => {
     const reducer = createReducer({
       namespace: 'app/test',
       handlers: {
@@ -64,7 +64,7 @@ describe('Utils | Reducer', () => {
     expect(state.status).to.eql('custom-handler')
   })
 
-  it('should allow you to override the deserializer', () => {
+  it('allows you to override the deserializer', () => {
     const reducer = createReducer({
       namespace: 'app/test',
       deserialize: (data) => ({
@@ -78,7 +78,7 @@ describe('Utils | Reducer', () => {
     expect(state.data.baz).to.eql('qux')
   })
 
-  it('should allow you to override the deserializer when an array of results is returned', () => {
+  it('allows you to override the deserializer when an array of results is returned', () => {
     const reducer = createReducer({
       namespace: 'app/test',
       deserialize: (data) => ({
