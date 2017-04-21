@@ -2,6 +2,14 @@
 
 ```
 <TotalDistance
-  campaign='au-6839'
+  campaign='au-21638'
+/>
+```
+
+### Multiple campaigns
+
+```
+<TotalDistance
+  campaign={['au-21638', 'nz-1223']}
 />
 ```
