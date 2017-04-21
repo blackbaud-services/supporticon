@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import numbro from 'numbro'
 import Icon from 'constructicon/icon'
 import Metric from 'constructicon/metric'
-import { fetchCampaign } from '../../api/campaigns'
+import { fetchCampaign, fetchCampaigns } from '../../api/campaigns'
 
 class TotalDistance extends Component {
   constructor () {
@@ -13,8 +13,27 @@ class TotalDistance extends Component {
   componentDidMount () {
     const { campaign } = this.props
 
-    fetchCampaign(campaign)
-      .then((data) => {
+    if (Array.isArray(campaign)) {
+      fetchCampaigns({ ids: campaign }).then((data) => {
+        let total = 0
+
+        data.map((campaign) => {
+          total += this.calculateTotal(campaign)
+        })
+
+        this.setState({
+          status: 'fetched',
+          data: total
+        })
+      })
+      .catch((error) => {
+        this.setState({
+          status: 'failed'
+        })
+        return Promise.reject(error)
+      })
+    } else {
+      fetchCampaign(campaign).then((data) => {
         this.setState({
           status: 'fetched',
           data: this.calculateTotal(data)
@@ -26,6 +45,7 @@ class TotalDistance extends Component {
         })
         return Promise.reject(error)
       })
+    }
   }
 
   calculateTotal (data) {
@@ -80,9 +100,12 @@ class TotalDistance extends Component {
 
 TotalDistance.propTypes = {
   /**
-  * The campaign uid to fetch totals for
+  * The campaign uid/s to fetch totals for
   */
-  campaign: PropTypes.string,
+  campaign: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.array
+  ]),
 
   /**
   * The type of activity to get kms for
