@@ -21,6 +21,12 @@ class Leaderboard extends Component {
     this.fetchLeaderboard()
   }
 
+  componentDidUpdate (prevProps) {
+    if (this.props !== prevProps) {
+      this.fetchLeaderboard()
+    }
+  }
+
   setFilter (q) {
     this.fetchLeaderboard(q)
   }
@@ -36,6 +42,11 @@ class Leaderboard extends Component {
       limit,
       page
     } = this.props
+
+    this.setState({
+      status: 'fetching',
+      data: null
+    })
 
     fetchLeaderboard({
       campaign,
