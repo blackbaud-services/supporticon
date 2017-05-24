@@ -45,7 +45,7 @@ class Leaderboard extends Component {
 
     this.setState({
       status: 'fetching',
-      data: null
+      data: undefined
     })
 
     fetchLeaderboard({
