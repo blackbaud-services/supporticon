@@ -2,6 +2,6 @@
 
 ```
 <Leaderboard
-  campaign='au-6839'
+  campaign='au-21638'
 />
 ```
