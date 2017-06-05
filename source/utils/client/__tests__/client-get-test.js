@@ -1,18 +1,17 @@
-import fetch from '..'
 import moxios from 'moxios'
-import { update as updateBaseUrl } from '../../base-url'
+import { get, instance, updateClient } from '..'
 
-describe ('Utils | Fetch', () => {
+describe ('Utils | get', () => {
   beforeEach (() => {
-    moxios.install()
+    moxios.install(instance)
   })
 
   afterEach (() => {
-    moxios.uninstall()
+    moxios.uninstall(instance)
   })
 
   it ('performs a simple get request', (done) => {
-    fetch('api/v2/campaigns', { foo: 'bar' })
+    get('api/v2/campaigns', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain('https://everydayhero.com/api/v2/campaigns')
@@ -23,7 +22,7 @@ describe ('Utils | Fetch', () => {
   })
 
   it ('resolves to the fetched data', (done) => {
-    fetch('api/v2/campaigns/au-1', { foo: 'bar' })
+    get('api/v2/campaigns/au-1', { foo: 'bar' })
       .then((data) => {
         expect(data.campaign.uid).to.eql('au-1')
         expect(data.campaign.name).to.eql('Test Campaign')
@@ -45,7 +44,7 @@ describe ('Utils | Fetch', () => {
   })
 
   it ('rejects if the request returns a 404', (done) => {
-    fetch('api/v2/campaigns/au-1', { foo: 'bar' })
+    get('api/v2/campaigns/au-1', { foo: 'bar' })
       .catch((error) => {
         expect(error.status).to.eql(404)
         done()
@@ -60,7 +59,7 @@ describe ('Utils | Fetch', () => {
   })
 
   it ('rejects if the request returns a 500', (done) => {
-    fetch('api/v2/campaigns/au-1', { foo: 'bar' })
+    get('api/v2/campaigns/au-1', { foo: 'bar' })
       .catch((error) => {
         expect(error.status).to.eql(500)
         done()
@@ -75,17 +74,17 @@ describe ('Utils | Fetch', () => {
   })
 
   it ('throws if no endpoint is supplied', () => {
-    const test = () => fetch()
+    const test = () => get()
     expect(test).to.throw
   })
 
-  it ('allows us to update the base url', () => {
-    updateBaseUrl('https://everydayhero-staging.com')
-    fetch('api/v2/campaigns', { foo: 'bar' })
+  it ('allows us to update the base url', (done) => {
+    updateClient({ baseURL: 'https://everydayhero-staging.com' })
+    get('api/v2/campaigns', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/campaigns')
-      updateBaseUrl('https://everydayhero.com')
+      updateClient({ baseURL: 'https://everydayhero.com' })
       done()
     })
   })

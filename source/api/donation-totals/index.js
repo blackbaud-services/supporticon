@@ -1,4 +1,4 @@
-import fetch from '../../utils/fetch'
+import { get } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
@@ -12,5 +12,5 @@ export const deserializeDonationTotals = (totals) => ({
 })
 
 export const fetchDonationTotals = (params = required()) => {
-  return fetch(c.ENDPOINT, params)
+  return get(c.ENDPOINT, params)
 }

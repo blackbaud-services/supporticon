@@ -44,7 +44,7 @@
     "lodash": "^4.17.4",
     "minimal.css": "^1.0.1",
     "mocha": "^3.2.0",
-    "moxios": "^0.3.0",
+    "moxios": "^0.4.0",
     "react": "^15.4.2",
     "react-addons-test-utils": "^15.4.2",
     "react-dom": "^15.4.2",

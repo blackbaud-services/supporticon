@@ -26,7 +26,11 @@ describe ('Utils | Param Maps', () => {
   })
 
   it ('allows us to pass in custom fields', () => {
-    const finalParams = map({ campaign: 'au-1' }, { campaign: 'campaignUID' })
+    const finalParams = map({ campaign: 'au-1' }, {
+      mappings: {
+        campaign: 'campaignUID'
+      }
+    })
     expect(Object.keys(finalParams).length).to.eql(1)
     expect(finalParams.campaignUID).to.eql('au-1')
   })
@@ -34,8 +38,10 @@ describe ('Utils | Param Maps', () => {
   it ('performs transforms on values', () => {
     const finalParams = map(
       { type: 'team' },
-      { type: 'group_by' },
-      { type: (v) => v === 'team' ? 'teams' : 'individuals' }
+      {
+        mappings: { type: 'group_by' },
+        transforms: { type: (v) => v === 'team' ? 'teams' : 'individuals' }
+      }
     )
     expect(finalParams.group_by).to.eql('teams')
   })

@@ -1,6 +1,6 @@
 import React from 'react'
 import Button from 'constructicon/button'
-import getBaseURL from '../../utils/base-url'
+import { getBaseURL } from '../../utils/client'
 
 const SingleSignOnLink = ({
   token,

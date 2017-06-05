@@ -1,13 +1,14 @@
 import moxios from 'moxios'
 import { fetchLeaderboard } from '..'
+import { instance } from '../../../utils/client'
 
 describe ('Fetch Leaderboards', () => {
   beforeEach (() => {
-    moxios.install()
+    moxios.install(instance)
   })
 
   afterEach (() => {
-    moxios.uninstall()
+    moxios.uninstall(instance)
   })
 
   it ('uses the correct url to fetch a leaderboard', (done) => {

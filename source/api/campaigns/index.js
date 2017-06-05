@@ -1,4 +1,4 @@
-import fetch from '../../utils/fetch'
+import { get } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
@@ -15,17 +15,17 @@ export const fetchCampaigns = (params = required()) => {
     charity: (v) => Array.isArray(v) ? v.join(',') : v
   }
 
-  return fetch(c.ENDPOINT, params, { mappings, transforms })
+  return get(c.ENDPOINT, params, { mappings, transforms })
     .then((response) => response.campaigns)
 }
 
 export const fetchCampaign = (id = required()) => {
-  return fetch(`${c.ENDPOINT}/${id}`)
+  return get(`${c.ENDPOINT}/${id}`)
     .then((response) => response.campaign)
 }
 
 export const fetchCampaignGroups = (id = required()) => {
-  return fetch(`${c.ENDPOINT}/${id}/groups`)
+  return get(`${c.ENDPOINT}/${id}/groups`)
     .then((response) => response.campaign_groups)
 }
 
