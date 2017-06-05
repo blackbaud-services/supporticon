@@ -1618,15 +1618,15 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constructicon@^0.7.8:
-  version "0.7.8"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-0.7.8.tgz#8258248d80befd7398f03e9b0cda5251121f1207"
+constructicon@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-0.9.1.tgz#088fd92ad6e5c8c196874d39c111ac542f529e55"
   dependencies:
     cxsync "^1.0.9"
     lodash "^4.17.4"
     minimal.css "^1.0.1"
-    react-modal "^1.6.5"
-    react-slick "^0.14.5"
+    react-modal "^1.7.7"
+    react-slick "0.14.4"
 
 content-disposition@0.5.1:
   version "0.5.1"
@@ -1686,6 +1686,14 @@ create-hmac@^1.1.0, create-hmac@^1.1.2:
   dependencies:
     create-hash "^1.1.0"
     inherits "^2.0.1"
+
+create-react-class@^15.5.2:
+  version "15.5.3"
+  resolved "https://registry.yarnpkg.com/create-react-class/-/create-react-class-15.5.3.tgz#fb0f7cae79339e9a179e194ef466efa3923820fe"
+  dependencies:
+    fbjs "^0.8.9"
+    loose-envify "^1.3.1"
+    object-assign "^4.1.1"
 
 cryptiles@2.x.x:
   version "2.0.5"
@@ -4186,7 +4194,7 @@ longest@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/longest/-/longest-1.0.1.tgz#30a0b2da38f73770e8294a0d22e6625ed77d0097"
 
-loose-envify@^1.0.0, loose-envify@^1.1.0:
+loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/loose-envify/-/loose-envify-1.3.1.tgz#d1a8ad33fa9ce0e713d65fdd0ac8b748d478c848"
   dependencies:
@@ -4837,7 +4845,7 @@ object-assign@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-3.0.0.tgz#9bedd5ca0897949bca47e7ff408062d549f587f2"
 
-object-assign@^4.0.1, object-assign@^4.1.0:
+object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
@@ -5422,7 +5430,7 @@ promzard@^0.3.0:
   dependencies:
     read "1"
 
-prop-types@^15.5.4:
+prop-types@^15.5.4, prop-types@^15.5.7:
   version "15.5.8"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.8.tgz#6b7b2e141083be38c8595aa51fc55775c7199394"
   dependencies:
@@ -5580,13 +5588,15 @@ react-group@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/react-group/-/react-group-1.0.3.tgz#553f50e3588324c4bbb161a3e6832677a33c7a5b"
 
-react-modal@^1.6.5:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-1.7.3.tgz#9745448f280c92290ab1ab05c3d34ae708ef9ab3"
+react-modal@^1.7.7:
+  version "1.7.7"
+  resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-1.7.7.tgz#70205f51c58708c487aff681ba3fed7946e391d9"
   dependencies:
+    create-react-class "^15.5.2"
     element-class "^0.2.0"
     exenv "1.2.0"
     lodash.assign "^4.2.0"
+    prop-types "^15.5.7"
 
 react-prefixer@^1.1.4:
   version "1.1.4"
@@ -5600,9 +5610,9 @@ react-responsive-mixin@^0.4.0:
     enquire.js "^2.1.1"
     json2mq "^0.2.0"
 
-react-slick@^0.14.5:
-  version "0.14.7"
-  resolved "https://registry.yarnpkg.com/react-slick/-/react-slick-0.14.7.tgz#5035f8b070f26fd18be1f6d3adc7dd2ab4b0bc2f"
+react-slick@0.14.4:
+  version "0.14.4"
+  resolved "https://registry.yarnpkg.com/react-slick/-/react-slick-0.14.4.tgz#50562de13c4fc99629fabfdeddfe9f53c7ac90e9"
   dependencies:
     classnames "^2.2.5"
     json2mq "^0.2.0"
