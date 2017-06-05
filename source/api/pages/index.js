@@ -19,7 +19,8 @@ export const deserializePage = (page) => ({
   image: page.image.medium_image_url,
   name: page.name,
   target: page.target_cents,
-  url: page.url
+  url: page.url,
+  groups: page.page_groups
 })
 
 /**
