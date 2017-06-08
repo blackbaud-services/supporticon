@@ -2,7 +2,7 @@ import moxios from 'moxios'
 import { resetPassword } from '..'
 import { instance } from '../../../utils/client'
 
-describe ('Authentication', () => {
+describe ('Authentication | Reset Password', () => {
   beforeEach (() => {
     moxios.install(instance)
   })
