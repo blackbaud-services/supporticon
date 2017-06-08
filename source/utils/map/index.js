@@ -10,7 +10,12 @@ const defaultMappings = {
 
 const defaultTransforms = {}
 
-export default (params = {}, customMappings = {}, customTransforms = {}) => {
+export default (params = {}, options = {}) => {
+  const {
+    mappings: customMappings = {},
+    transforms: customTransforms = {}
+  } = options
+
   const mappings = {
     ...defaultMappings,
     ...customMappings

@@ -1,4 +1,4 @@
-import fetch from '../../utils/fetch'
+import { get } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
@@ -19,5 +19,5 @@ export const fetchPagesTotals = (params = required()) => {
     endDate: 'end_updated_at'
   }
 
-  return fetch(c.ENDPOINT, finalParams, { mappings }).then((results) => results.meta.count)
+  return get(c.ENDPOINT, finalParams, { mappings }).then((results) => results.meta.count)
 }
