@@ -1,4 +1,4 @@
-import fetch from '../../utils/fetch'
+import { get } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
@@ -27,6 +27,6 @@ export const deserializePage = (page) => ({
 * @function fetches pages from the supporter api
 */
 export const fetchPages = (params = required()) => {
-  return fetch(c.ENDPOINT, params)
+  return get(c.ENDPOINT, params)
     .then((response) => response.pages)
 }

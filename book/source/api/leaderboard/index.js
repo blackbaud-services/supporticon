@@ -1,4 +1,4 @@
-import fetch from '../../utils/fetch'
+import { get } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
@@ -14,7 +14,7 @@ export const fetchLeaderboard = (params = required()) => {
     type: (val) => val === 'team' ? 'teams' : 'individuals'
   }
 
-  return fetch(c.ENDPOINT, params, { transforms })
+  return get(c.ENDPOINT, params, { transforms })
     .then((response) => response.results)
 }
 

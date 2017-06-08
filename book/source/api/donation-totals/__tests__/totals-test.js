@@ -1,13 +1,14 @@
 import moxios from 'moxios'
 import { fetchDonationTotals } from '..'
+import { instance } from '../../../utils/client'
 
 describe ('Fetch Donation Totals', () => {
   beforeEach (() => {
-    moxios.install()
+    moxios.install(instance)
   })
 
   afterEach (() => {
-    moxios.uninstall()
+    moxios.uninstall(instance)
   })
 
   it ('uses the correct url to fetch totals for a campaign', (done) => {
