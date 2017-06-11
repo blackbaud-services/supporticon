@@ -3,12 +3,75 @@
 Helpers related to authenticating through [the Partner API](http://developer.everydayhero.com/partner/custom-authentication/)
 
 - [Configuration](#configuration)
-- [resetPassword](#fetchauthentication)
+- [signIn](#signin)
+- [signUp](#signup)
+- [resetPassword](#resetpassword)
 
 ## Configuration
 
 - `namespace` - app/authentication
 - `endpoint` - api/v2/authentication
+
+
+## `signIn`
+
+**Purpose**
+
+Login EDH user with email and password
+
+**Params**
+
+- `params` (Object)
+
+- `client_id` (String) Public OAuth Client ID.
+- `email` (String) The email address of the user.
+- `password` (String) The password of the user.
+- `country` (String) The country of the user. Defaults to 'au'
+
+**Example**
+
+```javascript
+import { signIn } from 'supporticon/api/authentication'
+
+signIn({
+  client_id: process.env.API_CLIENT_ID,
+  email: 'professionalservices@everydayhero.com.au',
+  password: '********'
+})
+```
+
+
+## `signUp`
+
+**Purpose**
+
+Signup new EDH user.
+
+**Params**
+
+- `params` (Object)
+
+- `client_id` (String) Public OAuth Client ID.
+- `name` (String) The full name of the user.
+- `email` (String) The email address of the user.
+- `password` (String) The password of the user.
+- `phone` (String) The phone number of the user.
+- `country` (String) The country of the user. Defaults to 'au'
+
+**Example**
+
+```javascript
+import { signIn } from 'supporticon/api/authentication'
+
+signUp({
+  client_id: process.env.API_CLIENT_ID,
+  name: 'Professional Services'
+  email: 'professionalservices@everydayhero.com.au',
+  password: '********',
+  phone: '1300 798 768'
+})
+```
+
 
 ## `resetPassword`
 
