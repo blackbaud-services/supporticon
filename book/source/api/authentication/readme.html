@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Actions | Supporticon</title>
+        <title>Authentication | Supporticon</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.5.2">
@@ -37,10 +37,10 @@
         
     
     
-    <link rel="next" href="../../../source/utils/reducers/readme.html" />
+    <link rel="next" href="../../../source/utils/readme.html" />
     
     
-    <link rel="prev" href="../../../source/utils/readme.html" />
+    <link rel="prev" href="../../../source/api/pages-totals/readme.html" />
     
 
         
@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.1" data-chapter-title="Actions" data-filepath="source/utils/actions/readme.md" data-basepath="../../.." data-revision="Mon Jun 12 2017 08:55:40 GMT+1000 (AEST)">
+    <div class="book" data-level="1.6" data-chapter-title="Authentication" data-filepath="source/api/authentication/readme.md" data-basepath="../../.." data-revision="Mon Jun 12 2017 08:55:40 GMT+1000 (AEST)">
     
 
 <div class="book-summary">
@@ -167,7 +167,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6" data-path="source/api/authentication/readme.html">
+        <li class="chapter active" data-level="1.6" data-path="source/api/authentication/readme.html">
             
                 
                     <a href="../../../source/api/authentication/readme.html">
@@ -203,7 +203,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="2.1" data-path="source/utils/actions/readme.html">
+        <li class="chapter " data-level="2.1" data-path="source/utils/actions/readme.html">
             
                 
                     <a href="../../../source/utils/actions/readme.html">
@@ -286,46 +286,92 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="createaction"><code>createAction</code></h1>
-<h2 id="purpose">Purpose</h2>
-<p>Fetch data from the supporter API and dispatch the relevant Redux actions.</p>
-<h2 id="params">Params</h2>
+                        <h1 id="goal">Goal</h1>
+<p>Helpers related to authenticating through <a href="http://developer.everydayhero.com/partner/custom-authentication/" target="_blank">the Partner API</a></p>
 <ul>
-<li>Options (Object) various configuration options to configure your action<ul>
-<li>fetcher (Promise: required) the actual fetch function e.g. fetchLeaderboard(), fetchPages() etc.</li>
-<li>namespace (String: required) a unique namespace for dispatched actions e.g. <code>app/leaderboard</code>, <code>app/page</code></li>
-<li>actionDispatchers (Object) you can override action dispatchers if needed i.e. <code>fetch</code>, <code>fetchSuccess</code>, <code>fetchFailure</code></li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#signin">signIn</a></li>
+<li><a href="#signup">signUp</a></li>
+<li><a href="#resetpassword">resetPassword</a></li>
 </ul>
+<h2 id="configuration">Configuration</h2>
+<ul>
+<li><code>namespace</code> - app/authentication</li>
+<li><code>endpoint</code> - api/v2/authentication</li>
+</ul>
+<h2 id="signin"><code>signIn</code></h2>
+<p><strong>Purpose</strong></p>
+<p>Login EDH user with email and password</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><p><code>params</code> (Object)</p>
 </li>
+<li><p><code>client_id</code> (String) Public OAuth Client ID.</p>
+</li>
+<li><code>email</code> (String) The email address of the user.</li>
+<li><code>password</code> (String) The password of the user.</li>
+<li><code>country</code> (String) The country of the user. Defaults to &apos;au&apos;</li>
 </ul>
-<h2 id="returns">Returns</h2>
-<p>A thunk that will be dispatched by Redux Thunk middleware if installed</p>
-<h2 id="examples">Examples</h2>
-<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { createAction } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/utils/actions&apos;</span>
-<span class="hljs-keyword">import</span> { fetchLeaderboard } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/leaderboard&apos;</span>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { signIn } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/authentication&apos;</span>
 
-// ...
-
-dispatch(createAction({
-  namespace: <span class="hljs-string">&apos;app/leaderboard&apos;</span>,
-  fetcher: fetchLeaderboard({ campaign: <span class="hljs-string">&apos;au-123&apos;</span> })
-}))
+signIn({
+  client_id: process.env.API_CLIENT_ID,
+  email: <span class="hljs-string">&apos;professionalservices@everydayhero.com.au&apos;</span>,
+  password: <span class="hljs-string">&apos;********&apos;</span>
+})
 </code></pre>
-<p>The above will call <code>fetchLeaderboard</code> with your supplied params to fetch your data, and will dispatch the following actions.</p>
+<h2 id="signup"><code>signUp</code></h2>
+<p><strong>Purpose</strong></p>
+<p>Signup new EDH user.</p>
+<p><strong>Params</strong></p>
 <ul>
-<li><code>app/leaderboard/FETCH</code> when the request to Supporter is made<ul>
-<li><code>payload</code> - empty</li>
-</ul>
+<li><p><code>params</code> (Object)</p>
 </li>
-<li><code>app/leaderboard/FETCH_SUCCESS</code> when the response is received, with the pay<ul>
-<li><code>payload.data</code> - the result(s) retrieved from Supporter</li>
-</ul>
+<li><p><code>client_id</code> (String) Public OAuth Client ID.</p>
 </li>
-<li><code>app/leaderboard/FETCH_FAILURE</code> when an error is encountered<ul>
-<li><code>payload.error</code> - the error encountered</li>
+<li><code>name</code> (String) The full name of the user.</li>
+<li><code>email</code> (String) The email address of the user.</li>
+<li><code>password</code> (String) The password of the user.</li>
+<li><code>phone</code> (String) The phone number of the user.</li>
+<li><code>country</code> (String) The country of the user. Defaults to &apos;au&apos;</li>
 </ul>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { signIn } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/authentication&apos;</span>
+
+signUp({
+  client_id: process.env.API_CLIENT_ID,
+  name: <span class="hljs-string">&apos;Professional Services&apos;</span>
+  email: <span class="hljs-string">&apos;professionalservices@everydayhero.com.au&apos;</span>,
+  password: <span class="hljs-string">&apos;********&apos;</span>,
+  phone: <span class="hljs-string">&apos;1300 798 768&apos;</span>
+})
+</code></pre>
+<h2 id="resetpassword"><code>resetPassword</code></h2>
+<p><strong>Purpose</strong></p>
+<p>Send reset password email to user</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><p><code>params</code> (Object)</p>
 </li>
+<li><p><code>client_id</code> (String) Public OAuth Client ID.</p>
+</li>
+<li><code>email</code> (String) The email of the user.</li>
 </ul>
+<p><strong>Returns</strong></p>
+<p>A pending promise that will either resolve to:</p>
+<ul>
+<li>Success: <code>204</code> No Content</li>
+<li>Failure: the error encountered</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { resetPassword } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/authentication&apos;</span>
+
+resetPassword({
+  client_id: process.env.API_CLIENT_ID,
+  email: <span class="hljs-string">&apos;professionalservices@everydayhero.com.au&apos;</span>
+})
+</code></pre>
 
                     
                     </section>
@@ -336,10 +382,10 @@ dispatch(createAction({
         </div>
 
         
-        <a href="../../../source/utils/readme.html" class="navigation navigation-prev " aria-label="Previous page: Utilities"><i class="fa fa-angle-left"></i></a>
+        <a href="../../../source/api/pages-totals/readme.html" class="navigation navigation-prev " aria-label="Previous page: Pages Totals"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../../../source/utils/reducers/readme.html" class="navigation navigation-next " aria-label="Next page: Reducers"><i class="fa fa-angle-right"></i></a>
+        <a href="../../../source/utils/readme.html" class="navigation navigation-next " aria-label="Next page: Utilities"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
