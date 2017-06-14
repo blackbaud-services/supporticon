@@ -1,7 +1,7 @@
 import moxios from 'moxios'
-import { post, instance, updateClient } from '..'
+import { put, instance, updateClient } from '..'
 
-describe ('Utils | post', () => {
+describe ('Utils | put', () => {
   beforeEach (() => {
     moxios.install(instance)
   })
@@ -10,18 +10,18 @@ describe ('Utils | post', () => {
     moxios.uninstall(instance)
   })
 
-  it ('performs a simple post request', (done) => {
-    post('api/v2/pages', { foo: 'bar' })
+  it ('performs a simple put request', (done) => {
+    put('api/v2/users/123', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero.com/api/v2/pages')
+      expect(request.url).to.contain('https://everydayhero.com/api/v2/users/123')
       expect(JSON.parse(request.config.data)).to.deep.equal({ foo: 'bar' })
       done()
     })
   })
 
   it ('rejects if the request returns a 404', (done) => {
-    post('api/v2/does-not-exist', { foo: 'bar' })
+    put('api/v2/does-not-exist', { foo: 'bar' })
       .catch((error) => {
         expect(error.status).to.eql(404)
         done()
@@ -36,7 +36,7 @@ describe ('Utils | post', () => {
   })
 
   it ('rejects if the request returns a 500', (done) => {
-    post('api/v2/campaigns', { foo: 'bar' })
+    put('api/v2/pages/123', { foo: 'bar' })
       .catch((error) => {
         expect(error.status).to.eql(500)
         done()
@@ -51,16 +51,16 @@ describe ('Utils | post', () => {
   })
 
   it ('throws if no endpoint is supplied', () => {
-    const test = () => post()
+    const test = () => put()
     expect(test).to.throw
   })
 
   it ('allows us to update the base url', (done) => {
     updateClient({ baseURL: 'https://everydayhero-staging.com' })
-    post('api/v2/campaigns', { foo: 'bar' })
+    put('api/v2/pages/123', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/campaigns')
+      expect(request.url).to.contain('https://everydayhero-staging.com/api/v2/pages/123')
       updateClient({ baseURL: 'https://everydayhero.com' })
       done()
     })
