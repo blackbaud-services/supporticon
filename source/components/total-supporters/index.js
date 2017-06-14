@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import numbro from 'numbro'
 import Icon from 'constructicon/icon'
 import Metric from 'constructicon/metric'
