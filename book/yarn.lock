@@ -1618,15 +1618,16 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constructicon@^0.9.1:
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-0.9.1.tgz#088fd92ad6e5c8c196874d39c111ac542f529e55"
+constructicon@^0.10.8:
+  version "0.10.8"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-0.10.8.tgz#ca17718479a918534f9d1ad510497edb275bac4f"
   dependencies:
     cxsync "^1.0.9"
     lodash "^4.17.4"
     minimal.css "^1.0.1"
-    react-modal "^1.7.7"
-    react-slick "0.14.4"
+    prop-types "^15.5.8"
+    react-modal "^1.9.4"
+    react-slick "0.14.11"
 
 content-disposition@0.5.1:
   version "0.5.1"
@@ -2106,7 +2107,7 @@ enhanced-resolve@^3.0.0:
     object-assign "^4.0.1"
     tapable "^0.2.5"
 
-enquire.js@^2.1.1:
+enquire.js@^2.1.6:
   version "2.1.6"
   resolved "https://registry.yarnpkg.com/enquire.js/-/enquire.js-2.1.6.tgz#3e8780c9b8b835084c3f60e166dbc3c2a3c89814"
 
@@ -5588,9 +5589,9 @@ react-group@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/react-group/-/react-group-1.0.3.tgz#553f50e3588324c4bbb161a3e6832677a33c7a5b"
 
-react-modal@^1.7.7:
-  version "1.7.7"
-  resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-1.7.7.tgz#70205f51c58708c487aff681ba3fed7946e391d9"
+react-modal@^1.9.4:
+  version "1.9.4"
+  resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-1.9.4.tgz#f6823c29ca9ecbecd9cc2a9f019e78e4319bafdd"
   dependencies:
     create-react-class "^15.5.2"
     element-class "^0.2.0"
@@ -5602,22 +5603,16 @@ react-prefixer@^1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/react-prefixer/-/react-prefixer-1.1.4.tgz#e32a01c8c0dbb0f918ccd428a94932a943abf24b"
 
-react-responsive-mixin@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/react-responsive-mixin/-/react-responsive-mixin-0.4.0.tgz#9504218a17d49346d9a09a1f5945f629afdb624b"
+react-slick@0.14.11:
+  version "0.14.11"
+  resolved "https://registry.yarnpkg.com/react-slick/-/react-slick-0.14.11.tgz#c2cbdbe3728c66a2ff4929be96d457e3ea0d80f3"
   dependencies:
     can-use-dom "^0.1.0"
-    enquire.js "^2.1.1"
-    json2mq "^0.2.0"
-
-react-slick@0.14.4:
-  version "0.14.4"
-  resolved "https://registry.yarnpkg.com/react-slick/-/react-slick-0.14.4.tgz#50562de13c4fc99629fabfdeddfe9f53c7ac90e9"
-  dependencies:
     classnames "^2.2.5"
+    create-react-class "^15.5.2"
+    enquire.js "^2.1.6"
     json2mq "^0.2.0"
     object-assign "^4.1.0"
-    react-responsive-mixin "^0.4.0"
     slick-carousel "^1.6.0"
 
 react-styleguidist@^4.6.3:
