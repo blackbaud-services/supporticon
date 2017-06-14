@@ -27,6 +27,15 @@ export const post = (
     .catch((error) => Promise.reject(error.response))
 )
 
+export const put = (
+  endpoint = required(),
+  data
+) => (
+  instance.put(endpoint, data)
+    .then((response) => response.data)
+    .catch((error) => Promise.reject(error.response))
+)
+
 export const updateClient = (options = {}) => {
   Object.keys(options).map((option) => {
     instance.defaults[option] = options[option]
@@ -39,6 +48,7 @@ export default {
   instance,
   get,
   post,
+  put,
   updateClient,
   getBaseURL
 }

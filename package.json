@@ -59,7 +59,7 @@
     "prop-types": "^15.5.8"
   },
   "peerDependencies": {
-    "constructicon": "^0.9.1",
+    "constructicon": "~0.10",
     "react": "^15.4.2",
     "react-dom": "^15.4.2"
   },
