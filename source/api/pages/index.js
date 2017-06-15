@@ -1,9 +1,9 @@
-import { get } from '../../utils/client'
+import { get, post, put } from '../../utils/client'
 import { required } from '../../utils/params'
 
-export const c = {
-  ENDPOINT: 'api/v2/search/pages',
-  NAMESPACE: 'app/pages'
+const c = {
+  SEARCH_ENDPOINT: 'api/v2/search/pages',
+  ENDPOINT: '/api/v2/pages'
 }
 
 /**
@@ -27,6 +27,58 @@ export const deserializePage = (page) => ({
 * @function fetches pages from the supporter api
 */
 export const fetchPages = (params = required()) => {
-  return get(c.ENDPOINT, params)
+  return get(c.SEARCH_ENDPOINT, params)
     .then((response) => response.pages)
+}
+
+/**
+ * @function create page from the supporter api
+ */
+export const createPage = ({
+  token = required(),
+  campaignId = required(),
+  name = required(),
+  birthday = required(),
+  target,
+  nickname,
+  slug,
+  fitnessGoal,
+  groupValues
+}) => {
+  return post(`${c.ENDPOINT}?access_token=${token}`, {
+    campaign_id: campaignId,
+    name,
+    target,
+    nickname,
+    birthday,
+    slug,
+    fitness_goal: fitnessGoal,
+    group_values: groupValues
+  })
+}
+
+/**
+ * @function update page from the supporter api
+ */
+export const updatePage = (pageId, {
+  token = required(),
+  name,
+  birthday,
+  target,
+  nickname,
+  slug,
+  story,
+  fitnessGoal,
+  groupValues
+}) => {
+  return put(`${c.ENDPOINT}/${pageId}?access_token=${token}`, {
+    name,
+    target,
+    nickname,
+    birthday,
+    story,
+    slug,
+    fitness_goal: fitnessGoal,
+    group_values: groupValues
+  })
 }
