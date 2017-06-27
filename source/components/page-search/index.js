@@ -115,7 +115,7 @@ PageSearch.propTypes = {
   /**
   * The type of page to include in the leaderboard
   */
-  type: PropTypes.oneOf([ 'individual', 'team' ]),
+  type: PropTypes.oneOf([ 'individual', 'team', 'all' ]),
 
   /**
   * The group value(s) to filter by
