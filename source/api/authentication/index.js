@@ -8,11 +8,15 @@ export const c = {
 
 export const resetPassword = ({
   clientId = required(),
-  email = required()
+  email = required(),
+  reference,
+  return_to
 }) => {
   return post(`${c.ENDPOINT}/reset_password`, {
     client_id: clientId,
-    email
+    email,
+    reference,
+    return_to
   })
 }
 
