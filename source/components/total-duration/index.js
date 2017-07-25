@@ -5,7 +5,7 @@ import Icon from 'constructicon/icon'
 import Metric from 'constructicon/metric'
 import { fetchCampaign, fetchCampaigns } from '../../api/campaigns'
 
-class TotalDistance extends Component {
+class TotalDuration extends Component {
   constructor () {
     super()
     this.state = { status: 'fetching' }
@@ -48,14 +48,14 @@ class TotalDistance extends Component {
     const { activity } = this.props
     switch (typeof activity) {
       case 'string':
-        return data.fitness_activity_overview[activity].distance_in_meters
+        return data.fitness_activity_overview[activity].duration_in_seconds
       case 'object':
         return activity.reduce((total, type) => (
-          total += data.fitness_activity_overview[type].distance_in_meters
+          total += data.fitness_activity_overview[type].duration_in_seconds
         ), 0)
       default:
         return Object.keys(data.fitness_activity_overview).reduce((total, type) => (
-          total += data.fitness_activity_overview[type].distance_in_meters
+          total += data.fitness_activity_overview[type].duration_in_seconds
         ), 0)
     }
   }
@@ -89,12 +89,12 @@ class TotalDistance extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return `${numbro((this.props.offset + data) / 1000).format('0,0')}km`
+        return numbro(data / 3600).format('0,0')
     }
   }
 }
 
-TotalDistance.propTypes = {
+TotalDuration.propTypes = {
   /**
   * The campaign uid/s to fetch totals for
   */
@@ -140,9 +140,9 @@ TotalDistance.propTypes = {
   metric: PropTypes.object
 }
 
-TotalDistance.defaultProps = {
-  label: 'Total Distance',
+TotalDuration.defaultProps = {
+  label: 'Total Duration',
   offset: 0
 }
 
-export default TotalDistance
+export default TotalDuration
