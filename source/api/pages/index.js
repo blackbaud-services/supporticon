@@ -43,7 +43,8 @@ export const createPage = ({
   nickname,
   slug,
   fitnessGoal,
-  groupValues
+  groupValues,
+  inviteToken
 }) => {
   return post(`${c.ENDPOINT}?access_token=${token}`, {
     campaign_id: campaignId,
@@ -53,7 +54,8 @@ export const createPage = ({
     birthday,
     slug,
     fitness_goal: fitnessGoal,
-    group_values: groupValues
+    group_values: groupValues,
+    token: inviteToken
   })
 }
 
