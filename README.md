@@ -1,4 +1,4 @@
-#Supporticon
+# Supporticon
 
 Consistently and easily fetch data from the Supporter API for Professional Services projects.
 
