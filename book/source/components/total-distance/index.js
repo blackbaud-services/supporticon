@@ -83,13 +83,20 @@ class TotalDistance extends Component {
       data
     } = this.state
 
+    const {
+      format,
+      offset,
+      multiplier,
+      suffix
+    } = this.props
+
     switch (status) {
       case 'fetching':
         return <Icon name='loading' spin />
       case 'failed':
         return <Icon name='warning' />
       default:
-        return `${numbro((this.props.offset + data) / 1000).format('0,0')}km`
+        return `${numbro((offset + data) / 1000 * multiplier).format(format)}${suffix}`
     }
   }
 }
@@ -118,9 +125,24 @@ TotalDistance.propTypes = {
   offset: PropTypes.number,
 
   /**
+  * The amount to multiply the total by for custom conversions
+  */
+  multiplier: PropTypes.number,
+
+  /**
   * The label of the metric
   */
   label: PropTypes.string,
+
+  /**
+  * The format of the number
+  */
+  format: PropTypes.string,
+
+  /**
+  * The suffix to be appended
+  */
+  suffix: PropTypes.string,
 
   /**
   * The icon to use
@@ -142,7 +164,10 @@ TotalDistance.propTypes = {
 
 TotalDistance.defaultProps = {
   label: 'Total Distance',
-  offset: 0
+  offset: 0,
+  multiplier: 1,
+  format: '0,0',
+  suffix: 'km'
 }
 
 export default TotalDistance

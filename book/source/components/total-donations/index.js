@@ -68,13 +68,19 @@ class TotalDonations extends Component {
       data = {}
     } = this.state
 
+    const {
+      format,
+      offset,
+      multiplier
+    } = this.props
+
     switch (status) {
       case 'fetching':
         return <Icon name='loading' spin />
       case 'failed':
         return <Icon name='warning' />
       default:
-        return numbro(this.props.offset + data.donations).format('0,0')
+        return numbro((offset + data.donations) * multiplier).format(format)
     }
   }
 }
@@ -120,6 +126,16 @@ TotalDonations.propTypes = {
   offset: PropTypes.number,
 
   /**
+  * The amount to multiply the total by for custom conversions
+  */
+  multiplier: PropTypes.number,
+
+  /**
+  * The format of the number
+  */
+  format: PropTypes.string,
+
+  /**
   * The label of the metric
   */
   label: PropTypes.string,
@@ -144,7 +160,9 @@ TotalDonations.propTypes = {
 
 TotalDonations.defaultProps = {
   label: 'Donations',
-  offset: 0
+  offset: 0,
+  multiplier: 1,
+  format: '0,0'
 }
 
 export default TotalDonations

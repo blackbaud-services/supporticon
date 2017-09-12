@@ -66,13 +66,19 @@ class TotalSupporters extends Component {
       data = {}
     } = this.state
 
+    const {
+      format,
+      offset,
+      multiplier
+    } = this.props
+
     switch (status) {
       case 'fetching':
         return <Icon name='loading' spin />
       case 'failed':
         return <Icon name='warning' />
       default:
-        return numbro(this.props.offset + data).format('0,0')
+        return numbro((offset + data) * multiplier).format(format)
     }
   }
 }
@@ -123,6 +129,16 @@ TotalSupporters.propTypes = {
   offset: PropTypes.number,
 
   /**
+  * The amount to multiply the total by for custom conversions
+  */
+  multiplier: PropTypes.number,
+
+  /**
+  * The format of the number
+  */
+  format: PropTypes.string,
+
+  /**
   * The label of the metric
   */
   label: PropTypes.string,
@@ -148,6 +164,8 @@ TotalSupporters.propTypes = {
 TotalSupporters.defaultProps = {
   label: 'Supporters',
   offset: 0,
+  multiplier: 1,
+  format: '0,0',
   type: 'individual'
 }
 
