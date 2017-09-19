@@ -4,6 +4,9 @@ import numbro from 'numbro'
 import Filter from 'constructicon/filter'
 import LeaderboardWrapper from 'constructicon/leaderboard'
 import LeaderboardItem from 'constructicon/leaderboard-item'
+import Grid from 'constructicon/grid'
+import GridColumn from 'constructicon/grid-column'
+import PaginationLink from './pagination-link'
 
 import {
   fetchLeaderboard,
@@ -15,7 +18,13 @@ class Leaderboard extends Component {
     super()
     this.setFilter = this.setFilter.bind(this)
     this.renderLeader = this.renderLeader.bind(this)
-    this.state = { status: 'fetching' }
+    this.paginateLeaderboard = this.paginateLeaderboard.bind(this)
+    this.prevPage = this.prevPage.bind(this)
+    this.nextPage = this.nextPage.bind(this)
+    this.state = {
+      status: 'fetching',
+      currentPage: 1
+    }
   }
 
   componentDidMount () {
@@ -30,6 +39,35 @@ class Leaderboard extends Component {
 
   setFilter (q) {
     this.fetchLeaderboard(q)
+  }
+
+  paginateLeaderboard () {
+    const { pageSize } = this.props
+    const { currentPage, data = [] } = this.state
+    const currentIndex = (currentPage - 1) * pageSize
+    const pagedLeaderboard = data.slice(currentIndex, currentIndex + pageSize)
+
+    return pagedLeaderboard.map(this.renderLeader)
+  }
+
+  hasNextPage () {
+    const { pageSize } = this.props
+    const { currentPage, data = [] } = this.state
+    const totalPages = data.length / pageSize
+
+    return currentPage < totalPages
+  }
+
+  prevPage () {
+    if (this.state.currentPage > 1) {
+      this.setState({ currentPage: this.state.currentPage - 1 })
+    }
+  }
+
+  nextPage () {
+    if (this.hasNextPage()) {
+      this.setState({ currentPage: this.state.currentPage + 1 })
+    }
   }
 
   fetchLeaderboard (q) {
@@ -77,12 +115,14 @@ class Leaderboard extends Component {
   render () {
     const {
       status,
-      data = []
+      data = [],
+      currentPage
     } = this.state
 
     const {
       leaderboard,
-      filter
+      filter,
+      pageSize
     } = this.props
 
     return (
@@ -91,9 +131,21 @@ class Leaderboard extends Component {
         <LeaderboardWrapper
           loading={status === 'fetching'}
           error={status === 'failed'}
-          children={data.map(this.renderLeader)}
-          {...leaderboard}
-        />
+          {...leaderboard}>
+          {pageSize ? (
+            <div>
+              {this.paginateLeaderboard()}
+              <Grid justify={'center'}>
+                <GridColumn sm={1}>
+                  <PaginationLink onClick={this.prevPage} rotate={180} disabled={currentPage <= 1} />
+                </GridColumn>
+                <GridColumn sm={1}>
+                  <PaginationLink onClick={this.nextPage} disabled={!this.hasNextPage()} />
+                </GridColumn>
+              </Grid>
+            </div>
+          ) : data.map(this.renderLeader)}
+        </LeaderboardWrapper>
       </div>
     )
   }
@@ -109,6 +161,7 @@ class Leaderboard extends Component {
         image={leader.image}
         amount={numbro(leader.raised / 100).format('$0,0')}
         href={leader.url}
+        rank={leader.position}
         {...leaderboardItem}
       />
     )
@@ -161,6 +214,11 @@ Leaderboard.propTypes = {
   limit: PropTypes.number,
 
   /**
+  * The number of records to show per page, disables pagination if not specified.
+  */
+  pageSize: PropTypes.number,
+
+  /**
   * The page to fetch
   */
   page: PropTypes.number,
@@ -187,4 +245,4 @@ Leaderboard.defaultProps = {
   filter: {}
 }
 
-export default Leaderboard
+export default (Leaderboard)
