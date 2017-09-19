@@ -24,7 +24,7 @@ export const fetchLeaderboard = (params = required()) => {
 export const deserializeLeaderboard = ({ page, team }, index) => {
   const detail = team || page
   return {
-    position: index++,
+    position: index + 1,
     id: detail.id,
     name: detail.name,
     charity: detail.charity_name,
