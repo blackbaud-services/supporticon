@@ -42,8 +42,13 @@ export const createPage = ({
   target,
   nickname,
   slug,
+  image,
+  charityId,
+  expiresAt,
   fitnessGoal,
+  campaignDate,
   groupValues,
+  skipNotification,
   inviteToken
 }) => {
   return post(`${c.ENDPOINT}?access_token=${token}`, {
@@ -53,8 +58,13 @@ export const createPage = ({
     nickname,
     birthday,
     slug,
+    image,
+    charity_id: charityId,
+    expires_at: expiresAt,
     fitness_goal: fitnessGoal,
+    campaign_date: campaignDate,
     group_values: groupValues,
+    skip_notification: skipNotification,
     token: inviteToken
   })
 }
