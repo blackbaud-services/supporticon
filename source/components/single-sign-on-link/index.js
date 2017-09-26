@@ -7,7 +7,7 @@ const SingleSignOnLink = ({
   token,
   pageURL,
   label,
-  supporterCreateSessionURL,
+  supporterCreateSessionURL = `${getBaseURL()}/api/v2/authentication/sessions`,
   target,
   ...props
 }) => (
@@ -33,12 +33,12 @@ SingleSignOnLink.propTypes = {
   /**
   * The URL of a page
   */
-  pageURL: PropTypes.string.required,
+  pageURL: PropTypes.string.isRequired,
 
   /**
   * Button label
   */
-  label: PropTypes.string,
+  label: PropTypes.any,
 
   /**
   * The target for the form or anchor
@@ -53,7 +53,6 @@ SingleSignOnLink.propTypes = {
 
 SingleSignOnLink.defaultProps = {
   label: 'My Fundraising Page',
-  supporterCreateSessionURL: `${getBaseURL()}/api/v2/authentication/sessions`,
   target: '_self'
 }
 
