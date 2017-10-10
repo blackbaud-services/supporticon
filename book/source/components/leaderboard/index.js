@@ -136,10 +136,10 @@ class Leaderboard extends Component {
             <div>
               {this.paginateLeaderboard()}
               <Grid justify={'center'}>
-                <GridColumn sm={1}>
+                <GridColumn xs={1}>
                   <PaginationLink onClick={this.prevPage} rotate={180} disabled={currentPage <= 1} />
                 </GridColumn>
-                <GridColumn sm={1}>
+                <GridColumn xs={1}>
                   <PaginationLink onClick={this.nextPage} disabled={!this.hasNextPage()} />
                 </GridColumn>
               </Grid>
