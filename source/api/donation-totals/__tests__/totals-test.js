@@ -1,5 +1,8 @@
 import moxios from 'moxios'
-import { fetchDonationTotals } from '..'
+import {
+  deserializeDonationTotals,
+  fetchDonationTotals
+} from '..'
 import { instance } from '../../../utils/client'
 
 describe ('Fetch Donation Totals', () => {
@@ -34,5 +37,21 @@ describe ('Fetch Donation Totals', () => {
   it ('throws if no params are passed in', () => {
     const test = () => fetchDonationTotals()
     expect(test).to.throw
+  })
+})
+
+describe ('Deserialize donation totals', () => {
+  it ('Defaults falsy donation sums to 0', () => {
+    const deserializedDonationTotals = deserializeDonationTotals({
+      total_amount_cents: {
+        sum: null,
+        count: 0
+      }
+    })
+
+    expect(deserializedDonationTotals).to.deep.equal({
+      raised: 0,
+      donations: 0
+    })
   })
 })
