@@ -7,7 +7,7 @@ export const c = {
 }
 
 export const deserializeDonationTotals = (totals) => ({
-  raised: totals.total_amount_cents.sum,
+  raised: totals.total_amount_cents.sum || 0,
   donations: totals.total_amount_cents.count
 })
 
