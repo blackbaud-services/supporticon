@@ -37,8 +37,8 @@ export const fetchPages = (params = required()) => {
 export const createPage = ({
   token = required(),
   campaignId = required(),
-  name = required(),
   birthday = required(),
+  name,
   target,
   nickname,
   slug,
