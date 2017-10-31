@@ -53,10 +53,10 @@ export const createPage = ({
 }) => {
   return post(`${c.ENDPOINT}?access_token=${token}`, {
     campaign_id: campaignId,
+    birthday,
     name,
     target,
     nickname,
-    birthday,
     slug,
     image,
     charity_id: charityId,
@@ -75,22 +75,24 @@ export const createPage = ({
 export const updatePage = (pageId, {
   token = required(),
   name,
-  birthday,
   target,
-  nickname,
   slug,
   story,
+  image,
+  expiresAt,
   fitnessGoal,
+  campaignDate,
   groupValues
 }) => {
   return put(`${c.ENDPOINT}/${pageId}?access_token=${token}`, {
     name,
     target,
-    nickname,
-    birthday,
-    story,
     slug,
+    story,
+    image,
+    expires_at: expiresAt,
     fitness_goal: fitnessGoal,
+    campaign_date: campaignDate,
     group_values: groupValues
   })
 }

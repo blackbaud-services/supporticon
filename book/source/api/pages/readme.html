@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.4" data-chapter-title="Pages" data-filepath="source/api/pages/readme.md" data-basepath="../../.." data-revision="Fri Oct 27 2017 05:49:03 GMT+0000 (UTC)">
+    <div class="book" data-level="1.4" data-chapter-title="Pages" data-filepath="source/api/pages/readme.md" data-basepath="../../.." data-revision="Tue Oct 31 2017 00:03:38 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -290,8 +290,10 @@
 <p>Helpers related to fetching supporter pages</p>
 <ul>
 <li><a href="#configuration">Configuration</a></li>
-<li><a href="#fetchleaderboard">fetchLeaderboard</a></li>
-<li><a href="#deserializeleaderboard">deserializeLeaaderboard</a></li>
+<li><a href="#fetchpages">fetchPages</a></li>
+<li><a href="#deserializepage">deserializePage</a></li>
+<li><a href="#createpage">createPage</a></li>
+<li><a href="#updatepage">updatePage</a></li>
 </ul>
 <h2 id="configuration">Configuration</h2>
 <ul>
@@ -335,6 +337,76 @@ return {
   status: <span class="hljs-string">&apos;fetched&apos;</span>,
   data: payload.data.map(deserializePage)
 }
+</code></pre>
+<h2 id="createpage"><code>createPage</code></h2>
+<p>Create a Supporter page for an authenticated User.</p>
+<p>See <a href="http://developer.everydayhero.com/pages/#create-an-individual-page" target="_blank">the API documentation</a> for more information.</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><code>token</code> (String) OAuth User Token <em>required</em></li>
+<li><code>campaignId</code> (String) Campaign UID <em>required</em></li>
+<li><code>birthday</code> (String) User Date of Birth <em>required</em></li>
+<li><code>charityId</code> (String) Charity UID</li>
+<li><code>image</code> (String) Image URL for page avatar</li>
+<li><code>name</code> (String) Page Name</li>
+<li><code>nickname</code> (String) Page Nickname</li>
+<li><code>slug</code> (String) Page URL slug</li>
+<li><code>target</code> (String) Page fundraising target/goal (in cents)</li>
+<li><code>expiresAt</code> (String) Page expiry date</li>
+<li><code>skipNotification</code> (Boolean) Skip notification email</li>
+<li><code>fitnessGoal</code> (String) Page fitness goal (in metres)</li>
+<li><code>campaignDate</code> (String) Optional page date</li>
+<li><code>groupValues</code> (Hash/Array) Campaign group values for the page</li>
+<li><code>inviteToken</code> (String) Team invite token</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A pending promise that will either resolve to:</p>
+<ul>
+<li>Success: the data returned from the request</li>
+<li>Failure: the error encountered</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { createPage } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/pages&apos;</span>
+
+createPage({
+  token: <span class="hljs-string">&apos;xxxxx&apos;</span>,
+  campaignId: <span class="hljs-string">&apos;au-123&apos;</span>,
+  birthday: <span class="hljs-string">&apos;1970-01-01&apos;</span>,
+  name: <span class="hljs-string">&apos;Test User&apos;</span>,
+})
+</code></pre>
+<h2 id="updatepage"><code>updatePage</code></h2>
+<p>Update an existing Supporter page for an authenticated User.</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><code>pageId</code> (String/Integer) User page id</li>
+<li><code>params</code> (Object) Containing the following:<ul>
+<li><code>token</code> (String) OAuth User Token <em>required</em></li>
+<li><code>name</code> (String) Page Name</li>
+<li><code>target</code> (String) Page fundraising target/goal (in cents)</li>
+<li><code>slug</code> (String) Page URL slug</li>
+<li><code>story</code> (String) Page story</li>
+<li><code>image</code> (String) Image URL for page avatar</li>
+<li><code>expiresAt</code> (String)</li>
+<li><code>fitnessGoal</code> (String) Page fitness goal (in metres)</li>
+<li><code>campaignDate</code> (String) Optional page date</li>
+<li><code>groupValues</code> (Hash/Array) Campaign group values for the page</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A pending promise that will either resolve to:</p>
+<ul>
+<li>Success: the data returned from the request</li>
+<li>Failure: the error encountered</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { updatePage } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/pages&apos;</span>
+
+updatePage(123, {
+  token: <span class="hljs-string">&apos;xxxxx&apos;</span>,
+  story: <span class="hljs-string">&apos;This is an updated story&apos;</span>
+})
 </code></pre>
 
                     
