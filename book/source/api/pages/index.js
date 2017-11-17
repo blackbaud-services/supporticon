@@ -10,17 +10,23 @@ const c = {
 * @function deserializer for supporter pages
 */
 export const deserializePage = (page) => ({
-  id: page.id,
   active: page.active,
-  raised: page.amount.cents,
-  campaign: page.campaign,
-  charity: page.charity,
+  campaign: page.campaign || page.campaign_name,
+  campaignDate: page.campaign_date,
+  charity: page.charity || page.charity_name,
+  coordinates: page.coordinate,
+  donatationUrl: page.donation_url,
   expired: page.expired,
+  groups: page.page_groups,
+  id: page.id,
   image: page.image.medium_image_url,
   name: page.name,
+  raised: page.amount.cents,
+  story: page.story,
   target: page.target_cents,
+  teamPageId: page.team_page_id,
   url: page.url,
-  groups: page.page_groups
+  uuid: page.uuid
 })
 
 /**
