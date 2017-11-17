@@ -132,20 +132,18 @@ class Leaderboard extends Component {
           loading={status === 'fetching'}
           error={status === 'failed'}
           {...leaderboard}>
-          {pageSize ? (
-            <div>
-              {this.paginateLeaderboard()}
-              <Grid justify={'center'}>
-                <GridColumn xs={1}>
-                  <PaginationLink onClick={this.prevPage} rotate={180} disabled={currentPage <= 1} />
-                </GridColumn>
-                <GridColumn xs={1}>
-                  <PaginationLink onClick={this.nextPage} disabled={!this.hasNextPage()} />
-                </GridColumn>
-              </Grid>
-            </div>
-          ) : data.map(this.renderLeader)}
+          {pageSize ? this.paginateLeaderboard() : data.map(this.renderLeader)}
         </LeaderboardWrapper>
+        {pageSize && (
+          <Grid justify={'center'}>
+            <GridColumn xs={1}>
+              <PaginationLink onClick={this.prevPage} rotate={180} disabled={currentPage <= 1} />
+            </GridColumn>
+            <GridColumn xs={1}>
+              <PaginationLink onClick={this.nextPage} disabled={!this.hasNextPage()} />
+            </GridColumn>
+          </Grid>
+        )}
       </div>
     )
   }
