@@ -5,7 +5,6 @@ import Filter from 'constructicon/filter'
 import LeaderboardWrapper from 'constructicon/leaderboard'
 import LeaderboardItem from 'constructicon/leaderboard-item'
 import Grid from 'constructicon/grid'
-import GridColumn from 'constructicon/grid-column'
 import PaginationLink from './pagination-link'
 
 import {
@@ -136,12 +135,8 @@ class Leaderboard extends Component {
         </LeaderboardWrapper>
         {pageSize && (
           <Grid justify={'center'}>
-            <GridColumn xs={1}>
-              <PaginationLink onClick={this.prevPage} rotate={180} disabled={currentPage <= 1} />
-            </GridColumn>
-            <GridColumn xs={1}>
-              <PaginationLink onClick={this.nextPage} disabled={!this.hasNextPage()} />
-            </GridColumn>
+            <PaginationLink onClick={this.prevPage} rotate={180} disabled={currentPage <= 1} />
+            <PaginationLink onClick={this.nextPage} disabled={!this.hasNextPage()} />
           </Grid>
         )}
       </div>

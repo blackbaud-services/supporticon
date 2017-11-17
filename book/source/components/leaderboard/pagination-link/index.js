@@ -9,9 +9,11 @@ const PaginationLink = ({
   rotate,
   classNames
 }) => (
-  <button onClick={onClick} disabled={disabled} className={classNames.pagination}>
-    <Icon name='chevron' rotate={rotate} size={1} />
-  </button>
+  <div className={classNames.root}>
+    <button onClick={onClick} disabled={disabled} className={classNames.pagination}>
+      <Icon name='chevron' rotate={rotate} size={1} />
+    </button>
+  </div>
 )
 
 export default withStyles(styles)(PaginationLink)
