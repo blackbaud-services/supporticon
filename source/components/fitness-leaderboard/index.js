@@ -175,22 +175,22 @@ FitnessLeaderboard.propTypes = {
   /**
   * Include Virtual
   */
-  includeVirtual: PropTypes.boolean,
+  includeVirtual: PropTypes.bool,
 
   /**
   * Include Manual
   */
-  includeManual: PropTypes.boolean,
+  includeManual: PropTypes.bool,
 
   /**
   * Exclude Virtual
   */
-  excludeVirtual: PropTypes.boolean,
+  excludeVirtual: PropTypes.bool,
 
   /**
   * Unit
   */
-  miles: PropTypes.boolean,
+  miles: PropTypes.bool,
 
   /**
   * The number of records to fetch
