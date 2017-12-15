@@ -27,6 +27,7 @@ class SingleSignOnLink extends Component {
       token,
       pageURL,
       label,
+      method,
       supporterCreateSessionURL = `${getBaseURL()}/api/v2/authentication/sessions`,
       ...props
     } = this.props
@@ -34,7 +35,7 @@ class SingleSignOnLink extends Component {
     const { target } = this.state
 
     return token ? (
-      <form method='POST' action={supporterCreateSessionURL} target={target}>
+      <form method={method} action={supporterCreateSessionURL} target={target}>
         <input type='hidden' name='access_token' value={token} />
         <input type='hidden' name='return_to' value={pageURL} />
         <Button {...props} type='submit'>{label}</Button>
@@ -76,7 +77,8 @@ SingleSignOnLink.propTypes = {
 
 SingleSignOnLink.defaultProps = {
   label: 'My Fundraising Page',
-  target: '_self'
+  target: '_self',
+  method: 'POST'
 }
 
 export default SingleSignOnLink
