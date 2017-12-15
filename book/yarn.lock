@@ -1618,9 +1618,9 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constructicon@^0.12.2:
-  version "0.12.3"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-0.12.3.tgz#52b3876b273de7400c1d5466a76a34606becaba1"
+constructicon@^0.13.14:
+  version "0.13.14"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-0.13.14.tgz#716343f0ff13d49f8530ed2fa2da2288584c507e"
   dependencies:
     cxsync "^1.0.9"
     lodash "^4.17.4"
