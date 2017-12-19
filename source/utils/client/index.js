@@ -44,11 +44,19 @@ export const updateClient = (options = {}) => {
 
 export const getBaseURL = () => (instance.defaults.baseURL)
 
+export const getPlatform = () => (
+  /justgiving/.test(instance.defaults.baseURL) ? 'justgiving' : 'everydayhero'
+)
+
+export const isJustGiving = () => /justgiving/.test(instance.defaults.baseURL)
+
 export default {
   instance,
   get,
   post,
   put,
   updateClient,
-  getBaseURL
+  getBaseURL,
+  getPlatform,
+  isJustGiving
 }

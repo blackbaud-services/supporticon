@@ -10,7 +10,7 @@ Please note that not all endpoints accept all params, so refer to the API docs i
 
 - `campaign` (String, Array) a campaign id, or an array of campaign ids
 - `charity` (String, Array) a charity id, or an array of charity ids
-- `type` (String) either `team` or `individual`
-- `group` (String, Array) a group value, or an array of groups values
+- `type` (String) either `team` or `individual` (EDH Only)
+- `group` (String, Array) a group value, or an array of groups values (EDH Only)
 - `limit` (Integer) the number of results to fetch
 - `page` (Integer) the page of results to fetch
