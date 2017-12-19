@@ -2,8 +2,7 @@ import { get } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
-  ENDPOINT: 'api/v2/campaigns',
-  NAMESPACE: 'app/campaigns'
+  ENDPOINT: 'api/v2/campaigns'
 }
 
 export const fetchCampaigns = (params = required()) => {

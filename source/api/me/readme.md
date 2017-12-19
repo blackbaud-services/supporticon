@@ -4,15 +4,9 @@ Helpers related to fetching and updating an authenticated user with a provided O
 
 See [the developer docs](http://developer.everydayhero.com/users/) for more information
 
-- [Configuration](#configuration)
 - [signIn](#signin)
 - [signUp](#signup)
 - [resetPassword](#resetpassword)
-
-## Configuration
-
-- `namespace` - api/v1/me
-- `endpoint` - app/me
 
 
 ## `fetchCurrentUser`

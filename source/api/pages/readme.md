@@ -2,16 +2,11 @@
 
 Helpers related to fetching supporter pages
 
-- [Configuration](#configuration)
 - [fetchPages](#fetchpages)
 - [deserializePage](#deserializepage)
 - [createPage](#createpage)
 - [updatePage](#updatepage)
 
-## Configuration
-
-- `namespace` - app/pages
-- `endpoint` - api/v2/pages
 
 ## `fetchPages`
 

@@ -2,14 +2,9 @@
 
 Helpers related to fetching pages sorted by fitness activities.
 
-- [Configuration](#configuration)
 - [fetchFitnesseaderboard](#fetchfitnessleaderboard)
 - [deserializeFitnessLeaaderboard](#deserializefitnessleaderboard)
 
-## Configuration
-
-- `namespace` - app/leaderboard
-- `endpoint` - api/v2/search/fitness_activities_totals
 
 ## `fetchLeaderboard`
 

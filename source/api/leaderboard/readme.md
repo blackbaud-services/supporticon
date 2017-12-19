@@ -2,14 +2,9 @@
 
 Helpers related to fetching pages sorted by funds raised.
 
-- [Configuration](#configuration)
 - [fetchLeaderboard](#fetchleaderboard)
 - [deserializeLeaaderboard](#deserializeleaderboard)
 
-## Configuration
-
-- `namespace` - app/leaderboard
-- `endpoint` - api/v2/search/pages_totals
 
 ## `fetchLeaderboard`
 

@@ -2,8 +2,7 @@ import { get, put } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
-  ENDPOINT: 'api/v1/me',
-  NAMESPACE: 'app/me'
+  ENDPOINT: 'api/v1/me'
 }
 
 export const fetchCurrentUser = ({

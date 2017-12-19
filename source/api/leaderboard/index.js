@@ -2,8 +2,7 @@ import { get } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
-  ENDPOINT: 'api/v2/search/pages_totals',
-  NAMESPACE: 'app/leaderboard'
+  ENDPOINT: 'api/v2/search/pages_totals'
 }
 
 /**
