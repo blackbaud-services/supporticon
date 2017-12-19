@@ -2,8 +2,7 @@ import { post } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
-  ENDPOINT: 'api/v2/authentication',
-  NAMESPACE: 'app/authentication'
+  ENDPOINT: 'api/v2/authentication'
 }
 
 export const resetPassword = ({
