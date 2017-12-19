@@ -2,13 +2,8 @@
 
 Helpers related to fetching the number of pages for campaigns, charities etc.
 
-- [Configuration](#configuration)
 - [fetchPagesTotals](#fetchpagestotals)
 
-## Configuration
-
-- `namespace` - app/pages-totals
-- `endpoint` - api/v2/pages
 
 ## `fetchPagesTotals`
 

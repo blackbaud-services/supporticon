@@ -2,16 +2,11 @@
 
 Helpers related to fetching campaigns
 
-- [Configuration](#configuration)
 - [fetchCampaigns](#fetchcampaigns)
 - [fetchCampaign](#fetchcampaign)
 - [fetchCampaignGroups](#fetchcampaigngroups)
 - [deserializeCampaign](#deserializecampaign)
 
-## Configuration
-
-- `namespace` - app/campaigns
-- `endpoint` - api/v2/campaigns
 
 ## `fetchCampaigns`
 

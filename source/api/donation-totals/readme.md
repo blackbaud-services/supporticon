@@ -2,14 +2,9 @@
 
 Helpers related to fetching donation totals for charities, campaigns etc.
 
-- [Configuration](#configuration)
 - [fetchDonationTotals](#fetchdonationtotals)
 - [deserializeDonationTotals](#deserializedonationtotals)
 
-## Configuration
-
-- `namespace` - app/totals
-- `endpoint` - api/v2/search/totals
 
 ## `fetchDonationTotals`
 

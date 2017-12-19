@@ -2,8 +2,7 @@ import { get } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
-  ENDPOINT: 'api/v2/search/fitness_activities_totals',
-  NAMESPACE: 'app/fitness-leaderboard'
+  ENDPOINT: 'api/v2/search/fitness_activities_totals'
 }
 
 /**

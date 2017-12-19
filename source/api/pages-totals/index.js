@@ -2,8 +2,7 @@ import { get } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
-  ENDPOINT: 'api/v2/pages',
-  NAMESPACE: 'app/pages-totals'
+  ENDPOINT: 'api/v2/pages'
 }
 
 export const fetchPagesTotals = (params = required()) => {

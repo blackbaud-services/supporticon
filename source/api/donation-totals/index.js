@@ -2,8 +2,7 @@ import { get } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
-  ENDPOINT: 'api/v2/search/totals',
-  NAMESPACE: 'app/totals'
+  ENDPOINT: 'api/v2/search/totals'
 }
 
 export const deserializeDonationTotals = (totals) => ({

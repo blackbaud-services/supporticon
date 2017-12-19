@@ -2,16 +2,9 @@
 
 Helpers related to authenticating through [the Partner API](http://developer.everydayhero.com/partner/custom-authentication/)
 
-- [Configuration](#configuration)
 - [signIn](#signin)
 - [signUp](#signup)
 - [resetPassword](#resetpassword)
-
-## Configuration
-
-- `namespace` - app/authentication
-- `endpoint` - api/v2/authentication
-
 
 ## `signIn`
 
