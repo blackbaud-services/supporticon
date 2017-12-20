@@ -73,6 +73,7 @@ class Leaderboard extends Component {
     const {
       campaign,
       charity,
+      event,
       type,
       group,
       startDate,
@@ -89,6 +90,7 @@ class Leaderboard extends Component {
     fetchLeaderboard({
       campaign,
       charity,
+      event,
       type,
       group,
       startDate,
@@ -150,7 +152,7 @@ class Leaderboard extends Component {
       <LeaderboardItem
         key={i}
         title={leader.name}
-        subtitle={leader.charity || leader.event}
+        subtitle={leader.subtitle}
         image={leader.image}
         amount={numbro(leader.raised).format('$0,0')}
         href={leader.url}

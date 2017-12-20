@@ -23,7 +23,7 @@ export const deserializeLeaderboard = ({ page, team }, index) => {
     position: index + 1,
     id: detail.id,
     name: detail.name,
-    charity: detail.charity_name,
+    subtitle: detail.charity_name,
     url: detail.url,
     image: detail.image.medium_image_url,
     raised: detail.amount.cents / 100,
