@@ -1,4 +1,4 @@
-import { get } from '../../utils/client'
+import { get, isJustGiving } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
@@ -11,5 +11,7 @@ export const deserializeDonationTotals = (totals) => ({
 })
 
 export const fetchDonationTotals = (params = required()) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   return get(c.ENDPOINT, params)
 }

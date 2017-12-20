@@ -1,4 +1,4 @@
-import { get, post, put } from '../../utils/client'
+import { get, post, put, isJustGiving } from '../../utils/client'
 import { required } from '../../utils/params'
 
 const c = {
@@ -33,6 +33,8 @@ export const deserializePage = (page) => ({
 * @function fetches pages from the supporter api
 */
 export const fetchPages = (params = required()) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   return get(c.SEARCH_ENDPOINT, params)
     .then((response) => response.pages)
 }
@@ -57,6 +59,8 @@ export const createPage = ({
   skipNotification,
   inviteToken
 }) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   return post(`${c.ENDPOINT}?access_token=${token}`, {
     campaign_id: campaignId,
     birthday,
@@ -90,6 +94,8 @@ export const updatePage = (pageId, {
   campaignDate,
   groupValues
 }) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   return put(`${c.ENDPOINT}/${pageId}?access_token=${token}`, {
     name,
     target,

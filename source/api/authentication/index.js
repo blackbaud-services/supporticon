@@ -1,4 +1,4 @@
-import { post } from '../../utils/client'
+import { post, isJustGiving } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
@@ -11,6 +11,8 @@ export const resetPassword = ({
   reference,
   return_to
 }) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   return post(`${c.ENDPOINT}/reset_password`, {
     client_id: clientId,
     email,
@@ -25,6 +27,8 @@ export const signIn = ({
   password = required(),
   country = 'au'
 }) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   return post(`${c.ENDPOINT}/sign_in`, {
     client_id: clientId,
     country,
@@ -47,6 +51,8 @@ export const signUp = ({
   phone = required(),
   country = 'au'
 }) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   return post(`${c.ENDPOINT}/sign_up`, {
     client_id: clientId,
     country,
