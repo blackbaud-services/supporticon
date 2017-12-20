@@ -1,5 +1,5 @@
 import { get } from '../../../utils/client'
-import { required } from '../../../utils/params'
+import { required, dataSource } from '../../../utils/params'
 import compact from 'lodash/compact'
 import orderBy from 'lodash/orderBy'
 import range from 'lodash/range'
@@ -21,62 +21,49 @@ const currencySymbol = (code = 'GBP') => {
 * @function fetches fundraising pages ranked by funds raised
 */
 export const fetchLeaderboard = (params = required()) => {
-  const { campaign, charity, event } = params
+  switch (dataSource(params)) {
+    case 'event':
+      return get(`/v1/event/${params.event}/leaderboard`).then((response) => (
+        response.pages.map((page) => ({
+          ...page,
+          raisedAmount: page.amount,
+          eventName: response.eventName,
+          currencyCode: response.currency,
+          currencySymbol: currencySymbol(response.currency)
+        }))
+      ))
+    case 'charity':
+      return get(`/v1/charity/${params.charity}/leaderboard`).then((response) => (
+        response.pages.map((page) => ({
+          ...page,
+          raisedAmount: page.amount,
+          eventName: response.name,
+          currencyCode: response.currency,
+          currencySymbol: response.currencySymbol
+        }))
+      ))
+    default:
+      const url = `/v1/campaigns/${params.charity}/${params.campaign}/pages`
+      const pageSize = 100
+      const pageLimit = 10
+      const sort = (pages) => orderBy(pages, 'raisedAmount', 'desc')
 
-  if (event) {
-    if (isNaN(event)) {
-      throw new Error('Event parameter must be an ID')
-    }
+      return get(url, { pageSize, page: 1 }).then(({ totalPages, fundraisingPages }) => {
+        if (totalPages > 1) {
+          const upperLimit = Math.min(totalPages, pageLimit)
+          const paginatedRequests = range(2, upperLimit + 1).map((page) => {
+            return get(url, { pageSize, page: page })
+          })
 
-    return get(`/v1/event/${event}/leaderboard`).then((response) => (
-      response.pages.map((page) => ({
-        ...page,
-        raisedAmount: page.amount,
-        eventName: response.eventName,
-        currencyCode: response.currency,
-        currencySymbol: currencySymbol(response.currency)
-      }))
-    ))
-  } else if (charity && !campaign) {
-    if (isNaN(charity)) {
-      throw new Error('Charity parameter must be an ID')
-    }
+          return Promise.all(paginatedRequests)
+          .then((responses) => {
+            const paginatedResults = compact(responses.map((res) => res.fundraisingPages))
+            return sort(fundraisingPages.concat(paginatedResults))
+          })
+        }
 
-    return get(`/v1/charity/${charity}/leaderboard`).then((response) => (
-      response.pages.map((page) => ({
-        ...page,
-        raisedAmount: page.amount,
-        eventName: response.name,
-        currencyCode: response.currency,
-        currencySymbol: response.currencySymbol
-      }))
-    ))
-  } else {
-    if (!charity || !campaign) {
-      return required()
-    }
-
-    const url = `/v1/campaigns/${charity}/${campaign}/pages`
-    const pageSize = 100
-    const pageLimit = 10
-    const sort = (pages) => orderBy(pages, 'raisedAmount', 'desc')
-
-    return get(url, { pageSize, page: 1 }).then(({ totalPages, fundraisingPages }) => {
-      if (totalPages > 1) {
-        const upperLimit = Math.min(totalPages, pageLimit)
-        const paginatedRequests = range(2, upperLimit + 1).map((page) => {
-          return get(url, { pageSize, page: page })
-        })
-
-        return Promise.all(paginatedRequests)
-        .then((responses) => {
-          const paginatedResults = compact(responses.map((res) => res.fundraisingPages))
-          return sort(fundraisingPages.concat(paginatedResults))
-        })
-      }
-
-      return sort(fundraisingPages)
-    })
+        return sort(fundraisingPages)
+      })
   }
 }
 

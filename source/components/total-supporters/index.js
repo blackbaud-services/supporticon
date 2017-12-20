@@ -15,6 +15,7 @@ class TotalSupporters extends Component {
     const {
       campaign,
       charity,
+      event,
       type,
       group,
       startDate,
@@ -24,6 +25,7 @@ class TotalSupporters extends Component {
     fetchPagesTotals({
       campaign,
       charity,
+      event,
       type,
       group,
       startDate,
