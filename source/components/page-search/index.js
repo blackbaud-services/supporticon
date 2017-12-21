@@ -37,6 +37,7 @@ class PageSearch extends Component {
       q: query,
       campaign: this.props.campaign,
       charity: this.props.charity,
+      event: this.props.event,
       type: this.props.type,
       group: this.props.group,
       limit: this.props.limit,
@@ -74,6 +75,8 @@ class PageSearch extends Component {
       data = []
     } = this.state
 
+    console.log(data)
+
     return (
       <SearchResults
         loading={status === 'fetching'}
@@ -84,7 +87,7 @@ class PageSearch extends Component {
           <SearchResult
             key={i}
             title={page.name}
-            subtitle={page.charity.name}
+            subtitle={page.charity && page.charity.name}
             image={page.image}
             url={page.url}
             {...this.props.searchResult}
@@ -111,6 +114,11 @@ PageSearch.propTypes = {
     PropTypes.string,
     PropTypes.array
   ]),
+
+  /**
+  * The event id
+  */
+  event: PropTypes.string,
 
   /**
   * The type of page to include in the leaderboard
