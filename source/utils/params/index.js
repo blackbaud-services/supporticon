@@ -4,13 +4,13 @@ export const required = () => {
 
 export const dataSource = ({ event, charity, campaign }) => {
   if (event) {
-    if (isNaN(event)) {
+    if (isNaN(event) && isNaN(event.uid)) {
       throw new Error('Event parameter must be an ID')
     }
 
     return 'event'
   } else if (charity && !campaign) {
-    if (isNaN(charity)) {
+    if (isNaN(charity) && isNaN(charity.uid)) {
       throw new Error('Charity parameter must be an ID')
     }
 
@@ -23,3 +23,11 @@ export const dataSource = ({ event, charity, campaign }) => {
     return 'campaign'
   }
 }
+
+export const getUID = (data) => (
+  typeof data === 'object' ? data.uid : data
+)
+
+export const getShortName = (data) => (
+  typeof data === 'object' ? data.shortName : data
+)
