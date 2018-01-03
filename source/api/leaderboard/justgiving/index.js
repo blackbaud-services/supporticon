@@ -1,5 +1,5 @@
 import { get } from '../../../utils/client'
-import { required, dataSource } from '../../../utils/params'
+import { getShortName, getUID, required, dataSource } from '../../../utils/params'
 import compact from 'lodash/compact'
 import orderBy from 'lodash/orderBy'
 import range from 'lodash/range'
@@ -23,7 +23,7 @@ const currencySymbol = (code = 'GBP') => {
 export const fetchLeaderboard = (params = required()) => {
   switch (dataSource(params)) {
     case 'event':
-      return get(`/v1/event/${params.event}/leaderboard`).then((response) => (
+      return get(`/v1/event/${getUID(params.event)}/leaderboard`).then((response) => (
         response.pages.map((page) => ({
           ...page,
           raisedAmount: page.amount,
@@ -33,7 +33,7 @@ export const fetchLeaderboard = (params = required()) => {
         }))
       ))
     case 'charity':
-      return get(`/v1/charity/${params.charity}/leaderboard`).then((response) => (
+      return get(`/v1/charity/${getUID(params.charity)}/leaderboard`).then((response) => (
         response.pages.map((page) => ({
           ...page,
           raisedAmount: page.amount,
@@ -43,7 +43,7 @@ export const fetchLeaderboard = (params = required()) => {
         }))
       ))
     default:
-      const url = `/v1/campaigns/${params.charity}/${params.campaign}/pages`
+      const url = `/v1/campaigns/${getShortName(params.charity)}/${getShortName(params.campaign)}/pages`
       const pageSize = 100
       const pageLimit = 10
       const sort = (pages) => orderBy(pages, 'raisedAmount', 'desc')

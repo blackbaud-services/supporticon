@@ -75,8 +75,6 @@ class PageSearch extends Component {
       data = []
     } = this.state
 
-    console.log(data)
-
     return (
       <SearchResults
         loading={status === 'fetching'}

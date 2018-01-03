@@ -1,5 +1,5 @@
 import { get } from '../../../utils/client'
-import { required } from '../../../utils/params'
+import { getUID, required } from '../../../utils/params'
 
 /**
 * @function deserializer for supporter pages
@@ -28,16 +28,23 @@ export const deserializePage = (page) => ({
 * @function fetches pages from the supporter api
 */
 export const fetchPages = (params = required()) => {
+  const {
+    campaign,
+    charity,
+    event,
+    ...args
+  } = params
+
   return get('/v1/onesearch', {
-    campaignId: params.campaign,
-    charityId: params.charity,
-    eventId: params.event,
+    campaignId: getUID(campaign),
+    charityId: getUID(charity),
+    eventId: getUID(event),
     i: 'Fundraiser',
-    ...params
+    ...args
   }).then((response) => (
     response.GroupedResults &&
     response.GroupedResults.length &&
-    response.GroupedResults[0].Results
+    response.GroupedResults[0].Results || []
   ))
 }
 
