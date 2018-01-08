@@ -47,6 +47,16 @@ describe ('Fetch Pages', () => {
       })
     })
 
+    it ('uses the uid name as the param when an object is supplied', (done) => {
+      fetchPages({ campaign: { uid: 'UID', shortName: 'SHORT_NAME' } })
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain('https://api.justgiving.com/v1/onesearch')
+        expect(request.url).to.contain('campaignId=UID')
+        done()
+      })
+    })
+
     it ('throws if no params are passed in', () => {
       const test = () => fetchPages()
       expect(test).to.throw
