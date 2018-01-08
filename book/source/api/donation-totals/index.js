@@ -1,15 +1,24 @@
-import { get } from '../../utils/client'
+import { isJustGiving } from '../../utils/client'
 import { required } from '../../utils/params'
 
-export const c = {
-  ENDPOINT: 'api/v2/search/totals'
-}
+import {
+  fetchDonationTotals as fetchJGDonationTotals,
+  deserializeDonationTotals as deserializeJGTotals
+} from './justgiving'
 
-export const deserializeDonationTotals = (totals) => ({
-  raised: totals.total_amount_cents.sum || 0,
-  donations: totals.total_amount_cents.count
-})
+import {
+  fetchDonationTotals as fetchEDHDonationTotals,
+  deserializeDonationTotals as deserializeEDHTotals
+} from './everydayhero'
 
 export const fetchDonationTotals = (params = required()) => {
-  return get(c.ENDPOINT, params)
+  return isJustGiving()
+    ? fetchJGDonationTotals(params)
+    : fetchEDHDonationTotals(params)
+}
+
+export const deserializeDonationTotals = (totals) => {
+  return isJustGiving()
+    ? deserializeJGTotals(totals)
+    : deserializeEDHTotals(totals)
 }

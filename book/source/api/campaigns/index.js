@@ -1,4 +1,4 @@
-import { get } from '../../utils/client'
+import { get, isJustGiving } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
@@ -6,6 +6,8 @@ export const c = {
 }
 
 export const fetchCampaigns = (params = required()) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   const mappings = {
     charity: 'charity_ids'
   }
@@ -19,11 +21,15 @@ export const fetchCampaigns = (params = required()) => {
 }
 
 export const fetchCampaign = (id = required()) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   return get(`${c.ENDPOINT}/${id}`)
     .then((response) => response.campaign)
 }
 
 export const fetchCampaignGroups = (id = required()) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   return get(`${c.ENDPOINT}/${id}/groups`)
     .then((response) => response.campaign_groups)
 }

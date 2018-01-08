@@ -19,6 +19,7 @@ class TotalFundsRaised extends Component {
     const {
       campaign,
       charity,
+      event,
       group,
       startDate,
       endDate
@@ -27,6 +28,7 @@ class TotalFundsRaised extends Component {
     fetchDonationTotals({
       campaign,
       charity,
+      event,
       group,
       startDate,
       endDate
@@ -80,7 +82,7 @@ class TotalFundsRaised extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return numbro((offset + data.raised) / 100 * multiplier).format(format)
+        return numbro((offset + data.raised) * multiplier).format(format)
     }
   }
 }
