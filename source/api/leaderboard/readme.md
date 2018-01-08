@@ -23,13 +23,24 @@ A pending promise that will either resolve to:
 - Success: the data returned from the request
 - Failure: the error encountered
 
-**Example**
+**EDH Example**
 
 ```javascript
 import { fetchLeaderboard } from 'supporticon/api/leaderboard'
 
 fetchLeaderboard({
   campaign: 'au-123'
+})
+```
+
+**JG Example**
+
+```javascript
+import { fetchLeaderboard } from 'supporticon/api/leaderboard'
+
+fetchLeaderboard({
+  charity: 'example-charity'
+  campaign: 'example-campaign'
 })
 ```
 

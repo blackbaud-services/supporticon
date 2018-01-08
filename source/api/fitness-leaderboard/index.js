@@ -1,4 +1,4 @@
-import { get } from '../../utils/client'
+import { get, isJustGiving } from '../../utils/client'
 import { required } from '../../utils/params'
 
 export const c = {
@@ -9,6 +9,8 @@ export const c = {
 * @function fetches supporter pages ranked by fitness activities
 */
 export const fetchFitnessLeaderboard = (params = required()) => {
+  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+
   const transforms = {
     type: (val) => val === 'team' ? 'teams' : 'pages'
   }

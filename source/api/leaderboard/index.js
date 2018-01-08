@@ -1,35 +1,30 @@
-import { get } from '../../utils/client'
+import { isJustGiving } from '../../utils/client'
 import { required } from '../../utils/params'
 
-export const c = {
-  ENDPOINT: 'api/v2/search/pages_totals'
-}
+import {
+  fetchLeaderboard as fetchJGLeaderboard,
+  deserializeLeaderboard as deserializeJGLeaderboard
+} from './justgiving'
+
+import {
+  fetchLeaderboard as fetchEDHLeaderboard,
+  deserializeLeaderboard as deserializeEDHLeaderboard
+} from './everydayhero'
 
 /**
-* @function fetches supporter pages ranked by funds raised
+* @function fetches pages ranked by funds raised
 */
 export const fetchLeaderboard = (params = required()) => {
-  const transforms = {
-    type: (val) => val === 'team' ? 'teams' : 'individuals'
-  }
-
-  return get(c.ENDPOINT, params, { transforms })
-    .then((response) => response.results)
+  return isJustGiving()
+    ? fetchJGLeaderboard(params)
+    : fetchEDHLeaderboard(params)
 }
 
 /**
 * @function a default deserializer for leaderboard pages
 */
-export const deserializeLeaderboard = ({ page, team }, index) => {
-  const detail = team || page
-  return {
-    position: index + 1,
-    id: detail.id,
-    name: detail.name,
-    charity: detail.charity_name,
-    url: detail.url,
-    image: detail.image.medium_image_url,
-    raised: detail.amount.cents,
-    groups: detail.group_values
-  }
+export const deserializeLeaderboard = (page, index) => {
+  return isJustGiving()
+    ? deserializeJGLeaderboard(page, index)
+    : deserializeEDHLeaderboard(page, index)
 }
