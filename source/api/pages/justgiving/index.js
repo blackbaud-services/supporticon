@@ -2,7 +2,7 @@ import { get } from '../../../utils/client'
 import { getUID, required } from '../../../utils/params'
 
 /**
-* @function deserializer for supporter pages
+* @function deserializer for justgiving pages
 */
 export const deserializePage = (page) => ({
   active: null,
@@ -25,7 +25,7 @@ export const deserializePage = (page) => ({
 })
 
 /**
-* @function fetches pages from the supporter api
+* @function fetches pages from the justgiving api
 */
 export const fetchPages = (params = required()) => {
   const {
@@ -49,14 +49,21 @@ export const fetchPages = (params = required()) => {
 }
 
 /**
- * @function create page from the supporter api
+* @function fetches a single page from the justgiving api
+*/
+export const fetchPage = (page = required()) => {
+  return get(`/v1/fundraising/pages/${page}`)
+}
+
+/**
+ * @function create page using the justgiving api
  */
 export const createPage = (params) => {
   return Promise.reject('This method is not supported for JustGiving')
 }
 
 /**
- * @function update page from the supporter api
+ * @function update page using the justgiving api
  */
 export const updatePage = (pageId, params) => {
   return Promise.reject('This method is not supported for JustGiving')
