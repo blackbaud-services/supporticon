@@ -3,7 +3,7 @@ import { required } from '../params'
 import map from '../map'
 
 const defaults = {
-  baseURL: 'https://everydayhero.com'
+  baseURL: process.env.SUPPORTICON_BASE_URL || 'https://everydayhero.com'
 }
 
 export const instance = axios.create(defaults)
