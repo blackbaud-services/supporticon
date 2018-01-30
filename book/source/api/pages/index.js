@@ -3,6 +3,7 @@ import { isJustGiving } from '../../utils/client'
 import {
   deserializePage as deserializeEDHPage,
   fetchPages as fetchEDHPages,
+  fetchPage as fetchEDHPage,
   createPage as createEDHPage,
   updatePage as updateEDHPage
 } from './everydayhero'
@@ -10,12 +11,13 @@ import {
 import {
   deserializePage as deserializeJGPage,
   fetchPages as fetchJGPages,
+  fetchPage as fetchJGPage,
   createPage as createJGPage,
   updatePage as updateJGPage
 } from './justgiving'
 
 /**
-* @function deserializer for supporter pages
+* @function deserializer for fundraising pages
 */
 export const deserializePage = (page) => (
   isJustGiving()
@@ -24,16 +26,25 @@ export const deserializePage = (page) => (
 )
 
 /**
-* @function fetches pages from the supporter api
+* @function fetches multiple pages
 */
-export const fetchPages = (page) => (
+export const fetchPages = (params) => (
   isJustGiving()
-    ? fetchJGPages(page)
-    : fetchEDHPages(page)
+    ? fetchJGPages(params)
+    : fetchEDHPages(params)
 )
 
 /**
- * @function create page from the supporter api
+* @function fetches a single page
+*/
+export const fetchPage = (page) => (
+  isJustGiving()
+    ? fetchJGPage(page)
+    : fetchEDHPage(page)
+)
+
+/**
+ * @function create page
  */
 export const createPage = (params) => (
   isJustGiving()
@@ -42,7 +53,7 @@ export const createPage = (params) => (
 )
 
 /**
- * @function update page from the supporter api
+ * @function update page
  */
 export const updatePage = (pageId, params) => (
   isJustGiving()

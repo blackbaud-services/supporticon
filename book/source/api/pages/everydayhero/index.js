@@ -33,7 +33,15 @@ export const fetchPages = (params = required()) => {
 }
 
 /**
- * @function create page from the supporter api
+* @function fetches a single page from the supporter api
+*/
+export const fetchPage = (id = required()) => {
+  return get(`api/v2/pages/${id}`)
+    .then((response) => response.page)
+}
+
+/**
+ * @function create page using the supporter api
  */
 export const createPage = ({
   token = required(),
@@ -71,7 +79,7 @@ export const createPage = ({
 }
 
 /**
- * @function update page from the supporter api
+ * @function update page using the supporter api
  */
 export const updatePage = (pageId, {
   token = required(),
