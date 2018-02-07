@@ -2,7 +2,11 @@ import { get } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 export const fetchDonationTotals = (params = required()) => {
-  return get('api/v2/search/totals', params)
+  const mappings = {
+    type: 'type'
+  }
+
+  return get('api/v2/search/totals', params, { mappings })
 }
 
 export const deserializeDonationTotals = (totals) => ({
