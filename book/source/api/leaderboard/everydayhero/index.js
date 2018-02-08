@@ -27,9 +27,9 @@ export const deserializeLeaderboard = ({ page, team }, index) => {
     url: detail.url,
     image: detail.image.medium_image_url,
     raised: detail.amount.cents / 100,
-    target: page.target_cents / 100,
-    currency: page.amount.currency.iso_code,
-    currencySymbol: page.amount.currency.symbol,
+    target: detail.target_cents / 100,
+    currency: detail.amount.currency.iso_code,
+    currencySymbol: detail.amount.currency.symbol,
     groups: detail.group_values
   }
 }
