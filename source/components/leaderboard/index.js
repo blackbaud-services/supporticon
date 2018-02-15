@@ -5,7 +5,7 @@ import Filter from 'constructicon/filter'
 import LeaderboardWrapper from 'constructicon/leaderboard'
 import LeaderboardItem from 'constructicon/leaderboard-item'
 import Grid from 'constructicon/grid'
-import PaginationLink from 'constructicon//pagination-link'
+import PaginationLink from 'constructicon/pagination-link'
 
 import {
   fetchLeaderboard,
