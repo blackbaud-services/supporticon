@@ -11,27 +11,30 @@ export const instance = axios.create(defaults)
 export const get = (
   endpoint = required(),
   params,
-  options = {}
+  options = {},
+  config = {}
 ) => (
-  instance.get(endpoint, { params: map(params, options) })
+  instance.get(endpoint, { params: map(params, options), ...config })
     .then((response) => response.data)
     .catch((error) => Promise.reject(error.response))
 )
 
 export const post = (
   endpoint = required(),
-  data
+  data,
+  config = {}
 ) => (
-  instance.post(endpoint, data)
+  instance.post(endpoint, data, config)
     .then((response) => response.data)
     .catch((error) => Promise.reject(error.response))
 )
 
 export const put = (
   endpoint = required(),
-  data
+  data,
+  config = {}
 ) => (
-  instance.put(endpoint, data)
+  instance.put(endpoint, data, config)
     .then((response) => response.data)
     .catch((error) => Promise.reject(error.response))
 )
