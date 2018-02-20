@@ -19,7 +19,8 @@ module.exports = {
       components: () => ([
         path.resolve(__dirname, 'source/components/leaderboard', 'index.js'),
         path.resolve(__dirname, 'source/components/fitness-leaderboard', 'index.js'),
-        path.resolve(__dirname, 'source/components/page-search', 'index.js')
+        path.resolve(__dirname, 'source/components/page-search', 'index.js'),
+        path.resolve(__dirname, 'source/components/single-sign-on-link', 'index.js')
       ])
     },
     {
