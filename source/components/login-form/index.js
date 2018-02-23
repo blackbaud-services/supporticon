@@ -67,6 +67,8 @@ class LoginForm extends Component {
     const {
       disableInvalidForm,
       form,
+      formComponent,
+      inputField,
       submit
     } = this.props
 
@@ -82,9 +84,10 @@ class LoginForm extends Component {
         isLoading={status === 'fetching'}
         noValidate
         onSubmit={this.handleSubmit}
-        submit={submit}>
+        submit={submit}
+        {...formComponent}>
         {values(form.fields).map((field) => (
-          <InputField key={field.name} {...field} />
+          <InputField key={field.name} {...field} {...inputField} />
         ))}
       </Form>
     )
@@ -106,6 +109,16 @@ LoginForm.propTypes = {
   * Disable form submission when invalid
   */
   disableInvalidForm: PropTypes.bool,
+
+  /**
+  * Props to be passed to the Form component
+  */
+  formComponent: PropTypes.object,
+
+  /**
+  * Props to be passed to the InputField component
+  */
+  inputField: PropTypes.object,
 
   /**
   * The onSuccess event handler

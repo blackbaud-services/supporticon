@@ -4,7 +4,7 @@ import { instance, updateClient } from '../../../utils/client'
 
 import ResetPasswordForm from '..'
 
-describe.only ('Components | ResetPasswordForm', () => {
+describe ('Components | ResetPasswordForm', () => {
   describe ('EDH ResetPasswordForm', () => {
     it ('renders a simple login form', () => {
       const wrapper = mount(<ResetPasswordForm clientId='1234abcd' onSuccess={(res) => console.log(res)} />)
