@@ -1,9 +1,6 @@
 import { get, post, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
-/**
-* @function deserializer for supporter pages
-*/
 export const deserializePage = (page) => ({
   active: page.active,
   campaign: page.campaign || page.campaign_name,
@@ -24,25 +21,16 @@ export const deserializePage = (page) => ({
   uuid: page.uuid
 })
 
-/**
-* @function fetches pages from the supporter api
-*/
 export const fetchPages = (params = required()) => {
   return get('api/v2/search/pages', params)
     .then((response) => response.pages)
 }
 
-/**
-* @function fetches a single page from the supporter api
-*/
 export const fetchPage = (id = required()) => {
   return get(`api/v2/pages/${id}`)
     .then((response) => response.page)
 }
 
-/**
- * @function create page using the supporter api
- */
 export const createPage = ({
   token = required(),
   campaignId = required(),
@@ -78,9 +66,6 @@ export const createPage = ({
   })
 }
 
-/**
- * @function update page using the supporter api
- */
 export const updatePage = (pageId, {
   token = required(),
   name,

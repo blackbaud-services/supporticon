@@ -67,11 +67,28 @@ describe ('Create Page', () => {
       updateClient({ baseURL: 'https://everydayhero.com' })
     })
 
-    it ('throws method not supported error', (done) => {
-      createPage({ foo: 'bar' }).catch((err) => {
-        expect(err).to.eql('This method is not supported for JustGiving')
+    it ('hits the justgiving api with the correct url and data', (done) => {
+      createPage({
+        token: '012345abcdef',
+        charityId: '1234',
+        slug: 'super-supporter',
+        title: 'Super Supporter',
+        charityOptIn: true
+      })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.eql('https://api.justgiving.com/v1/fundraising/pages')
+        expect(request.config.headers['Authorization']).to.eql('Basic 012345abcdef')
+        expect(JSON.parse(request.config.data).pageShortName).to.eql('super-supporter')
+        expect(JSON.parse(request.config.data).pageTitle).to.eql('Super Supporter')
         done()
       })
+    })
+
+    it ('throws if no token is passed', () => {
+      const test = () => createPage({ bogus: 'data' })
+      expect(test).to.throw
     })
   })
 })

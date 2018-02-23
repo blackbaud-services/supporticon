@@ -1,9 +1,6 @@
-import { get } from '../../../utils/client'
+import { get, post, put } from '../../../utils/client'
 import { getUID, required } from '../../../utils/params'
 
-/**
-* @function deserializer for justgiving pages
-*/
 export const deserializePage = (page) => ({
   active: null,
   campaign: null,
@@ -24,9 +21,6 @@ export const deserializePage = (page) => ({
   uuid: null
 })
 
-/**
-* @function fetches pages from the justgiving api
-*/
 export const fetchPages = (params = required()) => {
   const {
     campaign,
@@ -48,23 +42,88 @@ export const fetchPages = (params = required()) => {
   ))
 }
 
-/**
-* @function fetches a single page from the justgiving api
-*/
 export const fetchPage = (page = required()) => {
   return get(`/v1/fundraising/pages/${page}`)
 }
 
-/**
- * @function create page using the justgiving api
- */
-export const createPage = (params) => {
-  return Promise.reject('This method is not supported for JustGiving')
+export const createPage = ({
+  charityId = required(),
+  charityOptIn = required(),
+  slug = required(),
+  title = required(),
+  token = required(),
+  activityType,
+  attribution,
+  causeId,
+  charityFunded,
+  companyAppealId,
+  consistentErrorResponses,
+  currency,
+  eventDate,
+  eventId,
+  eventName,
+  expiryDate,
+  images,
+  story,
+  summaryWhat,
+  summaryWhy,
+  reference,
+  rememberedPersonReference,
+  target,
+  teamId,
+  theme,
+  videos
+}) => {
+  put('/v1/fundraising/pages', {
+    activityType,
+    attribution,
+    causeId,
+    charityFunded,
+    charityId,
+    charityOptIn,
+    companyAppealId,
+    consistentErrorResponses,
+    currency,
+    eventDate,
+    eventId,
+    eventName,
+    expiryDate,
+    images,
+    pageShortName: slug,
+    pageStory: story,
+    pageSummaryWhat: summaryWhat,
+    pageSummaryWhy: summaryWhy,
+    pageTitle: title,
+    reference,
+    rememberedPersonReference,
+    targetAmount: target,
+    teamId,
+    theme,
+    videos
+  }, {
+    headers: {
+      'Authorization': `Basic ${token}`
+    }
+  })
 }
 
-/**
- * @function update page using the justgiving api
- */
-export const updatePage = (pageId, params) => {
-  return Promise.reject('This method is not supported for JustGiving')
+export const updatePage = (slug = required(), {
+  token = required(),
+  attribution,
+  image,
+  story,
+  summaryWhat,
+  summaryWhy
+}) => {
+  const config = { headers: { 'Authorization': `Basic ${token}` } }
+
+  return Promise.all([
+    attribution && put(`/v1/fundraising/pages/${slug}/attribution`, { attribution }, config),
+    image && put(`/v1/fundraising/pages/${slug}/images`, { url: image, isDefault: true }, config),
+    story && post(`/v1/fundraising/pages/${slug}`, { storySupplement: story }, config),
+    (summaryWhat || summaryWhy) && put(`/v1/fundraising/pages/${slug}/summary`, {
+      pageSummaryWhat: summaryWhat,
+      pageSummaryWhy: summaryWhy
+    }, config)
+  ].filter(promise => promise))
 }
