@@ -3,7 +3,7 @@
 ```
 <SingleSignOnLink
   label='Fundraise now!'
-  pageURL='http://locahost:3000'
+  url='http://locahost:3000'
   token='123'
 />
 ```
