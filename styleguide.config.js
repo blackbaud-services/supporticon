@@ -19,9 +19,7 @@ module.exports = {
       components: () => ([
         path.resolve(__dirname, 'source/components/leaderboard', 'index.js'),
         path.resolve(__dirname, 'source/components/fitness-leaderboard', 'index.js'),
-        path.resolve(__dirname, 'source/components/login-form', 'index.js'),
-        path.resolve(__dirname, 'source/components/page-search', 'index.js'),
-        path.resolve(__dirname, 'source/components/single-sign-on-link', 'index.js')
+        path.resolve(__dirname, 'source/components/page-search', 'index.js')
       ])
     },
     {
@@ -32,6 +30,14 @@ module.exports = {
         path.resolve(__dirname, 'source/components/total-duration', 'index.js'),
         path.resolve(__dirname, 'source/components/total-funds-raised', 'index.js'),
         path.resolve(__dirname, 'source/components/total-supporters', 'index.js')
+      ])
+    },
+    {
+      name: 'Authentication',
+      components: () => ([
+        path.resolve(__dirname, 'source/components/login-form', 'index.js'),
+        path.resolve(__dirname, 'source/components/reset-password-form', 'index.js'),
+        path.resolve(__dirname, 'source/components/single-sign-on-link', 'index.js')
       ])
     }
   ],
