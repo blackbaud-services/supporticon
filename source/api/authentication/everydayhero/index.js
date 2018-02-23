@@ -5,13 +5,13 @@ export const resetPassword = ({
   clientId = required(),
   email = required(),
   reference,
-  return_to
+  returnTo
 }) => (
   post('api/v2/authentication/reset_password', {
     client_id: clientId,
     email,
     reference,
-    return_to
+    return_to: returnTo
   })
 )
 
