@@ -141,6 +141,7 @@ const form = {
     email: {
       label: 'Email address',
       type: 'email',
+      required: true,
       validators: [
         validators.required('Email is a required field'),
         validators.email('Must be a valid email')
@@ -149,6 +150,7 @@ const form = {
     password: {
       label: 'Password',
       type: 'password',
+      required: true,
       validators: [
         validators.required('Password is a required field'),
         validators.greaterThan(7, 'Must be at least 8 characters')

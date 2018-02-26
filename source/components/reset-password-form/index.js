@@ -148,6 +148,7 @@ const form = {
     email: {
       label: 'Email address',
       type: 'email',
+      required: true,
       validators: [
         validators.required('Email is a required field'),
         validators.email('Must be a valid email')
