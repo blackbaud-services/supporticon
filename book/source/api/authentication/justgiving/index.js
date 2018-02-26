@@ -43,6 +43,7 @@ export const signUp = ({
     lastName,
     email,
     password,
+    title,
     address,
     reference,
     causeId: cause
