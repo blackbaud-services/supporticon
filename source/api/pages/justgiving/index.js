@@ -74,7 +74,7 @@ export const createPage = ({
   theme,
   videos
 }) => {
-  put('/v1/fundraising/pages', {
+  return put('/v1/fundraising/pages', {
     activityType,
     attribution,
     causeId,

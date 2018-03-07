@@ -6,7 +6,7 @@ import SignupForm from '..'
 
 describe ('Components | SignupForm', () => {
   describe ('EDH SignupForm', () => {
-    it ('renders a simple login form', () => {
+    it ('renders a simple sign up form', () => {
       const wrapper = mount(<SignupForm country='au' clientId='1234abcd' onSuccess={(res) => console.log(res)} />)
       const inputs = wrapper.find('input')
       const select = wrapper.find('select')
@@ -47,7 +47,7 @@ describe ('Components | SignupForm', () => {
       moxios.uninstall(instance)
     })
 
-    it ('renders a simple login form with custom submit prop', () => {
+    it ('renders a simple sign up form with custom submit prop', () => {
       const wrapper = mount(<SignupForm onSuccess={(res) => console.log(res)} />)
       const inputs = wrapper.find('input')
       const select = wrapper.find('select')
