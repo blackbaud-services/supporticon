@@ -49,6 +49,7 @@ const deserializePage = (item, index) => ({
 })
 
 const deserializeGroup = (item, index) => ({
+  position: index + 1,
   count: item.count,
   id: item.group.id,
   name: item.group.value,
