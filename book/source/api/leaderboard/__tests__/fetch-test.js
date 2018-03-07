@@ -86,6 +86,17 @@ describe ('Fetch Leaderboards', () => {
         done()
       })
     })
+
+    it ('fetches leaderboards based on a group', (done) => {
+      fetchEDHLeaderboard({ type: 'group', groupID: 99 })
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
+        expect(request.url).to.contain('group_by=groups')
+        expect(request.url).to.contain('group_id=99')
+        done()
+      })
+    })
   })
 
   describe ('Fetch JG Leaderboards', () => {

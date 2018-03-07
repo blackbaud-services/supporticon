@@ -6,30 +6,52 @@ import { required } from '../../../utils/params'
 */
 export const fetchLeaderboard = (params = required()) => {
   const transforms = {
-    type: (val) => val === 'team' ? 'teams' : 'individuals'
+    type: (val) => val === 'team'
+      ? 'teams'
+      : val === 'group'
+        ? 'groups'
+        : 'individuals'
   }
 
-  return get('api/v2/search/pages_totals', params, { transforms })
+  const mappings = {
+    groupID: 'group_id'
+  }
+
+  return get('api/v2/search/pages_totals', params, { mappings, transforms })
     .then((response) => response.results)
 }
 
 /**
 * @function a default deserializer for leaderboard pages
 */
-export const deserializeLeaderboard = ({ page, team }, index) => {
-  const detail = team || page
-
-  return {
-    position: index + 1,
-    id: detail.id,
-    name: detail.name,
-    subtitle: detail.charity_name,
-    url: detail.url,
-    image: detail.image.medium_image_url,
-    raised: detail.amount.cents / 100,
-    target: detail.target_cents / 100,
-    currency: detail.amount.currency.iso_code,
-    currencySymbol: detail.amount.currency.symbol,
-    groups: detail.group_values
+export const deserializeLeaderboard = (result, index) => {
+  if (result.page) {
+    return deserializePage(result.page, index)
+  } else if (result.team) {
+    return deserializePage(result.team, index)
+  } else if (result.group) {
+    return deserializeGroup(result, index)
   }
 }
+
+const deserializePage = (item, index) => ({
+  position: index + 1,
+  id: item.id,
+  name: item.name,
+  subtitle: item.charity_name,
+  url: item.url,
+  image: item.image.medium_image_url,
+  raised: item.amount.cents / 100,
+  target: item.target_cents / 100,
+  currency: item.amount.currency.iso_code,
+  currencySymbol: item.amount.currency.symbol,
+  groups: item.group_values
+})
+
+const deserializeGroup = (item, index) => ({
+  position: index + 1,
+  count: item.count,
+  id: item.group.id,
+  name: item.group.value,
+  raised: item.amount_cents / 100
+})

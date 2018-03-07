@@ -79,7 +79,8 @@ class Leaderboard extends Component {
       startDate,
       endDate,
       limit,
-      page
+      page,
+      groupID
     } = this.props
 
     this.setState({
@@ -97,6 +98,7 @@ class Leaderboard extends Component {
       endDate,
       limit,
       page,
+      groupID,
       q
     })
       .then((data) => {
@@ -183,7 +185,7 @@ Leaderboard.propTypes = {
   /**
   * The type of page to include in the leaderboard
   */
-  type: PropTypes.oneOf([ 'individual', 'team' ]),
+  type: PropTypes.oneOf([ 'group', 'individual', 'team' ]),
 
   /**
   * The group value(s) to filter by
@@ -217,6 +219,11 @@ Leaderboard.propTypes = {
   * The page to fetch
   */
   page: PropTypes.number,
+
+  /**
+  * The group ID to group the leaderboard by (only relevant if type is group)
+  */
+  groupID: PropTypes.number,
 
   /**
   * Props to be passed to the Constructicon Leaderboard component

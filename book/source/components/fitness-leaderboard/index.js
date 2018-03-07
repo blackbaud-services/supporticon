@@ -43,7 +43,8 @@ class FitnessLeaderboard extends Component {
       includeManual,
       excludeVirtual,
       limit,
-      page
+      page,
+      groupID
     } = this.props
 
     this.setState({
@@ -62,6 +63,7 @@ class FitnessLeaderboard extends Component {
       exclude_virtual: excludeVirtual,
       limit,
       page,
+      groupID,
       q
     })
       .then((data) => {
@@ -144,7 +146,7 @@ FitnessLeaderboard.propTypes = {
   /**
   * The type of page to include in the leaderboard
   */
-  type: PropTypes.oneOf([ 'individual', 'team' ]),
+  type: PropTypes.oneOf([ 'group', 'individual', 'team' ]),
 
   /**
   * The activity type of page to include in the leaderboard (bike, gym, hike, run, sport, swim, walk)
@@ -201,6 +203,11 @@ FitnessLeaderboard.propTypes = {
   * The page to fetch
   */
   page: PropTypes.number,
+
+  /**
+  * The group ID to group the leaderboard by (only relevant if type is group)
+  */
+  groupID: PropTypes.number,
 
   /**
   * Props to be passed to the Constructicon Leaderboard component
