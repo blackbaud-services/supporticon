@@ -180,10 +180,6 @@ CreatePageForm.defaultProps = {
   submit: 'Create Page'
 }
 
-const isValidSlug = (msg = 'No special characters allowed') => {
-  return (val) => !!val && !/^[A-Za-z0-9_+-]+$/i.test(val) && msg
-}
-
 const form = (props) => ({
   fields: merge(isJustGiving() ? {
     title: {
@@ -202,9 +198,10 @@ const form = (props) => ({
       required: true,
       maxLength: 255,
       placeholder: 'URL for your fundraising page',
+      onKeyDown: (e) => e.which === 32 && e.preventDefault(),
       validators: [
         validators.required('Please enter your page URL'),
-        isValidSlug('Please enter a valid URL')
+        validators.slug('Please enter a valid URL using only letters, numbers or hyphens (-)')
       ]
     }
   } : {
