@@ -8,7 +8,7 @@
 />
 ```
 
-**With extra fields:**
+### With extra fields
 
 ```
 const required = (msg = 'This field is required') => {
@@ -38,6 +38,16 @@ const fields = {
   campaignId='au-0'
   token='1234abcd'
   fields={fields}
+  onSuccess={(result) => alert(JSON.stringify(result))}
+/>
+```
+
+### With groups (EDH only)
+
+```
+<CreatePageForm
+  campaignId='au-21937'
+  token='1234abcd'
   onSuccess={(result) => alert(JSON.stringify(result))}
 />
 ```

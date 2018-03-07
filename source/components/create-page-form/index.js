@@ -4,14 +4,17 @@ import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
 import values from 'lodash/values'
+import compose from 'constructicon/lib/compose'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { createPage } from '../../api/pages'
 import { isJustGiving } from '../../utils/client'
+import withGroups from './with-groups'
 
 import Form from 'constructicon/form'
 import InputDate from 'constructicon/input-date'
 import InputField from 'constructicon/input-field'
+import InputSelect from 'constructicon/input-select'
 
 class CreatePageForm extends Component {
   constructor () {
@@ -83,6 +86,17 @@ class CreatePageForm extends Component {
     })
   }
 
+  renderInput (type) {
+    switch (type) {
+      case 'date':
+        return InputDate
+      case 'select':
+        return InputSelect
+      default:
+        return InputField
+    }
+  }
+
   render () {
     const {
       disableInvalidForm,
@@ -109,7 +123,7 @@ class CreatePageForm extends Component {
         {...formComponent}>
 
         {values(form.fields).map((field) => {
-          const Tag = field.type === 'date' ? InputDate : InputField
+          const Tag = this.renderInput(field.type)
           return <Tag key={field.name} {...field} {...inputField} />
         })}
       </Form>
@@ -219,4 +233,7 @@ const form = (props) => ({
   }, props.fields)
 })
 
-export default withForm(form)(CreatePageForm)
+export default compose(
+  withGroups,
+  withForm(form)
+)(CreatePageForm)
