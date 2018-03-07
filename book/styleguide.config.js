@@ -35,6 +35,7 @@ module.exports = {
     {
       name: 'Authentication',
       components: () => ([
+        path.resolve(__dirname, 'source/components/create-page-form', 'index.js'),
         path.resolve(__dirname, 'source/components/login-form', 'index.js'),
         path.resolve(__dirname, 'source/components/reset-password-form', 'index.js'),
         path.resolve(__dirname, 'source/components/signup-form', 'index.js'),
