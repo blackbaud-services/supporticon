@@ -16,3 +16,22 @@
   pageSize={10}
 />
 ```
+
+*Leaderboard by Team*
+
+```
+<Leaderboard
+  campaign='au-21937'
+  type='team'
+/>
+```
+
+*Leaderboard by Group*
+
+```
+<Leaderboard
+  campaign='au-21937'
+  type='group'
+  groupID={58}
+/>
+```
