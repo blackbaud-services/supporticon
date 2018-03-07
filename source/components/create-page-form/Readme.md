@@ -22,20 +22,22 @@ const required = (msg = 'This field is required') => {
   }
 };
 
+const fields = {
+  target: {
+    label: 'Fundraising Target',
+    type: 'number',
+    placeholder: '500',
+    required: true,
+    validators: [
+      required('Please enter a target')
+    ]
+  }
+};
+
 <CreatePageForm
   campaignId='au-0'
   token='1234abcd'
-  fields={{
-    target: {
-      label: 'Fundraising Target',
-      type: 'number',
-      placeholder: '500',
-      required: true,
-      validators: [
-        required('Please enter a target')
-      ]
-    }
-  }}
+  fields={fields}
   onSuccess={(result) => alert(JSON.stringify(result))}
 />
 ```
