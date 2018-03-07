@@ -2,6 +2,7 @@ const path = require('path')
 const camelCase = require('lodash/camelCase')
 const upperFirst = require('lodash/upperFirst')
 const { version } = require('./package.json')
+const { styles, theme } = require('./styleguide.styles')
 
 module.exports = {
   title: `Supporticon | ${version}`,
@@ -13,6 +14,10 @@ module.exports = {
     const componentName = upperFirst(camelCase(name))
     return 'import ' + componentName + ' from \'supporticon/components/' + name + '\''
   },
+  serverPort: 3000,
+  showUsage: true,
+  styles,
+  theme,
   sections: [
     {
       name: 'Components',
@@ -44,22 +49,23 @@ module.exports = {
       ])
     }
   ],
-  updateWebpackConfig: (webpackConfig) => {
-    webpackConfig.module.loaders.push(
-     {
-       test: /\.jsx?$/,
-       include: path.join(__dirname, 'source'),
-       loader: 'babel'
-     },
-     {
-       test: /\.css$/,
-       include: path.join(__dirname, 'node_modules', 'minimal.css'),
-       loader: 'style!css?modules&importLoaders=1'
-     }
-   )
-
-   webpackConfig.entry.push(path.join(__dirname, 'node_modules/minimal.css/minimal.css'))
-
-   return webpackConfig
+  require: [
+    path.join(__dirname, 'node_modules/minimal.css/minimal.css')
+  ],
+  webpackConfig: {
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?$/,
+          exclude: /node_modules/,
+          loader: 'babel-loader'
+        },
+        {
+          test: /\.css$/,
+          include: path.join(__dirname, 'node_modules', 'minimal.css'),
+          loader: 'style-loader!css-loader?modules'
+        }
+      ]
+    }
   }
 }
