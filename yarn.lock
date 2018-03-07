@@ -1618,9 +1618,9 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constructicon@^1.4.4:
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-1.4.4.tgz#03e699efc27ffbadd09fdf47c4a92d5795aa4399"
+constructicon@^1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-1.5.4.tgz#ab944578067f4095b01ded092861e9805b1c80bf"
   dependencies:
     cxsync "^1.0.9"
     lodash "^4.17.4"
@@ -1629,6 +1629,7 @@ constructicon@^1.4.4:
     prop-types "^15.5.8"
     react-helmet "^5.1.3"
     react-modal "^1.9.4"
+    react-onclickoutside "^6.7.1"
     react-slick "0.14.11"
 
 content-disposition@0.5.1:
@@ -5621,6 +5622,10 @@ react-modal@^1.9.4:
     exenv "1.2.0"
     lodash.assign "^4.2.0"
     prop-types "^15.5.7"
+
+react-onclickoutside@^6.7.1:
+  version "6.7.1"
+  resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.7.1.tgz#6a5b5b8b4eae6b776259712c89c8a2b36b17be93"
 
 react-prefixer@^1.1.4:
   version "1.1.4"
