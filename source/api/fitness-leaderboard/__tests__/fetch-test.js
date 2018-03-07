@@ -88,4 +88,15 @@ describe ('Fetch Fitness Leaderboards', () => {
       done()
     })
   })
+
+  it ('fetches leaderboards based on a group', (done) => {
+    fetchFitnessLeaderboard({ type: 'group', groupID: 99 })
+    moxios.wait(function () {
+      const request = moxios.requests.mostRecent()
+      expect(request.url).to.contain('https://everydayhero.com/api/v2/search/fitness_activities_totals')
+      expect(request.url).to.contain('group_by=groups')
+      expect(request.url).to.contain('group_id=99')
+      done()
+    })
+  })
 })
