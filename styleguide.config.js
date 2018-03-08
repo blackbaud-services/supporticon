@@ -37,6 +37,7 @@ module.exports = {
       components: () => ([
         path.resolve(__dirname, 'source/components/create-page-form', 'index.js'),
         path.resolve(__dirname, 'source/components/login-form', 'index.js'),
+        path.resolve(__dirname, 'source/components/provider-oauth-button', 'index.js'),
         path.resolve(__dirname, 'source/components/reset-password-form', 'index.js'),
         path.resolve(__dirname, 'source/components/signup-form', 'index.js'),
         path.resolve(__dirname, 'source/components/single-sign-on-link', 'index.js')
