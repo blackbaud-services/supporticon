@@ -5,7 +5,7 @@ import { fetchCurrentUser } from '../../api/me'
 import { submitCrossDomainForm } from '../../utils/cross-domain'
 
 import Button from 'constructicon/button'
-import Icon from 'constructicon/icon'
+import Loading from 'constructicon/loading'
 
 class SingleSignOnLink extends Component {
   constructor (props) {
@@ -51,7 +51,7 @@ class SingleSignOnLink extends Component {
             <input type='hidden' name='return_to' value={url} />
             <Button {...props} type='submit'>
               <span>{label}</span>
-              {loading && <Icon name='loading' spin />}
+              {loading && <Loading />}
             </Button>
           </form>
         ) : (
@@ -62,7 +62,7 @@ class SingleSignOnLink extends Component {
             onClick={(token && isJustGiving()) && this.submitForm}
             {...props}>
             <span>{label}</span>
-            {loading && <Icon name='loading' spin />}
+            {loading && <Loading />}
           </Button>
         )}
       </div>

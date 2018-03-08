@@ -5,7 +5,7 @@ import * as validators from 'constructicon/lib/validators'
 import { fetchCampaignGroups } from '../../../api/campaigns'
 import { isJustGiving } from '../../../utils/client'
 
-import Icon from 'constructicon/icon'
+import Loading from 'constructicon/loading'
 
 const withGroups = (ComponentToWrap) => (
   class extends Component {
@@ -72,7 +72,7 @@ const withGroups = (ComponentToWrap) => (
           fields={merge(this.props.fields, this.state.fields)}
         />
       ) : (
-        <Icon name='loading' spin />
+        <Loading />
       )
     }
   }

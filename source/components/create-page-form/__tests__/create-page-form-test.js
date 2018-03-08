@@ -40,11 +40,11 @@ describe ('Components | CreatePageForm', () => {
       })
     })
 
-    it ('shows a loading spinner while fetching groups', () => {
+    it ('shows a loading animation while fetching groups', () => {
       const wrapper = mount(<CreatePageForm campaignId='au-123' token='1234abcd' onSuccess={(res) => console.log(res)} />)
 
-      const icon = wrapper.find('svg')
-      expect(icon.length).to.eql(1)
+      const loading = wrapper.find('Loading')
+      expect(loading.length).to.eql(1)
     })
 
     it ('allows a custom submit button label to be passed', (done) => {
