@@ -73,14 +73,18 @@ class Leaderboard extends Component {
     const {
       campaign,
       charity,
-      event,
-      type,
-      group,
-      startDate,
       endDate,
+      event,
+      excludePageIds,
+      group,
+      groupID,
       limit,
+      maxAmount,
+      minAmount,
       page,
-      groupID
+      pageIds,
+      startDate,
+      type
     } = this.props
 
     this.setState({
@@ -91,15 +95,19 @@ class Leaderboard extends Component {
     fetchLeaderboard({
       campaign,
       charity,
-      event,
-      type,
-      group,
-      startDate,
       endDate,
-      limit,
-      page,
+      event,
+      excludePageIds,
+      group,
       groupID,
-      q
+      limit,
+      maxAmount,
+      minAmount,
+      page,
+      pageIds,
+      q,
+      startDate,
+      type
     })
       .then((data) => {
         this.setState({
