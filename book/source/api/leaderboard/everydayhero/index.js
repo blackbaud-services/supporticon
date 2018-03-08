@@ -14,7 +14,11 @@ export const fetchLeaderboard = (params = required()) => {
   }
 
   const mappings = {
-    groupID: 'group_id'
+    endDate: 'end_at',
+    excludePageIds: 'exclude_page_ids',
+    groupID: 'group_id',
+    maxAmount: 'max_amount_cents',
+    minAmount: 'min_amount_cents'
   }
 
   return get('api/v2/search/pages_totals', params, { mappings, transforms })
