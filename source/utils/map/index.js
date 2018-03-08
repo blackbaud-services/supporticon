@@ -1,11 +1,12 @@
 const defaultMappings = {
   campaign: 'campaign_id',
   charity: 'charity_id',
-  group: 'group_value',
-  type: 'group_by',
+  endDate: 'end_date',
   filter: 'q',
+  group: 'group_value',
+  pageIds: 'page_ids',
   startDate: 'start_at',
-  endDate: 'end_date'
+  type: 'group_by'
 }
 
 const defaultTransforms = {}
