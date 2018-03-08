@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
-import Icon from 'constructicon/icon'
-import Metric from 'constructicon/metric'
 import { fetchCampaign, fetchCampaigns } from '../../api/campaigns'
+
+import Icon from 'constructicon/icon'
+import Loading from 'constructicon/loading'
+import Metric from 'constructicon/metric'
 
 class TotalDistance extends Component {
   constructor () {
@@ -92,7 +94,7 @@ class TotalDistance extends Component {
 
     switch (status) {
       case 'fetching':
-        return <Icon name='loading' spin />
+        return <Loading />
       case 'failed':
         return <Icon name='warning' />
       default:
