@@ -1,4 +1,4 @@
-# Examples
+### Examples
 
 N.B. Support for the default popup functionality is IE11+
 
