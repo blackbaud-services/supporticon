@@ -1,8 +1,8 @@
-# Supporticon
+# Supporticon [![NPM Version](https://img.shields.io/npm/v/supporticon.svg?style=flat-square&amp;colorB=1bab6b)](https://www.npmjs.com/package/supporticon)
 
 Consistently and easily fetch data from the Supporter API for Professional Services projects.
 
-Provide some common Supporter data driven components, using the Constructicon UI library.
+Provides some common Supporter data-driven components, using the [Constructicon](https://github.com/everydayhero/constructicon) UI library.
 
 ## Important Links
 
