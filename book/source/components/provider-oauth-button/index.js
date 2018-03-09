@@ -14,7 +14,7 @@ class ProviderOauthButton extends Component {
     this.providerUrl = this.providerUrl.bind(this)
 
     this.state = {
-      loading: false
+      status: 'empty'
     }
   }
 
@@ -35,7 +35,7 @@ class ProviderOauthButton extends Component {
 
       addEventListener('message', (event) => {
         if (event.origin !== validSourceOrigin) { return }
-        this.setState({ loading: false })
+        setTimeout(() => this.setState({ status: 'fetched' }), 500)
         return onSuccess(event.data)
       }, false)
     }
@@ -48,20 +48,20 @@ class ProviderOauthButton extends Component {
       onClose
     } = this.props
 
-    const newWindow = window.open(this.providerUrl(), `${provider}-auth`, popupWindowFeatures)
+    const popupWindow = window.open(this.providerUrl(), `${provider}Auth`, popupWindowFeatures)
 
-    this.setState({ loading: true })
+    this.setState({ status: 'loading' })
 
     const isPopupClosed = setInterval(() => {
-      if (newWindow.closed) {
+      if (popupWindow.closed) {
         clearInterval(isPopupClosed)
-        this.setState({ loading: false })
+        this.setState({ status: 'empty' })
 
         if (typeof onClose === 'function') {
-          return onClose(newWindow)
+          return onClose(popupWindow)
         }
       }
-    }, 1000)
+    }, 500)
   }
 
   providerUrl () {
@@ -93,7 +93,9 @@ class ProviderOauthButton extends Component {
       ...props
     } = this.props
 
-    const { loading } = this.state
+    const { status } = this.state
+    const isLoading = status === 'loading'
+    const icon = isLoading ? 'loading' : status === 'fetched' ? 'check' : provider
 
     if (isJustGiving()) { return null }
 
@@ -108,10 +110,10 @@ class ProviderOauthButton extends Component {
       <Button
         aria-label={label}
         background={provider}
-        disabled={loading}
+        disabled={isLoading}
         {...actionProps}
         {...omit(props, ['clientId', 'onClose', 'onSuccess', 'popupWindowFeatures', 'redirectUri'])}>
-        <Icon name={loading ? 'loading' : provider} spin={loading} size={1.5} />
+        <Icon name={icon} spin={isLoading} size={1.5} />
         <span>{label}</span>
       </Button>
     )
