@@ -29,6 +29,7 @@ describe ('Components | CreatePageForm', () => {
 
         // Re-render
         setTimeout(() => {
+          wrapper.update()
           const inputs = wrapper.find('input')
           const button = wrapper.find('button')
 
@@ -62,6 +63,7 @@ describe ('Components | CreatePageForm', () => {
 
         // Re-render
         setTimeout(() => {
+          wrapper.update()
           const button = wrapper.find('button')
 
           expect(button.length).to.eql(1)
@@ -86,6 +88,7 @@ describe ('Components | CreatePageForm', () => {
 
         // Re-render
         setTimeout(() => {
+          wrapper.update()
           const inputs = wrapper.find('input')
 
           expect(inputs.length).to.eql(2)
@@ -121,6 +124,7 @@ describe ('Components | CreatePageForm', () => {
             ]
           }
         }).then(() => {
+          wrapper.update()
           const input = wrapper.find('input')
           const selects = wrapper.find('select')
 
