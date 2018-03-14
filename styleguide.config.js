@@ -19,6 +19,9 @@ module.exports = {
     const componentName = upperFirst(camelCase(name))
     return 'import ' + componentName + ' from \'supporticon/components/' + name + '\''
   },
+  styleguideComponents: {
+    Logo: path.join(__dirname, 'lib/components/logo')
+  },
   sections: [
     {
       name: '',
