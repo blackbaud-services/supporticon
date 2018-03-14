@@ -1,4 +1,4 @@
-# Supporticon
+# Supporticon [![NPM version](https://img.shields.io/npm/v/constructicon.svg?style=flat-square)](https://www.npmjs.com/package/supporticon)
 
 Supporticon provides some small React components that handle fetching and displaying data from Supporter, similar to [React Widgets](https://github.com/everydayhero/react-widgets). These components depend on [Constructicon](https://github.com/everydayhero/constructicon) for UI.
 
