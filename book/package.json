@@ -1,6 +1,6 @@
 {
   "name": "supporticon",
-  "version": "2.4.4",
+  "version": "2.4.5",
   "description": "A libary to handle fetching data from Supporter",
   "main": "index.js",
   "scripts": {
@@ -36,7 +36,8 @@
     "babel-register": "^6.22.0",
     "chai": "^3.5.0",
     "constructicon": "^1.5.6",
-    "enzyme": "^2.8.2",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "gh-pages": "^0.12.0",
     "gitbook-cli": "^2.3.0",
     "gulp": "^3.9.1",
@@ -45,9 +46,8 @@
     "minimal.css": "^1.0.1",
     "mocha": "^3.2.0",
     "moxios": "^0.4.0",
-    "react": "^15.4.2",
-    "react-addons-test-utils": "^15.4.2",
-    "react-dom": "^15.4.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "react-styleguidist": "^6.2.6",
     "sinon": "^1.17.7",
     "standard": "^8.6.0",
@@ -60,8 +60,8 @@
   },
   "peerDependencies": {
     "constructicon": "^1.5.6",
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react": "^15.0.0 || ^16.0.0",
+    "react-dom": "^15.0.0 || ^16.0.0"
   },
   "standard": {
     "ignore": [

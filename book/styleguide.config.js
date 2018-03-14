@@ -5,19 +5,20 @@ const { version } = require('./package.json')
 const { styles, theme } = require('./styleguide.styles')
 
 module.exports = {
-  title: `Supporticon | ${version}`,
+  title: `Supporticon ${version}`,
   template: './styleguide.template.html',
   styleguideDir: 'styleguide/components',
+  editorConfig: { theme: 'cobalt' },
+  serverPort: 3000,
+  showUsage: true,
+  styles,
+  theme,
   getComponentPathLine: (componentPath) => {
     const dirname = path.dirname(componentPath, '.js')
     const name = dirname.split('/').slice(-1)[0]
     const componentName = upperFirst(camelCase(name))
     return 'import ' + componentName + ' from \'supporticon/components/' + name + '\''
   },
-  serverPort: 3000,
-  showUsage: true,
-  styles,
-  theme,
   sections: [
     {
       name: '',
