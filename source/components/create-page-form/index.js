@@ -14,6 +14,7 @@ import withGroups from './with-groups'
 import Form from 'constructicon/form'
 import InputDate from 'constructicon/input-date'
 import InputField from 'constructicon/input-field'
+import InputSearch from 'constructicon/input-search'
 import InputSelect from 'constructicon/input-select'
 
 class CreatePageForm extends Component {
@@ -90,6 +91,8 @@ class CreatePageForm extends Component {
     switch (type) {
       case 'date':
         return InputDate
+      case 'search':
+        return InputSearch
       case 'select':
         return InputSelect
       default:
