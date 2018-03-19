@@ -44,7 +44,7 @@ const withGroups = (ComponentToWrap) => (
               }))
             ]
 
-            fields[key] = {
+            fields[`group_values_${key}`] = {
               label,
               options,
               type: 'select',
