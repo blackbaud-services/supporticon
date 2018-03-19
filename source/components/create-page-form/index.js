@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
+import mapKeys from 'lodash/mapKeys'
 import merge from 'lodash/merge'
+import pickBy from 'lodash/pickBy'
 import values from 'lodash/values'
 import compose from 'constructicon/lib/compose'
 import withForm from 'constructicon/with-form'
@@ -46,13 +48,16 @@ class CreatePageForm extends Component {
         status: 'fetching'
       })
 
+      const groupFields = pickBy(data, (value, key) => /^group_values_/.test(key))
+
       const dataPayload = merge({
         campaignId,
         charityFunded,
         charityId,
         charityOptIn: true,
         eventId,
-        token
+        token,
+        groupValues: mapKeys(groupFields, (value, key) => key.replace('group_values_', ''))
       }, data)
 
       return createPage(dataPayload).then((result) => {
@@ -66,7 +71,7 @@ class CreatePageForm extends Component {
 
             return this.setState({
               status: 'failed',
-              errors: errors.map(({ field, message }) => ({ message: [capitalize(field), message].join(' ') }))
+              errors: errors.map(({ field, message }) => ({ message: [capitalize(field.split('_').join(' ')), message].join(' ') }))
             })
           case 400:
             const errorMessages = error.data || []
