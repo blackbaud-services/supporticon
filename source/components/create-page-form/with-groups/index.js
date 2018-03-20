@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import get from 'lodash/get'
 import merge from 'lodash/merge'
 import startCase from 'lodash/startCase'
 import * as validators from 'constructicon/lib/validators'
@@ -6,6 +7,7 @@ import { fetchCampaignGroups } from '../../../api/campaigns'
 import { isJustGiving } from '../../../utils/client'
 
 import Loading from 'constructicon/loading'
+import Metric from 'constructicon/metric'
 
 const withGroups = (ComponentToWrap) => (
   class extends Component {
@@ -14,6 +16,7 @@ const withGroups = (ComponentToWrap) => (
       this.fetchGroups = this.fetchGroups.bind(this)
 
       this.state = {
+        error: null,
         fields: null,
         isFetched: isJustGiving()
       }
@@ -60,13 +63,20 @@ const withGroups = (ComponentToWrap) => (
           fields,
           isFetched: true
         })
-      })
+      }).catch((error) => (
+        this.setState({ error: get(error, 'data.error.message') })
+      ))
     }
 
     render () {
-      const { isFetched } = this.state
+      const { error, isFetched } = this.state
 
-      return isFetched ? (
+      return error ? (
+        <Metric
+          icon='warning'
+          label={error}
+        />
+      ) : isFetched ? (
         <ComponentToWrap
           {...this.props}
           fields={merge(this.props.fields, this.state.fields)}
