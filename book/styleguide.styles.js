@@ -40,11 +40,6 @@ const styles = {
       fontWeight: '700 !important'
     }
   },
-  Logo: {
-    logo: {
-      color: colors.light
-    }
-  },
   Heading: {
     heading1: {
       display: 'block',
@@ -80,7 +75,8 @@ const styles = {
   ReactComponent: {
     tabs: {
       backgroundColor: colors.paleGrey,
-      padding: `${rhythm(0.5)} ${rhythm(1)}`
+      padding: `${rhythm(0.5)} ${rhythm(1)}`,
+      overflow: 'auto'
     },
     tabButtons: {
       marginBottom: 0
@@ -98,13 +94,53 @@ const styles = {
   },
   StyleGuide: {
     content: {
-      paddingTop: rhythm(2.5)
+      paddingTop: rhythm(2.5),
+      '@media (max-width: 600px)': {
+        padding: rhythm(1.5)
+      }
     },
     logo: {
-      backgroundColor: 'rgba(0,0,0,0.125)',
-      borderBottom: 'thin solid rgba(0,0,0,0.1)'
+      border: 0,
+      paddingBottom: 0,
+      '& .rsg-logo': {
+        display: 'block',
+        color: colors.tertiary,
+        margin: rhythm(-0.5),
+        padding: rhythm(0.5),
+        fontSize: theme.fontSize.h3,
+        fontFamily: theme.fontFamily.base,
+        transition: 'all 250ms ease',
+        cursor: 'pointer',
+        '&:after, &:hover:after': {
+          content: '"\\2197"',
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          padding: rhythm(0.5),
+          opacity: 0.25,
+          transition: 'all 250ms ease',
+          cursor: 'pointer'
+        },
+        '&:hover:after': {
+          opacity: 0.75,
+          color: colors.dark
+        }
+      },
+      '& .rsg-logo-name, & .rsg-logo-version': {
+        display: 'inline-block',
+        verticalAlign: 'middle',
+        pointerEvents: 'none'
+      },
+      '& .rsg-logo-name': {
+        fontWeight: 700
+      },
+      '& .rsg-logo-version': {
+        marginLeft: rhythm(0.25),
+        opacity: 0.5
+      }
     },
     sidebar: {
+      border: 0,
       '& li > a': {
         color: `${colors.light} !important`
       }
@@ -121,7 +157,8 @@ const styles = {
   Table: {
     table: {
       marginTop: rhythm(0.5),
-      marginBottom: rhythm(0.5)
+      marginBottom: rhythm(0.5),
+      minWidth: '600px'
     },
     cellHeading: {
       borderBottom: `thin solid ${colors.lightGrey}`
