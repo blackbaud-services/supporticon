@@ -84,7 +84,7 @@ class TotalFundsRaised extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return numbro((offset + data.raised) * multiplier).format(format)
+        return numbro((offset + data.raised) * multiplier).formatCurrency(format)
     }
   }
 }
