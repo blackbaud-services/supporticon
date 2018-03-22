@@ -36,7 +36,8 @@ class Leaderboard extends Component {
     }
   }
 
-  setFilter (q) {
+  setFilter (filterValue) {
+    const q = filterValue || null
     this.fetchLeaderboard(q)
   }
 
