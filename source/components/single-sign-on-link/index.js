@@ -147,7 +147,7 @@ SingleSignOnLink.propTypes = {
 
 SingleSignOnLink.defaultProps = {
   label: 'My Fundraising Page',
-  target: '_self',
+  target: '_top',
   method: 'POST'
 }
 
