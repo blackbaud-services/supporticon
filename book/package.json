@@ -1,6 +1,6 @@
 {
   "name": "supporticon",
-  "version": "2.4.9",
+  "version": "2.4.10",
   "description": "A libary to handle fetching data from Supporter",
   "main": "index.js",
   "scripts": {
@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "axios": "^0.15.3",
-    "numbro": "^1.9.3",
+    "numbro": "^1.11.0",
     "prop-types": "^15.5.8"
   },
   "peerDependencies": {
