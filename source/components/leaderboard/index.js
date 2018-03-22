@@ -164,7 +164,7 @@ class Leaderboard extends Component {
         title={leader.name}
         subtitle={leader.subtitle}
         image={leader.image}
-        amount={numbro(leader.raised).formatCurrency('$0,0')}
+        amount={numbro(leader.raised).formatCurrency('0,0')}
         href={leader.url}
         rank={leader.position}
         {...leaderboardItem}

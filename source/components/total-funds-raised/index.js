@@ -166,7 +166,7 @@ TotalFundsRaised.defaultProps = {
   label: 'Funds Raised',
   offset: 0,
   multiplier: 1,
-  format: '$0,0'
+  format: '0,0'
 }
 
 export default TotalFundsRaised

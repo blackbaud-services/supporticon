@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "axios": "^0.15.3",
-    "numbro": "^1.9.3",
+    "numbro": "^1.11.0",
     "prop-types": "^15.5.8"
   },
   "peerDependencies": {
