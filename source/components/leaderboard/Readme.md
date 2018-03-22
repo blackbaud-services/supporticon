@@ -3,7 +3,7 @@
 *Standard Use*
 ```
 <Leaderboard
-  campaign='au-21638'
+  campaign='au-23374'
 />
 ```
 
@@ -11,7 +11,7 @@
 
 ```
 <Leaderboard
-  campaign='au-21638'
+  campaign='au-23374'
   limit={15}
   pageSize={10}
 />
@@ -21,7 +21,7 @@
 
 ```
 <Leaderboard
-  campaign='au-21937'
+  campaign='au-23374'
   type='team'
 />
 ```
