@@ -22,6 +22,11 @@ export const deserializePage = (page) => ({
 })
 
 export const fetchPages = (params = required()) => {
+  return get('api/v2/pages', params)
+    .then((response) => response.pages)
+}
+
+export const searchPages = (params = required()) => {
   return get('api/v2/search/pages', params)
     .then((response) => response.pages)
 }
