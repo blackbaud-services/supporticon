@@ -22,10 +22,13 @@ export const deserializePage = (page) => ({
 })
 
 export const fetchPages = (params = required()) => {
-  const url = params.allPages ? 'api/v2/pages' : 'api/v2/search/pages'
+  const { allPages, ...finalParams } = params
 
-  return get(url, params)
-    .then((response) => response.pages)
+  const promise = allPages
+    ? get('api/v2/pages', finalParams, { mappings: { type: 'type' } })
+    : get('api/v2/search/pages', finalParams)
+
+  return promise.then((response) => response.pages)
 }
 
 export const fetchPage = (id = required()) => {
