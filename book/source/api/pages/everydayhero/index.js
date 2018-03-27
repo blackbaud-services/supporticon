@@ -2,7 +2,7 @@ import { get, post, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 export const deserializePage = (page) => ({
-  active: page.active,
+  active: page.active || page.state === 'active',
   campaign: page.campaign || page.campaign_name,
   campaignDate: page.campaign_date,
   charity: page.charity || page.charity_name,
@@ -22,7 +22,9 @@ export const deserializePage = (page) => ({
 })
 
 export const fetchPages = (params = required()) => {
-  return get('api/v2/search/pages', params)
+  const url = params.allPages ? 'api/v2/pages' : 'api/v2/search/pages'
+
+  return get(url, params)
     .then((response) => response.pages)
 }
 
