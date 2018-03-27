@@ -14,7 +14,7 @@ Fetch pages from Supporter sorted by funds raised.
 
 **Params**
 
-- `params` (Object) see [paramater list](../readme.md#availableparameters)
+- `params` (Object) see [parameter list](../readme.md#availableparameters)
 
 **Returns**
 

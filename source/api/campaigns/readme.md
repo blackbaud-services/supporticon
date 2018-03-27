@@ -16,7 +16,7 @@ Fetch a listing of campaigns.
 
 **Params**
 
-- `params` (Object) see [paramater list](../readme.md#availableparameters)
+- `params` (Object) see [parameter list](../readme.md#availableparameters)
 
 **Returns**
 

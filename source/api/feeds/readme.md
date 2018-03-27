@@ -12,7 +12,7 @@ Fetch a donation activity feed.
 
 **Params**
 
-- `params` (Object) see [paramater list](../readme.md#availableparameters)
+- `params` (Object) see [parameter list](../readme.md#availableparameters)
 
 **Returns**
 
