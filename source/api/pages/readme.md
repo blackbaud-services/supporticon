@@ -17,6 +17,7 @@ Fetch pages from Supporter.
 **Params**
 
 - `params` (Object) see [parameter list](../readme.md#availableparameters)
+- `allPages` (Boolean) Use `api/v2/pages` endpoint (EDH only)
 
 **Returns**
 
