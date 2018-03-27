@@ -21,7 +21,17 @@ export const deserializePage = (page) => ({
   uuid: null
 })
 
-export const fetchPages = (params = required()) => {
+export const fetchPages = ({
+  token = required()
+}) => {
+  return get('/v1/fundraising/pages', {}, {}, {
+    headers: {
+      'Authorization': `Basic ${token}`
+    }
+  })
+}
+
+export const searchPages = (params = required()) => {
   const {
     campaign,
     charity,
