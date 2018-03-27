@@ -23,6 +23,16 @@ describe ('Fetch Pages', () => {
         })
       })
 
+      it ('uses a different endpoint if an `allPages` param is passed', (done) => {
+        fetchPages({ campaign_id: 'au-6839', allPages: true })
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.contain('https://everydayhero.com/api/v2/pages')
+          expect(request.url).to.contain('campaign_id=au-6839')
+          done()
+        })
+      })
+
       it ('throws if no params are passed in', () => {
         const test = () => fetchPages()
         expect(test).to.throw
