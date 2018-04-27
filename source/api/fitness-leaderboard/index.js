@@ -16,13 +16,27 @@ export const fetchFitnessLeaderboard = (params = required()) => {
       ? 'teams'
       : val === 'group'
         ? 'groups'
-        : 'individuals'
+        : 'individuals',
+
+    sortBy: (val) => {
+      switch (val) {
+        case 'calories':
+          return 'calories'
+        case 'duration':
+          return 'duration_in_seconds'
+        case 'elevation':
+          return 'elevation_in_meters'
+        default:
+          return 'distance_in_meters'
+      }
+    }
   }
 
   const mappings = {
     activity: 'type',
     groupID: 'group_id',
-    type: 'group_by'
+    type: 'group_by',
+    sortBy: 'sort_by'
   }
 
   return get(c.ENDPOINT, params, { mappings, transforms })
@@ -34,15 +48,15 @@ export const fetchFitnessLeaderboard = (params = required()) => {
 */
 export const deserializeFitnessLeaderboard = (result, index) => {
   if (result.page) {
-    return deserializePage(result.page, result.distance_in_meters, index)
+    return deserializePage(result.page, result, index)
   } else if (result.team) {
-    return deserializePage(result.team, result.distance_in_meters, index)
+    return deserializePage(result.team, result, index)
   } else if (result.group) {
     return deserializeGroup(result, index)
   }
 }
 
-const deserializePage = (item, distance, index) => ({
+const deserializePage = (item, result, index) => ({
   position: index + 1,
   id: item.id,
   name: item.name,
@@ -51,7 +65,10 @@ const deserializePage = (item, distance, index) => ({
   image: item.image.medium_image_url,
   raised: item.amount.cents,
   groups: item.group_values,
-  distance
+  distance: result.distance_in_meters,
+  elevation: result.elevation_in_meters,
+  calories: result.calories,
+  duration: result.duration_in_seconds
 })
 
 const deserializeGroup = (item, index) => ({
@@ -60,5 +77,8 @@ const deserializeGroup = (item, index) => ({
   id: item.group.id,
   name: item.group.value,
   raised: item.amount_cents / 100,
-  distance: item.distance_in_meters
+  distance: item.distance_in_meters,
+  elevation: result.elevation_in_meters,
+  calories: result.calories,
+  duration: result.duration_in_seconds
 })

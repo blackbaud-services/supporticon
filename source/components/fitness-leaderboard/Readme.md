@@ -26,3 +26,12 @@
   groupID={58}
 />
 ```
+
+*Leaderboard by Elevation*
+
+```
+<FitnessLeaderboard
+  campaign='nz-1608'
+  sortBy='elevation'
+/>
+```
