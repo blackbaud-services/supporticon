@@ -136,7 +136,7 @@ class FitnessLeaderboard extends Component {
       case 'duration':
         return `${numbro(leader.duration).format('0,0')} secs`
       case 'elevation':
-        const elevation = miles ? leader.elevation * 3.28084 :  leader.elevation
+        const elevation = miles ? leader.elevation * 3.28084 : leader.elevation
         return `${numbro(elevation).format('0,0')} ${miles ? 'ft' : 'm'}`
       default:
         const distance = miles ? leader.distance / 1609.34 : leader.distance / 1000
