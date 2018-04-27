@@ -78,7 +78,7 @@ const deserializeGroup = (item, index) => ({
   name: item.group.value,
   raised: item.amount_cents / 100,
   distance: item.distance_in_meters,
-  elevation: result.elevation_in_meters,
-  calories: result.calories,
-  duration: result.duration_in_seconds
+  elevation: item.elevation_in_meters,
+  calories: item.calories,
+  duration: item.duration_in_seconds
 })
