@@ -19,17 +19,21 @@ class TotalElevation extends Component {
       campaign
     } = this.props
 
-    fetchFitnessLeaderboard({ activity, campaign })
-      .then((data) => (
-        this.setState({
-          data: this.calculateTotal(data),
-          status: 'fetched'
-        })
-      ))
-      .catch((error) => {
-        this.setState({ status: 'failed' })
-        return Promise.reject(error)
+    fetchFitnessLeaderboard({
+      activity,
+      campaign,
+      limit: 9999
+    })
+    .then((data) => (
+      this.setState({
+        data: this.calculateTotal(data),
+        status: 'fetched'
       })
+    ))
+    .catch((error) => {
+      this.setState({ status: 'failed' })
+      return Promise.reject(error)
+    })
   }
 
   calculateTotal (data) {
