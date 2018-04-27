@@ -44,7 +44,8 @@ class FitnessLeaderboard extends Component {
       excludeVirtual,
       limit,
       page,
-      groupID
+      groupID,
+      sortBy
     } = this.props
 
     this.setState({
@@ -64,6 +65,7 @@ class FitnessLeaderboard extends Component {
       limit,
       page,
       groupID,
+      sortBy,
       q
     })
       .then((data) => {
@@ -106,11 +108,8 @@ class FitnessLeaderboard extends Component {
 
   renderLeader (leader, i) {
     const {
-      leaderboardItem = {},
-      miles
+      leaderboardItem = {}
     } = this.props
-
-    const finalDistance = miles ? leader.distance / 1609.34 : leader.distance / 1000
 
     return (
       <LeaderboardItem
@@ -118,11 +117,31 @@ class FitnessLeaderboard extends Component {
         title={leader.name}
         subtitle={leader.charity}
         image={leader.image}
-        amount={`${numbro(finalDistance).format('0,0')} ${miles ? 'mi.' : 'kms'}`}
+        amount={this.getMetric(leader)}
         href={leader.url}
         {...leaderboardItem}
       />
     )
+  }
+
+  getMetric (leader) {
+    const {
+      miles,
+      sortBy
+    } = this.props
+
+    switch (sortBy) {
+      case 'calories':
+        return `${numbro(leader.calories).format('0,0')} cals`
+      case 'duration':
+        return `${numbro(leader.duration).format('0,0')} secs`
+      case 'elevation':
+        const elevation = miles ? leader.elevation * 3.28084 : leader.elevation
+        return `${numbro(elevation).format('0,0')} ${miles ? 'ft' : 'm'}`
+      default:
+        const distance = miles ? leader.distance / 1609.34 : leader.distance / 1000
+        return `${numbro(distance).format('0,0')} ${miles ? 'mi.' : 'kms'}`
+    }
   }
 }
 
@@ -210,6 +229,11 @@ FitnessLeaderboard.propTypes = {
   groupID: PropTypes.number,
 
   /**
+  * The type of measurement to sort by
+  */
+  sortBy: PropTypes.oneOf([ 'distance', 'duration', 'calories', 'elevation' ]),
+
+  /**
   * Props to be passed to the Constructicon Leaderboard component
   */
   leaderboard: PropTypes.object,
@@ -228,7 +252,8 @@ FitnessLeaderboard.propTypes = {
 FitnessLeaderboard.defaultProps = {
   limit: 10,
   page: 1,
-  filter: {}
+  filter: {},
+  sortBy: 'distance'
 }
 
 export default FitnessLeaderboard
