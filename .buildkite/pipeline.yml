@@ -16,8 +16,6 @@ steps:
     command: "docker-compose run --rm build bin/staging"
     branches: master
 
-  - wait
-
   - name: ":shipit: Deploy NPM Package"
     command: "docker-compose run --rm build bin/deploy"
     branches: master
