@@ -22,7 +22,8 @@ class TotalElevation extends Component {
     fetchFitnessLeaderboard({
       activity,
       campaign,
-      limit: 9999
+      limit: 9999,
+      sortBy: 'elevation'
     })
     .then((data) => (
       this.setState({
