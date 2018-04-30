@@ -34,6 +34,7 @@ class FitnessLeaderboard extends Component {
 
   fetchLeaderboard (q) {
     const {
+      activity,
       campaign,
       charity,
       type,
@@ -54,6 +55,7 @@ class FitnessLeaderboard extends Component {
     })
 
     fetchFitnessLeaderboard({
+      activity,
       campaign,
       charity,
       type,
