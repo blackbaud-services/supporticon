@@ -16,12 +16,14 @@ class TotalElevation extends Component {
   componentDidMount () {
     const {
       activity,
-      campaign
+      campaign,
+      includeManual
     } = this.props
 
     fetchFitnessLeaderboard({
       activity,
       campaign,
+      include_manual: includeManual,
       limit: 9999,
       sortBy: 'elevation'
     })
@@ -99,6 +101,11 @@ TotalElevation.propTypes = {
     PropTypes.string,
     PropTypes.array
   ]),
+
+  /**
+  * Include manual fitness activities
+  */
+  includeManual: PropTypes.boolean,
 
   /**
   * Offset
