@@ -343,8 +343,7 @@ const form = (props) => ({
       type: 'tel',
       required: true,
       validators: [
-        validators.required('Please enter your phone number'),
-        validators.phone('Please enter your 10 digit phone number beginning with a zero')
+        validators.required('Please enter your phone number')
       ]
     }
   }, !isJustGiving() && !props.country ? {
