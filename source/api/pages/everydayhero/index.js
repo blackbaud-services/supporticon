@@ -51,6 +51,7 @@ export const createPage = ({
   campaignDate,
   groupValues,
   skipNotification,
+  directMarketingConsent,
   inviteToken
 }) => {
   return post(`/api/v2/pages?access_token=${token}`, {
@@ -67,6 +68,7 @@ export const createPage = ({
     campaign_date: campaignDate,
     group_values: groupValues,
     skip_notification: skipNotification,
+    direct_marketing_consent: directMarketingConsent,
     token: inviteToken
   })
 }
