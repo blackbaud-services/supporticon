@@ -4,16 +4,23 @@ import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
 import mapKeys from 'lodash/mapKeys'
 import merge from 'lodash/merge'
+import omit from 'lodash/omit'
+import pick from 'lodash/pick'
 import pickBy from 'lodash/pickBy'
 import values from 'lodash/values'
 import compose from 'constructicon/lib/compose'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { createPage } from '../../api/pages'
+import { updateCurrentUser } from '../../api/me'
 import { isJustGiving } from '../../utils/client'
 import withGroups from './with-groups'
+import countries from '../../utils/countries'
 
+import AddressSearch from '../address-search'
 import Form from 'constructicon/form'
+import Grid from 'constructicon/grid'
+import GridColumn from 'constructicon/grid-column'
 import InputDate from 'constructicon/input-date'
 import InputField from 'constructicon/input-field'
 import InputSearch from 'constructicon/input-search'
@@ -23,7 +30,9 @@ class CreatePageForm extends Component {
   constructor () {
     super()
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleAddressLookup = this.handleAddressLookup.bind(this)
     this.state = {
+      manualAddress: false,
       status: 'empty',
       errors: []
     }
@@ -49,6 +58,7 @@ class CreatePageForm extends Component {
       })
 
       const groupFields = pickBy(data, (value, key) => /^group_values_/.test(key))
+      const addressFields = pick(data, [ 'streetAddress', 'extendedAddress', 'locality', 'region', 'postCode', 'country' ])
 
       const dataPayload = merge({
         campaignId,
@@ -60,36 +70,57 @@ class CreatePageForm extends Component {
         groupValues: mapKeys(groupFields, (value, key) => key.replace('group_values_', ''))
       }, data)
 
-      return createPage(dataPayload).then((result) => {
-        this.setState({ status: 'fetched' })
+      return this.handleSubmitAddress(token, addressFields)
+        .then(() => createPage(dataPayload))
+        .then((result) => {
+          this.setState({ status: 'fetched' })
+          return onSuccess(result)
+        })
+        .catch((error) => {
+          switch (error.status) {
+            case 422:
+              const errors = get(error, 'data.error.errors') || []
 
-        return onSuccess(result)
-      }).catch((error) => {
-        switch (error.status) {
-          case 422:
-            const errors = get(error, 'data.error.errors') || []
+              return this.setState({
+                status: 'failed',
+                errors: errors.map(({ field, message }) => ({ message: [capitalize(field.split('_').join(' ')), message].join(' ') }))
+              })
+            case 400:
+              const errorMessages = error.data || []
 
-            return this.setState({
-              status: 'failed',
-              errors: errors.map(({ field, message }) => ({ message: [capitalize(field.split('_').join(' ')), message].join(' ') }))
-            })
-          case 400:
-            const errorMessages = error.data || []
+              return this.setState({
+                status: 'failed',
+                errors: errorMessages.map(({ desc }) => ({ message: capitalize(desc) }))
+              })
+            default:
+              const message = get(error, 'data.error.message') || get(error, 'data.errorMessage') || 'There was an unexpected error'
 
-            return this.setState({
-              status: 'failed',
-              errors: errorMessages.map(({ desc }) => ({ message: capitalize(desc) }))
-            })
-          default:
-            const message = get(error, 'data.error.message') || get(error, 'data.errorMessage')
-
-            return this.setState({
-              status: 'failed',
-              errors: message ? [{ message }] : []
-            })
-        }
-      })
+              return this.setState({
+                status: 'failed',
+                errors: message ? [{ message }] : []
+              })
+          }
+        })
     })
+  }
+
+  handleSubmitAddress (token, address) {
+    const { includeAddress } = this.props
+
+    return includeAddress
+      ? updateCurrentUser({ token, address })
+      : Promise.resolve()
+  }
+
+  handleAddressLookup (address, country) {
+    this.props.form.updateValues({ ...address, country })
+    this.setState({ manualAddress: true })
+  }
+
+  getAutoRenderedFields (fields) {
+    const addressFormFields = [ 'streetAddress', 'extendedAddress', 'locality', 'region', 'postCode', 'country' ]
+    const autoRenderFields = omit(fields, addressFormFields)
+    return values(autoRenderFields)
   }
 
   renderInput (type) {
@@ -110,6 +141,7 @@ class CreatePageForm extends Component {
       disableInvalidForm,
       form,
       formComponent,
+      includeAddress,
       inputField,
       submit
     } = this.props
@@ -130,11 +162,53 @@ class CreatePageForm extends Component {
         autoComplete='off'
         {...formComponent}>
 
-        {values(form.fields).map((field) => {
+        {this.getAutoRenderedFields(form.fields).map((field) => {
           const Tag = this.renderInput(field.type)
           return <Tag key={field.name} {...field} {...inputField} />
         })}
+
+        {includeAddress && this.renderAddress()}
       </Form>
+    )
+  }
+
+  renderAddress () {
+    const { manualAddress } = this.state
+    const { form, inputField } = this.props
+
+    if (!manualAddress) {
+      return (
+        <AddressSearch
+          error={form.fields.streetAddress.error}
+          onCancel={() => this.setState({ manualAddress: true })}
+          onChange={this.handleAddressLookup}
+          inputProps={inputField}
+          validations={form.fields.streetAddress.validations}
+        />
+      )
+    }
+
+    return (
+      <Grid spacing={{ x: 0.5 }}>
+        <GridColumn>
+          <InputField {...form.fields.streetAddress} {...inputField} />
+        </GridColumn>
+        <GridColumn>
+          <InputField {...form.fields.extendedAddress} {...inputField} />
+        </GridColumn>
+        <GridColumn>
+          <InputField {...form.fields.locality} {...inputField} />
+        </GridColumn>
+        <GridColumn md={4}>
+          <InputField {...form.fields.region} {...inputField} />
+        </GridColumn>
+        <GridColumn md={4}>
+          <InputSelect {...form.fields.country} {...inputField} />
+        </GridColumn>
+        <GridColumn md={4}>
+          <InputField {...form.fields.postCode} {...inputField} />
+        </GridColumn>
+      </Grid>
     )
   }
 }
@@ -193,7 +267,12 @@ CreatePageForm.propTypes = {
   /**
   * The logged in users' auth token
   */
-  token: PropTypes.string.isRequired
+  token: PropTypes.string.isRequired,
+
+  /**
+  * Include address search in the page creation
+  */
+  includeAddress: PropTypes.bool
 }
 
 CreatePageForm.defaultProps = {
@@ -202,8 +281,8 @@ CreatePageForm.defaultProps = {
   submit: 'Create Page'
 }
 
-const form = (props) => ({
-  fields: merge(isJustGiving() ? {
+const form = (props) => {
+  const defaultFields = isJustGiving() ? {
     title: {
       label: 'Page title',
       type: 'text',
@@ -238,8 +317,47 @@ const form = (props) => ({
         validators.required('Please enter your date of birth')
       ]
     }
-  }, props.fields)
-})
+  }
+
+  const addressFormFields = {
+    country: {
+      label: 'Country',
+      options: countries,
+      validators: [
+        validators.required('Please select a country')
+      ]
+    },
+    streetAddress: {
+      label: 'Street Address',
+      validators: [
+        validators.required('Please enter a street address')
+      ]
+    },
+    extendedAddress: {},
+    locality: {
+      label: 'Town/Suburb',
+      validators: [
+        validators.required('Please enter a town/suburb')
+      ]
+    },
+    region: {
+      label: 'State',
+      validators: [
+        validators.required('Please enter a state')
+      ]
+    },
+    postCode: {
+      label: 'Post Code',
+      validators: [
+        validators.required('Please enter a post code')
+      ]
+    }
+  }
+
+  return {
+    fields: merge(defaultFields, props.fields, props.includeAddress ? addressFormFields : {})
+  }
+}
 
 export default compose(
   withGroups,

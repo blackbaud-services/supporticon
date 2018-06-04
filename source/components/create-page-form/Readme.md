@@ -51,3 +51,14 @@ const fields = {
   onSuccess={(result) => alert(JSON.stringify(result))}
 />
 ```
+
+### With address (EDH only)
+
+```
+<CreatePageForm
+  campaignId='au-0'
+  includeAddress
+  token='1234abcd'
+  onSuccess={(result) => alert(JSON.stringify(result))}
+/>
+```
