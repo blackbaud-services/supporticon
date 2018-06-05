@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import omit from 'lodash/omit'
 import snakeCase from 'lodash/snakeCase'
 import { getBaseURL, isJustGiving } from '../../utils/client'
+import { getLocalStorageItem, setLocalStorageItem } from 'constructicon/lib/localStorage'
 
 import Button from 'constructicon/button'
 import Icon from 'constructicon/icon'
@@ -18,26 +19,45 @@ class ProviderOauthButton extends Component {
     }
   }
 
-  isValidUri (url) {
-    try {
-      return new window.URL(url)
-    } catch (error) {
-      return false
-    }
-  }
-
   componentDidMount () {
-    const { onSuccess, redirectUri } = this.props
+    const {
+      onSuccess,
+      popup,
+      provider,
+      redirectUri,
+      useLocalStorage
+    } = this.props
 
-    if (this.isValidUri(redirectUri) && typeof onSuccess === 'function') {
-      const { addEventListener, URL } = window
-      const validSourceOrigin = new URL(redirectUri).origin
+    if (popup && typeof onSuccess === 'function') {
+      if (useLocalStorage) {
+        const key = `app-oauth-state-${provider}`
+        const hash = this.parseOauthHash(window.location.hash)
 
-      addEventListener('message', (event) => {
-        if (event.origin !== validSourceOrigin) { return }
-        setTimeout(() => this.setState({ status: 'fetched' }), 500)
-        return onSuccess(event.data)
-      }, false)
+        if (hash.access_token) {
+          setLocalStorageItem(key, hash)
+          window.opener && window.close()
+        } else {
+          setLocalStorageItem(key, {})
+
+          const localStoragePoll = setInterval(() => {
+            const oauthState = getLocalStorageItem(key)
+            if (oauthState.access_token) {
+              clearInterval(localStoragePoll)
+              this.setState({ status: 'fetched' })
+              return onSuccess(oauthState)
+            }
+          }, 1000)
+        }
+      } else {
+        const { addEventListener, URL } = window
+        const validSourceOrigin = new URL(redirectUri).origin
+
+        addEventListener('message', (event) => {
+          if (event.origin !== validSourceOrigin) { return }
+          setTimeout(() => this.setState({ status: 'fetched' }), 500)
+          return onSuccess(event.data)
+        }, false)
+      }
     }
   }
 
@@ -85,6 +105,14 @@ class ProviderOauthButton extends Component {
     return `${getBaseURL()}/oauth/authorize?${urlParams}`
   }
 
+  parseOauthHash (hash) {
+    return hash.substring(1).split('&').reduce(function (params, part) {
+      var item = part.split('=')
+      params[decodeURIComponent(item[0])] = decodeURIComponent(item[1])
+      return params
+    }, {})
+  }
+
   render () {
     const {
       label,
@@ -112,7 +140,7 @@ class ProviderOauthButton extends Component {
         background={provider}
         disabled={isLoading}
         {...actionProps}
-        {...omit(props, ['clientId', 'onClose', 'onSuccess', 'popupWindowFeatures', 'redirectUri'])}>
+        {...omit(props, ['clientId', 'onClose', 'onSuccess', 'popupWindowFeatures', 'redirectUri', 'useLocalStorage'])}>
         <Icon name={icon} spin={isLoading} size={1.5} />
         <span>{label}</span>
       </Button>
