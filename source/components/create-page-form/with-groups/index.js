@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
-import startCase from 'lodash/startCase'
 import * as validators from 'constructicon/lib/validators'
 import { fetchCampaignGroups } from '../../../api/campaigns'
 import { isJustGiving } from '../../../utils/client'
@@ -34,10 +33,9 @@ const withGroups = (ComponentToWrap) => (
 
         if (groups.length) {
           groups.forEach(({ key, label, values }) => {
-            const name = startCase(key)
             const options = [
               {
-                label: `Select a ${name}`,
+                label: 'Please select',
                 value: '',
                 disabled: true
               },
@@ -53,7 +51,7 @@ const withGroups = (ComponentToWrap) => (
               type: 'select',
               required: true,
               validators: [
-                validators.required(`Please select a ${name}`)
+                validators.required('Please select an option')
               ]
             }
           })
