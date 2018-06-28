@@ -31,6 +31,7 @@ class SingleSignOnLink extends Component {
   render () {
     const {
       label,
+      loadingProps,
       method,
       token,
       url,
@@ -51,7 +52,7 @@ class SingleSignOnLink extends Component {
             <input type='hidden' name='return_to' value={url} />
             <Button {...props} type='submit'>
               <span>{label}</span>
-              {loading && <Loading />}
+              {loading && <Loading {...loadingProps} />}
             </Button>
           </form>
         ) : (
@@ -62,7 +63,7 @@ class SingleSignOnLink extends Component {
             onClick={(token && isJustGiving()) && this.submitForm}
             {...props}>
             <span>{label}</span>
-            {loading && <Loading />}
+            {loading && <Loading {...loadingProps} />}
           </Button>
         )}
       </div>
@@ -142,7 +143,12 @@ SingleSignOnLink.propTypes = {
   /**
   * The method for the form action
   */
-  method: PropTypes.string
+  method: PropTypes.string,
+
+  /**
+  * Props to be forwarded to the Loading dots
+  */
+  loadingProps: PropTypes.object
 }
 
 SingleSignOnLink.defaultProps = {
