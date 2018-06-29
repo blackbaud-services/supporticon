@@ -14,6 +14,7 @@ Fetch number of pages from Supporter.
 **Params**
 
 - `params` (Object) see [parameter list](../readme.md#availableparameters)
+- `search` (Boolean) Use `api/v2/search/pages` endpoint (EDH only)
 
 **Returns**
 
