@@ -4,22 +4,22 @@ import { fetchPagesTotals } from '..'
 import { fetchPagesTotals as fetchEDHPagesTotals } from '../everydayhero'
 import { fetchPagesTotals as fetchJGPagesTotals } from '../justgiving'
 
-describe ('Fetch Pages Totals', () => {
-  it ('throws if no params are passed in', () => {
+describe('Fetch Pages Totals', () => {
+  it('throws if no params are passed in', () => {
     const test = () => fetchPagesTotals()
     expect(test).to.throw
   })
 
-  describe ('Fetch EDH Pages Totals', () => {
-    beforeEach (() => {
+  describe('Fetch EDH Pages Totals', () => {
+    beforeEach(() => {
       moxios.install(instance)
     })
 
-    afterEach (() => {
+    afterEach(() => {
       moxios.uninstall(instance)
     })
 
-    it ('uses the correct url to fetch totals for a campaign', (done) => {
+    it('uses the correct url to fetch totals for a campaign', (done) => {
       fetchEDHPagesTotals({ campaign_id: 'au-6839' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
@@ -29,7 +29,7 @@ describe ('Fetch Pages Totals', () => {
       })
     })
 
-    it ('uses the correct url to fetch totals for a charity', (done) => {
+    it('uses the correct url to fetch totals for a charity', (done) => {
       fetchEDHPagesTotals({ charity_id: 'au-28' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
@@ -38,20 +38,30 @@ describe ('Fetch Pages Totals', () => {
         done()
       })
     })
+
+    it('allows the API url endpoint to be changed via search param', (done) => {
+      fetchEDHPagesTotals({ campaign_id: 'au-6839', search: true })
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages')
+        expect(request.url).to.contain('campaign_id=au-6839')
+        done()
+      })
+    })
   })
 
-  describe ('Fetch JG Pages Totals', () => {
-    beforeEach (() => {
+  describe('Fetch JG Pages Totals', () => {
+    beforeEach(() => {
       updateClient({ baseURL: 'https://api.justgiving.com', headers: { 'x-api-key': 'abcd1234' } })
       moxios.install(instance)
     })
 
-    afterEach (() => {
+    afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
     })
 
-    it ('uses the correct url to fetch totals for an event', (done) => {
+    it('uses the correct url to fetch totals for an event', (done) => {
       fetchJGPagesTotals({ event: 12345 })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()

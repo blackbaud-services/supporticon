@@ -21,7 +21,8 @@ class TotalSupporters extends Component {
       type,
       group,
       startDate,
-      endDate
+      endDate,
+      search
     } = this.props
 
     fetchPagesTotals({
@@ -31,7 +32,8 @@ class TotalSupporters extends Component {
       type,
       group,
       startDate,
-      endDate
+      endDate,
+      search
     })
       .then((data) => {
         this.setState({
@@ -162,7 +164,12 @@ TotalSupporters.propTypes = {
   /**
   * Props to be passed to the Constructicon Metric component
   */
-  metric: PropTypes.object
+  metric: PropTypes.object,
+
+  /**
+  * Use `v2/search/pages` endpoint (EDH only)
+  */
+  search: PropTypes.bool
 }
 
 TotalSupporters.defaultProps = {
