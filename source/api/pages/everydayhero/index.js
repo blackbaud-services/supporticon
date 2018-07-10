@@ -70,7 +70,7 @@ export const createPage = ({
     skip_notification: skipNotification,
     direct_marketing_consent: directMarketingConsent,
     token: inviteToken
-  })
+  }).then(response => response.page)
 }
 
 export const updatePage = (pageId, {
@@ -95,5 +95,5 @@ export const updatePage = (pageId, {
     fitness_goal: fitnessGoal,
     campaign_date: campaignDate,
     group_values: groupValues
-  })
+  }).then(response => response.page)
 }
