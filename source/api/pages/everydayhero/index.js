@@ -32,6 +32,17 @@ export const fetchPages = (params = required()) => {
 }
 
 export const fetchPage = (id = required()) => {
+  if (typeof id === 'object') {
+    const {
+      campaignSlug = required(),
+      countryCode = required(),
+      slug = required()
+    } = id
+
+    return get(`api/v3/prerelease/pages/${countryCode}/${campaignSlug}/${slug}`)
+      .then((response) => response.page)
+  }
+
   return get(`api/v2/pages/${id}`)
     .then((response) => response.page)
 }
