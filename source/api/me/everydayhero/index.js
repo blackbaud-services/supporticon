@@ -34,12 +34,14 @@ export const fetchCurrentUser = ({
 
 export const updateCurrentUser = ({
   token = required(),
+  name,
   address,
   birthday,
   phone
 }) => (
   put(`api/v1/me?access_token=${token}`, {
     user: {
+      name,
       address: address,
       birthday: birthday,
       phone: phone
