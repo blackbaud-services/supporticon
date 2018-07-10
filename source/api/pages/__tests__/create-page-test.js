@@ -2,24 +2,24 @@ import moxios from 'moxios'
 import { instance, updateClient } from '../../../utils/client'
 import { createPage } from '..'
 
-describe ('Create Page', () => {
-  beforeEach (() => {
+describe('Create Page', () => {
+  beforeEach(() => {
     moxios.install(instance)
   })
 
-  afterEach (() => {
+  afterEach(() => {
     moxios.uninstall(instance)
   })
 
   describe('Create EDH Page', () => {
-    it ('throws if no token is passed', () => {
+    it('throws if no token is passed', () => {
       const test = () => createPage({
         bogus: 'data'
       })
       expect(test).to.throw
     })
 
-    it ('hits the supporter api with the correct url and data', (done) => {
+    it('hits the supporter api with the correct url and data', (done) => {
       createPage({
         token: '012345abcdef',
         campaignId: '1234',
@@ -34,9 +34,9 @@ describe ('Create Page', () => {
       })
     })
 
-    it ('returns the expected params', (done) => {
+    it('returns the expected params', (done) => {
       const response = {
-        campaignId: '1234',
+        campaign_uid: '1234',
         name: 'Super Supporter',
         birthday: '1970-01-02'
       }
@@ -53,21 +53,25 @@ describe ('Create Page', () => {
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        request.respondWith({ response: response })
+        request.respondWith({
+          response: {
+            page: response
+          }
+        })
       })
     })
   })
 
-  describe ('Create JG Page', () => {
-    beforeEach (() => {
+  describe('Create JG Page', () => {
+    beforeEach(() => {
       updateClient({ baseURL: 'https://api.justgiving.com' })
     })
 
-    afterEach (() => {
+    afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
     })
 
-    it ('hits the justgiving api with the correct url and data', (done) => {
+    it('hits the justgiving api with the correct url and data', (done) => {
       createPage({
         token: '012345abcdef',
         charityId: '1234',
@@ -86,7 +90,7 @@ describe ('Create Page', () => {
       })
     })
 
-    it ('throws if no token is passed', () => {
+    it('throws if no token is passed', () => {
       const test = () => createPage({ bogus: 'data' })
       expect(test).to.throw
     })
