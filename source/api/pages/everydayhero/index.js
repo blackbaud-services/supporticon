@@ -7,7 +7,7 @@ export const deserializePage = (page) => ({
   campaignDate: page.campaign_date || page.event_date,
   charity: page.charity || page.beneficiary || page.charity_name,
   coordinates: page.coordinate,
-  donatationUrl: page.donation_url,
+  donationUrl: page.donation_url,
   expired: page.expired,
   fitness: page.metrics ? page.metrics.fitness : page.fitness_activity_overview,
   groups: page.page_groups,
