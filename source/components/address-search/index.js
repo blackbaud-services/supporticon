@@ -12,12 +12,12 @@ import GridColumn from 'constructicon/grid-column'
 import InputSearch from 'constructicon/input-search'
 
 class AddressSearch extends Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.handleQuery = this.handleQuery.bind(this)
     this.handleSelect = this.handleSelect.bind(this)
     this.state = {
-      country: 'AU',
+      country: props.country,
       results: [],
       status: null,
       value: null
@@ -39,7 +39,7 @@ class AddressSearch extends Component {
     this.setState({ value: selected && selected.label })
 
     if (selected && selected.id) {
-      getAddressDetails(selected.id)
+      getAddressDetails(selected.id, this.state.country)
         .then((address) => deserializeAddress(address))
         .then((address) => this.props.onChange(address, this.state.country))
     }
@@ -105,6 +105,11 @@ class AddressSearch extends Component {
 }
 
 AddressSearch.propTypes = {
+  /**
+  * Country for API queries
+  */
+  country: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
+
   /**
   * The props to pass to the input search component
   */
