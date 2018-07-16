@@ -62,3 +62,15 @@ const fields = {
   onSuccess={(result) => alert(JSON.stringify(result))}
 />
 ```
+
+### With address and default country (EDH only)
+
+```
+<CreatePageForm
+  campaignId='au-0'
+  country='uk'
+  includeAddress
+  token='1234abcd'
+  onSuccess={(result) => alert(JSON.stringify(result))}
+/>
+```
