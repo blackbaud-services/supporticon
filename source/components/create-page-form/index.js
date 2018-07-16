@@ -174,11 +174,12 @@ class CreatePageForm extends Component {
 
   renderAddress () {
     const { manualAddress } = this.state
-    const { form, inputField } = this.props
+    const { form, inputField, country } = this.props
 
     if (!manualAddress) {
       return (
         <AddressSearch
+          country={country}
           error={form.fields.streetAddress.error}
           onCancel={() => this.setState({ manualAddress: true })}
           onChange={this.handleAddressLookup}
@@ -228,6 +229,11 @@ CreatePageForm.propTypes = {
   * Whether Gift Aid is enabled
   */
   charityFunded: PropTypes.bool,
+
+  /**
+  * Country for new page
+  */
+  country: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
 
   /**
   * Disable form submission when invalid
@@ -322,6 +328,7 @@ const form = (props) => {
   const addressFormFields = {
     country: {
       label: 'Country',
+      initial: props.country,
       options: countries,
       validators: [
         validators.required('Please select a country')
