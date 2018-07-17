@@ -7,6 +7,7 @@ import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { signUp } from '../../api/authentication'
 import { isJustGiving } from '../../utils/client'
+import { renderInput, renderFormFields } from '../../utils/form'
 
 import Form from 'constructicon/form'
 import Grid from 'constructicon/grid'
@@ -84,6 +85,22 @@ class SignupForm extends Component {
     })
   }
 
+  customFields (fields) {
+    return renderFormFields(fields, [
+      'firstName',
+      'lastName',
+      'email',
+      'password',
+      'phone',
+      'line1',
+      'line2',
+      'townOrCity',
+      'countyOrState',
+      'country',
+      'postcodeOrZipcode'
+    ])
+  }
+
   render () {
     const {
       country,
@@ -159,6 +176,11 @@ class SignupForm extends Component {
             </GridColumn>
           </Grid>
         )}
+
+        {this.customFields(form.fields).map((field) => {
+          const Tag = renderInput(field.type)
+          return <Tag key={field.name} {...field} {...inputField} />
+        })}
       </Form>
     )
   }
@@ -179,6 +201,11 @@ SignupForm.propTypes = {
   * Disable form submission when invalid
   */
   disableInvalidForm: PropTypes.bool,
+
+  /**
+  * Fields to be passed to the form HOC
+  */
+  fields: PropTypes.object,
 
   /**
   * Props to be passed to the Form component
@@ -218,6 +245,7 @@ SignupForm.propTypes = {
 
 SignupForm.defaultProps = {
   disableInvalidForm: false,
+  fields: {},
   submit: 'Sign Up',
   legend: {
     size: 0.5,
@@ -382,7 +410,7 @@ const form = (props) => ({
         }
       ]
     }
-  } : {})
+  } : {}, props.fields)
 })
 
 export default withForm(form)(SignupForm)
