@@ -7,6 +7,7 @@ import merge from 'lodash/merge'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import pickBy from 'lodash/pickBy'
+import sortBy from 'lodash/sortBy'
 import values from 'lodash/values'
 import compose from 'constructicon/lib/compose'
 import withForm from 'constructicon/with-form'
@@ -120,7 +121,7 @@ class CreatePageForm extends Component {
   getAutoRenderedFields (fields) {
     const addressFormFields = [ 'streetAddress', 'extendedAddress', 'locality', 'region', 'postCode', 'country' ]
     const autoRenderFields = omit(fields, addressFormFields)
-    return values(autoRenderFields)
+    return sortBy(values(autoRenderFields), ['order'])
   }
 
   renderInput (type) {
@@ -292,6 +293,7 @@ const form = (props) => {
     title: {
       label: 'Page title',
       type: 'text',
+      order: 1,
       required: true,
       maxLength: 255,
       placeholder: 'Title of your fundraising page',
@@ -302,6 +304,7 @@ const form = (props) => {
     slug: {
       label: 'Page URL',
       type: 'text',
+      order: 2,
       required: true,
       maxLength: 255,
       placeholder: 'URL for your fundraising page',
@@ -315,6 +318,7 @@ const form = (props) => {
     birthday: {
       label: 'Date of birth',
       type: 'date',
+      order: 1,
       required: true,
       placeholder: 'DD/MM/YYYY',
       min: '1900-01-01',
