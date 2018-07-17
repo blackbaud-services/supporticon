@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import get from 'lodash/get'
-import values from 'lodash/values'
+import merge from 'lodash/merge'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { signIn } from '../../api/authentication'
+import { renderInput, renderFormFields } from '../../utils/form'
 
 import Form from 'constructicon/form'
-import InputField from 'constructicon/input-field'
 
 class LoginForm extends Component {
   constructor () {
@@ -86,9 +86,11 @@ class LoginForm extends Component {
         onSubmit={this.handleSubmit}
         submit={submit}
         {...formComponent}>
-        {values(form.fields).map((field) => (
-          <InputField key={field.name} {...field} {...inputField} />
-        ))}
+
+        {renderFormFields(form.fields).map((field) => {
+          const Tag = renderInput(field.type)
+          return <Tag key={field.name} {...field} {...inputField} />
+        })}
       </Form>
     )
   }
@@ -109,6 +111,11 @@ LoginForm.propTypes = {
   * Disable form submission when invalid
   */
   disableInvalidForm: PropTypes.bool,
+
+  /**
+  * Fields to be passed to the form HOC
+  */
+  fields: PropTypes.object,
 
   /**
   * Props to be passed to the Form component
@@ -133,14 +140,16 @@ LoginForm.propTypes = {
 
 LoginForm.defaultProps = {
   disableInvalidForm: false,
+  fields: {},
   submit: 'Log in'
 }
 
-const form = {
-  fields: {
+const form = (props) => ({
+  fields: merge({
     email: {
       label: 'Email address',
       type: 'email',
+      order: 1,
       required: true,
       validators: [
         validators.required('Email is a required field'),
@@ -150,13 +159,14 @@ const form = {
     password: {
       label: 'Password',
       type: 'password',
+      order: 2,
       required: true,
       validators: [
         validators.required('Password is a required field'),
         validators.greaterThan(7, 'Must be at least 8 characters')
       ]
     }
-  }
-}
+  }, props.fields)
+})
 
 export default withForm(form)(LoginForm)

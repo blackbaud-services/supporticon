@@ -4,17 +4,15 @@ import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
 import mapKeys from 'lodash/mapKeys'
 import merge from 'lodash/merge'
-import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import pickBy from 'lodash/pickBy'
-import sortBy from 'lodash/sortBy'
-import values from 'lodash/values'
 import compose from 'constructicon/lib/compose'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { createPage } from '../../api/pages'
 import { updateCurrentUser } from '../../api/me'
 import { isJustGiving } from '../../utils/client'
+import { renderInput, renderFormFields } from '../../utils/form'
 import withGroups from './with-groups'
 import countries from '../../utils/countries'
 
@@ -22,9 +20,7 @@ import AddressSearch from '../address-search'
 import Form from 'constructicon/form'
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
-import InputDate from 'constructicon/input-date'
 import InputField from 'constructicon/input-field'
-import InputSearch from 'constructicon/input-search'
 import InputSelect from 'constructicon/input-select'
 
 class CreatePageForm extends Component {
@@ -119,22 +115,7 @@ class CreatePageForm extends Component {
   }
 
   getAutoRenderedFields (fields) {
-    const addressFormFields = [ 'streetAddress', 'extendedAddress', 'locality', 'region', 'postCode', 'country' ]
-    const autoRenderFields = omit(fields, addressFormFields)
-    return sortBy(values(autoRenderFields), ['order'])
-  }
-
-  renderInput (type) {
-    switch (type) {
-      case 'date':
-        return InputDate
-      case 'search':
-        return InputSearch
-      case 'select':
-        return InputSelect
-      default:
-        return InputField
-    }
+    return renderFormFields(fields, ['streetAddress', 'extendedAddress', 'locality', 'region', 'postCode', 'country'])
   }
 
   render () {
@@ -164,7 +145,7 @@ class CreatePageForm extends Component {
         {...formComponent}>
 
         {this.getAutoRenderedFields(form.fields).map((field) => {
-          const Tag = this.renderInput(field.type)
+          const Tag = renderInput(field.type)
           return <Tag key={field.name} {...field} {...inputField} />
         })}
 
@@ -285,6 +266,7 @@ CreatePageForm.propTypes = {
 CreatePageForm.defaultProps = {
   charityFunded: false,
   disableInvalidForm: false,
+  fields: {},
   submit: 'Create Page'
 }
 
