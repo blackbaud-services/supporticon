@@ -74,6 +74,7 @@ class Leaderboard extends Component {
     const {
       campaign,
       charity,
+      country,
       endDate,
       event,
       excludePageIds,
@@ -96,6 +97,7 @@ class Leaderboard extends Component {
     fetchLeaderboard({
       campaign,
       charity,
+      country,
       endDate,
       event,
       excludePageIds,
@@ -190,6 +192,11 @@ Leaderboard.propTypes = {
     PropTypes.string,
     PropTypes.array
   ]),
+
+  /**
+  * Country code for API (JG only)
+  */
+  country: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
 
   /**
   * The type of page to include in the leaderboard

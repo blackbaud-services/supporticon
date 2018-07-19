@@ -1,21 +1,9 @@
 import { get } from '../../../utils/client'
 import { getShortName, getUID, required, dataSource } from '../../../utils/params'
+import { currencySymbol, currencyCode } from '../../../utils/currencies'
 import compact from 'lodash/compact'
 import orderBy from 'lodash/orderBy'
 import range from 'lodash/range'
-
-const currencySymbol = (code = 'GBP') => {
-  switch (code) {
-    case 'GBP':
-      return '£'
-    case 'HKD':
-      return 'HK$'
-    case 'AED':
-      return 'د.إ'
-    default:
-      return '$'
-  }
-}
 
 /**
 * @function fetches fundraising pages ranked by funds raised
@@ -23,7 +11,7 @@ const currencySymbol = (code = 'GBP') => {
 export const fetchLeaderboard = (params = required()) => {
   switch (dataSource(params)) {
     case 'event':
-      return get(`/v1/event/${getUID(params.event)}/leaderboard`).then((response) => (
+      return get(`/v1/event/${getUID(params.event)}/leaderboard`, { currency: currencyCode(params.country) }).then((response) => (
         response.pages.map((page) => ({
           ...page,
           raisedAmount: page.amount,
@@ -33,7 +21,7 @@ export const fetchLeaderboard = (params = required()) => {
         }))
       ))
     case 'charity':
-      return get(`/v1/charity/${getUID(params.charity)}/leaderboard`).then((response) => (
+      return get(`/v1/charity/${getUID(params.charity)}/leaderboard`, { currency: currencyCode(params.country) }).then((response) => (
         response.pages.map((page) => ({
           ...page,
           raisedAmount: page.amount,

@@ -18,6 +18,7 @@ class TotalSupporters extends Component {
       campaign,
       charity,
       event,
+      country,
       type,
       group,
       startDate,
@@ -29,6 +30,7 @@ class TotalSupporters extends Component {
       campaign,
       charity,
       event,
+      country,
       type,
       group,
       startDate,
@@ -105,6 +107,11 @@ TotalSupporters.propTypes = {
     PropTypes.string,
     PropTypes.array
   ]),
+
+  /**
+  * Country code for API (JG only)
+  */
+  country: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
 
   /**
   * The type of page to include in the leaderboard

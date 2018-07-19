@@ -21,6 +21,8 @@ class TotalDonations extends Component {
     const {
       campaign,
       charity,
+      event,
+      country,
       group,
       startDate,
       endDate
@@ -29,6 +31,8 @@ class TotalDonations extends Component {
     fetchDonationTotals({
       campaign,
       charity,
+      event,
+      country,
       group,
       startDate,
       endDate
@@ -103,6 +107,11 @@ TotalDonations.propTypes = {
     PropTypes.string,
     PropTypes.array
   ]),
+
+  /**
+  * Country code for API (JG only)
+  */
+  country: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
 
   /**
   * The group value(s) to filter by
