@@ -38,6 +38,7 @@ class PageSearch extends Component {
       campaign: this.props.campaign,
       charity: this.props.charity,
       event: this.props.event,
+      country: this.props.country,
       type: this.props.type,
       group: this.props.group,
       limit: this.props.limit,

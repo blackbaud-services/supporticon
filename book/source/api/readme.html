@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1" data-chapter-title="Supporter API" data-filepath="source/api/readme.md" data-basepath="../.." data-revision="Wed Jul 18 2018 22:20:00 GMT+0000 (UTC)">
+    <div class="book" data-level="1" data-chapter-title="Supporter API" data-filepath="source/api/readme.md" data-basepath="../.." data-revision="Thu Jul 19 2018 06:17:33 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -307,9 +307,20 @@
 <p>Supporticon offers a consistent way to pass in parameters to your requests, to minimise the effect of the various small inconsistencies in naming and expected values of the different API endpoints.</p>
 <p>Please note that not all endpoints accept all params, so refer to the API docs if you are unsure.</p>
 <ul>
-<li><code>campaign</code> (String, Array) a campaign id, or an array of campaign ids</li>
-<li><code>charity</code> (String, Array) a charity id, or an array of charity ids</li>
+<li><code>campaign</code> (String, Array)<ul>
+<li>a campaign id (EDH) or short name (JG)</li>
+<li>an array of campaign ids (EDH)</li>
+</ul>
+</li>
+<li><code>charity</code> (String, Array, Object)<ul>
+<li>a charity id (EDH) or short name (JG)</li>
+<li>an object containing both charity <code>uid</code> and <code>shortName</code></li>
+<li>an array of charity ids (EDH)</li>
+</ul>
+</li>
+<li><code>event</code> (String, Object) an event id (JG Only)</li>
 <li><code>type</code> (String) either <code>team</code> or <code>individual</code> (EDH Only)</li>
+<li><code>country</code> (String) two letter country code (e.g. <code>au</code>)</li>
 <li><code>group</code> (String, Array) a group value, or an array of groups values (EDH Only)</li>
 <li><code>limit</code> (Integer) the number of results to fetch</li>
 <li><code>page</code> (Integer) the page of results to fetch</li>
