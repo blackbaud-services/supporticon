@@ -22,6 +22,7 @@ class TotalFundsRaised extends Component {
       campaign,
       charity,
       event,
+      country,
       group,
       startDate,
       endDate
@@ -31,6 +32,7 @@ class TotalFundsRaised extends Component {
       campaign,
       charity,
       event,
+      country,
       group,
       startDate,
       endDate
@@ -105,6 +107,11 @@ TotalFundsRaised.propTypes = {
     PropTypes.string,
     PropTypes.array
   ]),
+
+  /**
+  * Country code for API (JG only)
+  */
+  country: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
 
   /**
   * The group value(s) to filter by

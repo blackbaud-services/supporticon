@@ -12,22 +12,22 @@ import {
   deserializeDonationTotals as deserializeJGTotals
 } from '../justgiving'
 
-describe ('Fetch Donation Totals', () => {
-  it ('throws if no params are passed in', () => {
+describe('Fetch Donation Totals', () => {
+  it('throws if no params are passed in', () => {
     const test = () => fetchDonationTotals()
     expect(test).to.throw
   })
 
-  describe ('Fetch EDH Donation Totals', () => {
-    beforeEach (() => {
+  describe('Fetch EDH Donation Totals', () => {
+    beforeEach(() => {
       moxios.install(instance)
     })
 
-    afterEach (() => {
+    afterEach(() => {
       moxios.uninstall(instance)
     })
 
-    it ('uses the correct url to fetch totals for a campaign', (done) => {
+    it('uses the correct url to fetch totals for a campaign', (done) => {
       fetchEDHDonationTotals({ campaign_id: 'au-6839' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
@@ -37,7 +37,7 @@ describe ('Fetch Donation Totals', () => {
       })
     })
 
-    it ('uses the correct url to fetch totals for a charity', (done) => {
+    it('uses the correct url to fetch totals for a charity', (done) => {
       fetchEDHDonationTotals({ charity_id: 'au-28' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
@@ -48,27 +48,36 @@ describe ('Fetch Donation Totals', () => {
     })
   })
 
-  describe ('Fetch JG Donation Totals', () => {
-    beforeEach (() => {
+  describe('Fetch JG Donation Totals', () => {
+    beforeEach(() => {
       updateClient({ baseURL: 'https://api.justgiving.com', headers: { 'x-api-key': 'abcd1234' } })
       moxios.install(instance)
     })
 
-    afterEach (() => {
+    afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
     })
 
-    it ('uses the correct url to fetch totals for an event', (done) => {
+    it('uses the correct url to fetch totals for an event', (done) => {
       fetchJGDonationTotals({ event: 12345 })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal('https://api.justgiving.com/v1/event/12345/leaderboard')
+        expect(request.url).to.equal('https://api.justgiving.com/v1/event/12345/leaderboard?currency=GBP')
         done()
       })
     })
 
-    it ('uses the correct url to fetch totals for a campaign', (done) => {
+    it('allows the country (and currency) to be specified', (done) => {
+      fetchJGDonationTotals({ event: 12345, country: 'ie' })
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.equal('https://api.justgiving.com/v1/event/12345/leaderboard?currency=EUR')
+        done()
+      })
+    })
+
+    it('uses the correct url to fetch totals for a campaign', (done) => {
       fetchJGDonationTotals({ charity: 'my-charity', campaign: 'my-campaign' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
@@ -79,9 +88,9 @@ describe ('Fetch Donation Totals', () => {
   })
 })
 
-describe ('Deserialize donation totals', () => {
-  describe ('Deserialize EDH donation totals', () => {
-    it ('Defaults falsy donation sums to 0', () => {
+describe('Deserialize donation totals', () => {
+  describe('Deserialize EDH donation totals', () => {
+    it('Defaults falsy donation sums to 0', () => {
       const deserializedDonationTotals = deserializeEDHTotals({
         total_amount_cents: {
           sum: null,
@@ -96,8 +105,8 @@ describe ('Deserialize donation totals', () => {
     })
   })
 
-  describe ('Deserialize JG donation totals', () => {
-    it ('Defaults falsy donation sums to 0', () => {
+  describe('Deserialize JG donation totals', () => {
+    it('Defaults falsy donation sums to 0', () => {
       const deserializedDonationTotals = deserializeJGTotals({
         totalRaised: 0
       })
