@@ -116,8 +116,16 @@ describe('Fetch Pages', () => {
         fetchPage('my-page-shortname')
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
-          expect(request.url).to.contain('https://api.justgiving.com/v1/fundraising/pages')
-          expect(request.url).to.contain('my-page-shortname')
+          expect(request.url).to.equal('https://api.justgiving.com/v1/fundraising/pages/my-page-shortname')
+          done()
+        })
+      })
+
+      it('uses an alternate url to fetch a page by id', (done) => {
+        fetchPage('123')
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.equal('https://api.justgiving.com/v1/fundraising/pagebyid/123')
           done()
         })
       })
