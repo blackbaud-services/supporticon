@@ -1,3 +1,4 @@
+import omit from 'lodash/omit'
 import { get, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
@@ -42,8 +43,8 @@ export const updateCurrentUser = ({
   put(`api/v1/me?access_token=${token}`, {
     user: {
       name,
-      address: {
-        ...address,
+      address: address && {
+        ...omit(address, ['streetAddress', 'extendedAddress', 'postCode']),
         street_address: address.streetAddress,
         extended_address: address.extendedAddress,
         postal_code: address.postCode
