@@ -43,7 +43,8 @@ export const fetchPages = (params = required()) => {
 }
 
 export const fetchPage = (page = required()) => {
-  return get(`/v1/fundraising/pages/${page}`)
+  const endpoint = isNaN(page) ? 'pages' : 'pagebyid'
+  return get(`/v1/fundraising/${endpoint}/${page}`)
 }
 
 export const createPage = ({
