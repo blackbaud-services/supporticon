@@ -117,7 +117,10 @@ PageSearch.propTypes = {
   /**
   * The event id
   */
-  event: PropTypes.string,
+  event: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
 
   /**
   * The type of page to include in the leaderboard
