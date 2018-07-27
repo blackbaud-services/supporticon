@@ -9,7 +9,13 @@ export const fetchDonationTotals = (params = required()) => {
   return get('api/v2/search/totals', params, { mappings })
 }
 
-export const deserializeDonationTotals = (totals) => ({
-  raised: totals.total_amount_cents.sum / 100 || 0,
-  donations: totals.total_amount_cents.count
-})
+export const deserializeDonationTotals = (totals, excludeOffline) => {
+  const offsetOffline = excludeOffline && totals.types.offline_donation
+  const raisedOffset = offsetOffline ? totals.types.offline_donation.total_amount_cents.sum : 0
+  const countOffset = offsetOffline ? totals.types.offline_donation.total_amount_cents.count : 0
+
+  return {
+    raised: totals.total_amount_cents.sum - raisedOffset / 100 || 0,
+    donations: totals.total_amount_cents.count - countOffset || 0
+  }
+}

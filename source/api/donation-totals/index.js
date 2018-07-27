@@ -17,8 +17,8 @@ export const fetchDonationTotals = (params = required()) => {
     : fetchEDHDonationTotals(params)
 }
 
-export const deserializeDonationTotals = (totals) => {
+export const deserializeDonationTotals = (totals, excludeOffline) => {
   return isJustGiving()
     ? deserializeJGTotals(totals)
-    : deserializeEDHTotals(totals)
+    : deserializeEDHTotals(totals, excludeOffline)
 }
