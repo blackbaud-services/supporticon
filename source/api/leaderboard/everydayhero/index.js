@@ -47,6 +47,7 @@ const deserializePage = (item, index) => ({
   image: item.image.medium_image_url,
   raised: item.amount.cents / 100,
   target: item.target_cents / 100,
+  offline: (item.offline_amount_cents || 0) / 100,
   currency: item.amount.currency.iso_code,
   currencySymbol: item.amount.currency.symbol,
   groups: item.group_values
