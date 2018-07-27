@@ -22,6 +22,7 @@ class TotalDonations extends Component {
       campaign,
       charity,
       event,
+      excludeOffline,
       country,
       group,
       startDate,
@@ -40,7 +41,7 @@ class TotalDonations extends Component {
       .then((data) => {
         this.setState({
           status: 'fetched',
-          data: deserializeDonationTotals(data)
+          data: deserializeDonationTotals(data, excludeOffline)
         })
       })
       .catch((error) => {
@@ -114,6 +115,11 @@ TotalDonations.propTypes = {
   country: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
 
   /**
+  * Exclude offline donations?
+  */
+  excludeOffline: PropTypes.bool,
+
+  /**
   * The group value(s) to filter by
   */
   group: PropTypes.oneOfType([
@@ -170,10 +176,11 @@ TotalDonations.propTypes = {
 }
 
 TotalDonations.defaultProps = {
+  excludeOffline: false,
+  format: '0,0',
   label: 'Donations',
-  offset: 0,
   multiplier: 1,
-  format: '0,0'
+  offset: 0
 }
 
 export default TotalDonations
