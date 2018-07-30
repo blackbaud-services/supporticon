@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
 import Filter from 'constructicon/filter'
@@ -70,6 +71,22 @@ class Leaderboard extends Component {
     }
   }
 
+  handleData (data, excludeOffline) {
+    const leaderboardData = data.map(deserializeLeaderboard)
+
+    if (excludeOffline) {
+      return orderBy(leaderboardData.map(item => ({
+        ...item,
+        raised: item.raised - item.offline
+      })), ['raised'], ['desc']).map((item, index) => ({
+        ...item,
+        position: index + 1
+      }))
+    }
+
+    return leaderboardData
+  }
+
   fetchLeaderboard (q) {
     const {
       campaign,
@@ -77,6 +94,7 @@ class Leaderboard extends Component {
       country,
       endDate,
       event,
+      excludeOffline,
       excludePageIds,
       group,
       groupID,
@@ -115,7 +133,7 @@ class Leaderboard extends Component {
       .then((data) => {
         this.setState({
           status: 'fetched',
-          data: data.map(deserializeLeaderboard)
+          data: this.handleData(data, excludeOffline)
         })
       })
       .catch((error) => {
