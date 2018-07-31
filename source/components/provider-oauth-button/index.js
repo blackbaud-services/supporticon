@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import URL from 'url-parse'
 import omit from 'lodash/omit'
 import snakeCase from 'lodash/snakeCase'
 import { getBaseURL, isJustGiving } from '../../utils/client'
@@ -49,8 +50,8 @@ class ProviderOauthButton extends Component {
           }, 1000)
         }
       } else {
-        const { addEventListener, URL } = window
-        const validSourceOrigin = new URL(redirectUri).origin
+        const { addEventListener } = window
+        const validSourceOrigin = redirectUri && new URL(redirectUri).origin
 
         addEventListener('message', (event) => {
           if (event.origin !== validSourceOrigin) { return }
