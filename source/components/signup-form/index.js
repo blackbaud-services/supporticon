@@ -33,8 +33,12 @@ class SignupForm extends Component {
       clientId,
       country,
       form,
-      onSuccess
+      onSuccess,
+      resetPasswordUrl
     } = this.props
+
+    const platform = isJustGiving() ? 'JustGiving' : 'everydayhero'
+    const defaultResetPasswordUrl = isJustGiving() ? 'https://www.justgiving.com/sso/resetpassword?ReturnUrl=https%3A%2F%2Fwww.justgiving.com%2F&Context=consumer&ActionType=set_profile' : `https://everydayhero.com/${country}/passwords/new`
 
     return form.submit().then((data) => {
       this.setState({
@@ -71,7 +75,20 @@ class SignupForm extends Component {
 
             return this.setState({
               status: 'failed',
-              errors: errors.map(({ field, message }) => ({ message: [capitalize(field), message].join(' ') }))
+              errors: errors.map(({ field, message }) => {
+                if (field === 'email' && message === 'has already been taken') {
+                  return {
+                    message: (
+                      <div>
+                        <p>Your password is incorrect.</p>
+                        <p>Please try again, or you can <a href={resetPasswordUrl || defaultResetPasswordUrl} target='_blank'>reset your {platform} password here.</a></p>
+                      </div>
+                    )
+                  }
+                }
+
+                return { message: [capitalize(field), message].join(' ') }
+              })
             })
           default:
             const message = get(error, 'data.error.message') || get(error, 'data.errorMessage')
@@ -238,12 +255,18 @@ SignupForm.propTypes = {
   onSuccess: PropTypes.func.isRequired,
 
   /**
+  * Reset password URL to display on error
+  */
+  resetPasswordUrl: PropTypes.string,
+
+  /**
   * The label for the form submit button
   */
   submit: PropTypes.string
 }
 
 SignupForm.defaultProps = {
+  country: 'au',
   disableInvalidForm: false,
   fields: {},
   submit: 'Sign Up',
