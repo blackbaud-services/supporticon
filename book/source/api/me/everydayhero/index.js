@@ -44,10 +44,10 @@ export const updateCurrentUser = ({
     user: {
       name,
       address: address && {
-        ...omit(address, ['streetAddress', 'extendedAddress', 'postCode']),
         street_address: address.streetAddress,
         extended_address: address.extendedAddress,
-        postal_code: address.postCode
+        postal_code: address.postCode,
+        ...omit(address, ['streetAddress', 'extendedAddress', 'postCode'])
       },
       birthday: birthday,
       phone: phone
