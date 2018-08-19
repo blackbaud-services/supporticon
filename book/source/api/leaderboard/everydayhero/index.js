@@ -44,7 +44,7 @@ const deserializePage = (item, index) => ({
   name: item.name,
   subtitle: item.charity_name,
   url: item.url,
-  image: item.image.medium_image_url,
+  image: item.image.large_image_url,
   raised: item.amount.cents / 100,
   target: item.target_cents / 100,
   offline: (item.offline_amount_cents || 0) / 100,
