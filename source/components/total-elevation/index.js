@@ -10,10 +10,21 @@ import Metric from 'constructicon/metric'
 class TotalElevation extends Component {
   constructor () {
     super()
+    this.fetchData = this.fetchData.bind(this)
     this.state = { status: 'fetching' }
   }
 
   componentDidMount () {
+    const { refreshInterval } = this.props
+    this.fetchData()
+    this.interval = refreshInterval && setInterval(this.fetchData, refreshInterval)
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.interval)
+  }
+
+  fetchData () {
     const {
       activity,
       campaign,
@@ -147,7 +158,12 @@ TotalElevation.propTypes = {
   /**
   * Props to be passed to the Constructicon Metric component
   */
-  metric: PropTypes.object
+  metric: PropTypes.object,
+
+  /**
+  * Interval (in milliseconds) to refresh data from API
+  */
+  refreshInterval: PropTypes.number
 }
 
 TotalElevation.defaultProps = {
