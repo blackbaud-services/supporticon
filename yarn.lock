@@ -1885,9 +1885,9 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constructicon@^1.5.10:
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-1.5.10.tgz#c2e8479fae4699b77336223ac212483b62475117"
+constructicon@^1.7.4:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-1.7.4.tgz#6a93a728fdbe4f5f2362f2cafd9d86b985dbc70e"
   dependencies:
     cxsync "^1.0.9"
     lodash "^4.17.4"
@@ -5396,6 +5396,10 @@ mocha@^3.2.0:
 moment@^2.19.1:
   version "2.21.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.21.0.tgz#2a114b51d2a6ec9e6d83cf803f838a878d8a023a"
+
+moment@^2.22.2:
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 move-concurrently@^1.0.1:
   version "1.0.1"
