@@ -16,6 +16,7 @@ import {
 class Leaderboard extends Component {
   constructor () {
     super()
+    this.fetchLeaderboard = this.fetchLeaderboard.bind(this)
     this.setFilter = this.setFilter.bind(this)
     this.renderLeader = this.renderLeader.bind(this)
     this.paginateLeaderboard = this.paginateLeaderboard.bind(this)
@@ -23,22 +24,30 @@ class Leaderboard extends Component {
     this.nextPage = this.nextPage.bind(this)
     this.state = {
       status: 'fetching',
+      q: null,
       currentPage: 1
     }
   }
 
   componentDidMount () {
+    const { refreshInterval } = this.props
     this.fetchLeaderboard()
+    this.interval = refreshInterval && setInterval(() => this.fetchLeaderboard(this.state.q, true), refreshInterval)
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.interval)
   }
 
   componentDidUpdate (prevProps) {
     if (this.props !== prevProps) {
-      this.fetchLeaderboard()
+      this.fetchLeaderboard(this.state.q)
     }
   }
 
   setFilter (filterValue) {
     const q = filterValue || null
+    this.setState({ q })
     this.fetchLeaderboard(q)
   }
 
@@ -87,7 +96,7 @@ class Leaderboard extends Component {
     return leaderboardData
   }
 
-  fetchLeaderboard (q) {
+  fetchLeaderboard (q, refresh) {
     const {
       campaign,
       charity,
@@ -107,7 +116,7 @@ class Leaderboard extends Component {
       type
     } = this.props
 
-    this.setState({
+    !refresh && this.setState({
       status: 'fetching',
       data: undefined
     })
@@ -272,7 +281,12 @@ Leaderboard.propTypes = {
   /**
   * Props to be passed to the Filter component (false to hide)
   */
-  filter: PropTypes.any
+  filter: PropTypes.any,
+
+  /**
+  * Interval (in milliseconds) to refresh data from API
+  */
+  refreshInterval: PropTypes.number
 }
 
 Leaderboard.defaultProps = {
