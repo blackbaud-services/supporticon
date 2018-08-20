@@ -10,11 +10,23 @@ import Metric from 'constructicon/metric'
 class TotalSupporters extends Component {
   constructor () {
     super()
+    this.fetchData = this.fetchData.bind(this)
     this.state = { status: 'fetching' }
   }
 
   componentDidMount () {
+    const { refreshInterval } = this.props
+    this.fetchData()
+    this.interval = refreshInterval && setInterval(this.fetchData, refreshInterval)
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.interval)
+  }
+
+  fetchData () {
     const {
+      active,
       campaign,
       charity,
       event,
@@ -27,6 +39,7 @@ class TotalSupporters extends Component {
     } = this.props
 
     fetchPagesTotals({
+      active,
       campaign,
       charity,
       event,
@@ -119,6 +132,14 @@ TotalSupporters.propTypes = {
   type: PropTypes.oneOf([ 'individual', 'team', 'all' ]),
 
   /**
+  * Whether to include active pages
+  */
+  active: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.boolean
+  ]),
+
+  /**
   * The group value(s) to filter by
   */
   group: PropTypes.oneOfType([
@@ -174,6 +195,11 @@ TotalSupporters.propTypes = {
   metric: PropTypes.object,
 
   /**
+  * Interval (in milliseconds) to refresh data from API
+  */
+  refreshInterval: PropTypes.number,
+
+  /**
   * Use `v2/search/pages` endpoint (EDH only)
   */
   search: PropTypes.bool
@@ -184,6 +210,7 @@ TotalSupporters.defaultProps = {
   offset: 0,
   multiplier: 1,
   format: '0,0',
+  search: true,
   type: 'individual'
 }
 

@@ -13,26 +13,37 @@ import {
 class FitnessLeaderboard extends Component {
   constructor () {
     super()
+    this.fetchLeaderboard = this.fetchLeaderboard.bind(this)
     this.setFilter = this.setFilter.bind(this)
     this.renderLeader = this.renderLeader.bind(this)
-    this.state = { status: 'fetching' }
+    this.state = {
+      status: 'fetching',
+      q: null
+    }
   }
 
   componentDidMount () {
+    const { refreshInterval } = this.props
     this.fetchLeaderboard()
+    this.interval = refreshInterval && setInterval(() => this.fetchLeaderboard(this.state.q, true), refreshInterval)
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.interval)
   }
 
   componentDidUpdate (prevProps) {
     if (this.props !== prevProps) {
-      this.fetchLeaderboard()
+      this.fetchLeaderboard(this.state.q)
     }
   }
 
   setFilter (q) {
+    this.setState({ q })
     this.fetchLeaderboard(q)
   }
 
-  fetchLeaderboard (q) {
+  fetchLeaderboard (q, refresh) {
     const {
       activity,
       campaign,
@@ -50,7 +61,7 @@ class FitnessLeaderboard extends Component {
       sortBy
     } = this.props
 
-    this.setState({
+    !refresh && this.setState({
       status: 'fetching',
       data: undefined
     })
@@ -250,7 +261,12 @@ FitnessLeaderboard.propTypes = {
   /**
   * Props to be passed to the Filter component (false to hide)
   */
-  filter: PropTypes.any
+  filter: PropTypes.any,
+
+  /**
+  * Interval (in milliseconds) to refresh data from API
+  */
+  refreshInterval: PropTypes.number
 }
 
 FitnessLeaderboard.defaultProps = {
