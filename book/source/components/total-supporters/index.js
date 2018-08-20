@@ -124,7 +124,7 @@ TotalSupporters.propTypes = {
   /**
   * Country code for API (JG only)
   */
-  country: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
+  country: PropTypes.oneOf(['au', 'ca', 'hk', 'ie', 'nz', 'sg', 'uk', 'us', 'za']),
 
   /**
   * The type of page to include in the leaderboard
