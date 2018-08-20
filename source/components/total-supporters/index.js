@@ -15,6 +15,7 @@ class TotalSupporters extends Component {
 
   componentDidMount () {
     const {
+      active,
       campaign,
       charity,
       event,
@@ -27,6 +28,7 @@ class TotalSupporters extends Component {
     } = this.props
 
     fetchPagesTotals({
+      active,
       campaign,
       charity,
       event,
@@ -119,6 +121,14 @@ TotalSupporters.propTypes = {
   type: PropTypes.oneOf([ 'individual', 'team', 'all' ]),
 
   /**
+  * Whether to include active pages
+  */
+  active: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.boolean
+  ]),
+
+  /**
   * The group value(s) to filter by
   */
   group: PropTypes.oneOfType([
@@ -184,6 +194,7 @@ TotalSupporters.defaultProps = {
   offset: 0,
   multiplier: 1,
   format: '0,0',
+  search: true,
   type: 'individual'
 }
 
