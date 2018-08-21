@@ -7,6 +7,10 @@ export const fetchDonationFeed = (params) => {
   }
 
   const mappings = {
+    campaign: 'campaign_id',
+    charity: 'charity_id',
+    page: 'page_id',
+    team: 'team_id',
     type: 'type'
   }
 
@@ -15,9 +19,10 @@ export const fetchDonationFeed = (params) => {
 }
 
 export const deserializeDonation = (donation) => ({
-  amount: donation.amount.cents,
+  amount: donation.amount.cents / 100,
   anonymous: donation.anonymous,
   createdAt: donation.created_at,
+  currency: donation.amount.currency.iso_code,
   message: donation.message,
   name: donation.nickname,
   page: donation.page_id,
