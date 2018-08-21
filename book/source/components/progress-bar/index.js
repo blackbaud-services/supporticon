@@ -73,6 +73,9 @@ class ProgressBar extends Component {
       eventDate,
       format,
       fundedLabel,
+      grid,
+      heading,
+      metric,
       offset,
       progressBar,
       raisedLabel,
@@ -87,12 +90,13 @@ class ProgressBar extends Component {
     } = this.state
 
     return status === 'fetched' ? (
-      <Grid spacing={0.25}>
+      <Grid spacing={0.25} {...grid}>
         <GridColumn xs={6}>
           <Metric
             align='left'
             label={raisedLabel}
             amount={numbro(raised + offset).formatCurrency(format)}
+            {...metric}
           />
         </GridColumn>
         <GridColumn xs={6} xsAlign='right'>
@@ -100,6 +104,7 @@ class ProgressBar extends Component {
             align='right'
             label={targetLabel}
             amount={numbro(target).formatCurrency(format)}
+            {...metric}
           />
         </GridColumn>
         <GridColumn>
@@ -109,14 +114,14 @@ class ProgressBar extends Component {
             {...progressBar}
           />
         </GridColumn>
-        {fundedLabel && (
+        {fundedLabel ? (
           <GridColumn xs={6}>
-            <Heading size={0} tag='strong'>{this.calculatePercentage()}%</Heading> {fundedLabel}
+            <Heading size={0} tag='strong' {...heading}>{this.calculatePercentage()}%</Heading> {fundedLabel}
           </GridColumn>
-        )}
+        ) : <GridColumn xs={6} />}
         {remainingLabel && eventDate && (
           <GridColumn xs={6} xsAlign='right'>
-            <Heading size={0} tag='strong'>{this.calculateDaysRemaining(eventDate)}</Heading> {remainingLabel}
+            <Heading size={0} tag='strong' {...heading}>{this.calculateDaysRemaining(eventDate)}</Heading> {remainingLabel}
           </GridColumn>
         )}
       </Grid>
@@ -205,6 +210,21 @@ ProgressBar.propTypes = {
   * The format of the number
   */
   format: PropTypes.string,
+
+  /**
+  * Props to be passed to the Constructicon Grid component
+  */
+  grid: PropTypes.object,
+
+  /**
+  * Props to be passed to the Constructicon Heading components
+  */
+  heading: PropTypes.object,
+
+  /**
+  * Props to be passed to the Constructicon Metric components
+  */
+  metric: PropTypes.object,
 
   /**
   * Props to be passed to the Constructicon ProgressBar component
