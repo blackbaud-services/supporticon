@@ -43,6 +43,7 @@ module.exports = {
     {
       name: 'Metrics',
       components: () => ([
+        path.resolve(__dirname, 'source/components/donation-ticker', 'index.js'),
         path.resolve(__dirname, 'source/components/progress-bar', 'index.js'),
         path.resolve(__dirname, 'source/components/total-distance', 'index.js'),
         path.resolve(__dirname, 'source/components/total-donations', 'index.js'),
