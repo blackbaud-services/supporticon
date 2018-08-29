@@ -64,6 +64,7 @@ class AddressSearch extends Component {
         <GridColumn md={4}>
           <InputSelect
             label='Country'
+            name='address-country'
             onBlur={(country) => this.setState({ country })}
             onChange={(country) => this.setState({ country })}
             options={countries}
@@ -94,11 +95,14 @@ class AddressSearch extends Component {
 
     return (
       <div>
-        <span>Address - </span>
-        <span
-          className={classNames.cancel}
-          onClick={onCancel}>Enter address manually
-        </span>
+        <span>Address</span>
+        {onCancel && ' - '}
+        {onCancel && (
+          <span
+            className={classNames.cancel}
+            onClick={onCancel}>Enter address manually
+          </span>
+        )}
       </div>
     )
   }
@@ -118,12 +122,12 @@ AddressSearch.propTypes = {
   /**
   * The onCancel function to call when the user wants to enter address manually
   */
-  onCancel: PropTypes.func.required,
+  onCancel: PropTypes.func,
 
   /**
   * The onChange function to call when a selection is made
   */
-  onChange: PropTypes.func.required
+  onChange: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(AddressSearch)
