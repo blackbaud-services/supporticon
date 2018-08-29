@@ -39,6 +39,7 @@ class CreatePageForm extends Component {
     e.preventDefault()
 
     const {
+      authType,
       campaignId,
       charityFunded,
       charityId,
@@ -58,6 +59,7 @@ class CreatePageForm extends Component {
       const addressFields = pick(data, [ 'streetAddress', 'extendedAddress', 'locality', 'region', 'postCode', 'country' ])
 
       const dataPayload = merge({
+        authType,
         campaignId,
         charityFunded,
         charityId,
@@ -102,10 +104,10 @@ class CreatePageForm extends Component {
   }
 
   handleSubmitAddress (token, address) {
-    const { includeAddress } = this.props
+    const { authType, includeAddress } = this.props
 
     return includeAddress
-      ? updateCurrentUser({ token, address })
+      ? updateCurrentUser({ authType, token, address })
       : Promise.resolve()
   }
 
@@ -264,6 +266,7 @@ CreatePageForm.propTypes = {
 }
 
 CreatePageForm.defaultProps = {
+  authType: 'Basic',
   charityFunded: false,
   disableInvalidForm: false,
   fields: {},

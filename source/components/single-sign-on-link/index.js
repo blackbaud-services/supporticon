@@ -72,6 +72,7 @@ class SingleSignOnLink extends Component {
 
   submitForm (event) {
     const {
+      authType,
       token,
       url,
       method
@@ -86,7 +87,7 @@ class SingleSignOnLink extends Component {
 
     window.addEventListener('message', ({ data }) => {
       if (data === 'cross-domain-cookie-auth') {
-        return fetchCurrentUser({ token }).then(() => {
+        return fetchCurrentUser({ authType, token }).then(() => {
           const formSubmission = setInterval(() => {
             try {
               return root.querySelector('iframe').contentWindow.location.origin
@@ -152,6 +153,7 @@ SingleSignOnLink.propTypes = {
 }
 
 SingleSignOnLink.defaultProps = {
+  authType: 'Basic',
   label: 'My Fundraising Page',
   target: '_top',
   method: 'POST'
