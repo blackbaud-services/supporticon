@@ -54,11 +54,12 @@ export const deserializeUser = (user) => ({
 })
 
 export const fetchCurrentUser = ({
-  token = required()
+  token = required(),
+  authType = 'Basic'
 }) => (
   get('v1/account', {}, {}, {
     headers: {
-      'Authorization': `Basic ${token}`
+      'Authorization': [authType, token].join(' ')
     }
   })
 )
@@ -67,6 +68,7 @@ export const updateCurrentUser = ({
   token = required(),
   userId = required(),
   email = required(),
+  authType = 'Basic',
   firstName,
   lastName,
   address
@@ -78,7 +80,7 @@ export const updateCurrentUser = ({
     address
   }, {
     headers: {
-      'Authorization': `Basic ${token}`
+      'Authorization': [authType, token].join(' ')
     }
   })
 )

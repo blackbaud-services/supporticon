@@ -19,6 +19,7 @@ export const fetchTeam = (id = required()) => {
 }
 
 export const createTeam = ({
+  authType = 'Basic',
   name = required(),
   slug = required(),
   story = required(),
@@ -36,12 +37,13 @@ export const createTeam = ({
     teamType
   }, {
     headers: {
-      'Authorization': `Basic ${token}`
+      'Authorization': [authType, token].join(' ')
     }
   })
 }
 
 export const joinTeam = ({
+  authType = 'Basic',
   id = required(),
   page = required(),
   token = required()
@@ -50,7 +52,7 @@ export const joinTeam = ({
     pageShortName: page
   }, {
     headers: {
-      'Authorization': `Basic ${token}`
+      'Authorization': [authType, token].join(' ')
     }
   })
 }

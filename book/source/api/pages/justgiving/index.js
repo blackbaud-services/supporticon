@@ -53,6 +53,7 @@ export const createPage = ({
   slug = required(),
   title = required(),
   token = required(),
+  authType = 'Basic',
   activityType,
   attribution,
   causeId,
@@ -103,7 +104,7 @@ export const createPage = ({
     videos
   }, {
     headers: {
-      'Authorization': `Basic ${token}`
+      'Authorization': [authType, token].join(' ')
     }
   })
 }
