@@ -75,11 +75,11 @@ class SignupForm extends Component {
 
             return this.setState({
               status: 'failed',
-              errors: errors.map(({ field, message }) => {
+              errors: errors.map(({ field, message }, key) => {
                 if (field === 'email' && message === 'has already been taken') {
                   return {
                     message: (
-                      <div>
+                      <div key={key}>
                         <p>Your password is incorrect.</p>
                         <p>Please try again, or you can <a href={resetPasswordUrl || defaultResetPasswordUrl} target='_blank'>reset your {platform} password here.</a></p>
                       </div>

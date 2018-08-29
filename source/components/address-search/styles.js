@@ -1,13 +1,7 @@
-export default (props, traits) => {
-  const {
-    treatments
-  } = traits
-
-  return {
-    cancel: {
-      cursor: 'pointer',
-      textDecoration: 'underline',
-      ...treatments.body
-    }
+export default (props, { treatments }) => ({
+  cancel: {
+    cursor: 'pointer',
+    textDecoration: 'underline',
+    ...treatments.body
   }
-}
+})
