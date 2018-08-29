@@ -136,7 +136,7 @@ TotalSupporters.propTypes = {
   */
   active: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.boolean
+    PropTypes.bool
   ]),
 
   /**

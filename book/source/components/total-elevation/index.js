@@ -116,7 +116,7 @@ TotalElevation.propTypes = {
   /**
   * Include manual fitness activities
   */
-  includeManual: PropTypes.boolean,
+  includeManual: PropTypes.bool,
 
   /**
   * Offset
