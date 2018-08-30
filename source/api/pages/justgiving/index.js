@@ -1,6 +1,6 @@
 import moment from 'moment'
 import lodashGet from 'lodash/get'
-import { get, post, put } from '../../../utils/client'
+import { get, put } from '../../../utils/client'
 import { getUID, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
@@ -121,18 +121,23 @@ export const createPage = ({
 
 export const updatePage = (slug = required(), {
   token = required(),
+  authType = 'Basic',
   attribution,
   image,
+  name,
   story,
   summaryWhat,
-  summaryWhy
+  summaryWhy,
+  target
 }) => {
-  const config = { headers: { 'Authorization': `Basic ${token}` } }
+  const config = { headers: { 'Authorization': [authType, token].join(' ') } }
 
   return Promise.all([
     attribution && put(`/v1/fundraising/pages/${slug}/attribution`, { attribution }, config),
     image && put(`/v1/fundraising/pages/${slug}/images`, { url: image, isDefault: true }, config),
-    story && post(`/v1/fundraising/pages/${slug}`, { storySupplement: story }, config),
+    name && put(`/v1/fundraising/pages/${slug}/pagetitle`, { pageTitle: name }, config),
+    story && put(`/v1/fundraising/pages/${slug}/pagestory`, { story }, config),
+    target && put(`/v1/fundraising/pages/${slug}/pagetarget`, { target }, config),
     (summaryWhat || summaryWhy) && put(`/v1/fundraising/pages/${slug}/summary`, {
       pageSummaryWhat: summaryWhat,
       pageSummaryWhy: summaryWhy
