@@ -1,6 +1,6 @@
-import moment from 'moment'
 import { get } from '../../../utils/client'
 import { getShortName, getUID } from '../../../utils/params'
+import jsonDate from '../../../utils/jsonDate'
 
 export const fetchDonationFeed = ({ charity, page }) => {
   if (!charity && !page) {
@@ -17,7 +17,7 @@ export const fetchDonationFeed = ({ charity, page }) => {
 export const deserializeDonation = donation => ({
   amount: donation.donorLocalAmount || donation.amount,
   anonymous: !donation.donorDisplayName || donation.donorDisplayName.toLowerCase().trim() === 'anonymous',
-  createdAt: moment.isMoment(moment(donation.donationDate)) && moment(donation.donationDate).toISOString(),
+  createdAt: jsonDate(donation.donationDate),
   currency: donation.donorLocalCurrencyCode || donation.currencyCode,
   message: donation.message,
   name: donation.donorDisplayName
