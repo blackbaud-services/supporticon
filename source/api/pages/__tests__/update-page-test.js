@@ -11,7 +11,7 @@ describe('Page | Update Page', () => {
     moxios.uninstall(instance)
   })
 
-  describe('Create EDH Page', () => {
+  describe('Update EDH Page', () => {
     it('throws if no token is passed', () => {
       const test = () => updatePage(123, {
         bogus: 'data'
@@ -62,7 +62,7 @@ describe('Page | Update Page', () => {
     })
   })
 
-  describe('Create JG Page', () => {
+  describe('Update JG Page', () => {
     beforeEach(() => {
       updateClient({ baseURL: 'https://api.justgiving.com' })
     })
@@ -116,7 +116,7 @@ describe('Page | Update Page', () => {
           moxios.requests.at(moxios.requests.count() - 1).url
         ]
 
-        expect(requests).to.include('https://api.justgiving.com/v1/fundraising/pages/page-slug')
+        expect(requests).to.include('https://api.justgiving.com/v1/fundraising/pages/page-slug/pagestory')
         expect(requests).to.include('https://api.justgiving.com/v1/fundraising/pages/page-slug/attribution')
         expect(requests).to.include('https://api.justgiving.com/v1/fundraising/pages/page-slug/images')
         done()
