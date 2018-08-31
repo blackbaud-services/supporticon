@@ -22,6 +22,7 @@ import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
 import InputField from 'constructicon/input-field'
 import InputSelect from 'constructicon/input-select'
+import InputSlug from '../input-slug'
 
 class CreatePageForm extends Component {
   constructor () {
@@ -31,7 +32,8 @@ class CreatePageForm extends Component {
     this.state = {
       manualAddress: false,
       status: 'empty',
-      errors: []
+      errors: [],
+      slugAvailable: false
     }
   }
 
@@ -50,6 +52,10 @@ class CreatePageForm extends Component {
     } = this.props
 
     return form.submit().then((data) => {
+      if (form.fields.slug && !this.state.slugAvailable) {
+        return
+      }
+
       this.setState({
         errors: [],
         status: 'fetching'
@@ -147,8 +153,20 @@ class CreatePageForm extends Component {
         {...formComponent}>
 
         {this.getAutoRenderedFields(form.fields).map((field) => {
-          const Tag = renderInput(field.type)
-          return <Tag key={field.name} {...field} {...inputField} />
+          switch (field.name) {
+            case 'slug':
+              return (
+                <InputSlug
+                  key={field.name}
+                  {...field}
+                  {...inputField}
+                  handleFetch={(slugAvailable) => this.setState({ slugAvailable })}
+                />
+              )
+            default:
+              const Tag = renderInput(field.type)
+              return <Tag key={field.name} {...field} {...inputField} />
+          }
         })}
 
         {includeAddress && this.renderAddress()}
