@@ -5,7 +5,7 @@ import { getUID, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
 export const deserializePage = (page) => {
-  const url = page.Link || `https://${page.domain || 'www.justgiving.com'}/${page.pageShortName}`
+  const url = page.Link || `https://${page.domain || 'www.justgiving.com'}/fundraising/${page.pageShortName}`
 
   return {
     active: page.status === 'Active',
@@ -36,8 +36,19 @@ export const fetchPages = (params = required()) => {
     campaign,
     charity,
     event,
+    userPages,
+    token,
+    authType = 'Basic',
     ...args
   } = params
+
+  if (userPages && token) {
+    return get('/v1/fundraising/pages', {}, {}, {
+      headers: {
+        'Authorization': [authType, token].join(' ')
+      }
+    })
+  }
 
   return get('/v1/onesearch', {
     campaignId: getUID(campaign),
