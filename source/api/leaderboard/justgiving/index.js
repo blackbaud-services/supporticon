@@ -65,7 +65,7 @@ export const deserializeLeaderboard = (supporter, index) => ({
   subtitle: supporter.eventName,
   url: `https://www.justgiving.com/${supporter.pageShortName}`,
   image: supporter.defaultImage || (supporter.pageImages ? `https://images.jg-cdn.com/image/${supporter.pageImages[0]}?template=Size200x200` : null),
-  raised: supporter.raisedAmount,
+  raised: supporter.amount || supporter.raisedAmount,
   target: supporter.targetAmount,
   currency: supporter.currencyCode,
   currencySymbol: supporter.currencySymbol
