@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 import { fetchPage } from '../../api/pages'
@@ -9,7 +10,7 @@ import InputField from 'constructicon/input-field'
 class InputSlug extends Component {
   constructor () {
     super()
-    this.fetchPageSlug = debounce(this.fetchPageSlug.bind(this), 300)
+    this.fetchPageSlug = debounce(this.fetchPageSlug.bind(this), 500)
     this.state = {
       status: 'fetched',
       slug: null,
@@ -54,7 +55,7 @@ class InputSlug extends Component {
 
     return (
       <InputField
-        {...props}
+        {...omit(props, ['handleFetch'])}
         type='search'
         autoComplete='off'
         status={slug && status}
