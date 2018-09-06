@@ -26,5 +26,6 @@ export const deserializeDonation = donation => ({
   currency: donation.donorLocalCurrencyCode || donation.currencyCode,
   donationRef: donation.thirdPartyReference,
   message: donation.message,
-  name: donation.donorDisplayName
+  name: donation.donorDisplayName,
+  page: donation.pageShortName
 })
