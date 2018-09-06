@@ -19,12 +19,13 @@ export const fetchDonationFeed = ({ charity, page, donationRef }) => {
 }
 
 export const deserializeDonation = donation => ({
-  amount: donation.donorLocalAmount || donation.amount,
+  amount: parseFloat(donation.donorLocalAmount || donation.amount || 0),
   anonymous: !donation.donorDisplayName || donation.donorDisplayName.toLowerCase().trim() === 'anonymous',
   charity: donation.charityId,
   createdAt: jsonDate(donation.donationDate),
   currency: donation.donorLocalCurrencyCode || donation.currencyCode,
   donationRef: donation.thirdPartyReference,
   message: donation.message,
-  name: donation.donorDisplayName
+  name: donation.donorDisplayName,
+  page: donation.pageShortName
 })
