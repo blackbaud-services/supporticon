@@ -69,5 +69,5 @@ export const deserializeLeaderboard = (supporter, index) => ({
   slug: supporter.pageShortName,
   subtitle: supporter.eventName,
   target: supporter.targetAmount,
-  url: `https://www.justgiving.com/${supporter.pagxeShortName}`
+  url: `https://www.justgiving.com/${supporter.pageShortName}`
 })
