@@ -59,14 +59,15 @@ export const fetchLeaderboard = (params = required()) => {
 * @function a default deserializer for leaderboard pages
 */
 export const deserializeLeaderboard = (supporter, index) => ({
-  position: index + 1,
-  id: supporter.pageId,
-  name: supporter.pageTitle,
-  subtitle: supporter.eventName,
-  url: `https://www.justgiving.com/${supporter.pageShortName}`,
-  image: supporter.defaultImage || (supporter.pageImages ? `https://images.jg-cdn.com/image/${supporter.pageImages[0]}?template=Size200x200` : null),
-  raised: supporter.amount || supporter.raisedAmount,
-  target: supporter.targetAmount,
   currency: supporter.currencyCode,
-  currencySymbol: supporter.currencySymbol
+  currencySymbol: supporter.currencySymbol,
+  id: supporter.pageId,
+  image: supporter.defaultImage || (supporter.pageImages ? `https://images.jg-cdn.com/image/${supporter.pageImages[0]}?template=Size200x200` : null),
+  name: supporter.pageTitle,
+  position: index + 1,
+  raised: parseFloat(supporter.amount || supporter.raisedAmount || 0),
+  slug: supporter.pageShortName,
+  subtitle: supporter.eventName,
+  target: supporter.targetAmount,
+  url: `https://www.justgiving.com/${supporter.pagxeShortName}`
 })

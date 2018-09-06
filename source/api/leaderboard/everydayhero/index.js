@@ -1,3 +1,4 @@
+import last from 'lodash/last'
 import { get } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
@@ -39,24 +40,25 @@ export const deserializeLeaderboard = (result, index) => {
 }
 
 const deserializePage = (item, index) => ({
-  position: index + 1,
-  id: item.id,
-  name: item.name,
-  subtitle: item.charity_name,
-  url: item.url,
-  image: item.image.large_image_url,
-  raised: item.amount.cents / 100,
-  target: item.target_cents / 100,
-  offline: (item.offline_amount_cents || 0) / 100,
   currency: item.amount.currency.iso_code,
   currencySymbol: item.amount.currency.symbol,
-  groups: item.group_values
+  groups: item.group_values,
+  id: item.id,
+  image: item.image.large_image_url,
+  name: item.name,
+  offline: (item.offline_amount_cents || 0) / 100,
+  position: index + 1,
+  raised: item.amount.cents / 100,
+  slug: item.url && last(item.url.split('/')),
+  subtitle: item.charity_name,
+  target: item.target_cents / 100,
+  url: item.url
 })
 
 const deserializeGroup = (item, index) => ({
-  position: index + 1,
   count: item.count,
   id: item.group.id,
   name: item.group.value,
+  position: index + 1,
   raised: item.amount_cents / 100
 })
