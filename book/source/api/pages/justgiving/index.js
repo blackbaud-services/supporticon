@@ -148,7 +148,7 @@ export const updatePage = (slug = required(), {
     image && put(`/v1/fundraising/pages/${slug}/images`, { url: image, isDefault: true }, config),
     name && put(`/v1/fundraising/pages/${slug}/pagetitle`, { pageTitle: name }, config),
     story && put(`/v1/fundraising/pages/${slug}/pagestory`, { story }, config),
-    target && put(`/v1/fundraising/pages/${slug}/pagetarget`, { target }, config),
+    target && put(`/v1/fundraising/pages/${slug}/target`, { amount: target }, config),
     (summaryWhat || summaryWhy) && put(`/v1/fundraising/pages/${slug}/summary`, {
       pageSummaryWhat: summaryWhat,
       pageSummaryWhy: summaryWhy
