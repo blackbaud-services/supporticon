@@ -8,7 +8,7 @@ export const deserializePage = (page) => {
   const url = page.Link || `https://${page.domain || 'www.justgiving.com'}/fundraising/${page.pageShortName}`
 
   return {
-    active: page.status === 'Active',
+    active: [page.status, page.pageStatus].indexOf('Active') > -1,
     campaign: page.eventId || page.EventId,
     campaignDate: jsonDate(page.eventDate) || page.EventDate,
     charity: page.charity || page.CharityId,
@@ -18,13 +18,13 @@ export const deserializePage = (page) => {
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
     groups: null,
     id: page.pageId || page.Id,
-    image: page.defaultImage || page.Logo || lodashGet(page, 'image.url'),
-    name: page.title || page.Name,
+    image: page.defaultImage || page.Logo || lodashGet(page, 'image.url') || lodashGet(page, 'images[0].url'),
+    name: page.title || page.pageTitle || page.Name,
     owner: page.owner || page.OwnerFullName,
-    raised: parseFloat(page.grandTotalRaisedExcludingGiftAid || page.Amount || 0),
+    raised: parseFloat(page.grandTotalRaisedExcludingGiftAid || page.Amount || page.raisedAmount || 0),
     slug: page.pageShortName,
     story: page.story || page.ProfileWhat || page.ProfileWhy,
-    target: parseFloat(page.fundraisingTarget || page.TargetAmount || 0),
+    target: parseFloat(page.fundraisingTarget || page.TargetAmount || page.targetAmount || 0),
     teamPageId: null,
     url,
     uuid: null
