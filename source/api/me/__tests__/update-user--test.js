@@ -2,24 +2,24 @@ import moxios from 'moxios'
 import { instance, updateClient } from '../../../utils/client'
 import { updateCurrentUser } from '..'
 
-describe ('Update User', () => {
-  describe ('Update EDH User', () => {
-    beforeEach (() => {
+describe('Update User', () => {
+  describe('Update EDH User', () => {
+    beforeEach(() => {
       moxios.install(instance)
     })
 
-    afterEach (() => {
+    afterEach(() => {
       moxios.uninstall(instance)
     })
 
-    it ('throws if no token is passed', () => {
+    it('throws if no token is passed', () => {
       const test = () => updateCurrentUser({
         bogus: 'data'
       })
       expect(test).to.throw
     })
 
-    it ('hits the supporter api with the correct url and data', (done) => {
+    it('hits the supporter api with the correct url and data', (done) => {
       updateCurrentUser({
         token: '012345abcdef',
         birthday: '1970-01-02'
@@ -32,7 +32,7 @@ describe ('Update User', () => {
       })
     })
 
-    it ('errors when an invalid token is provided', (done) => {
+    it('errors when an invalid token is provided', (done) => {
       updateCurrentUser({
         token: 'bogus',
         birthday: '1970-01-02'
@@ -49,7 +49,7 @@ describe ('Update User', () => {
       })
     })
 
-    it ('updates the user successfully with the provided params', (done) => {
+    it('updates the user successfully with the provided params', (done) => {
       updateCurrentUser({
         token: '012345abcdef',
         birthday: '1970-01-02'
@@ -67,28 +67,28 @@ describe ('Update User', () => {
     })
   })
 
-  describe ('Update JG User', () => {
-    beforeEach (() => {
+  describe('Update JG User', () => {
+    beforeEach(() => {
       updateClient({ baseURL: 'https://api.justgiving.com', headers: { 'x-api-key': 'abcd1234' } })
       moxios.install(instance)
     })
 
-    afterEach (() => {
+    afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
     })
 
-    it ('throws if no token is passed', () => {
+    it('throws if no token is passed', () => {
       const test = () => updateCurrentUser({ bogus: 'data' })
       expect(test).to.throw
     })
 
-    it ('hits the JG api with the correct url and data', (done) => {
+    it('hits the JG api with the correct url and data', (done) => {
       updateCurrentUser({
         token: 'dGVzdEBleGFtcGxlLmNvbTpmb29iYXIxMjM=',
-        userId: '123456-abcdef',
+        uuid: '123456-abcdef',
         email: 'test@example.com',
-        firstName: 'Don',
+        firstName: 'Don'
       })
 
       moxios.wait(() => {
