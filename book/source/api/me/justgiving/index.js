@@ -35,7 +35,7 @@ export const deserializeUser = (user) => ({
     extendedAddress: user.address.line2,
     locality: user.address.townOrCity,
     state: user.address.countyOrState,
-    postcode: user.postcodeOrZipcode,
+    postcode: user.address.postcodeOrZipcode,
     country: user.address.country
   },
   birthday: null,
@@ -66,14 +66,14 @@ export const fetchCurrentUser = ({
 
 export const updateCurrentUser = ({
   token = required(),
-  userId = required(),
+  uuid = required(),
   email = required(),
   authType = 'Basic',
   firstName,
   lastName,
   address
 }) => (
-  put(`v1/account/${userId}`, {
+  put(`v1/account/${uuid}`, {
     firstName,
     lastName,
     email,
