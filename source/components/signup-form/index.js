@@ -33,6 +33,7 @@ class SignupForm extends Component {
       clientId,
       country = 'au',
       form,
+      includeAddress,
       onSuccess,
       resetPasswordUrl
     } = this.props
@@ -46,7 +47,10 @@ class SignupForm extends Component {
         status: 'fetching'
       })
 
-      const dataPayload = isJustGiving() ? {
+      const dataPayload = isJustGiving() ? merge({
+        title: data.title || 'Other',
+        ...data
+      }, includeAddress && {
         address: {
           line1: data.line1,
           line2: data.line2,
@@ -54,10 +58,8 @@ class SignupForm extends Component {
           countyOrState: data.countyOrState,
           country: data.country,
           postcodeOrZipcode: data.postcodeOrZipcode
-        },
-        title: 'Other',
-        ...data
-      } : {
+        }
+      }) : {
         clientId,
         country,
         name: [data.firstName, data.lastName].join(' '),
@@ -126,6 +128,7 @@ class SignupForm extends Component {
       formComponent,
       grid,
       gridColumn,
+      includeAddress,
       inputField,
       legend,
       submit
@@ -159,7 +162,18 @@ class SignupForm extends Component {
         <InputField {...form.fields.email} {...inputField} />
         <InputField {...form.fields.password} {...inputField} />
 
-        {isJustGiving() ? (
+        {!isJustGiving() ? country ? (
+          <InputField {...form.fields.phone} {...inputField} />
+        ) : (
+          <Grid spacing={{ x: 0.5 }} {...grid}>
+            <GridColumn sm={7} {...gridColumn}>
+              <InputField {...form.fields.phone} {...inputField} />
+            </GridColumn>
+            <GridColumn sm={5} {...gridColumn}>
+              <InputSelect {...form.fields.country} {...inputField} />
+            </GridColumn>
+          </Grid>
+        ) : includeAddress && (
           <fieldset>
             <Heading tag='legend' {...legend}>Address</Heading>
             <InputField {...form.fields.line1} {...inputField} />
@@ -181,17 +195,6 @@ class SignupForm extends Component {
               </GridColumn>
             </Grid>
           </fieldset>
-        ) : country ? (
-          <InputField {...form.fields.phone} {...inputField} />
-        ) : (
-          <Grid spacing={{ x: 0.5 }} {...grid}>
-            <GridColumn sm={7} {...gridColumn}>
-              <InputField {...form.fields.phone} {...inputField} />
-            </GridColumn>
-            <GridColumn sm={5} {...gridColumn}>
-              <InputSelect {...form.fields.country} {...inputField} />
-            </GridColumn>
-          </Grid>
         )}
 
         {this.customFields(form.fields).map((field) => {
@@ -238,6 +241,11 @@ SignupForm.propTypes = {
   * Props to be passed to the GridColumn components
   */
   gridColumn: PropTypes.object,
+
+  /**
+  * Include address form (JG only)
+  */
+  includeAddress: PropTypes.bool,
 
   /**
   * Props to be passed to the InputField components
@@ -318,7 +326,52 @@ const form = (props) => ({
       ]
     }
   },
-  isJustGiving() ? {
+  !isJustGiving() && {
+    phone: {
+      label: 'Phone Number',
+      type: 'tel',
+      required: true,
+      validators: [
+        validators.required('Please enter your phone number')
+      ]
+    }
+  }, (!isJustGiving() && !props.country) && {
+    country: {
+      label: 'Country',
+      type: 'select',
+      required: true,
+      validators: [
+        validators.required('Please select a country')
+      ],
+      options: [
+        {
+          label: 'Select a country',
+          value: '',
+          disabled: true
+        },
+        {
+          label: 'Australia',
+          value: 'au'
+        },
+        {
+          label: 'New Zealand',
+          value: 'nz'
+        },
+        {
+          label: 'United States',
+          value: 'us'
+        },
+        {
+          label: 'United Kingdom',
+          value: 'uk'
+        },
+        {
+          label: 'Ireland',
+          value: 'ie'
+        }
+      ]
+    }
+  }, (isJustGiving() && props.includeAddress) && {
     line1: {
       label: 'Street address',
       type: 'text',
@@ -387,52 +440,7 @@ const form = (props) => ({
         validators.required('Please enter your postcode / zip')
       ]
     }
-  } : {
-    phone: {
-      label: 'Phone Number',
-      type: 'tel',
-      required: true,
-      validators: [
-        validators.required('Please enter your phone number')
-      ]
-    }
-  }, !isJustGiving() && !props.country ? {
-    country: {
-      label: 'Country',
-      type: 'select',
-      required: true,
-      validators: [
-        validators.required('Please select a country')
-      ],
-      options: [
-        {
-          label: 'Select a country',
-          value: '',
-          disabled: true
-        },
-        {
-          label: 'Australia',
-          value: 'au'
-        },
-        {
-          label: 'New Zealand',
-          value: 'nz'
-        },
-        {
-          label: 'United States',
-          value: 'us'
-        },
-        {
-          label: 'United Kingdom',
-          value: 'uk'
-        },
-        {
-          label: 'Ireland',
-          value: 'ie'
-        }
-      ]
-    }
-  } : {}, props.fields)
+  }, props.fields)
 })
 
 export default withForm(form)(SignupForm)

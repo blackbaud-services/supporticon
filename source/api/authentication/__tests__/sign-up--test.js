@@ -3,13 +3,13 @@ import omit from 'lodash/omit'
 import { instance, updateClient } from '../../../utils/client'
 import { signUp } from '..'
 
-describe ('Authentication | Sign Up', () => {
-  describe ('Sign Up EDH User', () => {
-    beforeEach (() => {
+describe('Authentication | Sign Up', () => {
+  describe('Sign Up EDH User', () => {
+    beforeEach(() => {
       moxios.install(instance)
     })
 
-    afterEach (() => {
+    afterEach(() => {
       moxios.uninstall(instance)
     })
 
@@ -21,32 +21,32 @@ describe ('Authentication | Sign Up', () => {
       phone: '0123456789'
     }
 
-    it ('throws if no client id is passed', () => {
+    it('throws if no client id is passed', () => {
       const test = () => signUp(omit(values, ['clientId']))
       expect(test).to.throw
     })
 
-    it ('throws if no name is passed', () => {
+    it('throws if no name is passed', () => {
       const test = () => signUp(omit(values, ['name']))
       expect(test).to.throw
     })
 
-    it ('throws if no email is passed', () => {
+    it('throws if no email is passed', () => {
       const test = () => signUp(omit(values, ['email']))
       expect(test).to.throw
     })
 
-    it ('throws if no password is passed', () => {
+    it('throws if no password is passed', () => {
       const test = () => signUp(omit(values, ['password']))
       expect(test).to.throw
     })
 
-    it ('throws if no phone is passed', () => {
+    it('throws if no phone is passed', () => {
       const test = () => signUp(omit(values, ['phone']))
       expect(test).to.throw
     })
 
-    it ('should hit the supporter api with the correct url and data', (done) => {
+    it('should hit the supporter api with the correct url and data', (done) => {
       signUp(values)
 
       moxios.wait(() => {
@@ -64,7 +64,7 @@ describe ('Authentication | Sign Up', () => {
       })
     })
 
-    it ('should return the user id and token on success', (done) => {
+    it('should return the user id and token on success', (done) => {
       signUp(values).then((data) => {
         expect(data.userId).to.eql('user123')
         expect(data.token).to.eql('token123')
@@ -84,49 +84,68 @@ describe ('Authentication | Sign Up', () => {
     })
   })
 
-  describe ('Register JG User Account', () => {
-    beforeEach (() => {
+  describe('Register JG User Account', () => {
+    beforeEach(() => {
       updateClient({ baseURL: 'https://api.justgiving.com', headers: { 'x-api-key': 'abcd1234' } })
       moxios.install(instance)
     })
 
-    afterEach (() => {
+    afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
     })
 
-    it ('should hit the JG api with the correct url and data', (done) => {
-      signUp({
-        title: 'Mr',
-        firstName: 'Just',
-        lastName: 'Giving',
-        email: 'test@gmail.com',
-        password: 'password',
-        address: {
-          line1: '333 Ann Street',
-          line2: 'Level 8',
-          townOrCity: 'Brisbane',
-          countyOrState: 'Queensland',
-          country: 'Australia',
-          postcodeOrZipcode: '4000'
-        }
+    describe('should hit the JG api with the correct url and data', () => {
+      it('with address supplied', (done) => {
+        signUp({
+          title: 'Mr',
+          firstName: 'Just',
+          lastName: 'Giving',
+          email: 'test@gmail.com',
+          password: 'password',
+          address: {
+            line1: '333 Ann Street',
+            line2: 'Level 8',
+            townOrCity: 'Brisbane',
+            countyOrState: 'Queensland',
+            country: 'Australia',
+            postcodeOrZipcode: '4000'
+          }
+        })
+
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          const data = JSON.parse(request.config.data)
+          expect(request.url).to.eql('https://api.justgiving.com/v1/account')
+          expect(data.email).to.eql('test@gmail.com')
+          done()
+        })
       })
 
-      moxios.wait(() => {
-        const request = moxios.requests.mostRecent()
-        const data = JSON.parse(request.config.data)
-        expect(request.url).to.eql('https://api.justgiving.com/v1/account')
-        expect(data.email).to.eql('test@gmail.com')
-        done()
+      it('without address supplied', (done) => {
+        signUp({
+          firstName: 'Just',
+          lastName: 'Giving',
+          email: 'test@gmail.com',
+          password: 'password'
+        })
+
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          const data = JSON.parse(request.config.data)
+          expect(request.url).to.eql('https://api.justgiving.com/v1/account/lite')
+          expect(data.email).to.eql('test@gmail.com')
+          done()
+        })
       })
     })
 
-    it ('throws if no parameters are provided', () => {
+    it('throws if no parameters are provided', () => {
       const test = () => signUp()
       expect(test).to.throw
     })
 
-    it ('throws if request is missing required params', () => {
+    it('throws if request is missing required params', () => {
       const test = () => signUp({
         title: 'Mr',
         firstName: 'Just',
