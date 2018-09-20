@@ -19,11 +19,13 @@ describe('Fetch Leaderboards', () => {
       moxios.uninstall(instance)
     })
 
-    it('uses the correct url to fetch a leaderboard', (done) => {
+    it('uses the correct url to fetch a leaderboard', done => {
       fetchEDHLeaderboard({ campaign_id: 'au-6839', group_value: 'group123' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/search/pages_total'
+        )
         expect(request.url).to.contain('campaign_id=au-6839')
         expect(request.url).to.contain('group_value=group123')
         done()
@@ -35,63 +37,75 @@ describe('Fetch Leaderboards', () => {
       expect(test).to.throw
     })
 
-    it('uses the correct url to fetch a campaign leaderboard', (done) => {
+    it('uses the correct url to fetch a campaign leaderboard', done => {
       fetchEDHLeaderboard({ campaign: 'au-6839' })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/search/pages_total'
+        )
         expect(request.url).to.contain('campaign_id=au-6839')
         done()
       })
     })
 
-    it('uses the correct url to fetch a leaderboard for multiple campaigns', (done) => {
-      fetchEDHLeaderboard({ campaign: ['au-6839', 'au-6840']})
+    it('uses the correct url to fetch a leaderboard for multiple campaigns', done => {
+      fetchEDHLeaderboard({ campaign: ['au-6839', 'au-6840'] })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/search/pages_total'
+        )
         expect(request.url).to.contain('campaign_id[]=au-6839')
         expect(request.url).to.contain('campaign_id[]=au-6840')
         done()
       })
     })
 
-    it('uses the correct url to fetch a charity leaderboard', (done) => {
+    it('uses the correct url to fetch a charity leaderboard', done => {
       fetchEDHLeaderboard({ charity: 'au-28' })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/search/pages_total'
+        )
         expect(request.url).to.contain('charity_id=au-28')
         done()
       })
     })
 
-    it('uses the correct url to fetch a leaderboard for multiple campaigns', (done) => {
+    it('uses the correct url to fetch a leaderboard for multiple campaigns', done => {
       fetchEDHLeaderboard({ charity: ['au-28', 'au-29'] })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/search/pages_total'
+        )
         expect(request.url).to.contain('charity_id[]=au-28')
         expect(request.url).to.contain('charity_id[]=au-29')
         done()
       })
     })
 
-    it('correctly transforms page type params', (done) => {
+    it('correctly transforms page type params', done => {
       fetchEDHLeaderboard({ type: 'team' })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/search/pages_total'
+        )
         expect(request.url).to.contain('group_by=teams')
         done()
       })
     })
 
-    it('fetches leaderboards based on a group', (done) => {
+    it('fetches leaderboards based on a group', done => {
       fetchEDHLeaderboard({ type: 'group', groupID: 99 })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/pages_total')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/search/pages_total'
+        )
         expect(request.url).to.contain('group_by=groups')
         expect(request.url).to.contain('group_id=99')
         done()
@@ -101,7 +115,10 @@ describe('Fetch Leaderboards', () => {
 
   describe('Fetch JG Leaderboards', () => {
     beforeEach(() => {
-      updateClient({ baseURL: 'https://api.justgiving.com', headers: { 'x-api-key': 'abcd1234' } })
+      updateClient({
+        baseURL: 'https://api.justgiving.com',
+        headers: { 'x-api-key': 'abcd1234' }
+      })
       moxios.install(instance)
     })
 
@@ -115,30 +132,36 @@ describe('Fetch Leaderboards', () => {
       expect(test).to.throw
     })
 
-    it('uses the correct url to fetch a campaign leaderboard', (done) => {
+    it('uses the correct url to fetch a campaign leaderboard', done => {
       fetchJGLeaderboard({ charity: 'my-charity', campaign: 'my-campaign' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://api.justgiving.com/v1/campaigns/my-charity/my-campaign/pages')
+        expect(request.url).to.contain(
+          'https://api.justgiving.com/v1/campaigns/my-charity/my-campaign/pages'
+        )
         expect(request.url).to.contain('pageSize=100')
         done()
       })
     })
 
-    it('uses the correct url to fetch an event leaderboard', (done) => {
+    it('uses the correct url to fetch an event leaderboard', done => {
       fetchJGLeaderboard({ event: 12345 })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal('https://api.justgiving.com/v1/event/12345/leaderboard?currency=GBP')
+        expect(request.url).to.equal(
+          'https://api.justgiving.com/v1/event/12345/leaderboard?currency=GBP'
+        )
         done()
       })
     })
 
-    it('allows ther country (and currency) to be set', (done) => {
+    it('allows ther country (and currency) to be set', done => {
       fetchJGLeaderboard({ event: 12345, country: 'au' })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal('https://api.justgiving.com/v1/event/12345/leaderboard?currency=AUD')
+        expect(request.url).to.equal(
+          'https://api.justgiving.com/v1/event/12345/leaderboard?currency=AUD'
+        )
         done()
       })
     })
@@ -148,11 +171,13 @@ describe('Fetch Leaderboards', () => {
       expect(test).to.throw
     })
 
-    it('uses the correct url to fetch a charity leaderboard', (done) => {
+    it('uses the correct url to fetch a charity leaderboard', done => {
       fetchJGLeaderboard({ charity: 4567 })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal('https://api.justgiving.com/v1/charity/4567/leaderboard?currency=GBP')
+        expect(request.url).to.equal(
+          'https://api.justgiving.com/v1/charity/4567/leaderboard?currency=GBP'
+        )
         done()
       })
     })

@@ -4,10 +4,12 @@ import { instance, updateClient } from '../../../utils/client'
 
 import LoginForm from '..'
 
-describe ('Components | LoginForm', () => {
-  describe ('EDH LoginForm', () => {
-    it ('renders a simple login form', () => {
-      const wrapper = mount(<LoginForm clientId='1234abcd' onSuccess={(res) => console.log(res)} />)
+describe('Components | LoginForm', () => {
+  describe('EDH LoginForm', () => {
+    it('renders a simple login form', () => {
+      const wrapper = mount(
+        <LoginForm clientId='1234abcd' onSuccess={res => console.log(res)} />
+      )
       const inputs = wrapper.find('input')
       const button = wrapper.find('button')
 
@@ -17,19 +19,27 @@ describe ('Components | LoginForm', () => {
     })
   })
 
-  describe ('JG LoginForm', () => {
-    beforeEach (() => {
-      updateClient({ baseURL: 'https://api.justgiving.com', headers: { 'x-api-key': 'abcd1234' } })
+  describe('JG LoginForm', () => {
+    beforeEach(() => {
+      updateClient({
+        baseURL: 'https://api.justgiving.com',
+        headers: { 'x-api-key': 'abcd1234' }
+      })
       moxios.install(instance)
     })
 
-    afterEach (() => {
+    afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
     })
 
-    it ('renders a simple login form with custom submit prop', () => {
-      const wrapper = mount(<LoginForm submit='Sign in to JustGiving' onSuccess={(res) => console.log(res)} />)
+    it('renders a simple login form with custom submit prop', () => {
+      const wrapper = mount(
+        <LoginForm
+          submit='Sign in to JustGiving'
+          onSuccess={res => console.log(res)}
+        />
+      )
       const inputs = wrapper.find('input')
       const button = wrapper.find('button')
 

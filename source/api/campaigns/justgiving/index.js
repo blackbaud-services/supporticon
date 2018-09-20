@@ -5,23 +5,20 @@ export const c = {
   ENDPOINT: 'v1/campaigns'
 }
 
-export const fetchCampaigns = (params = required()) => (
-  get(`${c.ENDPOINT}/${getShortName(params.charity)}`)
-    .then((response) => response.campaignsDetails)
-)
+export const fetchCampaigns = (params = required()) =>
+  get(`${c.ENDPOINT}/${getShortName(params.charity)}`).then(
+    response => response.campaignsDetails
+  )
 
 export const fetchCampaign = ({
   charity = required(),
   campaign = required()
-}) => (
-  get(`${c.ENDPOINT}/${getShortName(charity)}/${getShortName(campaign)}`)
-)
+}) => get(`${c.ENDPOINT}/${getShortName(charity)}/${getShortName(campaign)}`)
 
-export const fetchCampaignGroups = (id = required()) => (
+export const fetchCampaignGroups = (id = required()) =>
   Promise.reject('This method is not supported for JustGiving')
-)
 
-export const deserializeCampaign = (campaign) => {
+export const deserializeCampaign = campaign => {
   const { id, campaignUrl, causeId } = campaign
   const slug = campaignUrl.split('/')[campaignUrl.split('/').length - 1]
 

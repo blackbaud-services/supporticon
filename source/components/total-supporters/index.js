@@ -17,7 +17,8 @@ class TotalSupporters extends Component {
   componentDidMount () {
     const { refreshInterval } = this.props
     this.fetchData()
-    this.interval = refreshInterval && setInterval(this.fetchData, refreshInterval)
+    this.interval =
+      refreshInterval && setInterval(this.fetchData, refreshInterval)
   }
 
   componentWillUnmount () {
@@ -50,13 +51,13 @@ class TotalSupporters extends Component {
       endDate,
       search
     })
-      .then((data) => {
+      .then(data => {
         this.setState({
           status: 'fetched',
           data
         })
       })
-      .catch((error) => {
+      .catch(error => {
         this.setState({
           status: 'failed'
         })
@@ -65,11 +66,7 @@ class TotalSupporters extends Component {
   }
 
   render () {
-    const {
-      icon,
-      label,
-      metric
-    } = this.props
+    const { icon, label, metric } = this.props
 
     return (
       <Metric
@@ -82,16 +79,9 @@ class TotalSupporters extends Component {
   }
 
   renderAmount () {
-    const {
-      status,
-      data = {}
-    } = this.state
+    const { status, data = {} } = this.state
 
-    const {
-      format,
-      offset,
-      multiplier
-    } = this.props
+    const { format, offset, multiplier } = this.props
 
     switch (status) {
       case 'fetching':
@@ -106,83 +96,81 @@ class TotalSupporters extends Component {
 
 TotalSupporters.propTypes = {
   /**
-  * The campaign uid to fetch totals for
-  */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
+   * The campaign uid to fetch totals for
+   */
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+
+  /**
+   * The charity uid to fetch totals for
+   */
+  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+
+  /**
+   * Country code for API (JG only)
+   */
+  country: PropTypes.oneOf([
+    'au',
+    'ca',
+    'hk',
+    'ie',
+    'nz',
+    'sg',
+    'uk',
+    'us',
+    'za'
   ]),
 
   /**
-  * The charity uid to fetch totals for
-  */
-  charity: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The type of page to include in the leaderboard
+   */
+  type: PropTypes.oneOf(['individual', 'team', 'all']),
 
   /**
-  * Country code for API (JG only)
-  */
-  country: PropTypes.oneOf(['au', 'ca', 'hk', 'ie', 'nz', 'sg', 'uk', 'us', 'za']),
+   * Whether to include active pages
+   */
+  active: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 
   /**
-  * The type of page to include in the leaderboard
-  */
-  type: PropTypes.oneOf([ 'individual', 'team', 'all' ]),
+   * The group value(s) to filter by
+   */
+  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * Whether to include active pages
-  */
-  active: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool
-  ]),
-
-  /**
-  * The group value(s) to filter by
-  */
-  group: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
-
-  /**
-  * Start date filter (ISO Format)
-  */
+   * Start date filter (ISO Format)
+   */
   startDate: PropTypes.string,
 
   /**
-  * End date filter (ISO Format)
-  */
+   * End date filter (ISO Format)
+   */
   endDate: PropTypes.string,
 
   /**
-  * Offset
-  */
+   * Offset
+   */
   offset: PropTypes.number,
 
   /**
-  * The amount to multiply the total by for custom conversions
-  */
+   * The amount to multiply the total by for custom conversions
+   */
   multiplier: PropTypes.number,
 
   /**
-  * The format of the number
-  */
+   * The format of the number
+   */
   format: PropTypes.string,
 
   /**
-  * The label of the metric
-  */
+   * The label of the metric
+   */
   label: PropTypes.string,
 
   /**
-  * The icon to use
-  * - String representing a constructicon icon e.g. heart
-  * - Array of custom paths
-  * - An element to use instead e.g. <i className='fa fa-heart' />
-  */
+   * The icon to use
+   * - String representing a constructicon icon e.g. heart
+   * - Array of custom paths
+   * - An element to use instead e.g. <i className='fa fa-heart' />
+   */
   icon: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
@@ -190,18 +178,18 @@ TotalSupporters.propTypes = {
   ]),
 
   /**
-  * Props to be passed to the Constructicon Metric component
-  */
+   * Props to be passed to the Constructicon Metric component
+   */
   metric: PropTypes.object,
 
   /**
-  * Interval (in milliseconds) to refresh data from API
-  */
+   * Interval (in milliseconds) to refresh data from API
+   */
   refreshInterval: PropTypes.number,
 
   /**
-  * Use `v2/search/pages` endpoint (EDH only)
-  */
+   * Use `v2/search/pages` endpoint (EDH only)
+   */
   search: PropTypes.bool
 }
 

@@ -46,13 +46,15 @@ describe('Authentication | Sign Up', () => {
       expect(test).to.throw
     })
 
-    it('should hit the supporter api with the correct url and data', (done) => {
+    it('should hit the supporter api with the correct url and data', done => {
       signUp(values)
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         const data = JSON.parse(request.config.data)
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/authentication/sign_up')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/authentication/sign_up'
+        )
         expect(data.client_id).to.eql('0123456789')
         expect(data.user).to.eql({
           name: 'Supporter User',
@@ -64,8 +66,8 @@ describe('Authentication | Sign Up', () => {
       })
     })
 
-    it('should return the user id and token on success', (done) => {
-      signUp(values).then((data) => {
+    it('should return the user id and token on success', done => {
+      signUp(values).then(data => {
         expect(data.userId).to.eql('user123')
         expect(data.token).to.eql('token123')
         done()
@@ -86,7 +88,10 @@ describe('Authentication | Sign Up', () => {
 
   describe('Register JG User Account', () => {
     beforeEach(() => {
-      updateClient({ baseURL: 'https://api.justgiving.com', headers: { 'x-api-key': 'abcd1234' } })
+      updateClient({
+        baseURL: 'https://api.justgiving.com',
+        headers: { 'x-api-key': 'abcd1234' }
+      })
       moxios.install(instance)
     })
 
@@ -96,7 +101,7 @@ describe('Authentication | Sign Up', () => {
     })
 
     describe('should hit the JG api with the correct url and data', () => {
-      it('with address supplied', (done) => {
+      it('with address supplied', done => {
         signUp({
           title: 'Mr',
           firstName: 'Just',
@@ -122,7 +127,7 @@ describe('Authentication | Sign Up', () => {
         })
       })
 
-      it('without address supplied', (done) => {
+      it('without address supplied', done => {
         signUp({
           firstName: 'Just',
           lastName: 'Giving',
@@ -133,7 +138,9 @@ describe('Authentication | Sign Up', () => {
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
           const data = JSON.parse(request.config.data)
-          expect(request.url).to.eql('https://api.justgiving.com/v1/account/lite')
+          expect(request.url).to.eql(
+            'https://api.justgiving.com/v1/account/lite'
+          )
           expect(data.email).to.eql('test@gmail.com')
           done()
         })
@@ -146,11 +153,12 @@ describe('Authentication | Sign Up', () => {
     })
 
     it('throws if request is missing required params', () => {
-      const test = () => signUp({
-        title: 'Mr',
-        firstName: 'Just',
-        email: 'test@gmail.com'
-      })
+      const test = () =>
+        signUp({
+          title: 'Mr',
+          firstName: 'Just',
+          email: 'test@gmail.com'
+        })
 
       expect(test).to.throw
     })

@@ -1,13 +1,7 @@
 export default (props, traits) => {
-  const {
-    colors,
-    rhythm
-  } = traits
+  const { colors, rhythm } = traits
 
-  const {
-    isActive,
-    styles
-  } = props
+  const { isActive, styles } = props
 
   return {
     root: {

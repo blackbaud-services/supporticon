@@ -1,7 +1,7 @@
 import { get, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
-const countryCode = (country) => {
+const countryCode = country => {
   switch (country) {
     case 'Australia':
       return 'AU'
@@ -27,9 +27,12 @@ const formattedAddress = ({
   countyOrState,
   postcodeOrZipcode,
   country
-}) => [line1, line2, townOrCity, countyOrState, postcodeOrZipcode, country].join(', ')
+}) =>
+  [line1, line2, townOrCity, countyOrState, postcodeOrZipcode, country].join(
+    ', '
+  )
 
-export const deserializeUser = (user) => ({
+export const deserializeUser = user => ({
   address: {
     streetAddress: user.address.line1,
     extendedAddress: user.address.line2,
@@ -45,7 +48,9 @@ export const deserializeUser = (user) => ({
   firstName: user.firstName,
   formattedAddress: formattedAddress(user.address),
   id: user.accountId,
-  image: user.profileImageUrls.length ? user.profileImageUrls[0]['Value'] : null,
+  image: user.profileImageUrls.length
+    ? user.profileImageUrls[0]['Value']
+    : null,
   lastName: user.lastName,
   name: [user.firstName, user.lastName].join(' '),
   pageCount: user.activePageCount,
@@ -53,16 +58,17 @@ export const deserializeUser = (user) => ({
   uuid: user.userId
 })
 
-export const fetchCurrentUser = ({
-  token = required(),
-  authType = 'Basic'
-}) => (
-  get('v1/account', {}, {}, {
-    headers: {
-      'Authorization': [authType, token].join(' ')
+export const fetchCurrentUser = ({ token = required(), authType = 'Basic' }) =>
+  get(
+    'v1/account',
+    {},
+    {},
+    {
+      headers: {
+        Authorization: [authType, token].join(' ')
+      }
     }
-  })
-)
+  )
 
 export const updateCurrentUser = ({
   token = required(),
@@ -72,15 +78,18 @@ export const updateCurrentUser = ({
   firstName,
   lastName,
   address
-}) => (
-  put(`v1/account/${uuid}`, {
-    firstName,
-    lastName,
-    email,
-    address
-  }, {
-    headers: {
-      'Authorization': [authType, token].join(' ')
+}) =>
+  put(
+    `v1/account/${uuid}`,
+    {
+      firstName,
+      lastName,
+      email,
+      address
+    },
+    {
+      headers: {
+        Authorization: [authType, token].join(' ')
+      }
     }
-  })
-)
+  )

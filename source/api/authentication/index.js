@@ -14,19 +14,13 @@ import {
 } from './everydayhero'
 
 export const resetPassword = (params = required()) => {
-  return isJustGiving()
-    ? resetJGPassword(params)
-    : resetEDHPassword(params)
+  return isJustGiving() ? resetJGPassword(params) : resetEDHPassword(params)
 }
 
 export const signIn = (params = required()) => {
-  return isJustGiving()
-    ? loginJGAccount(params)
-    : loginEDHUser(params)
+  return isJustGiving() ? loginJGAccount(params) : loginEDHUser(params)
 }
 
 export const signUp = (params = required()) => {
-  return isJustGiving()
-    ? registerJGAccount(params)
-    : signUpEDHUser(params)
+  return isJustGiving() ? registerJGAccount(params) : signUpEDHUser(params)
 }

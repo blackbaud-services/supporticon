@@ -22,15 +22,9 @@ class ResetPasswordForm extends Component {
   handleSubmit (e) {
     e.preventDefault()
 
-    const {
-      clientId,
-      form,
-      onSuccess,
-      reference,
-      returnTo
-    } = this.props
+    const { clientId, form, onSuccess, reference, returnTo } = this.props
 
-    return form.submit().then((data) => {
+    return form.submit().then(data => {
       this.setState({
         errors: [],
         status: 'fetching'
@@ -41,27 +35,29 @@ class ResetPasswordForm extends Component {
         reference,
         returnTo,
         ...data
-      }).then((result) => {
-        this.setState({ status: 'fetched' })
-
-        return onSuccess(result)
-      }).catch((error) => {
-        const message = get(error, 'data.error.message')
-
-        switch (error.status) {
-          case 400:
-          case 404:
-            return this.setState({
-              status: 'failed',
-              errors: [{ message: `No account was found for ${data.email}` }]
-            })
-          default:
-            return this.setState({
-              status: 'failed',
-              errors: message ? [{ message }] : []
-            })
-        }
       })
+        .then(result => {
+          this.setState({ status: 'fetched' })
+
+          return onSuccess(result)
+        })
+        .catch(error => {
+          const message = get(error, 'data.error.message')
+
+          switch (error.status) {
+            case 400:
+            case 404:
+              return this.setState({
+                status: 'failed',
+                errors: [{ message: `No account was found for ${data.email}` }]
+              })
+            default:
+              return this.setState({
+                status: 'failed',
+                errors: message ? [{ message }] : []
+              })
+          }
+        })
     })
   }
 
@@ -74,10 +70,7 @@ class ResetPasswordForm extends Component {
       submit
     } = this.props
 
-    const {
-      status,
-      errors
-    } = this.state
+    const { status, errors } = this.state
 
     return (
       <Form
@@ -87,8 +80,9 @@ class ResetPasswordForm extends Component {
         noValidate
         onSubmit={this.handleSubmit}
         submit={submit}
-        {...formComponent}>
-        {values(form.fields).map((field) => (
+        {...formComponent}
+      >
+        {values(form.fields).map(field => (
           <InputField key={field.name} {...field} {...inputField} />
         ))}
       </Form>
@@ -98,43 +92,43 @@ class ResetPasswordForm extends Component {
 
 ResetPasswordForm.propTypes = {
   /**
-  * The clientId for a valid OauthApplication (EDH only)
-  */
+   * The clientId for a valid OauthApplication (EDH only)
+   */
   clientId: PropTypes.string,
 
   /**
-  * Disable form submission when invalid
-  */
+   * Disable form submission when invalid
+   */
   disableInvalidForm: PropTypes.bool,
 
   /**
-  * Props to be passed to the Form component
-  */
+   * Props to be passed to the Form component
+   */
   formComponent: PropTypes.object,
 
   /**
-  * Props to be passed to the InputField component
-  */
+   * Props to be passed to the InputField component
+   */
   inputField: PropTypes.object,
 
   /**
-  * The onSuccess event handler
-  */
+   * The onSuccess event handler
+   */
   onSuccess: PropTypes.func.isRequired,
 
   /**
-  * The label for the form submit button
-  */
+   * The label for the form submit button
+   */
   submit: PropTypes.string,
 
   /**
-  * The campaign slug for branding (EDH only)
-  */
+   * The campaign slug for branding (EDH only)
+   */
   reference: PropTypes.string,
 
   /**
-  * The URL to return to after updating password (EDH only)
-  */
+   * The URL to return to after updating password (EDH only)
+   */
   returnTo: PropTypes.string
 }
 

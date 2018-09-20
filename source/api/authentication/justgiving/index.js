@@ -4,18 +4,20 @@ import { required } from '../../../utils/params'
 export const resetPassword = ({ email = required() }) =>
   get(`v1/account/${email}/requestpasswordreminder`)
 
-export const signIn = ({
-  email = required(),
-  password = required()
-}) => {
+export const signIn = ({ email = required(), password = required() }) => {
   const { btoa } = window
   const token = btoa(`${email}:${password}`)
 
-  return get('v1/account', {}, {}, {
-    headers: {
-      'Authorization': `Basic ${token}`
+  return get(
+    'v1/account',
+    {},
+    {},
+    {
+      headers: {
+        Authorization: `Basic ${token}`
+      }
     }
-  }).then((data) => ({
+  ).then(data => ({
     address: data.address,
     email: data.email,
     name: [data.firstName, data.lastName].join(' '),

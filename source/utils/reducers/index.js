@@ -4,7 +4,7 @@ export const createReducer = ({
   namespace = required(),
   initialState = {},
   handlers = {},
-  deserialize = (data) => data
+  deserialize = data => data
 }) => {
   const c = {
     FETCH: `${namespace}/FETCH`,
@@ -12,12 +12,12 @@ export const createReducer = ({
     FETCH_FAILURE: `${namespace}/FETCH_FAILURE`
   }
 
-  const defaultFetch = (state) => ({
+  const defaultFetch = state => ({
     ...state,
     status: 'fetching'
   })
 
-  const defaultFetchFailure = (state) => ({
+  const defaultFetchFailure = state => ({
     ...state,
     status: 'failed'
   })

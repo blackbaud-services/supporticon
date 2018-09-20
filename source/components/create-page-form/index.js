@@ -51,7 +51,7 @@ class CreatePageForm extends Component {
       token
     } = this.props
 
-    return form.submit().then((data) => {
+    return form.submit().then(data => {
       if (form.fields.slug && !this.state.slugAvailable) {
         return
       }
@@ -61,44 +61,68 @@ class CreatePageForm extends Component {
         status: 'fetching'
       })
 
-      const groupFields = pickBy(data, (value, key) => /^group_values_/.test(key))
-      const addressFields = pick(data, [ 'streetAddress', 'extendedAddress', 'locality', 'region', 'postCode', 'country' ])
+      const groupFields = pickBy(data, (value, key) =>
+        /^group_values_/.test(key)
+      )
+      const addressFields = pick(data, [
+        'streetAddress',
+        'extendedAddress',
+        'locality',
+        'region',
+        'postCode',
+        'country'
+      ])
 
-      const dataPayload = merge({
-        authType,
-        campaignId,
-        charityFunded,
-        charityId,
-        charityOptIn: true,
-        eventId,
-        token,
-        groupValues: mapKeys(groupFields, (value, key) => key.replace('group_values_', ''))
-      }, data)
+      const dataPayload = merge(
+        {
+          authType,
+          campaignId,
+          charityFunded,
+          charityId,
+          charityOptIn: true,
+          eventId,
+          token,
+          groupValues: mapKeys(groupFields, (value, key) =>
+            key.replace('group_values_', '')
+          )
+        },
+        data
+      )
 
       return this.handleSubmitAddress(token, addressFields)
         .then(() => createPage(dataPayload))
-        .then((result) => {
+        .then(result => {
           this.setState({ status: 'fetched' })
           return onSuccess(result)
         })
-        .catch((error) => {
+        .catch(error => {
           switch (error.status) {
             case 422:
               const errors = get(error, 'data.error.errors') || []
 
               return this.setState({
                 status: 'failed',
-                errors: errors.map(({ field, message }) => ({ message: [capitalize(field.split('_').join(' ')), message].join(' ') }))
+                errors: errors.map(({ field, message }) => ({
+                  message: [
+                    capitalize(field.split('_').join(' ')),
+                    message
+                  ].join(' ')
+                }))
               })
             case 400:
               const errorMessages = error.data || []
 
               return this.setState({
                 status: 'failed',
-                errors: errorMessages.map(({ desc }) => ({ message: capitalize(desc) }))
+                errors: errorMessages.map(({ desc }) => ({
+                  message: capitalize(desc)
+                }))
               })
             default:
-              const message = get(error, 'data.error.message') || get(error, 'data.errorMessage') || 'There was an unexpected error'
+              const message =
+                get(error, 'data.error.message') ||
+                get(error, 'data.errorMessage') ||
+                'There was an unexpected error'
 
               return this.setState({
                 status: 'failed',
@@ -123,7 +147,14 @@ class CreatePageForm extends Component {
   }
 
   getAutoRenderedFields (fields) {
-    return renderFormFields(fields, ['streetAddress', 'extendedAddress', 'locality', 'region', 'postCode', 'country'])
+    return renderFormFields(fields, [
+      'streetAddress',
+      'extendedAddress',
+      'locality',
+      'region',
+      'postCode',
+      'country'
+    ])
   }
 
   render () {
@@ -136,10 +167,7 @@ class CreatePageForm extends Component {
       submit
     } = this.props
 
-    const {
-      status,
-      errors
-    } = this.state
+    const { status, errors } = this.state
 
     return (
       <Form
@@ -150,9 +178,9 @@ class CreatePageForm extends Component {
         onSubmit={this.handleSubmit}
         submit={submit}
         autoComplete='off'
-        {...formComponent}>
-
-        {this.getAutoRenderedFields(form.fields).map((field) => {
+        {...formComponent}
+      >
+        {this.getAutoRenderedFields(form.fields).map(field => {
           switch (field.name) {
             case 'slug':
               return (
@@ -160,7 +188,9 @@ class CreatePageForm extends Component {
                   key={field.name}
                   {...field}
                   {...inputField}
-                  handleFetch={(slugAvailable) => this.setState({ slugAvailable })}
+                  handleFetch={slugAvailable =>
+                    this.setState({ slugAvailable })
+                  }
                 />
               )
             default:
@@ -218,68 +248,68 @@ class CreatePageForm extends Component {
 
 CreatePageForm.propTypes = {
   /**
-  * The campaignId for a valid campaign (EDH only - required)
-  */
+   * The campaignId for a valid campaign (EDH only - required)
+   */
   campaignId: PropTypes.string,
 
   /**
-  * The charityId for a valid charity (Required for JG)
-  */
+   * The charityId for a valid charity (Required for JG)
+   */
   charityId: PropTypes.string,
 
   /**
-  * Whether Gift Aid is enabled
-  */
+   * Whether Gift Aid is enabled
+   */
   charityFunded: PropTypes.bool,
 
   /**
-  * Country for new page
-  */
-  country: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
+   * Country for new page
+   */
+  country: PropTypes.oneOf(['au', 'nz', 'uk', 'us', 'ie']),
 
   /**
-  * Disable form submission when invalid
-  */
+   * Disable form submission when invalid
+   */
   disableInvalidForm: PropTypes.bool,
 
   /**
-  * The eventId for a valid event (JG only - required)
-  */
+   * The eventId for a valid event (JG only - required)
+   */
   eventId: PropTypes.string,
 
   /**
-  * Form fields to be passed to withForm config
-  */
+   * Form fields to be passed to withForm config
+   */
   fields: PropTypes.object,
 
   /**
-  * Props to be passed to the Form component
-  */
+   * Props to be passed to the Form component
+   */
   formComponent: PropTypes.object,
 
   /**
-  * Props to be passed to the InputField components
-  */
+   * Props to be passed to the InputField components
+   */
   inputField: PropTypes.object,
 
   /**
-  * The onSuccess event handler
-  */
+   * The onSuccess event handler
+   */
   onSuccess: PropTypes.func.isRequired,
 
   /**
-  * The label for the form submit button
-  */
+   * The label for the form submit button
+   */
   submit: PropTypes.string,
 
   /**
-  * The logged in users' auth token
-  */
+   * The logged in users' auth token
+   */
   token: PropTypes.string.isRequired,
 
   /**
-  * Include address search in the page creation
-  */
+   * Include address search in the page creation
+   */
   includeAddress: PropTypes.bool
 }
 
@@ -291,85 +321,79 @@ CreatePageForm.defaultProps = {
   submit: 'Create Page'
 }
 
-const form = (props) => {
-  const defaultFields = isJustGiving() ? {
-    title: {
-      label: 'Page title',
-      type: 'text',
-      order: 1,
-      required: true,
-      maxLength: 255,
-      placeholder: 'Title of your fundraising page',
-      validators: [
-        validators.required('Please enter a page title')
-      ]
-    },
-    slug: {
-      label: 'Page URL',
-      type: 'text',
-      order: 2,
-      required: true,
-      maxLength: 255,
-      placeholder: 'URL for your fundraising page',
-      onKeyDown: (e) => e.which === 32 && e.preventDefault(),
-      validators: [
-        validators.required('Please enter your page URL'),
-        validators.slug('Please enter a valid URL using only letters, numbers or hyphens (-)')
-      ]
+const form = props => {
+  const defaultFields = isJustGiving()
+    ? {
+      title: {
+        label: 'Page title',
+        type: 'text',
+        order: 1,
+        required: true,
+        maxLength: 255,
+        placeholder: 'Title of your fundraising page',
+        validators: [validators.required('Please enter a page title')]
+      },
+      slug: {
+        label: 'Page URL',
+        type: 'text',
+        order: 2,
+        required: true,
+        maxLength: 255,
+        placeholder: 'URL for your fundraising page',
+        onKeyDown: e => e.which === 32 && e.preventDefault(),
+        validators: [
+          validators.required('Please enter your page URL'),
+          validators.slug(
+            'Please enter a valid URL using only letters, numbers or hyphens (-)'
+          )
+        ]
+      }
     }
-  } : {
-    birthday: {
-      label: 'Date of birth',
-      type: 'date',
-      order: 1,
-      required: true,
-      placeholder: 'DD/MM/YYYY',
-      min: '1900-01-01',
-      pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}',
-      validators: [
-        validators.required('Please enter your date of birth')
-      ]
+    : {
+      birthday: {
+        label: 'Date of birth',
+        type: 'date',
+        order: 1,
+        required: true,
+        placeholder: 'DD/MM/YYYY',
+        min: '1900-01-01',
+        pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}',
+        validators: [validators.required('Please enter your date of birth')]
+      }
     }
-  }
 
   const addressFormFields = {
     country: {
       label: 'Country',
       initial: props.country,
       options: countries,
-      validators: [
-        validators.required('Please select a country')
-      ]
+      validators: [validators.required('Please select a country')]
     },
     streetAddress: {
       label: 'Street Address',
-      validators: [
-        validators.required('Please enter a street address')
-      ]
+      validators: [validators.required('Please enter a street address')]
     },
     extendedAddress: {},
     locality: {
       label: 'Town/Suburb',
-      validators: [
-        validators.required('Please enter a town/suburb')
-      ]
+      validators: [validators.required('Please enter a town/suburb')]
     },
     region: {
       label: 'State',
-      validators: [
-        validators.required('Please enter a state')
-      ]
+      validators: [validators.required('Please enter a state')]
     },
     postCode: {
       label: 'Post Code',
-      validators: [
-        validators.required('Please enter a post code')
-      ]
+      validators: [validators.required('Please enter a post code')]
     }
   }
 
   return {
-    fields: merge(defaultFields, props.fields, props.includeAddress ? addressFormFields : {})
+    fields: merge(
+      defaultFields,
+      props.fields,
+      props.includeAddress ? addressFormFields : {}
+    )
   }
 }
 

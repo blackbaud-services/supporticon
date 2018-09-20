@@ -2,7 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import withStyles from 'constructicon/with-styles'
 import styles from './styles'
-import { deserializeAddress, getAddressDetails, searchAddress } from '../../api/address'
+import {
+  deserializeAddress,
+  getAddressDetails,
+  searchAddress
+} from '../../api/address'
 import countries from '../../utils/countries'
 
 import AddressResult from './AddressResult'
@@ -28,8 +32,8 @@ class AddressSearch extends Component {
     Promise.resolve()
       .then(() => this.setState({ status: 'fetching' }))
       .then(() => searchAddress(q, this.state.country))
-      .then((results) => this.setState({ results, status: 'fetched' }))
-      .catch((error) => {
+      .then(results => this.setState({ results, status: 'fetched' }))
+      .catch(error => {
         this.setState({ status: 'failed' })
         return Promise.reject(error)
       })
@@ -40,24 +44,15 @@ class AddressSearch extends Component {
 
     if (selected && selected.id) {
       getAddressDetails(selected.id, this.state.country)
-        .then((address) => deserializeAddress(address))
-        .then((address) => this.props.onChange(address, this.state.country))
+        .then(address => deserializeAddress(address))
+        .then(address => this.props.onChange(address, this.state.country))
     }
   }
 
   render () {
-    const {
-      error,
-      inputProps,
-      validations
-    } = this.props
+    const { error, inputProps, validations } = this.props
 
-    const {
-      country,
-      results,
-      status,
-      value
-    } = this.state
+    const { country, results, status, value } = this.state
 
     return (
       <Grid spacing={{ x: 0.5 }}>
@@ -65,8 +60,8 @@ class AddressSearch extends Component {
           <InputSelect
             label='Country'
             name='address-country'
-            onBlur={(country) => this.setState({ country })}
-            onChange={(country) => this.setState({ country })}
+            onBlur={country => this.setState({ country })}
+            onChange={country => this.setState({ country })}
             options={countries}
             value={country}
           />
@@ -98,9 +93,8 @@ class AddressSearch extends Component {
         <span>Address</span>
         {onCancel && ' - '}
         {onCancel && (
-          <span
-            className={classNames.cancel}
-            onClick={onCancel}>Enter address manually
+          <span className={classNames.cancel} onClick={onCancel}>
+            Enter address manually
           </span>
         )}
       </div>
@@ -110,23 +104,23 @@ class AddressSearch extends Component {
 
 AddressSearch.propTypes = {
   /**
-  * Country for API queries
-  */
-  country: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
+   * Country for API queries
+   */
+  country: PropTypes.oneOf(['au', 'nz', 'uk', 'us', 'ie']),
 
   /**
-  * The props to pass to the input search component
-  */
+   * The props to pass to the input search component
+   */
   inputProps: PropTypes.object,
 
   /**
-  * The onCancel function to call when the user wants to enter address manually
-  */
+   * The onCancel function to call when the user wants to enter address manually
+   */
   onCancel: PropTypes.func,
 
   /**
-  * The onChange function to call when a selection is made
-  */
+   * The onChange function to call when a selection is made
+   */
   onChange: PropTypes.func.isRequired
 }
 

@@ -25,7 +25,12 @@ class FitnessLeaderboard extends Component {
   componentDidMount () {
     const { refreshInterval } = this.props
     this.fetchLeaderboard()
-    this.interval = refreshInterval && setInterval(() => this.fetchLeaderboard(this.state.q, true), refreshInterval)
+    this.interval =
+      refreshInterval &&
+      setInterval(
+        () => this.fetchLeaderboard(this.state.q, true),
+        refreshInterval
+      )
   }
 
   componentWillUnmount () {
@@ -61,10 +66,11 @@ class FitnessLeaderboard extends Component {
       sortBy
     } = this.props
 
-    !refresh && this.setState({
-      status: 'fetching',
-      data: undefined
-    })
+    !refresh &&
+      this.setState({
+        status: 'fetching',
+        data: undefined
+      })
 
     fetchFitnessLeaderboard({
       activity,
@@ -83,13 +89,13 @@ class FitnessLeaderboard extends Component {
       sortBy,
       q
     })
-      .then((data) => {
+      .then(data => {
         this.setState({
           status: 'fetched',
           data: data.map(deserializeFitnessLeaderboard)
         })
       })
-      .catch((error) => {
+      .catch(error => {
         this.setState({
           status: 'failed'
         })
@@ -98,15 +104,9 @@ class FitnessLeaderboard extends Component {
   }
 
   render () {
-    const {
-      status,
-      data = []
-    } = this.state
+    const { status, data = [] } = this.state
 
-    const {
-      leaderboard,
-      filter
-    } = this.props
+    const { leaderboard, filter } = this.props
 
     return (
       <div>
@@ -122,9 +122,7 @@ class FitnessLeaderboard extends Component {
   }
 
   renderLeader (leader, i) {
-    const {
-      leaderboardItem = {}
-    } = this.props
+    const { leaderboardItem = {} } = this.props
 
     return (
       <LeaderboardItem
@@ -140,10 +138,7 @@ class FitnessLeaderboard extends Component {
   }
 
   getMetric (leader) {
-    const {
-      miles,
-      sortBy
-    } = this.props
+    const { miles, sortBy } = this.props
 
     switch (sortBy) {
       case 'calories':
@@ -154,7 +149,9 @@ class FitnessLeaderboard extends Component {
         const elevation = miles ? leader.elevation * 3.28084 : leader.elevation
         return `${numbro(elevation).format('0,0')} ${miles ? 'ft' : 'm'}`
       default:
-        const distance = miles ? leader.distance / 1609.34 : leader.distance / 1000
+        const distance = miles
+          ? leader.distance / 1609.34
+          : leader.distance / 1000
         return `${numbro(distance).format('0,0')} ${miles ? 'mi.' : 'kms'}`
     }
   }
@@ -162,110 +159,98 @@ class FitnessLeaderboard extends Component {
 
 FitnessLeaderboard.propTypes = {
   /**
-  * The campaign uid to fetch pages for
-  */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The campaign uid to fetch pages for
+   */
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * The charity uid to fetch pages for
-  */
-  charity: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The charity uid to fetch pages for
+   */
+  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * The type of page to include in the leaderboard
-  */
-  type: PropTypes.oneOf([ 'group', 'individual', 'team' ]),
+   * The type of page to include in the leaderboard
+   */
+  type: PropTypes.oneOf(['group', 'individual', 'team']),
 
   /**
-  * The activity type of page to include in the leaderboard (bike, gym, hike, run, sport, swim, walk)
-  */
-  activity: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The activity type of page to include in the leaderboard (bike, gym, hike, run, sport, swim, walk)
+   */
+  activity: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * The group value(s) to filter by
-  */
-  group: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The group value(s) to filter by
+   */
+  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * Start date filter (ISO Format)
-  */
+   * Start date filter (ISO Format)
+   */
   startDate: PropTypes.string,
 
   /**
-  * End date filter (ISO Format)
-  */
+   * End date filter (ISO Format)
+   */
   endDate: PropTypes.string,
 
   /**
-  * Include Virtual
-  */
+   * Include Virtual
+   */
   includeVirtual: PropTypes.bool,
 
   /**
-  * Include Manual
-  */
+   * Include Manual
+   */
   includeManual: PropTypes.bool,
 
   /**
-  * Exclude Virtual
-  */
+   * Exclude Virtual
+   */
   excludeVirtual: PropTypes.bool,
 
   /**
-  * Unit
-  */
+   * Unit
+   */
   miles: PropTypes.bool,
 
   /**
-  * The number of records to fetch
-  */
+   * The number of records to fetch
+   */
   limit: PropTypes.number,
 
   /**
-  * The page to fetch
-  */
+   * The page to fetch
+   */
   page: PropTypes.number,
 
   /**
-  * The group ID to group the leaderboard by (only relevant if type is group)
-  */
+   * The group ID to group the leaderboard by (only relevant if type is group)
+   */
   groupID: PropTypes.number,
 
   /**
-  * The type of measurement to sort by
-  */
-  sortBy: PropTypes.oneOf([ 'distance', 'duration', 'calories', 'elevation' ]),
+   * The type of measurement to sort by
+   */
+  sortBy: PropTypes.oneOf(['distance', 'duration', 'calories', 'elevation']),
 
   /**
-  * Props to be passed to the Constructicon Leaderboard component
-  */
+   * Props to be passed to the Constructicon Leaderboard component
+   */
   leaderboard: PropTypes.object,
 
   /**
-  * Props to be passed to the Constructicon LeaderboardItem component
-  */
+   * Props to be passed to the Constructicon LeaderboardItem component
+   */
   leaderboardItem: PropTypes.object,
 
   /**
-  * Props to be passed to the Filter component (false to hide)
-  */
+   * Props to be passed to the Filter component (false to hide)
+   */
   filter: PropTypes.any,
 
   /**
-  * Interval (in milliseconds) to refresh data from API
-  */
+   * Interval (in milliseconds) to refresh data from API
+   */
   refreshInterval: PropTypes.number
 }
 

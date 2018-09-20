@@ -2,7 +2,7 @@ import omit from 'lodash/omit'
 import { get, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
-export const deserializeUser = (user) => ({
+export const deserializeUser = user => ({
   address: {
     streetAddress: user.street_address,
     extendedAddress: user.extended_address,
@@ -26,12 +26,8 @@ export const deserializeUser = (user) => ({
   uuid: user.uuid
 })
 
-export const fetchCurrentUser = ({
-  token = required()
-}) => (
-  get('api/v1/me', { access_token: token })
-    .then((data) => data.user)
-)
+export const fetchCurrentUser = ({ token = required() }) =>
+  get('api/v1/me', { access_token: token }).then(data => data.user)
 
 export const updateCurrentUser = ({
   token = required(),
@@ -39,7 +35,7 @@ export const updateCurrentUser = ({
   address = {},
   birthday,
   phone
-}) => (
+}) =>
   put(`api/v1/me?access_token=${token}`, {
     user: {
       name,
@@ -53,4 +49,3 @@ export const updateCurrentUser = ({
       phone: phone
     }
   })
-)

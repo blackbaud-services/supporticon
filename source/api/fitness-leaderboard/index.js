@@ -6,19 +6,18 @@ export const c = {
 }
 
 /**
-* @function fetches supporter pages ranked by fitness activities
-*/
+ * @function fetches supporter pages ranked by fitness activities
+ */
 export const fetchFitnessLeaderboard = (params = required()) => {
-  if (isJustGiving()) return Promise.reject('This method is not supported for JustGiving')
+  if (isJustGiving()) {
+    return Promise.reject('This method is not supported for JustGiving')
+  }
 
   const transforms = {
-    type: (val) => val === 'team'
-      ? 'teams'
-      : val === 'group'
-        ? 'groups'
-        : 'individuals',
+    type: val =>
+      val === 'team' ? 'teams' : val === 'group' ? 'groups' : 'individuals',
 
-    sortBy: (val) => {
+    sortBy: val => {
       switch (val) {
         case 'calories':
           return 'calories'
@@ -39,13 +38,14 @@ export const fetchFitnessLeaderboard = (params = required()) => {
     sortBy: 'sort_by'
   }
 
-  return get(c.ENDPOINT, params, { mappings, transforms })
-    .then((response) => response.results)
+  return get(c.ENDPOINT, params, { mappings, transforms }).then(
+    response => response.results
+  )
 }
 
 /**
-* @function a default deserializer for leaderboard pages
-*/
+ * @function a default deserializer for leaderboard pages
+ */
 export const deserializeFitnessLeaderboard = (result, index) => {
   if (result.page) {
     return deserializePage(result.page, result, index)

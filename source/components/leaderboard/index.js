@@ -8,10 +8,7 @@ import LeaderboardItem from 'constructicon/leaderboard-item'
 import Grid from 'constructicon/grid'
 import PaginationLink from 'constructicon/pagination-link'
 
-import {
-  fetchLeaderboard,
-  deserializeLeaderboard
-} from '../../api/leaderboard'
+import { fetchLeaderboard, deserializeLeaderboard } from '../../api/leaderboard'
 
 class Leaderboard extends Component {
   constructor () {
@@ -32,7 +29,12 @@ class Leaderboard extends Component {
   componentDidMount () {
     const { refreshInterval } = this.props
     this.fetchLeaderboard()
-    this.interval = refreshInterval && setInterval(() => this.fetchLeaderboard(this.state.q, true), refreshInterval)
+    this.interval =
+      refreshInterval &&
+      setInterval(
+        () => this.fetchLeaderboard(this.state.q, true),
+        refreshInterval
+      )
   }
 
   componentWillUnmount () {
@@ -84,10 +86,14 @@ class Leaderboard extends Component {
     const leaderboardData = data.map(deserializeLeaderboard)
 
     if (excludeOffline) {
-      return orderBy(leaderboardData.map(item => ({
-        ...item,
-        raised: item.raised - item.offline
-      })), ['raised'], ['desc']).map((item, index) => ({
+      return orderBy(
+        leaderboardData.map(item => ({
+          ...item,
+          raised: item.raised - item.offline
+        })),
+        ['raised'],
+        ['desc']
+      ).map((item, index) => ({
         ...item,
         position: index + 1
       }))
@@ -116,10 +122,11 @@ class Leaderboard extends Component {
       type
     } = this.props
 
-    !refresh && this.setState({
-      status: 'fetching',
-      data: undefined
-    })
+    !refresh &&
+      this.setState({
+        status: 'fetching',
+        data: undefined
+      })
 
     fetchLeaderboard({
       campaign,
@@ -139,13 +146,13 @@ class Leaderboard extends Component {
       startDate,
       type
     })
-      .then((data) => {
+      .then(data => {
         this.setState({
           status: 'fetched',
           data: this.handleData(data, excludeOffline)
         })
       })
-      .catch((error) => {
+      .catch(error => {
         this.setState({
           status: 'failed'
         })
@@ -154,17 +161,9 @@ class Leaderboard extends Component {
   }
 
   render () {
-    const {
-      status,
-      data = [],
-      currentPage
-    } = this.state
+    const { status, data = [], currentPage } = this.state
 
-    const {
-      leaderboard,
-      filter,
-      pageSize
-    } = this.props
+    const { leaderboard, filter, pageSize } = this.props
 
     return (
       <div>
@@ -172,13 +171,22 @@ class Leaderboard extends Component {
         <LeaderboardWrapper
           loading={status === 'fetching'}
           error={status === 'failed'}
-          {...leaderboard}>
+          {...leaderboard}
+        >
           {pageSize ? this.paginateLeaderboard() : data.map(this.renderLeader)}
         </LeaderboardWrapper>
         {pageSize && (
           <Grid justify={'center'}>
-            <PaginationLink onClick={this.prevPage} direction='prev' disabled={currentPage <= 1} />
-            <PaginationLink onClick={this.nextPage} direction='next' disabled={!this.hasNextPage()} />
+            <PaginationLink
+              onClick={this.prevPage}
+              direction='prev'
+              disabled={currentPage <= 1}
+            />
+            <PaginationLink
+              onClick={this.nextPage}
+              direction='next'
+              disabled={!this.hasNextPage()}
+            />
           </Grid>
         )}
       </div>
@@ -205,87 +213,88 @@ class Leaderboard extends Component {
 
 Leaderboard.propTypes = {
   /**
-  * The campaign uid to fetch pages for
-  */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
+   * The campaign uid to fetch pages for
+   */
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+
+  /**
+   * The charity uid to fetch pages for
+   */
+  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+
+  /**
+   * Country code for API (JG only)
+   */
+  country: PropTypes.oneOf([
+    'au',
+    'ca',
+    'hk',
+    'ie',
+    'nz',
+    'sg',
+    'uk',
+    'us',
+    'za'
   ]),
 
   /**
-  * The charity uid to fetch pages for
-  */
-  charity: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The type of page to include in the leaderboard
+   */
+  type: PropTypes.oneOf(['group', 'individual', 'team']),
 
   /**
-  * Country code for API (JG only)
-  */
-  country: PropTypes.oneOf(['au', 'ca', 'hk', 'ie', 'nz', 'sg', 'uk', 'us', 'za']),
+   * The group value(s) to filter by
+   */
+  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * The type of page to include in the leaderboard
-  */
-  type: PropTypes.oneOf([ 'group', 'individual', 'team' ]),
-
-  /**
-  * The group value(s) to filter by
-  */
-  group: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
-
-  /**
-  * Start date filter (ISO Format)
-  */
+   * Start date filter (ISO Format)
+   */
   startDate: PropTypes.string,
 
   /**
-  * End date filter (ISO Format)
-  */
+   * End date filter (ISO Format)
+   */
   endDate: PropTypes.string,
 
   /**
-  * The number of records to fetch
-  */
+   * The number of records to fetch
+   */
   limit: PropTypes.number,
 
   /**
-  * The number of records to show per page, disables pagination if not specified.
-  */
+   * The number of records to show per page, disables pagination if not specified.
+   */
   pageSize: PropTypes.number,
 
   /**
-  * The page to fetch
-  */
+   * The page to fetch
+   */
   page: PropTypes.number,
 
   /**
-  * The group ID to group the leaderboard by (only relevant if type is group)
-  */
+   * The group ID to group the leaderboard by (only relevant if type is group)
+   */
   groupID: PropTypes.number,
 
   /**
-  * Props to be passed to the Constructicon Leaderboard component
-  */
+   * Props to be passed to the Constructicon Leaderboard component
+   */
   leaderboard: PropTypes.object,
 
   /**
-  * Props to be passed to the Constructicon LeaderboardItem component
-  */
+   * Props to be passed to the Constructicon LeaderboardItem component
+   */
   leaderboardItem: PropTypes.object,
 
   /**
-  * Props to be passed to the Filter component (false to hide)
-  */
+   * Props to be passed to the Filter component (false to hide)
+   */
   filter: PropTypes.any,
 
   /**
-  * Interval (in milliseconds) to refresh data from API
-  */
+   * Interval (in milliseconds) to refresh data from API
+   */
   refreshInterval: PropTypes.number
 }
 
@@ -295,4 +304,4 @@ Leaderboard.defaultProps = {
   filter: {}
 }
 
-export default (Leaderboard)
+export default Leaderboard

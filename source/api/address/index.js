@@ -13,28 +13,25 @@ import {
 } from './justgiving'
 
 /**
-* @function search an address
-*/
-export const searchAddress = (query, region) => (
+ * @function search an address
+ */
+export const searchAddress = (query, region) =>
   isJustGiving()
     ? searchJGAddress(query, region)
     : searchEDHAddress(query, region)
-)
 
 /**
-* @function get address details
-*/
-export const getAddressDetails = (id, region) => (
+ * @function get address details
+ */
+export const getAddressDetails = (id, region) =>
   isJustGiving()
     ? getJGAddressDetails(id, region)
     : getEDHAddressDetails(id, region)
-)
 
 /**
-* @function deserialize an address
-*/
-export const deserializeAddress = (address) => (
+ * @function deserialize an address
+ */
+export const deserializeAddress = address =>
   isJustGiving()
     ? deserializeJGAddress(address)
     : deserializeEDHAddress(address)
-)

@@ -17,7 +17,8 @@ class TotalElevation extends Component {
   componentDidMount () {
     const { refreshInterval } = this.props
     this.fetchData()
-    this.interval = refreshInterval && setInterval(this.fetchData, refreshInterval)
+    this.interval =
+      refreshInterval && setInterval(this.fetchData, refreshInterval)
   }
 
   componentWillUnmount () {
@@ -25,11 +26,7 @@ class TotalElevation extends Component {
   }
 
   fetchData () {
-    const {
-      activity,
-      campaign,
-      includeManual
-    } = this.props
+    const { activity, campaign, includeManual } = this.props
 
     fetchFitnessLeaderboard({
       activity,
@@ -38,16 +35,16 @@ class TotalElevation extends Component {
       limit: 9999,
       sortBy: 'elevation'
     })
-    .then((data) => (
-      this.setState({
-        data: this.calculateTotal(data),
-        status: 'fetched'
+      .then(data =>
+        this.setState({
+          data: this.calculateTotal(data),
+          status: 'fetched'
+        })
+      )
+      .catch(error => {
+        this.setState({ status: 'failed' })
+        return Promise.reject(error)
       })
-    ))
-    .catch((error) => {
-      this.setState({ status: 'failed' })
-      return Promise.reject(error)
-    })
   }
 
   calculateTotal (data) {
@@ -55,11 +52,7 @@ class TotalElevation extends Component {
   }
 
   render () {
-    const {
-      icon,
-      label,
-      metric
-    } = this.props
+    const { icon, label, metric } = this.props
 
     return (
       <Metric
@@ -72,17 +65,9 @@ class TotalElevation extends Component {
   }
 
   renderAmount () {
-    const {
-      status,
-      data
-    } = this.state
+    const { status, data } = this.state
 
-    const {
-      format,
-      offset,
-      multiplier,
-      suffix
-    } = this.props
+    const { format, offset, multiplier, suffix } = this.props
 
     switch (status) {
       case 'fetching':
@@ -97,58 +82,52 @@ class TotalElevation extends Component {
 
 TotalElevation.propTypes = {
   /**
-  * The campaign uid/s to fetch totals for
-  */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The campaign uid/s to fetch totals for
+   */
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * The type of activity to get kms for
-  * e.g. bike, [bike, run, walk, swim]
-  */
-  activity: PropTypes.oneOf([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The type of activity to get kms for
+   * e.g. bike, [bike, run, walk, swim]
+   */
+  activity: PropTypes.oneOf([PropTypes.string, PropTypes.array]),
 
   /**
-  * Include manual fitness activities
-  */
+   * Include manual fitness activities
+   */
   includeManual: PropTypes.bool,
 
   /**
-  * Offset
-  */
+   * Offset
+   */
   offset: PropTypes.number,
 
   /**
-  * The amount to multiply the total by for custom conversions
-  */
+   * The amount to multiply the total by for custom conversions
+   */
   multiplier: PropTypes.number,
 
   /**
-  * The format of the number
-  */
+   * The format of the number
+   */
   format: PropTypes.string,
 
   /**
-  * The label of the metric
-  */
+   * The label of the metric
+   */
   label: PropTypes.string,
 
   /**
-  * The suffix to display
-  */
+   * The suffix to display
+   */
   suffix: PropTypes.string,
 
   /**
-  * The icon to use
-  * - String representing a constructicon icon e.g. heart
-  * - Array of custom paths
-  * - An element to use instead e.g. <i className='fa fa-heart' />
-  */
+   * The icon to use
+   * - String representing a constructicon icon e.g. heart
+   * - Array of custom paths
+   * - An element to use instead e.g. <i className='fa fa-heart' />
+   */
   icon: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
@@ -156,13 +135,13 @@ TotalElevation.propTypes = {
   ]),
 
   /**
-  * Props to be passed to the Constructicon Metric component
-  */
+   * Props to be passed to the Constructicon Metric component
+   */
   metric: PropTypes.object,
 
   /**
-  * Interval (in milliseconds) to refresh data from API
-  */
+   * Interval (in milliseconds) to refresh data from API
+   */
   refreshInterval: PropTypes.number
 }
 

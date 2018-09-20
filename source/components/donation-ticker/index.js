@@ -21,7 +21,8 @@ class DonationTicker extends Component {
   componentDidMount () {
     const { refreshInterval } = this.props
     this.fetchData()
-    this.interval = refreshInterval && setInterval(this.fetchData, refreshInterval)
+    this.interval =
+      refreshInterval && setInterval(this.fetchData, refreshInterval)
   }
 
   componentWillUnmount () {
@@ -29,13 +30,7 @@ class DonationTicker extends Component {
   }
 
   fetchData () {
-    const {
-      campaign,
-      charity,
-      page,
-      sort,
-      team
-    } = this.props
+    const { campaign, charity, page, sort, team } = this.props
 
     fetchDonationFeed({
       campaign,
@@ -46,7 +41,9 @@ class DonationTicker extends Component {
     })
       .then(donations => donations.map(deserializeDonation))
       .then(donations => donations.filter(donation => !donation.anonymous))
-      .then(donations => donations.map(donation => this.formatDonation(donation)))
+      .then(donations =>
+        donations.map(donation => this.formatDonation(donation))
+      )
       .then(donations => this.setState({ donations, status: 'fetched' }))
       .catch(() => this.setState({ status: 'failed' }))
   }
@@ -61,22 +58,24 @@ class DonationTicker extends Component {
       case 'amount-only':
         return formattedAmount
       case 'amount-name':
-        return <span><strong>{formattedAmount}</strong> {donation.name}</span>
+        return (
+          <span>
+            <strong>{formattedAmount}</strong> {donation.name}
+          </span>
+        )
       default:
-        return <span>{donation.name} <strong>{formattedAmount}</strong></span>
+        return (
+          <span>
+            {donation.name} <strong>{formattedAmount}</strong>
+          </span>
+        )
     }
   }
 
   render () {
-    const {
-      label,
-      ticker
-    } = this.props
+    const { label, ticker } = this.props
 
-    const {
-      donations,
-      status
-    } = this.state
+    const { donations, status } = this.state
 
     return status === 'fetched' ? (
       <Ticker label={label} items={donations} {...ticker} />
@@ -90,16 +89,13 @@ class DonationTicker extends Component {
 
 DonationTicker.propTypes = {
   /**
-  * The campaign uid to fetch totals for
-  */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The campaign uid to fetch totals for
+   */
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * The charity uid to fetch totals for
-  */
+   * The charity uid to fetch totals for
+   */
   charity: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
@@ -107,8 +103,8 @@ DonationTicker.propTypes = {
   ]),
 
   /**
-  * The page uid to fetch totals for
-  */
+   * The page uid to fetch totals for
+   */
   page: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
@@ -116,8 +112,8 @@ DonationTicker.propTypes = {
   ]),
 
   /**
-  * The team uid to fetch totals for
-  */
+   * The team uid to fetch totals for
+   */
   team: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
@@ -125,28 +121,33 @@ DonationTicker.propTypes = {
   ]),
 
   /**
-  * Donation amount format
-  */
+   * Donation amount format
+   */
   format: PropTypes.string,
 
   /**
-  * Donation display format
-  */
-  layout: PropTypes.oneOf(['amount-name', 'name-amount', 'amount-only', 'name-only']),
+   * Donation display format
+   */
+  layout: PropTypes.oneOf([
+    'amount-name',
+    'name-amount',
+    'amount-only',
+    'name-only'
+  ]),
 
   /**
-  * Label text
-  */
+   * Label text
+   */
   label: PropTypes.string,
 
   /**
-  * Props to be passed to the Constructicon Ticker component
-  */
+   * Props to be passed to the Constructicon Ticker component
+   */
   ticker: PropTypes.object,
 
   /**
-  * Interval (in milliseconds) to refresh data from API
-  */
+   * Interval (in milliseconds) to refresh data from API
+   */
   refreshInterval: PropTypes.number
 }
 
