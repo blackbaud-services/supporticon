@@ -9,6 +9,8 @@
     "test:lint": "standard -d source",
     "test:unit": "mocha source/**/**/__tests__/*.js --compilers js:babel-register",
     "test": "npm run test:lint && npm run test:unit",
+    "format": "prettier-standard 'source/**/*.js'",
+    "precommit": "lint-staged",
     "book:prepare": "gitbook install",
     "book:watch": "npm run book:prepare && gitbook serve",
     "book:build": "npm run book:prepare && rm -rf styleguide/book && gitbook build . styleguide/book",
@@ -38,14 +40,19 @@
     "constructicon": "^1.7.11",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^5.6.0",
     "gh-pages": "^0.12.0",
     "gitbook-cli": "^2.3.0",
     "gulp": "^3.9.1",
+    "husky": "^0.14.3",
     "jsdom": "^9.12.0",
+    "lint-staged": "^7.2.2",
     "lodash": "^4.17.4",
     "minimal.css": "^1.0.1",
     "mocha": "^3.2.0",
     "moxios": "^0.4.0",
+    "prettier": "^1.14.3",
+    "prettier-standard": "^8.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-styleguidist": "^6.2.6",
@@ -80,5 +87,13 @@
       "react",
       "stage-0"
     ]
+  },
+  "lint-staged": {
+    "linters": {
+      "source/**/*.js": [
+        "prettier-standard",
+        "git add"
+      ]
+    }
   }
 }
