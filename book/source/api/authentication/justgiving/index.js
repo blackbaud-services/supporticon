@@ -1,11 +1,8 @@
-import { get, put } from '../../../utils/client'
+import { get, put, post } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
-export const resetPassword = ({
-  email = required()
-}) => (
+export const resetPassword = ({ email = required() }) =>
   get(`v1/account/${email}/requestpasswordreminder`)
-)
 
 export const signIn = ({
   email = required(),
@@ -19,11 +16,11 @@ export const signIn = ({
       'Authorization': `Basic ${token}`
     }
   }).then((data) => ({
-    userId: data.userId,
-    token,
-    name: [data.firstName, data.lastName].join(' '),
+    address: data.address,
     email: data.email,
-    address: data.address
+    name: [data.firstName, data.lastName].join(' '),
+    token,
+    userId: data.userId
   }))
 }
 
@@ -32,12 +29,12 @@ export const signUp = ({
   lastName = required(),
   email = required(),
   password = required(),
-  title = required(),
-  address = required(),
-  reference,
-  cause
-}) => (
-  put('v1/account', {
+  address,
+  title,
+  cause,
+  reference
+}) => {
+  const payload = {
     acceptTermsAndConditions: true,
     firstName,
     lastName,
@@ -47,16 +44,19 @@ export const signUp = ({
     address,
     reference,
     causeId: cause
-  }).then((data) => {
-    const { btoa } = window
-    const token = btoa(`${email}:${password}`)
+  }
 
-    return {
-      userId: data.userId,
-      token,
-      name: [data.firstName, data.lastName].join(' '),
-      email: data.email,
-      address: data.address
-    }
-  })
-)
+  const request = address
+    ? put('v1/account', payload)
+    : post('v1/account/lite', payload)
+
+  return request.then(data => ({
+    address,
+    country: data.country,
+    email,
+    firstName,
+    lastName,
+    name: [firstName, lastName].join(' '),
+    token: window.btoa(`${email}:${password}`)
+  }))
+}
