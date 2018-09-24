@@ -2,13 +2,10 @@
 
 set -euo pipefail
 
-# Publish to NPM
-
 npm -v
 node -v
-npm cache verify
-npm cache clean --force
 
+# Publish to NPM
 echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
 npm install yarn -g
 yarn
