@@ -6,8 +6,8 @@ set -euo pipefail
 
 npm -v
 node -v
-
-npm cache clean
+npm cache verify
+npm cache clean --force
 
 echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
 npm install yarn -g
