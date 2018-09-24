@@ -63,6 +63,7 @@ class InputSlug extends Component {
         status={slug && status}
         onKeyUp={e => this.fetchPageSlug(e.target.value)}
         error={touched && !!errors.length}
+        invalid={!!errors.length}
         validations={errors}
       />
     )
