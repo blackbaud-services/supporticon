@@ -13,11 +13,8 @@ import {
   updateCurrentUser as updateEDHCurrentUser
 } from './everydayhero'
 
-export const deserializeUser = (user) => (
-  isJustGiving()
-    ? deserializeJGUser(user)
-    : deserializeEDHUser(user)
-)
+export const deserializeUser = user =>
+  isJustGiving() ? deserializeJGUser(user) : deserializeEDHUser(user)
 
 export const fetchCurrentUser = (params = required()) => {
   return isJustGiving()

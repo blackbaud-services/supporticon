@@ -21,11 +21,12 @@ export const submitCrossDomainForm = ({
 
   formEl.action = action
   formEl.method = method
-  formEl.onsubmit = (event) => window.parent.postMessage(message, window.location.origin)
+  formEl.onsubmit = event =>
+    window.parent.postMessage(message, window.location.origin)
 
   formSubmit.type = 'submit'
 
-  inputs.map((attrs) => {
+  inputs.map(attrs => {
     const input = document.createElement('input')
     input.type = 'hidden'
     input.name = attrs.name

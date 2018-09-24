@@ -1,7 +1,7 @@
 import { get, post, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
-export const deserializePage = (page) => ({
+export const deserializePage = page => ({
   active: page.active || page.state === 'active',
   campaign: page.campaign || page.campaign_name,
   campaignDate: page.campaign_date || page.event_date,
@@ -16,7 +16,11 @@ export const deserializePage = (page) => ({
   image: page.image.large_image_url,
   name: page.name,
   owner: page.owner_uid || page.user_id,
-  raised: page.metrics ? page.metrics.fundraising.total_in_cents : page.amount ? page.amount.cents : 0,
+  raised: page.metrics
+    ? page.metrics.fundraising.total_in_cents
+    : page.amount
+      ? page.amount.cents
+      : 0,
   slug: page.slug,
   story: page.story,
   target: page.metrics ? page.metrics.fundraising.goal : page.target_cents,
@@ -28,15 +32,17 @@ export const deserializePage = (page) => ({
 export const fetchPages = (params = required()) => {
   const { allPages, ...finalParams } = params
   const mappings = { type: 'type' }
-  const transforms = allPages ? {} : {
-    type: (v) => v === 'individual' ? 'user' : v
-  }
+  const transforms = allPages
+    ? {}
+    : {
+      type: v => (v === 'individual' ? 'user' : v)
+    }
 
   const promise = allPages
     ? get('api/v2/pages', finalParams, { mappings, transforms })
     : get('api/v2/search/pages', finalParams, { mappings, transforms })
 
-  return promise.then((response) => response.pages)
+  return promise.then(response => response.pages)
 }
 
 export const fetchPage = (id = required()) => {
@@ -47,12 +53,12 @@ export const fetchPage = (id = required()) => {
       slug = required()
     } = id
 
-    return get(`api/v3/prerelease/pages/${countryCode}/${campaignSlug}/${slug}`)
-      .then((response) => response.page)
+    return get(
+      `api/v3/prerelease/pages/${countryCode}/${campaignSlug}/${slug}`
+    ).then(response => response.page)
   }
 
-  return get(`api/v2/pages/${id}`)
-    .then((response) => response.page)
+  return get(`api/v2/pages/${id}`).then(response => response.page)
 }
 
 export const createPage = ({
@@ -92,18 +98,21 @@ export const createPage = ({
   }).then(response => response.page)
 }
 
-export const updatePage = (pageId, {
-  token = required(),
-  name,
-  target,
-  slug,
-  story,
-  image,
-  expiresAt,
-  fitnessGoal,
-  campaignDate,
-  groupValues
-}) => {
+export const updatePage = (
+  pageId,
+  {
+    token = required(),
+    name,
+    target,
+    slug,
+    story,
+    image,
+    expiresAt,
+    fitnessGoal,
+    campaignDate,
+    groupValues
+  }
+) => {
   return put(`/api/v2/pages/${pageId}?access_token=${token}`, {
     name,
     target,

@@ -11,24 +11,21 @@ export const fetchCampaigns = (params = required()) => {
   }
 
   const transforms = {
-    charity: (v) => Array.isArray(v) ? v.join(',') : v
+    charity: v => (Array.isArray(v) ? v.join(',') : v)
   }
 
-  return get(c.ENDPOINT, params, { mappings, transforms })
-    .then((response) => response.campaigns)
+  return get(c.ENDPOINT, params, { mappings, transforms }).then(
+    response => response.campaigns
+  )
 }
 
-export const fetchCampaign = (id = required()) => (
-  get(`${c.ENDPOINT}/${id}`)
-    .then((response) => response.campaign)
-)
+export const fetchCampaign = (id = required()) =>
+  get(`${c.ENDPOINT}/${id}`).then(response => response.campaign)
 
-export const fetchCampaignGroups = (id = required()) => (
-  get(`${c.ENDPOINT}/${id}/groups`)
-    .then((response) => response.campaign_groups)
-)
+export const fetchCampaignGroups = (id = required()) =>
+  get(`${c.ENDPOINT}/${id}/groups`).then(response => response.campaign_groups)
 
-export const deserializeCampaign = (campaign) => ({
+export const deserializeCampaign = campaign => ({
   name: campaign.name,
   id: campaign.id,
   uuid: campaign.uuid,

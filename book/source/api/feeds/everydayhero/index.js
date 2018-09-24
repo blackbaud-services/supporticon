@@ -1,6 +1,6 @@
 import { get } from '../../../utils/client'
 
-export const fetchDonationFeed = (params) => {
+export const fetchDonationFeed = params => {
   const finalParams = {
     ...params,
     type: 'OnlineDonation'
@@ -14,11 +14,12 @@ export const fetchDonationFeed = (params) => {
     type: 'type'
   }
 
-  return get('api/v2/search/feed', finalParams, { mappings })
-    .then((response) => response.results)
+  return get('api/v2/search/feed', finalParams, { mappings }).then(
+    response => response.results
+  )
 }
 
-export const deserializeDonation = (donation) => ({
+export const deserializeDonation = donation => ({
   amount: donation.amount.cents / 100,
   anonymous: donation.anonymous,
   createdAt: donation.created_at,

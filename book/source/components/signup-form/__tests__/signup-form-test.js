@@ -7,7 +7,13 @@ import SignupForm from '..'
 describe('Components | SignupForm', () => {
   describe('EDH SignupForm', () => {
     it('renders a simple sign up form', () => {
-      const wrapper = mount(<SignupForm country='au' clientId='1234abcd' onSuccess={(res) => console.log(res)} />)
+      const wrapper = mount(
+        <SignupForm
+          country='au'
+          clientId='1234abcd'
+          onSuccess={res => console.log(res)}
+        />
+      )
       const inputs = wrapper.find('input')
       const select = wrapper.find('select')
       const button = wrapper.find('button')
@@ -19,7 +25,9 @@ describe('Components | SignupForm', () => {
     })
 
     it('renders a country select when no country prop is supplied', () => {
-      const wrapper = mount(<SignupForm clientId='1234abcd' onSuccess={(res) => console.log(res)} />)
+      const wrapper = mount(
+        <SignupForm clientId='1234abcd' onSuccess={res => console.log(res)} />
+      )
       const inputs = wrapper.find('input')
       const select = wrapper.find('select')
 
@@ -28,7 +36,13 @@ describe('Components | SignupForm', () => {
     })
 
     it('allows a custom submit button label to be passed', () => {
-      const wrapper = mount(<SignupForm clientId='1234abcd' submit='Sign Up to EDH' onSuccess={(res) => console.log(res)} />)
+      const wrapper = mount(
+        <SignupForm
+          clientId='1234abcd'
+          submit='Sign Up to EDH'
+          onSuccess={res => console.log(res)}
+        />
+      )
       const button = wrapper.find('button')
 
       expect(button.length).to.eql(1)
@@ -38,7 +52,10 @@ describe('Components | SignupForm', () => {
 
   describe('JG SignupForm', () => {
     beforeEach(() => {
-      updateClient({ baseURL: 'https://api.justgiving.com', headers: { 'x-api-key': 'abcd1234' } })
+      updateClient({
+        baseURL: 'https://api.justgiving.com',
+        headers: { 'x-api-key': 'abcd1234' }
+      })
       moxios.install(instance)
     })
 
@@ -48,7 +65,7 @@ describe('Components | SignupForm', () => {
     })
 
     it('renders a simple sign up form with custom submit prop', () => {
-      const wrapper = mount(<SignupForm onSuccess={(res) => console.log(res)} />)
+      const wrapper = mount(<SignupForm onSuccess={res => console.log(res)} />)
       const inputs = wrapper.find('input')
       const button = wrapper.find('button')
 
@@ -58,7 +75,12 @@ describe('Components | SignupForm', () => {
     })
 
     it('allows a custom submit button label to be passed', () => {
-      const wrapper = mount(<SignupForm submit='Sign Up to JustGiving' onSuccess={(res) => console.log(res)} />)
+      const wrapper = mount(
+        <SignupForm
+          submit='Sign Up to JustGiving'
+          onSuccess={res => console.log(res)}
+        />
+      )
       const button = wrapper.find('button')
 
       expect(button.length).to.eql(1)

@@ -8,7 +8,7 @@ import { isJustGiving } from '../../../utils/client'
 import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
 
-const withGroups = (ComponentToWrap) => (
+const withGroups = ComponentToWrap =>
   class extends Component {
     constructor (props) {
       super(props)
@@ -28,52 +28,49 @@ const withGroups = (ComponentToWrap) => (
     fetchGroups () {
       const { campaignId } = this.props
 
-      fetchCampaignGroups(campaignId).then((groups) => {
-        const fields = {}
+      fetchCampaignGroups(campaignId)
+        .then(groups => {
+          const fields = {}
 
-        if (groups.length) {
-          groups.forEach(({ key, label, values }) => {
-            const options = [
-              {
-                label: 'Please select',
-                value: '',
-                disabled: true
-              },
-              ...values.map((value) => ({
-                label: value,
-                value
-              }))
-            ]
-
-            fields[`group_values_${key}`] = {
-              label,
-              options,
-              type: 'select',
-              required: true,
-              validators: [
-                validators.required('Please select an option')
+          if (groups.length) {
+            groups.forEach(({ key, label, values }) => {
+              const options = [
+                {
+                  label: 'Please select',
+                  value: '',
+                  disabled: true
+                },
+                ...values.map(value => ({
+                  label: value,
+                  value
+                }))
               ]
-            }
-          })
-        }
 
-        return this.setState({
-          fields,
-          isFetched: true
+              fields[`group_values_${key}`] = {
+                label,
+                options,
+                type: 'select',
+                required: true,
+                validators: [validators.required('Please select an option')]
+              }
+            })
+          }
+
+          return this.setState({
+            fields,
+            isFetched: true
+          })
         })
-      }).catch((error) => (
-        this.setState({ error: get(error, 'data.error.message') })
-      ))
+        .catch(error =>
+          this.setState({ error: get(error, 'data.error.message') })
+        )
     }
 
     render () {
       const { error, isFetched } = this.state
 
       return error ? (
-        <Metric
-          icon='warning'
-          label={error}
-        />
+        <Metric icon='warning' label={error} />
       ) : isFetched ? (
         <ComponentToWrap
           {...this.props}
@@ -84,6 +81,5 @@ const withGroups = (ComponentToWrap) => (
       )
     }
   }
-)
 
 export default withGroups

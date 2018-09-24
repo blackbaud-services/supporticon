@@ -12,8 +12,8 @@ import {
 } from './everydayhero'
 
 /**
-* @function fetches pages ranked by funds raised
-*/
+ * @function fetches pages ranked by funds raised
+ */
 export const fetchLeaderboard = (params = required()) => {
   return isJustGiving()
     ? fetchJGLeaderboard(params)
@@ -21,8 +21,8 @@ export const fetchLeaderboard = (params = required()) => {
 }
 
 /**
-* @function a default deserializer for leaderboard pages
-*/
+ * @function a default deserializer for leaderboard pages
+ */
 export const deserializeLeaderboard = (page, index) => {
   return isJustGiving()
     ? deserializeJGLeaderboard(page, index)

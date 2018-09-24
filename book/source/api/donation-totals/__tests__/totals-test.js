@@ -27,21 +27,25 @@ describe('Fetch Donation Totals', () => {
       moxios.uninstall(instance)
     })
 
-    it('uses the correct url to fetch totals for a campaign', (done) => {
+    it('uses the correct url to fetch totals for a campaign', done => {
       fetchEDHDonationTotals({ campaign_id: 'au-6839' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/totals')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/search/totals'
+        )
         expect(request.url).to.contain('campaign_id=au-6839')
         done()
       })
     })
 
-    it('uses the correct url to fetch totals for a charity', (done) => {
+    it('uses the correct url to fetch totals for a charity', done => {
       fetchEDHDonationTotals({ charity_id: 'au-28' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/search/totals')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/search/totals'
+        )
         expect(request.url).to.contain('charity_id=au-28')
         done()
       })
@@ -50,7 +54,10 @@ describe('Fetch Donation Totals', () => {
 
   describe('Fetch JG Donation Totals', () => {
     beforeEach(() => {
-      updateClient({ baseURL: 'https://api.justgiving.com', headers: { 'x-api-key': 'abcd1234' } })
+      updateClient({
+        baseURL: 'https://api.justgiving.com',
+        headers: { 'x-api-key': 'abcd1234' }
+      })
       moxios.install(instance)
     })
 
@@ -59,29 +66,35 @@ describe('Fetch Donation Totals', () => {
       moxios.uninstall(instance)
     })
 
-    it('uses the correct url to fetch totals for an event', (done) => {
+    it('uses the correct url to fetch totals for an event', done => {
       fetchJGDonationTotals({ event: 12345 })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal('https://api.justgiving.com/v1/event/12345/leaderboard?currency=GBP')
+        expect(request.url).to.equal(
+          'https://api.justgiving.com/v1/event/12345/leaderboard?currency=GBP'
+        )
         done()
       })
     })
 
-    it('allows the country (and currency) to be specified', (done) => {
+    it('allows the country (and currency) to be specified', done => {
       fetchJGDonationTotals({ event: 12345, country: 'ie' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal('https://api.justgiving.com/v1/event/12345/leaderboard?currency=EUR')
+        expect(request.url).to.equal(
+          'https://api.justgiving.com/v1/event/12345/leaderboard?currency=EUR'
+        )
         done()
       })
     })
 
-    it('uses the correct url to fetch totals for a campaign', (done) => {
+    it('uses the correct url to fetch totals for a campaign', done => {
       fetchJGDonationTotals({ charity: 'my-charity', campaign: 'my-campaign' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal('https://api.justgiving.com/v1/campaigns/my-charity/my-campaign')
+        expect(request.url).to.equal(
+          'https://api.justgiving.com/v1/campaigns/my-charity/my-campaign'
+        )
         done()
       })
     })

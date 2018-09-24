@@ -4,10 +4,7 @@ import SearchForm from 'constructicon/search-form'
 import SearchResult from 'constructicon/search-result'
 import SearchResults from 'constructicon/search-results'
 
-import {
-  fetchPages,
-  deserializePage
-} from '../../api/pages'
+import { fetchPages, deserializePage } from '../../api/pages'
 
 class PageSearch extends Component {
   constructor () {
@@ -44,13 +41,13 @@ class PageSearch extends Component {
       limit: this.props.limit,
       page: this.props.page
     })
-      .then((data) => {
+      .then(data => {
         this.setState({
           status: 'fetched',
           data: data.map(deserializePage)
         })
       })
-      .catch((error) => {
+      .catch(error => {
         this.setState({
           status: 'failed'
         })
@@ -70,18 +67,15 @@ class PageSearch extends Component {
   }
 
   renderResults () {
-    const {
-      status,
-      q,
-      data = []
-    } = this.state
+    const { status, q, data = [] } = this.state
 
     return (
       <SearchResults
         loading={status === 'fetching'}
         error={status === 'failed'}
         emptyLabel={`No results found for "${q}"`}
-        {...this.props.searchResults}>
+        {...this.props.searchResults}
+      >
         {data.map((page, i) => (
           <SearchResult
             key={i}
@@ -99,70 +93,58 @@ class PageSearch extends Component {
 
 PageSearch.propTypes = {
   /**
-  * The campaign uid to fetch pages for
-  */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The campaign uid to fetch pages for
+   */
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * The charity uid to fetch pages for
-  */
-  charity: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The charity uid to fetch pages for
+   */
+  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * The event id
-  */
-  event: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object
-  ]),
+   * The event id
+   */
+  event: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 
   /**
-  * The type of page to include in the leaderboard
-  */
-  type: PropTypes.oneOf([ 'individual', 'team', 'all' ]),
+   * The type of page to include in the leaderboard
+   */
+  type: PropTypes.oneOf(['individual', 'team', 'all']),
 
   /**
-  * The group value(s) to filter by
-  */
-  group: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The group value(s) to filter by
+   */
+  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * The number of records to fetch
-  */
+   * The number of records to fetch
+   */
   limit: PropTypes.number,
 
   /**
-  * The page to fetch
-  */
+   * The page to fetch
+   */
   page: PropTypes.number,
 
   /**
-  * Props to be passed to the SearchForm component
-  */
+   * Props to be passed to the SearchForm component
+   */
   searchForm: PropTypes.object,
 
   /**
-  * Props to be passed to the SearchResults component
-  */
+   * Props to be passed to the SearchResults component
+   */
   searchResults: PropTypes.object,
 
   /**
-  * Props to be passed to the SearchResult components
-  */
+   * Props to be passed to the SearchResult components
+   */
   searchResult: PropTypes.object,
 
   /**
-  * Props to be passed to the Button components
-  */
+   * Props to be passed to the Button components
+   */
   button: PropTypes.object
 }
 

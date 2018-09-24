@@ -21,7 +21,8 @@ class TotalFundsRaised extends Component {
   componentDidMount () {
     const { refreshInterval } = this.props
     this.fetchData()
-    this.interval = refreshInterval && setInterval(this.fetchData, refreshInterval)
+    this.interval =
+      refreshInterval && setInterval(this.fetchData, refreshInterval)
   }
 
   componentWillUnmount () {
@@ -49,13 +50,13 @@ class TotalFundsRaised extends Component {
       startDate,
       endDate
     })
-      .then((data) => {
+      .then(data => {
         this.setState({
           status: 'fetched',
           data: deserializeDonationTotals(data, excludeOffline)
         })
       })
-      .catch((error) => {
+      .catch(error => {
         this.setState({
           status: 'failed'
         })
@@ -64,11 +65,7 @@ class TotalFundsRaised extends Component {
   }
 
   render () {
-    const {
-      icon,
-      label,
-      metric
-    } = this.props
+    const { icon, label, metric } = this.props
 
     return (
       <Metric
@@ -81,16 +78,9 @@ class TotalFundsRaised extends Component {
   }
 
   renderAmount () {
-    const {
-      status,
-      data = {}
-    } = this.state
+    const { status, data = {} } = this.state
 
-    const {
-      format,
-      offset,
-      multiplier
-    } = this.props
+    const { format, offset, multiplier } = this.props
 
     switch (status) {
       case 'fetching':
@@ -98,82 +88,85 @@ class TotalFundsRaised extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return numbro((offset + data.raised) * multiplier).formatCurrency(format)
+        return numbro((offset + data.raised) * multiplier).formatCurrency(
+          format
+        )
     }
   }
 }
 
 TotalFundsRaised.propTypes = {
   /**
-  * The campaign uid to fetch totals for
-  */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
+   * The campaign uid to fetch totals for
+   */
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+
+  /**
+   * The charity uid to fetch totals for
+   */
+  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+
+  /**
+   * Country code for API (JG only)
+   */
+  country: PropTypes.oneOf([
+    'au',
+    'ca',
+    'hk',
+    'ie',
+    'nz',
+    'sg',
+    'uk',
+    'us',
+    'za'
   ]),
 
   /**
-  * The charity uid to fetch totals for
-  */
-  charity: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
-
-  /**
-  * Country code for API (JG only)
-  */
-  country: PropTypes.oneOf(['au', 'ca', 'hk', 'ie', 'nz', 'sg', 'uk', 'us', 'za']),
-
-  /**
-  * Exclude offline donations?
-  */
+   * Exclude offline donations?
+   */
   excludeOffline: PropTypes.bool,
 
   /**
-  * The group value(s) to filter by
-  */
-  group: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The group value(s) to filter by
+   */
+  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * Start date filter (ISO Format)
-  */
+   * Start date filter (ISO Format)
+   */
   startDate: PropTypes.string,
 
   /**
-  * End date filter (ISO Format)
-  */
+   * End date filter (ISO Format)
+   */
   endDate: PropTypes.string,
 
   /**
-  * Offset
-  */
+   * Offset
+   */
   offset: PropTypes.number,
 
   /**
-  * The amount to multiply the total by for custom conversions
-  */
+   * The amount to multiply the total by for custom conversions
+   */
   multiplier: PropTypes.number,
 
   /**
-  * The label of the metric
-  */
+   * The label of the metric
+   */
   label: PropTypes.string,
 
   /**
-  * The format of the number
-  */
+   * The format of the number
+   */
   format: PropTypes.string,
 
   /**
-  * The icon to use
-  * - String representing a constructicon icon e.g. heart
-  * - Array of custom paths
-  * - An element to use instead e.g. <i className='fa fa-heart' />
-  */
+   * The icon to use
+   * - String representing a constructicon icon e.g. heart
+   * - Array of custom paths
+   * - An element to use instead e.g. <i className='fa fa-heart' />
+   */
   icon: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
@@ -181,13 +174,13 @@ TotalFundsRaised.propTypes = {
   ]),
 
   /**
-  * Props to be passed to the Constructicon Metric component
-  */
+   * Props to be passed to the Constructicon Metric component
+   */
   metric: PropTypes.object,
 
   /**
-  * Interval (in milliseconds) to refresh data from API
-  */
+   * Interval (in milliseconds) to refresh data from API
+   */
   refreshInterval: PropTypes.number
 }
 

@@ -11,19 +11,13 @@ import {
 } from './everydayhero'
 
 /**
-* @function fetch a donation feed for a campaign
-*/
-export const fetchDonationFeed = (params) => (
-  isJustGiving()
-    ? fetchJGDonationFeed(params)
-    : fetchEDHDonationFeed(params)
-)
+ * @function fetch a donation feed for a campaign
+ */
+export const fetchDonationFeed = params =>
+  isJustGiving() ? fetchJGDonationFeed(params) : fetchEDHDonationFeed(params)
 
 /**
-* @function deserialize a donation
-*/
-export const deserializeDonation = (data) => (
-  isJustGiving()
-    ? deserializeJGDonation(data)
-    : deserializeEDHDonation(data)
-)
+ * @function deserialize a donation
+ */
+export const deserializeDonation = data =>
+  isJustGiving() ? deserializeJGDonation(data) : deserializeEDHDonation(data)

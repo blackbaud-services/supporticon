@@ -13,13 +13,14 @@ describe('Create Page', () => {
 
   describe('Create EDH Page', () => {
     it('throws if no token is passed', () => {
-      const test = () => createPage({
-        bogus: 'data'
-      })
+      const test = () =>
+        createPage({
+          bogus: 'data'
+        })
       expect(test).to.throw
     })
 
-    it('hits the supporter api with the correct url and data', (done) => {
+    it('hits the supporter api with the correct url and data', done => {
       createPage({
         token: '012345abcdef',
         campaignId: '1234',
@@ -29,12 +30,14 @@ describe('Create Page', () => {
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/pages?access_token=012345abcdef')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/pages?access_token=012345abcdef'
+        )
         done()
       })
     })
 
-    it('returns the expected params', (done) => {
+    it('returns the expected params', done => {
       const response = {
         campaign_uid: '1234',
         name: 'Super Supporter',
@@ -46,7 +49,7 @@ describe('Create Page', () => {
         campaignId: '1234',
         name: 'Super Supporter',
         birthday: '1970-01-02'
-      }).then((page) => {
+      }).then(page => {
         expect(page).to.equal(response)
         done()
       })
@@ -71,7 +74,7 @@ describe('Create Page', () => {
       updateClient({ baseURL: 'https://everydayhero.com' })
     })
 
-    it('hits the justgiving api with the correct url and data', (done) => {
+    it('hits the justgiving api with the correct url and data', done => {
       createPage({
         token: '012345abcdef',
         charityId: '1234',
@@ -82,10 +85,18 @@ describe('Create Page', () => {
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.eql('https://api.justgiving.com/v1/fundraising/pages')
-        expect(request.config.headers['Authorization']).to.eql('Basic 012345abcdef')
-        expect(JSON.parse(request.config.data).pageShortName).to.eql('super-supporter')
-        expect(JSON.parse(request.config.data).pageTitle).to.eql('Super Supporter')
+        expect(request.url).to.eql(
+          'https://api.justgiving.com/v1/fundraising/pages'
+        )
+        expect(request.config.headers['Authorization']).to.eql(
+          'Basic 012345abcdef'
+        )
+        expect(JSON.parse(request.config.data).pageShortName).to.eql(
+          'super-supporter'
+        )
+        expect(JSON.parse(request.config.data).pageTitle).to.eql(
+          'Super Supporter'
+        )
         done()
       })
     })

@@ -14,7 +14,10 @@ describe('Utils | Reducer', () => {
 
   it('handles FETCH_SUCCESS', () => {
     const reducer = createReducer({ namespace: 'app/test' })
-    const state = reducer({}, { type: 'app/test/FETCH_SUCCESS', payload: { data: { foo: 'bar' }}})
+    const state = reducer(
+      {},
+      { type: 'app/test/FETCH_SUCCESS', payload: { data: { foo: 'bar' } } }
+    )
     expect(state.status).to.eql('fetched')
     expect(state.data.foo).to.eql('bar')
   })
@@ -67,12 +70,15 @@ describe('Utils | Reducer', () => {
   it('allows you to override the deserializer', () => {
     const reducer = createReducer({
       namespace: 'app/test',
-      deserialize: (data) => ({
+      deserialize: data => ({
         ...data,
         baz: 'qux'
       })
     })
-    const state = reducer({}, { type: 'app/test/FETCH_SUCCESS', payload: { data: { foo: 'bar' }}})
+    const state = reducer(
+      {},
+      { type: 'app/test/FETCH_SUCCESS', payload: { data: { foo: 'bar' } } }
+    )
     expect(state.status).to.eql('fetched')
     expect(state.data.foo).to.eql('bar')
     expect(state.data.baz).to.eql('qux')
@@ -81,12 +87,18 @@ describe('Utils | Reducer', () => {
   it('allows you to override the deserializer when an array of results is returned', () => {
     const reducer = createReducer({
       namespace: 'app/test',
-      deserialize: (data) => ({
+      deserialize: data => ({
         ...data,
         baz: 'qux'
       })
     })
-    const state = reducer({}, { type: 'app/test/FETCH_SUCCESS', payload: { data: [{ foo: 'bar' }, { quux: 'quuz' }] }})
+    const state = reducer(
+      {},
+      {
+        type: 'app/test/FETCH_SUCCESS',
+        payload: { data: [{ foo: 'bar' }, { quux: 'quuz' }] }
+      }
+    )
     expect(state.status).to.eql('fetched')
     expect(state.data[0].foo).to.eql('bar')
     expect(state.data[0].baz).to.eql('qux')

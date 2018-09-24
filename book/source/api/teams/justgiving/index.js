@@ -1,7 +1,7 @@
 import { get, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
-export const deserializeTeam = (team) => ({
+export const deserializeTeam = team => ({
   id: team.id,
   leader: null,
   name: team.name,
@@ -11,7 +11,9 @@ export const deserializeTeam = (team) => ({
 })
 
 export const fetchTeams = () => {
-  return Promise.reject(new Error('This method is not supported for JustGiving'))
+  return Promise.reject(
+    new Error('This method is not supported for JustGiving')
+  )
 }
 
 export const fetchTeam = (id = required()) => {
@@ -28,18 +30,22 @@ export const createTeam = ({
   teamType = 'Open',
   token = required()
 }) => {
-  return put('v1/team', {
-    name,
-    story,
-    targetType,
-    teamShortName: slug,
-    teamTarget: target,
-    teamType
-  }, {
-    headers: {
-      'Authorization': [authType, token].join(' ')
+  return put(
+    'v1/team',
+    {
+      name,
+      story,
+      targetType,
+      teamShortName: slug,
+      teamTarget: target,
+      teamType
+    },
+    {
+      headers: {
+        Authorization: [authType, token].join(' ')
+      }
     }
-  })
+  )
 }
 
 export const joinTeam = ({
@@ -48,11 +54,15 @@ export const joinTeam = ({
   page = required(),
   token = required()
 }) => {
-  return put(`v1/team/join/${id}`, {
-    pageShortName: page
-  }, {
-    headers: {
-      'Authorization': [authType, token].join(' ')
+  return put(
+    `v1/team/join/${id}`,
+    {
+      pageShortName: page
+    },
+    {
+      headers: {
+        Authorization: [authType, token].join(' ')
+      }
     }
-  })
+  )
 }

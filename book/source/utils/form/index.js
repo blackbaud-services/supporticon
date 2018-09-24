@@ -7,7 +7,7 @@ import InputField from 'constructicon/input-field'
 import InputSearch from 'constructicon/input-search'
 import InputSelect from 'constructicon/input-select'
 
-export const renderInput = (type) => {
+export const renderInput = type => {
   switch (type) {
     case 'date':
       return InputDate
@@ -20,5 +20,8 @@ export const renderInput = (type) => {
   }
 }
 
-export const renderFormFields = (fields, fieldsToOmit = [], sortKey = 'order') =>
-  sortBy(values(omit(fields, fieldsToOmit)), [sortKey])
+export const renderFormFields = (
+  fields,
+  fieldsToOmit = [],
+  sortKey = 'order'
+) => sortBy(values(omit(fields, fieldsToOmit)), [sortKey])

@@ -19,7 +19,7 @@ export const createAction = ({
   fetcher = required(),
   namespace = required(),
   actionDispatchers = {}
-}) => (dispatch) => {
+}) => dispatch => {
   const c = {
     FETCH: `${namespace}/FETCH`,
     FETCH_SUCCESS: `${namespace}/FETCH_SUCCESS`,
@@ -35,11 +35,11 @@ export const createAction = ({
   dispatch(fetch(c.FETCH))
 
   return fetcher
-    .then((data) => {
+    .then(data => {
       dispatch(fetchSuccess(c.FETCH_SUCCESS, data))
       return Promise.resolve(data)
     })
-    .catch((error) => {
+    .catch(error => {
       dispatch(fetchFailure(c.FETCH_FAILURE, error))
       return Promise.reject(error)
     })

@@ -2,7 +2,10 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 import numbro from 'numbro'
-import { fetchDonationTotals, deserializeDonationTotals } from '../../api/donation-totals'
+import {
+  fetchDonationTotals,
+  deserializeDonationTotals
+} from '../../api/donation-totals'
 
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
@@ -22,7 +25,8 @@ class ProgressBar extends Component {
   componentDidMount () {
     const { refreshInterval } = this.props
     this.fetchData()
-    this.interval = refreshInterval && setInterval(this.fetchData, refreshInterval)
+    this.interval =
+      refreshInterval && setInterval(this.fetchData, refreshInterval)
   }
 
   componentWillUnmount () {
@@ -65,7 +69,7 @@ class ProgressBar extends Component {
   calculatePercentage () {
     const { offset, target } = this.props
     const { raised = 0 } = this.state
-    return Math.min(100, Math.floor((raised + offset) / target * 100))
+    return Math.min(100, Math.floor(((raised + offset) / target) * 100))
   }
 
   render () {
@@ -84,10 +88,7 @@ class ProgressBar extends Component {
       targetLabel
     } = this.props
 
-    const {
-      raised,
-      status
-    } = this.state
+    const { raised, status } = this.state
 
     return status === 'fetched' ? (
       <Grid spacing={0.25} {...grid}>
@@ -116,12 +117,21 @@ class ProgressBar extends Component {
         </GridColumn>
         {fundedLabel ? (
           <GridColumn xs={6}>
-            <Heading size={0} tag='strong' {...heading}>{this.calculatePercentage()}%</Heading> {fundedLabel}
+            <Heading size={0} tag='strong' {...heading}>
+              {this.calculatePercentage()}%
+            </Heading>{' '}
+            {fundedLabel}
           </GridColumn>
-        ) : <GridColumn xs={6} />}
-        {remainingLabel && eventDate && (
+        ) : (
+          <GridColumn xs={6} />
+        )}
+        {remainingLabel &&
+          eventDate && (
           <GridColumn xs={6} xsAlign='right'>
-            <Heading size={0} tag='strong' {...heading}>{this.calculateDaysRemaining(eventDate)}</Heading> {remainingLabel}
+            <Heading size={0} tag='strong' {...heading}>
+              {this.calculateDaysRemaining(eventDate)}
+            </Heading>{' '}
+            {remainingLabel}
           </GridColumn>
         )}
       </Grid>
@@ -133,107 +143,108 @@ class ProgressBar extends Component {
 
 ProgressBar.propTypes = {
   /**
-  * The campaign uid to fetch totals for
-  */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
+   * The campaign uid to fetch totals for
+   */
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+
+  /**
+   * The charity uid to fetch totals for
+   */
+  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+
+  /**
+   * Country code for API (JG only)
+   */
+  country: PropTypes.oneOf([
+    'au',
+    'ca',
+    'hk',
+    'ie',
+    'nz',
+    'sg',
+    'uk',
+    'us',
+    'za'
   ]),
 
   /**
-  * The charity uid to fetch totals for
-  */
-  charity: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
-
-  /**
-  * Country code for API (JG only)
-  */
-  country: PropTypes.oneOf(['au', 'ca', 'hk', 'ie', 'nz', 'sg', 'uk', 'us', 'za']),
-
-  /**
-  * Exclude offline donations?
-  */
+   * Exclude offline donations?
+   */
   excludeOffline: PropTypes.bool,
 
   /**
-  * The group value(s) to filter by
-  */
-  group: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]),
+   * The group value(s) to filter by
+   */
+  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
-  * Start date filter (ISO Format)
-  */
+   * Start date filter (ISO Format)
+   */
   startDate: PropTypes.string,
 
   /**
-  * End date filter (ISO Format)
-  */
+   * End date filter (ISO Format)
+   */
   endDate: PropTypes.string,
 
   /**
-  * Offset
-  */
+   * Offset
+   */
   offset: PropTypes.number,
 
   /**
-  * Target
-  */
+   * Target
+   */
   target: PropTypes.number.isRequired,
 
   /**
-  * Raised label
-  */
+   * Raised label
+   */
   raisedLabel: PropTypes.string,
 
   /**
-  * Target label
-  */
+   * Target label
+   */
   targetLabel: PropTypes.string,
 
   /**
-  * Show funded label
-  */
+   * Show funded label
+   */
   fundedLabel: PropTypes.string,
 
   /**
-  * Show time remaining label
-  */
+   * Show time remaining label
+   */
   remainingLabel: PropTypes.string,
 
   /**
-  * The format of the number
-  */
+   * The format of the number
+   */
   format: PropTypes.string,
 
   /**
-  * Props to be passed to the Constructicon Grid component
-  */
+   * Props to be passed to the Constructicon Grid component
+   */
   grid: PropTypes.object,
 
   /**
-  * Props to be passed to the Constructicon Heading components
-  */
+   * Props to be passed to the Constructicon Heading components
+   */
   heading: PropTypes.object,
 
   /**
-  * Props to be passed to the Constructicon Metric components
-  */
+   * Props to be passed to the Constructicon Metric components
+   */
   metric: PropTypes.object,
 
   /**
-  * Props to be passed to the Constructicon ProgressBar component
-  */
+   * Props to be passed to the Constructicon ProgressBar component
+   */
   progressBar: PropTypes.object,
 
   /**
-  * Interval (in milliseconds) to refresh data from API
-  */
+   * Interval (in milliseconds) to refresh data from API
+   */
   refreshInterval: PropTypes.number
 }
 

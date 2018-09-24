@@ -16,24 +16,18 @@ import {
 } from './everydayhero'
 
 export const fetchCampaigns = (params = required()) => {
-  return isJustGiving()
-    ? fetchJGCampaigns(params)
-    : fetchEDHCampaigns(params)
+  return isJustGiving() ? fetchJGCampaigns(params) : fetchEDHCampaigns(params)
 }
 
 export const fetchCampaign = (id = required()) => {
-  return isJustGiving()
-    ? fetchJGCampaign(id)
-    : fetchEDHCampaign(id)
+  return isJustGiving() ? fetchJGCampaign(id) : fetchEDHCampaign(id)
 }
 
 export const fetchCampaignGroups = (id = required()) => {
-  return isJustGiving()
-    ? fetchJGCampaignGroups(id)
-    : fetchEDHCampaignGroups(id)
+  return isJustGiving() ? fetchJGCampaignGroups(id) : fetchEDHCampaignGroups(id)
 }
 
-export const deserializeCampaign = (campaign) => {
+export const deserializeCampaign = campaign => {
   return isJustGiving()
     ? deserializeJGCampaign(campaign)
     : deserializeEDHCampaign(campaign)

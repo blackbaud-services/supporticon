@@ -19,7 +19,11 @@ class InputSlug extends Component {
   }
 
   fetchPageSlug (slug) {
-    this.setState({ slug, validations: [], status: slug ? 'fetching' : 'fetched' })
+    this.setState({
+      slug,
+      validations: [],
+      status: slug ? 'fetching' : 'fetched'
+    })
 
     if (slug) {
       const { campaignSlug, countryCode } = this.props
@@ -29,7 +33,9 @@ class InputSlug extends Component {
         .then(() => {
           this.props.handleFetch(false)
           this.setState({
-            validations: [`The URL '${slug}' is not available. Please try a different value.`],
+            validations: [
+              `The URL '${slug}' is not available. Please try a different value.`
+            ],
             status: 'failed'
           })
         })
@@ -45,11 +51,7 @@ class InputSlug extends Component {
   render () {
     const { status, slug } = this.state
 
-    const {
-      validations = [],
-      touched,
-      ...props
-    } = this.props
+    const { validations = [], touched, ...props } = this.props
 
     const errors = validations.concat(this.state.validations)
 
@@ -59,8 +61,9 @@ class InputSlug extends Component {
         type='search'
         autoComplete='off'
         status={slug && status}
-        onKeyUp={(e) => this.fetchPageSlug(e.target.value)}
+        onKeyUp={e => this.fetchPageSlug(e.target.value)}
         error={touched && !!errors.length}
+        invalid={!!errors.length}
         validations={errors}
       />
     )
@@ -69,18 +72,18 @@ class InputSlug extends Component {
 
 InputSlug.propTypes = {
   /**
-  * The campaign slug for the page slug lookup (EDH only - required)
-  */
+   * The campaign slug for the page slug lookup (EDH only - required)
+   */
   campaignSlug: PropTypes.string,
 
   /**
-  * Country for the page slug lookup (EDH only - required)
-  */
-  countryCode: PropTypes.oneOf([ 'au', 'nz', 'uk', 'us', 'ie' ]),
+   * Country for the page slug lookup (EDH only - required)
+   */
+  countryCode: PropTypes.oneOf(['au', 'nz', 'uk', 'us', 'ie']),
 
   /**
-  * The change handler
-  */
+   * The change handler
+   */
   handleFetch: PropTypes.func.isRequired
 }
 

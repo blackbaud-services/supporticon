@@ -16,32 +16,18 @@ import {
   joinTeam as joinEDHTeam
 } from './everydayhero'
 
-export const deserializeTeam = (team) => (
-  isJustGiving()
-    ? deserializeJGTeam(team)
-    : deserializeEDHTeam(team)
-)
+export const deserializeTeam = team =>
+  isJustGiving() ? deserializeJGTeam(team) : deserializeEDHTeam(team)
 
-export const fetchTeams = (params) => {
-  return isJustGiving()
-    ? fetchJGTeams(params)
-    : fetchEDHTeams(params)
+export const fetchTeams = params => {
+  return isJustGiving() ? fetchJGTeams(params) : fetchEDHTeams(params)
 }
 
-export const fetchTeam = (params) => (
-  isJustGiving()
-    ? fetchJGTeam(params)
-    : fetchEDHTeam(params)
-)
+export const fetchTeam = params =>
+  isJustGiving() ? fetchJGTeam(params) : fetchEDHTeam(params)
 
-export const createTeam = (params) => (
-  isJustGiving()
-    ? createJGTeam(params)
-    : createEDHTeam(params)
-)
+export const createTeam = params =>
+  isJustGiving() ? createJGTeam(params) : createEDHTeam(params)
 
-export const joinTeam = (params) => (
-  isJustGiving()
-    ? joinJGTeam(params)
-    : joinEDHTeam(params)
-)
+export const joinTeam = params =>
+  isJustGiving() ? joinJGTeam(params) : joinEDHTeam(params)
