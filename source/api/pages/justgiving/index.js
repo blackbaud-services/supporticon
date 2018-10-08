@@ -1,7 +1,7 @@
 import moment from 'moment'
 import lodashGet from 'lodash/get'
 import { get, put } from '../../../utils/client'
-import { getUID, required } from '../../../utils/params'
+import { getUID, getShortName, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
 export const deserializePage = page => {
@@ -10,6 +10,19 @@ export const deserializePage = page => {
     `https://${page.domain || 'www.justgiving.com'}/fundraising/${
       page.pageShortName
     }`
+
+  const getImage = () => {
+    if (page.pageImages && page.pageImages.length > 0) {
+      return `https://images.jg-cdn.com/image/${page.pageImages[0]}`
+    }
+
+    return (
+      page.defaultImage ||
+      page.Logo ||
+      lodashGet(page, 'image.url') ||
+      lodashGet(page, 'images[0].url')
+    )
+  }
 
   return {
     active: [page.status, page.pageStatus].indexOf('Active') > -1,
@@ -22,11 +35,7 @@ export const deserializePage = page => {
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
     groups: null,
     id: page.pageId || page.Id,
-    image:
-      page.defaultImage ||
-      page.Logo ||
-      lodashGet(page, 'image.url') ||
-      lodashGet(page, 'images[0].url'),
+    image: getImage(),
     name: page.title || page.pageTitle || page.Name,
     owner: page.owner || page.OwnerFullName,
     raised: parseFloat(
@@ -48,6 +57,7 @@ export const deserializePage = page => {
 
 export const fetchPages = (params = required()) => {
   const {
+    allPages,
     campaign,
     charity,
     event,
@@ -68,6 +78,18 @@ export const fetchPages = (params = required()) => {
         }
       }
     )
+  }
+
+  if (allPages && event) {
+    return get(`/v1/event/${getUID(event)}/pages`).then(
+      response => response.fundraisingPages
+    )
+  }
+
+  if (allPages && campaign && charity) {
+    return get(
+      `/v1/campaigns/${getShortName(charity)}/${getShortName(campaign)}/pages`
+    ).then(response => response.fundraisingPages)
   }
 
   return get('/v1/onesearch', {
