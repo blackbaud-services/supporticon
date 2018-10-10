@@ -89,7 +89,9 @@ class CreatePageForm extends Component {
         data
       )
 
-      return this.handleSubmitAddress(token, addressFields)
+      return Promise.resolve()
+        .then(() => this.handleSubmitAddress(token, addressFields))
+        .then(() => this.handleSubmitPhone(token, data.phone))
         .then(() => createPage(dataPayload))
         .then(result => {
           this.setState({ status: 'fetched' })
@@ -138,6 +140,14 @@ class CreatePageForm extends Component {
 
     return includeAddress
       ? updateCurrentUser({ authType, token, address })
+      : Promise.resolve()
+  }
+
+  handleSubmitPhone (token, phone) {
+    const { authType, includePhone } = this.props
+
+    return !isJustGiving() && includePhone
+      ? updateCurrentUser({ authType, token, phone })
       : Promise.resolve()
   }
 
@@ -308,6 +318,11 @@ CreatePageForm.propTypes = {
   token: PropTypes.string.isRequired,
 
   /**
+   * Include phone in page creation
+   */
+  includePhone: PropTypes.bool,
+
+  /**
    * Include address search in the page creation
    */
   includeAddress: PropTypes.bool
@@ -322,6 +337,8 @@ CreatePageForm.defaultProps = {
 }
 
 const form = props => {
+  const includePhone = !isJustGiving() && props.includePhone
+
   const defaultFields = isJustGiving()
     ? {
       title: {
@@ -388,11 +405,22 @@ const form = props => {
     }
   }
 
+  const phoneFields = {
+    phone: {
+      label: 'Phone Number',
+      type: 'tel',
+      order: 2,
+      required: true,
+      validators: [validators.required('Please enter your phone number')]
+    }
+  }
+
   return {
     fields: merge(
       defaultFields,
       props.fields,
-      props.includeAddress ? addressFormFields : {}
+      props.includeAddress ? addressFormFields : {},
+      includePhone ? phoneFields : {}
     )
   }
 }
