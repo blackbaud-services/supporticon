@@ -1,9 +1,12 @@
 import { get } from '../../../utils/client'
+import compact from 'lodash/compact'
 
-export const fetchDonationFeed = params => {
+export const fetchDonationFeed = options => {
+  const { includeOffline, ...params } = options
+
   const finalParams = {
     ...params,
-    type: 'OnlineDonation'
+    type: compact([ 'OnlineDonation', includeOffline && 'OfflineDonation' ])
   }
 
   const mappings = {
