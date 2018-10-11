@@ -30,11 +30,12 @@ class DonationTicker extends Component {
   }
 
   fetchData () {
-    const { campaign, charity, page, sort, team } = this.props
+    const { campaign, charity, includeOffline, page, sort, team } = this.props
 
     fetchDonationFeed({
       campaign,
       charity,
+      includeOffline,
       page,
       sort,
       team
@@ -139,6 +140,11 @@ DonationTicker.propTypes = {
    * Label text
    */
   label: PropTypes.string,
+
+  /**
+   * Include offline donations
+   */
+  includeOffline: PropTypes.bool,
 
   /**
    * Props to be passed to the Constructicon Ticker component

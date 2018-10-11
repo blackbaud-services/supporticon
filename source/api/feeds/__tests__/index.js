@@ -12,16 +12,29 @@ describe('Fetch EDH Donation Feed', () => {
   })
 
   it('uses the correct url', done => {
-    fetchDonationFeed({ campaign_id: 'au-6839' }).then(response =>
-      console.log(response.data)
-    )
+    fetchDonationFeed({ campaign_id: 'au-6839' })
+
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
         'https://everydayhero.com/api/v2/search/feed'
       )
       expect(request.url).to.contain('campaign_id=au-6839')
-      expect(request.url).to.contain('type=OnlineDonation')
+      expect(request.url).to.contain('type[]=OnlineDonation')
+      done()
+    })
+  })
+
+  it('fetches offline donations when includeOffline option is passed in', done => {
+    fetchDonationFeed({ campaign_id: 'au-6839', includeOffline: true })
+
+    moxios.wait(() => {
+      const request = moxios.requests.mostRecent()
+      expect(request.url).to.contain(
+        'https://everydayhero.com/api/v2/search/feed'
+      )
+      expect(request.url).to.contain('type[]=OnlineDonation')
+      expect(request.url).to.contain('type[]=OfflineDonation')
       done()
     })
   })
