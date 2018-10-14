@@ -18,3 +18,14 @@ export const searchCharities = (params = required()) => {
       response.GroupedResults[0].Results) || []
     ))
 }
+
+export const deserializeCharity = charity => ({
+  active: true,
+  country: charity.CountryCode,
+  description: charity.Description,
+  events: charity.EventIds,
+  id: charity.Id,
+  logo: charity.Logo,
+  name: charity.Name,
+  slug: charity.Link.split('/').pop()
+})
