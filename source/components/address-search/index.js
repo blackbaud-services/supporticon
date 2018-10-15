@@ -9,7 +9,6 @@ import {
 } from '../../api/address'
 import countries from '../../utils/countries'
 
-import AddressResult from './AddressResult'
 import InputSelect from 'constructicon/input-select'
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
@@ -73,7 +72,6 @@ class AddressSearch extends Component {
             label={this.renderLabel()}
             onChange={this.handleSelect}
             onSearch={this.handleQuery}
-            ResultComponent={AddressResult}
             results={results}
             status={status}
             validations={validations}
