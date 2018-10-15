@@ -57,6 +57,7 @@ module.exports = {
       name: 'Authentication',
       components: () => ([
         path.resolve(__dirname, 'source/components/address-search', 'index.js'),
+        path.resolve(__dirname, 'source/components/charity-search', 'index.js'),
         path.resolve(__dirname, 'source/components/create-page-form', 'index.js'),
         path.resolve(__dirname, 'source/components/login-form', 'index.js'),
         path.resolve(__dirname, 'source/components/provider-oauth-button', 'index.js'),
