@@ -17,6 +17,7 @@ import withGroups from './with-groups'
 import countries from '../../utils/countries'
 
 import AddressSearch from '../address-search'
+import CharitySearch from '../charity-search'
 import Form from 'constructicon/form'
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
@@ -70,7 +71,8 @@ class CreatePageForm extends Component {
         'locality',
         'region',
         'postCode',
-        'country'
+        'country',
+        'charityId'
       ])
 
       const dataPayload = merge(
@@ -169,6 +171,7 @@ class CreatePageForm extends Component {
 
   render () {
     const {
+      campaignId,
       disableInvalidForm,
       form,
       formComponent,
@@ -201,6 +204,15 @@ class CreatePageForm extends Component {
                   handleFetch={slugAvailable =>
                     this.setState({ slugAvailable })
                   }
+                />
+              )
+            case 'charity':
+              return (
+                <CharitySearch
+                  key={field.name}
+                  campaign={campaignId}
+                  onChange={field.onChange}
+                  inputProps={{ ...field, ...inputField }}
                 />
               )
             default:
@@ -318,6 +330,11 @@ CreatePageForm.propTypes = {
   token: PropTypes.string.isRequired,
 
   /**
+   * Include a charity search field
+   */
+  includeCharitySearch: PropTypes.bool,
+
+  /**
    * Include phone in page creation
    */
   includePhone: PropTypes.bool,
@@ -379,49 +396,54 @@ const form = props => {
       }
     }
 
-  const addressFormFields = {
-    country: {
-      label: 'Country',
-      initial: props.country,
-      options: countries,
-      validators: [validators.required('Please select a country')]
-    },
-    streetAddress: {
-      label: 'Street Address',
-      validators: [validators.required('Please enter a street address')]
-    },
-    extendedAddress: {},
-    locality: {
-      label: 'Town/Suburb',
-      validators: [validators.required('Please enter a town/suburb')]
-    },
-    region: {
-      label: 'State',
-      validators: [validators.required('Please enter a state')]
-    },
-    postCode: {
-      label: 'Post Code',
-      validators: [validators.required('Please enter a post code')]
-    }
-  }
-
-  const phoneFields = {
-    phone: {
-      label: 'Phone Number',
-      type: 'tel',
-      order: 2,
-      required: true,
-      validators: [validators.required('Please enter your phone number')]
-    }
+  const optionalFields = {
+    ...(includePhone && {
+      phone: {
+        label: 'Phone Number',
+        type: 'tel',
+        order: 2,
+        required: true,
+        validators: [validators.required('Please enter your phone number')]
+      }
+    }),
+    ...(props.includeCharitySearch && {
+      charityId: {
+        label: 'Charity',
+        type: 'search',
+        order: 1,
+        required: true,
+        validators: [validators.required('Please select your charity')]
+      }
+    }),
+    ...(props.includeAddress && {
+      country: {
+        label: 'Country',
+        initial: props.country,
+        options: countries,
+        validators: [validators.required('Please select a country')]
+      },
+      streetAddress: {
+        label: 'Street Address',
+        validators: [validators.required('Please enter a street address')]
+      },
+      extendedAddress: {},
+      locality: {
+        label: 'Town/Suburb',
+        validators: [validators.required('Please enter a town/suburb')]
+      },
+      region: {
+        label: 'State',
+        validators: [validators.required('Please enter a state')]
+      },
+      postCode: {
+        label: 'Post Code',
+        validators: [validators.required('Please enter a post code')]
+      }
+    })
   }
 
   return {
-    fields: merge(
-      defaultFields,
-      props.fields,
-      props.includeAddress ? addressFormFields : {},
-      includePhone ? phoneFields : {}
-    )
+    fields: merge(defaultFields, optionalFields, props.fields)
   }
 }
 
