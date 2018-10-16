@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import withStyles from 'constructicon/with-styles'
-import styles from './styles'
 import {
   deserializeAddress,
   getAddressDetails,
@@ -9,6 +7,7 @@ import {
 } from '../../api/address'
 import countries from '../../utils/countries'
 
+import Button from 'constructicon/button'
 import InputSelect from 'constructicon/input-select'
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
@@ -84,18 +83,28 @@ class AddressSearch extends Component {
   }
 
   renderLabel () {
-    const { classNames, onCancel } = this.props
+    const { onCancel, onCancelLabel } = this.props
 
     return (
-      <div>
-        <span>Address</span>
-        {onCancel && ' - '}
+      <Grid spacing={{ x: 0.5 }}>
+        <GridColumn xs={5}>
+          <span>Address</span>
+        </GridColumn>
         {onCancel && (
-          <span className={classNames.cancel} onClick={onCancel}>
-            Enter address manually
-          </span>
+          <GridColumn xs={7} xsAlign='right'>
+            <Button
+              background='transparent'
+              borderWidth={0}
+              foreground='inherit'
+              onClick={onCancel}
+              size={-1.5}
+              spacing={0}
+            >
+              {onCancelLabel}
+            </Button>
+          </GridColumn>
         )}
-      </div>
+      </Grid>
     )
   }
 }
@@ -117,9 +126,18 @@ AddressSearch.propTypes = {
   onCancel: PropTypes.func,
 
   /**
+   * The text label from the 'Enter manually' button
+   */
+  onCancelLabel: PropTypes.string,
+
+  /**
    * The onChange function to call when a selection is made
    */
   onChange: PropTypes.func.isRequired
 }
 
-export default withStyles(styles)(AddressSearch)
+AddressSearch.defaultProps = {
+  onCancelLabel: 'Enter manually'
+}
+
+export default AddressSearch
