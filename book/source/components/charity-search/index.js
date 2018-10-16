@@ -46,6 +46,7 @@ class CharitySearch extends Component {
 
     return (
       <InputSearch
+        {...inputProps}
         autoComplete='off'
         onChange={this.handleSelect}
         onSearch={this.handleQuery}
@@ -53,7 +54,6 @@ class CharitySearch extends Component {
         results={results}
         status={status}
         value={value}
-        {...inputProps}
       />
     )
   }
