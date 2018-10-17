@@ -206,7 +206,7 @@ class CreatePageForm extends Component {
                   }
                 />
               )
-            case 'charity':
+            case 'charityId':
               return (
                 <CharitySearch
                   key={field.name}
@@ -410,7 +410,7 @@ const form = props => {
       charityId: {
         label: 'Charity',
         type: 'search',
-        order: 1,
+        order: 2,
         required: true,
         validators: [validators.required('Please select your charity')]
       }
