@@ -72,7 +72,7 @@ class FitnessProgressBar extends Component {
 
     const { status, distance: distanceInMeters = 0 } = this.state
     const distanceInKm = distanceInMeters / 1000
-    const distance = unit === 'km' ? distanceInKm : distanceInKm / 0.621371
+    const distance = unit === 'km' ? distanceInKm : distanceInKm * 0.621371
 
     return status === 'fetched' ? (
       <Grid spacing={0.25} {...grid}>
