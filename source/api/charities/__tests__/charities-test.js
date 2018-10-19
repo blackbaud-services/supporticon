@@ -24,14 +24,30 @@ describe('Search charities', () => {
       expect(test).to.throw
     })
 
-    it('fetches a single charity', done => {
-      fetchCharity('au-123')
-      moxios.wait(() => {
-        const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal(
-          'https://everydayhero.com/api/v2/charities/au-123'
-        )
-        done()
+    describe('fetches a single charity', () => {
+      it('when an id is passed', done => {
+        fetchCharity('au-123')
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.equal(
+            'https://everydayhero.com/api/v2/charities/au-123'
+          )
+          done()
+        })
+      })
+
+      it('when an object is passed', done => {
+        fetchCharity({
+          countryCode: 'au',
+          slug: 'test-charity'
+        })
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.equal(
+            'https://everydayhero.com/api/v2/charities/au/test-charity'
+          )
+          done()
+        })
       })
     })
 

@@ -19,8 +19,17 @@ export const fetchCampaigns = (params = required()) => {
   )
 }
 
-export const fetchCampaign = (id = required()) =>
-  get(`${c.ENDPOINT}/${id}`).then(response => response.campaign)
+export const fetchCampaign = (id = required()) => {
+  if (typeof id === 'object') {
+    const { countryCode = required(), slug = required() } = id
+
+    return get([c.ENDPOINT, countryCode, slug].join('/')).then(
+      response => response.campaign
+    )
+  }
+
+  return get(`${c.ENDPOINT}/${id}`).then(response => response.campaign)
+}
 
 export const fetchCampaignGroups = (id = required()) =>
   get(`${c.ENDPOINT}/${id}/groups`).then(response => response.campaign_groups)

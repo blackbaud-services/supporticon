@@ -15,8 +15,17 @@ export const fetchCharities = (params = required()) => {
   )
 }
 
-export const fetchCharity = (id = required()) =>
-  get(`${c.ENDPOINT}/${id}`).then(response => response.charity)
+export const fetchCharity = (id = required()) => {
+  if (typeof id === 'object') {
+    const { countryCode = required(), slug = required() } = id
+
+    return get([c.ENDPOINT, countryCode, slug].join('/')).then(
+      response => response.charity
+    )
+  }
+
+  return get(`${c.ENDPOINT}/${id}`).then(response => response.charity)
+}
 
 export const searchCharities = (params = required()) =>
   get(c.SEARCH_ENDPOINT, params).then(response => response.charities)
