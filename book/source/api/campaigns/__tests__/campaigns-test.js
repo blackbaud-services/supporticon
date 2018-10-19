@@ -42,14 +42,30 @@ describe('Fetch Campaigns', () => {
       expect(test).to.throw
     })
 
-    it('fetches a single campaign', done => {
-      fetchCampaign('au-6839')
-      moxios.wait(() => {
-        const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal(
-          'https://everydayhero.com/api/v2/campaigns/au-6839'
-        )
-        done()
+    describe('fetches a single campaign', () => {
+      it('when an id is passed', done => {
+        fetchCampaign('au-6839')
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.equal(
+            'https://everydayhero.com/api/v2/campaigns/au-6839'
+          )
+          done()
+        })
+      })
+
+      it('when an object is passed', done => {
+        fetchCampaign({
+          countryCode: 'au',
+          slug: 'test-campaign'
+        })
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.equal(
+            'https://everydayhero.com/api/v2/campaigns/au/test-campaign'
+          )
+          done()
+        })
       })
     })
 
