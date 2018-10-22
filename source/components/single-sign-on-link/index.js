@@ -29,7 +29,15 @@ class SingleSignOnLink extends Component {
   }
 
   render () {
-    const { label, loadingProps, method, token, url, ...props } = this.props
+    const {
+      authType,
+      label,
+      loadingProps,
+      method,
+      token,
+      url,
+      ...props
+    } = this.props
 
     const { loading, target } = this.state
 

@@ -211,7 +211,7 @@ class CreatePageForm extends Component {
                 <CharitySearch
                   key={field.name}
                   campaign={campaignId}
-                  onChange={field.onChange}
+                  onChange={charity => field.onChange(charity.id)}
                   inputProps={{ ...field, ...inputField }}
                 />
               )
