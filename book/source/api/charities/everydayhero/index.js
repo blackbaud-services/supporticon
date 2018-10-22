@@ -36,9 +36,14 @@ export const deserializeCharity = charity => ({
   categories: charity.causes,
   country: charity.country_code,
   description: charity.description,
+  donateUrl: charity.donate_url,
+  getStartedUrl: charity.get_started_url,
   email: charity.public_email,
-  id: charity.uid,
+  id: charity.uid || charity.id,
   logo: charity.logo_url,
   name: charity.name,
-  slug: charity.slug
+  registrationNumber: charity.registration_number,
+  slug: charity.slug,
+  url: charity.url,
+  uuid: charity.uuid
 })

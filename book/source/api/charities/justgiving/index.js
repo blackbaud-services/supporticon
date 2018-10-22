@@ -26,15 +26,23 @@ export const searchCharities = (params = required()) => {
   )
 }
 
-export const deserializeCharity = charity => ({
-  active: true,
-  categories: charity.categories,
-  country: charity.countryCode || charity.CountryCode,
-  description: charity.description || charity.Description,
-  email: charity.emailAddress,
-  events: charity.EventIds,
-  id: charity.id || charity.Id,
-  logo: charity.logoAbsoluteUrl || charity.Logo,
-  name: charity.name || charity.Name,
-  slug: charity.pageShortName || charity.Link.split('/').pop()
-})
+export const deserializeCharity = charity => {
+  const id = charity.id || charity.Id
+
+  return {
+    active: true,
+    categories: charity.categories,
+    country: charity.countryCode || charity.CountryCode,
+    description: charity.description || charity.Description,
+    donateUrl: `https://www.justgiving.com/onecheckout/donation/direct/${id}`,
+    email: charity.emailAddress,
+    events: charity.EventIds,
+    getStartedUrl: `https://www.justgiving.com/fundraising-page/creation/?cid=${id}`,
+    id: charity.id || charity.Id,
+    logo: charity.logoAbsoluteUrl || charity.Logo,
+    name: charity.name || charity.Name,
+    registrationNumber: charity.registrationNumber,
+    slug: charity.pageShortName || charity.Link.split('/').pop(),
+    url: charity.profilePageUrl
+  }
+}
