@@ -36,7 +36,7 @@ class CharitySearch extends Component {
     this.setState({ value: selected.name })
 
     if (selected.id) {
-      this.props.onChange(selected.id)
+      this.props.onChange(selected)
     }
   }
 
@@ -83,7 +83,7 @@ CharitySearch.propTypes = {
   /**
    * The component to render the search results
    */
-  ResultComponent: PropTypes.node
+  ResultComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func])
 }
 
 CharitySearch.defaultProps = {
