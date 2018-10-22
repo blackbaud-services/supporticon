@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import omit from 'lodash/omit'
 import { getBaseURL, isJustGiving } from '../../utils/client'
 import { fetchCurrentUser } from '../../api/me'
 import { submitCrossDomainForm } from '../../utils/cross-domain'
@@ -29,17 +30,9 @@ class SingleSignOnLink extends Component {
   }
 
   render () {
-    const {
-      authType,
-      label,
-      loadingProps,
-      method,
-      token,
-      url,
-      ...props
-    } = this.props
-
+    const { label, loadingProps, method, token, url, ...props } = this.props
     const { loading, target } = this.state
+    const safeProps = omit(props, ['authType'])
 
     return (
       <div ref='root'>
@@ -52,7 +45,7 @@ class SingleSignOnLink extends Component {
           >
             <input type='hidden' name='access_token' value={token} />
             <input type='hidden' name='return_to' value={url} />
-            <Button {...props} type='submit'>
+            <Button {...safeProps} type='submit'>
               <span>{label}</span>
               {loading && <Loading {...loadingProps} />}
             </Button>
@@ -63,7 +56,7 @@ class SingleSignOnLink extends Component {
             href={url}
             target={target}
             onClick={token && isJustGiving() && this.submitForm}
-            {...props}
+            {...safeProps}
           >
             <span>{label}</span>
             {loading && <Loading {...loadingProps} />}
