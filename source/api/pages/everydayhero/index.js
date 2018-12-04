@@ -1,33 +1,39 @@
 import { get, post, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
-export const deserializePage = page => ({
-  active: page.active || page.state === 'active',
-  campaign: page.campaign || page.campaign_name,
-  campaignDate: page.campaign_date || page.event_date,
-  charity: page.charity || page.beneficiary || page.charity_name,
-  coordinates: page.coordinate,
-  donationUrl: page.donation_url,
-  expired: page.expired,
-  fitness: page.metrics ? page.metrics.fitness : page.fitness_activity_overview,
-  fitnessGoal: page.fitness_goal,
-  groups: page.page_groups,
-  id: page.id,
-  image: page.image.large_image_url,
-  name: page.name,
-  owner: page.owner_uid || page.user_id,
-  raised: page.metrics
+export const deserializePage = page => {
+  const amountInCents = page.metrics
     ? page.metrics.fundraising.total_in_cents
     : page.amount
       ? page.amount.cents
-      : 0,
-  slug: page.slug,
-  story: page.story,
-  target: page.metrics ? page.metrics.fundraising.goal : page.target_cents,
-  teamPageId: page.team_page_id,
-  url: page.url,
-  uuid: page.uuid
-})
+      : 0
+
+  return {
+    active: page.active || page.state === 'active',
+    campaign: page.campaign || page.campaign_name,
+    campaignDate: page.campaign_date || page.event_date,
+    charity: page.charity || page.beneficiary || page.charity_name,
+    coordinates: page.coordinate,
+    donationUrl: page.donation_url,
+    expired: page.expired,
+    fitness: page.metrics
+      ? page.metrics.fitness
+      : page.fitness_activity_overview,
+    fitnessGoal: page.fitness_goal,
+    groups: page.page_groups,
+    id: page.id,
+    image: page.image && page.image.large_image_url,
+    name: page.name,
+    owner: page.owner_uid || page.user_id,
+    raised: amountInCents / 100,
+    slug: page.slug,
+    story: page.story,
+    target: page.metrics ? page.metrics.fundraising.goal : page.target_cents,
+    teamPageId: page.team_page_id,
+    url: page.url,
+    uuid: page.uuid
+  }
+}
 
 export const fetchPages = (params = required()) => {
   const { allPages, ...finalParams } = params
