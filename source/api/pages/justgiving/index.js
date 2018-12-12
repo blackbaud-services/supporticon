@@ -121,6 +121,7 @@ export const createPage = ({
   authType = 'Basic',
   activityType,
   attribution,
+  campaignGuid,
   causeId,
   charityFunded,
   companyAppealId,
@@ -146,6 +147,7 @@ export const createPage = ({
     {
       activityType,
       attribution,
+      campaignGuid,
       causeId,
       charityFunded,
       charityId,
