@@ -60,15 +60,26 @@ class TotalDistance extends Component {
     }
   }
 
+  getDistanceForActivityType (overview, type) {
+    const metrics = overview[type]
+    return metrics ? metrics.distance_in_meters : 0
+  }
+
   calculateTotal (data) {
     const { activity } = this.props
     switch (typeof activity) {
       case 'string':
-        return data.fitness_activity_overview[activity].distance_in_meters
+        return this.getDistanceForActivityType(
+          data.fitness_activity_overview,
+          activity
+        )
       case 'object':
         return activity.reduce(
           (total, type) =>
-            (total += data.fitness_activity_overview[type].distance_in_meters),
+            (total += this.getDistanceForActivityType(
+              data.fitness_activity_overview,
+              type
+            )),
           0
         )
       default:
