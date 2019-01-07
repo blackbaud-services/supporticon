@@ -55,10 +55,10 @@ export const createFitnessActivity = ({
   distance,
   distanceInMeters,
   elevationSeries,
-  trainer,
-  virtual,
   pageId,
-  unit
+  trainer,
+  unit,
+  virtual
 }) =>
   post(`/api/v2/fitness_activities?access_token=${token}`, {
     calories,
@@ -70,6 +70,7 @@ export const createFitnessActivity = ({
     duration_in_seconds: duration,
     elevation_series: elevationSeries,
     manual,
+    pageId,
     public: visible,
     started_at: startedAt,
     trainer,
