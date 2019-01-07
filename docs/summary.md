@@ -7,6 +7,7 @@
   * [Leaderboard](source/api/leaderboard/readme.md)
   * [Pages](source/api/pages/readme.md)
   * [Pages Totals](source/api/pages-totals/readme.md)
+  * [Posts](source/api/posts/readme.md)
   * [Authentication](source/api/authentication/readme.md)
 * [Utilities](source/utils/readme.md)
   * [Actions](source/utils/actions/readme.md)
