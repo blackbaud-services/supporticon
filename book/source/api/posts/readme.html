@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Feeds | Supporticon NPM Version</title>
+        <title>Posts | Supporticon NPM Version</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.5.2">
@@ -37,10 +37,10 @@
         
     
     
-    <link rel="next" href="../../../source/api/leaderboard/readme.html" />
+    <link rel="next" href="../../../source/api/authentication/readme.html" />
     
     
-    <link rel="prev" href="../../../source/api/donation-totals/readme.html" />
+    <link rel="prev" href="../../../source/api/pages-totals/readme.html" />
     
 
         
@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.3" data-chapter-title="Feeds" data-filepath="source/api/feeds/readme.md" data-basepath="../../.." data-revision="Tue Jan 08 2019 06:34:15 GMT+0000 (UTC)">
+    <div class="book" data-level="1.7" data-chapter-title="Posts" data-filepath="source/api/posts/readme.md" data-basepath="../../.." data-revision="Tue Jan 08 2019 06:34:15 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -122,7 +122,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3" data-path="source/api/feeds/readme.html">
+        <li class="chapter " data-level="1.3" data-path="source/api/feeds/readme.html">
             
                 
                     <a href="../../../source/api/feeds/readme.html">
@@ -182,7 +182,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7" data-path="source/api/posts/readme.html">
+        <li class="chapter active" data-level="1.7" data-path="source/api/posts/readme.html">
             
                 
                     <a href="../../../source/api/posts/readme.html">
@@ -317,47 +317,32 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="goal">Goal</h1>
-<p>Helpers related to fetching activity feeds</p>
+<p>Helpers related to fetching &amp; creating page posts</p>
 <ul>
-<li><a href="#fetchdonationfeed">fetchDonationFeed</a></li>
+<li><a href="#createPost">createPost</a></li>
 </ul>
-<h2 id="fetchdonationfeed"><code>fetchDonationFeed</code></h2>
-<p><strong>Purpose</strong></p>
-<p>Fetch a donation activity feed.</p>
+<h2 id="createpost"><code>createPost</code></h2>
+<p>Create a post</p>
 <p><strong>Params</strong></p>
 <ul>
-<li><code>params</code> (Object) see <a href="../readme.html#availableparameters">parameter list</a></li>
+<li><code>pageId</code> (string or integer)</li>
+<li><code>caption</code> (string)</li>
+<li><code>image</code> (string)</li>
 </ul>
 <p><strong>Returns</strong></p>
 <p>A pending promise that will either resolve to:</p>
 <ul>
-<li>Success: the data returned from the request</li>
-<li>Failure: the error encountered</li>
+<li>Success: the created post</li>
+<li>Failure: the error</li>
 </ul>
 <p><strong>Example</strong></p>
-<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { fetchDonationFeed } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/feeds&apos;</span>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { createPost } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/posts&apos;</span>
 
-fetchDonationFeed({
-  campaign: <span class="hljs-string">&apos;au-123&apos;</span>
+createPost({
+  page: 12345,
+  caption: <span class="hljs-string">&apos;I am making great progress&apos;</span>,
+  image: <span class="hljs-string">&apos;https://placehold.it/400x400&apos;</span>
 })
-</code></pre>
-<h2 id="deserializedonation"><code>deserializeDonation</code></h2>
-<p>A default deserializer for deserializing a donation</p>
-<p><strong>Params</strong></p>
-<ul>
-<li><code>data</code> {Object} a single donation</li>
-</ul>
-<p><strong>Returns</strong></p>
-<p>The deserialized donation</p>
-<p><strong>Example</strong></p>
-<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { deserializeDonation } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/feeds&apos;</span>
-
-// ...
-
-return {
-  status: <span class="hljs-string">&apos;fetched&apos;</span>,
-  data: payload.data.map(deserializeDonation)
-}
 </code></pre>
 
                     
@@ -369,10 +354,10 @@ return {
         </div>
 
         
-        <a href="../../../source/api/donation-totals/readme.html" class="navigation navigation-prev " aria-label="Previous page: Donation Totals"><i class="fa fa-angle-left"></i></a>
+        <a href="../../../source/api/pages-totals/readme.html" class="navigation navigation-prev " aria-label="Previous page: Pages Totals"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../../../source/api/leaderboard/readme.html" class="navigation navigation-next " aria-label="Next page: Leaderboard"><i class="fa fa-angle-right"></i></a>
+        <a href="../../../source/api/authentication/readme.html" class="navigation navigation-next " aria-label="Next page: Authentication"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
