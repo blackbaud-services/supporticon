@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Reducers | Supporticon NPM Version</title>
+        <title>Donations | Supporticon NPM Version</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.5.2">
@@ -37,10 +37,10 @@
         
     
     
-    <link rel="next" href="../../../source/components/readme.html" />
+    <link rel="next" href="../../../source/api/donation-totals/readme.html" />
     
     
-    <link rel="prev" href="../../../source/utils/actions/readme.html" />
+    <link rel="prev" href="../../../source/api/campaigns/readme.html" />
     
 
         
@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.2" data-chapter-title="Reducers" data-filepath="source/utils/reducers/readme.md" data-basepath="../../.." data-revision="Fri Jan 18 2019 04:50:24 GMT+0000 (UTC)">
+    <div class="book" data-level="1.2" data-chapter-title="Donations" data-filepath="source/api/donations/readme.md" data-basepath="../../.." data-revision="Fri Jan 18 2019 04:50:24 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -107,7 +107,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2" data-path="source/api/donations/readme.html">
+        <li class="chapter active" data-level="1.2" data-path="source/api/donations/readme.html">
             
                 
                     <a href="../../../source/api/donations/readme.html">
@@ -263,7 +263,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.2" data-path="source/utils/reducers/readme.html">
+        <li class="chapter " data-level="2.2" data-path="source/utils/reducers/readme.html">
             
                 
                     <a href="../../../source/utils/reducers/readme.html">
@@ -331,40 +331,35 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="createreducer"><code>createReducer</code></h1>
-<h2 id="purpose">Purpose</h2>
-<p>Creates a simple reducer that listens to the related Redux actions and stores the state of the requests.</p>
-<h2 id="params">Params</h2>
+                        <h1 id="goal">Goal</h1>
+<p>Helpers related to interacting with donations</p>
 <ul>
-<li>Options (Object) various configuration options to configure your reduce<ul>
-<li>namespace (String: required) the namespace to listen to for the relevant actions e.g. <code>app/leaderboard</code></li>
-<li>deserialize (Function) the function to deserialize the response payload if required e.g. <code>deserializeLeaderboard</code></li>
-<li>initialState (Object) the initial state of the reducer (default: {})</li>
-<li>handlers (Object) you can override handlers if needed i.e. <code>fetch</code>, <code>fetchSuccess</code>, <code>fetchFailure</code></li>
+<li><a href="#replyToDonation">replyToDonation</a></li>
 </ul>
-</li>
+<h2 id="replytodonation"><code>replyToDonation</code></h2>
+<p>Replies to a donation</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><code>token</code> (string)</li>
+<li><code>pageId</code> (string or integer)</li>
+<li><code>donationId</code> (string)</li>
+<li><code>caption</code> (string)</li>
 </ul>
-<h2 id="returns">Returns</h2>
-<p>A valid reducer that can be easily added to <code>combineReducers</code></p>
-<h2 id="examples">Examples</h2>
-<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { createReducer } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/utils/reducers&apos;</span>
-<span class="hljs-keyword">import</span> { deserializeLeaderboard } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/leaderboard&apos;</span>
+<p><strong>Returns</strong></p>
+<p>A pending promise that will either resolve to:</p>
+<ul>
+<li>Success: the created reply</li>
+<li>Failure: the error</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { replyToDonation } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/replyToDonation&apos;</span>
 
-// ...
-
-combineReducers({
-  leaderboard: createReducer({
-    namespace: <span class="hljs-string">&apos;app/leaderboard&apos;</span>,
-    deserialize: deserializeLeaderboard
-  })
+replyToDonation({
+  pageId: 12345,
+  donationId: <span class="hljs-string">&apos;au-1234&apos;</span>,
+  caption: <span class="hljs-string">&apos;Thanks mate&apos;</span>
 })
 </code></pre>
-<p>Using the default handlers, the following will respond to the following actions.</p>
-<ul>
-<li><code>app/leaderboard/FETCH</code> - { status: &apos;fetching&apos; }</li>
-<li><code>app/leaderboard/FETCH_SUCCESS</code> - { status: &apos;fetched&apos;, data: deserializedResponse }</li>
-<li><code>app/leaderboard/FETCH_FAILURE</code> - { status: &apos;failed&apos; }</li>
-</ul>
 
                     
                     </section>
@@ -375,10 +370,10 @@ combineReducers({
         </div>
 
         
-        <a href="../../../source/utils/actions/readme.html" class="navigation navigation-prev " aria-label="Previous page: Actions"><i class="fa fa-angle-left"></i></a>
+        <a href="../../../source/api/campaigns/readme.html" class="navigation navigation-prev " aria-label="Previous page: Campaigns"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../../../source/components/readme.html" class="navigation navigation-next " aria-label="Next page: Components"><i class="fa fa-angle-right"></i></a>
+        <a href="../../../source/api/donation-totals/readme.html" class="navigation navigation-next " aria-label="Next page: Donation Totals"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
