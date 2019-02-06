@@ -3,13 +3,17 @@ import { isJustGiving } from '../../utils/client'
 import {
   deserializeFitnessActivity as deserializeEDHFitnessActivity,
   fetchFitnessActivities as fetchEDHFitnessActivities,
-  createFitnessActivity as createEDHFitnessActivity
+  createFitnessActivity as createEDHFitnessActivity,
+  updateFitnessActivity as updateEDHFitnessActivity,
+  deleteFitnessActivity as deleteEDHFitnessActivity
 } from './everydayhero'
 
 import {
   deserializeFitnessActivity as deserializeJGFitnessActivity,
   fetchFitnessActivities as fetchJGFitnessActivities,
-  createFitnessActivity as createJGFitnessActivity
+  createFitnessActivity as createJGFitnessActivity,
+  updateFitnessActivity as updateJGFitnessActivity,
+  deleteFitnessActivity as deleteJGFitnessActivity
 } from './justgiving'
 
 export const deserializeFitnessActivity = activity =>
@@ -26,3 +30,13 @@ export const createFitnessActivity = params =>
   isJustGiving()
     ? createJGFitnessActivity(params)
     : createEDHFitnessActivity(params)
+
+export const updateFitnessActivity = (activityId, params) =>
+  isJustGiving()
+    ? updateJGFitnessActivity(activityId, params)
+    : updateEDHFitnessActivity(activityId, params)
+
+export const deleteFitnessActivity = (activityId, token) =>
+  isJustGiving()
+    ? deleteJGFitnessActivity(activityId, token)
+    : deleteEDHFitnessActivity(activityId, token)

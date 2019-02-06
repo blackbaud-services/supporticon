@@ -1,6 +1,6 @@
 import moment from 'moment'
 import uuid from 'uuid/v1'
-import { get, post } from '../../../utils/client'
+import { destroy, get, post, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 export const deserializeFitnessActivity = (activity = required()) => ({
@@ -79,3 +79,49 @@ export const createFitnessActivity = ({
     unit,
     virtual
   })
+
+export const updateFitnessActivity = (
+  id = required(),
+  {
+    token = required(),
+    type,
+    duration,
+    manual,
+    startedAt,
+    uid,
+    visible,
+    calories,
+    caption,
+    coordinates,
+    description,
+    distance,
+    distanceInMeters,
+    elevationSeries,
+    pageId,
+    trainer,
+    unit,
+    virtual
+  }
+) =>
+  put(`/api/v2/fitness_activities/${id}?access_token=${token}`, {
+    calories,
+    caption,
+    coordinates,
+    description,
+    distance_in_meters: distanceInMeters,
+    distance,
+    duration_in_seconds: duration,
+    elevation_series: elevationSeries,
+    manual,
+    pageId,
+    public: visible,
+    started_at: startedAt,
+    trainer,
+    type,
+    uid,
+    unit,
+    virtual
+  })
+
+export const deleteFitnessActivity = (id = required(), token = required()) =>
+  destroy(`/api/v2/fitness_activities/${id}?access_token=${token}`)

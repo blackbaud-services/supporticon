@@ -85,3 +85,77 @@ createFitnessActivity({
   duration: '60'
 })
 ```
+
+## `updateFitnessActivity`
+
+Update an existing fitness activity for an authenticated User.
+
+See [the API documentation](http://developer.everydayhero.com/fitness-activities#createupdate-fitness-activity) for more information.
+
+**Params**
+
+- `id` (String) Fitness activity ID _required_
+- `params` (Object) Containing the following:
+  - `token` (String) OAuth User Token _required_
+  - `type` (String) Activity type _required_
+  - `duration` (String) Activity duration in seconds _required_
+  - `calories` (Integer) kcals total burned per activity, e.g. ~600 for a 10km run
+  - `caption` (String) Title/caption for activity
+  - `coordinates` (Array) To be used to render a map, if provided. Array of lat/longs
+  - `description` (String) Description of an activity
+  - `distance` (Integer) Distance covered in any distance format. Requires `unit`
+  - `distanceInMeters` (Integer) Distance covered for activity in meters
+  - `elevationSeries` (Array) Array of elevation points (in meters)
+  - `manual` (Boolean) Manually logged activity, default is `true`
+  - `pageId` (String) Fundraising page to attribute the activity to
+  - `startedAt` (Date/time) Timestamp for start of activity, ISO8601 format
+  - `trainer` (Boolean)
+  - `uid` (String) Unique uuid reference for activity
+  - `unit` (String) Unit for distance, e.g.: meter, foot, step, yard, mile, km. Requires `distance`
+  - `virtual` (Boolean)
+  - `visible` (Boolean) Must be true for the fitness activity to be visible
+
+**Returns**
+
+A pending promise that will either resolve to:
+
+- Success: the data returned from the request
+- Failure: the error encountered
+
+**Example**
+
+```javascript
+import { updateFitnessActivity } from 'supporticon/api/fitness-activities'
+
+createFitnessActivity(1234, {
+  token: 'xxxxx',
+  type: 'run'
+})
+```
+
+## `deleteFitnessActivity`
+
+Delete an existing fitness activity for an authenticated User.
+
+**Params**
+
+- `id` (String) Fitness activity ID _required_
+- `token` (String) OAuth User Token _required_
+
+**Returns**
+
+A pending promise that will either resolve to:
+
+- Success: the data returned from the request
+- Failure: the error encountered
+
+**Example**
+
+```javascript
+import { updateFitnessActivity } from 'supporticon/api/fitness-activities'
+
+createFitnessActivity(1234, {
+  token: 'xxxxx',
+  type: 'run'
+})
+```
