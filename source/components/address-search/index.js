@@ -54,17 +54,19 @@ class AddressSearch extends Component {
 
     return (
       <Grid spacing={{ x: 0.5 }}>
-        <GridColumn md={4}>
-          <InputSelect
-            label='Country'
-            name='address-country'
-            onBlur={country => this.setState({ country })}
-            onChange={country => this.setState({ country })}
-            options={countries}
-            value={country}
-          />
-        </GridColumn>
-        <GridColumn md={8}>
+        {!this.props.country && (
+          <GridColumn md={4}>
+            <InputSelect
+              label='Country'
+              name='address-country'
+              onBlur={country => this.setState({ country })}
+              onChange={country => this.setState({ country })}
+              options={countries}
+              value={country}
+            />
+          </GridColumn>
+        )}
+        <GridColumn md={this.props.country ? 12 : 8}>
           <InputSearch
             autoComplete='nope'
             error={error}
