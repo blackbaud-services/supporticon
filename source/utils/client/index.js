@@ -26,6 +26,12 @@ export const put = (endpoint = required(), data, config = {}) =>
     .then(response => response.data)
     .catch(error => Promise.reject(error.response))
 
+export const destroy = (endpoint = required(), config = {}) =>
+  instance
+    .delete(endpoint, config)
+    .then(response => response.data)
+    .catch(error => Promise.reject(error.response))
+
 export const updateClient = (options = {}) => {
   Object.keys(options).map(option => {
     instance.defaults[option] = options[option]
@@ -44,6 +50,7 @@ export default {
   get,
   post,
   put,
+  destroy,
   updateClient,
   getBaseURL,
   getPlatform,
