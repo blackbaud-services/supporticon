@@ -153,8 +153,8 @@ class CreatePageForm extends Component {
       : Promise.resolve()
   }
 
-  handleAddressLookup (address, country) {
-    this.props.form.updateValues({ ...address, country })
+  handleAddressLookup (address) {
+    this.props.form.updateValues(address)
     this.setState({ manualAddress: true })
   }
 
@@ -254,13 +254,15 @@ class CreatePageForm extends Component {
         <GridColumn>
           <InputField {...form.fields.locality} {...inputField} />
         </GridColumn>
-        <GridColumn md={4}>
+        <GridColumn md={country ? 6 : 4}>
           <InputField {...form.fields.region} {...inputField} />
         </GridColumn>
-        <GridColumn md={4}>
-          <InputSelect {...form.fields.country} {...inputField} />
-        </GridColumn>
-        <GridColumn md={4}>
+        {!country && (
+          <GridColumn md={4}>
+            <InputSelect {...form.fields.country} {...inputField} />
+          </GridColumn>
+        )}
+        <GridColumn md={country ? 6 : 4}>
           <InputField {...form.fields.postCode} {...inputField} />
         </GridColumn>
       </Grid>
