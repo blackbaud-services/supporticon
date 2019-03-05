@@ -4,6 +4,7 @@ import {
   deserializePage as deserializeEDHPage,
   fetchPages as fetchEDHPages,
   fetchPage as fetchEDHPage,
+  fetchPageDonationCount as fetchEDHPageDonationCount,
   createPage as createEDHPage,
   updatePage as updateEDHPage
 } from './everydayhero'
@@ -12,6 +13,7 @@ import {
   deserializePage as deserializeJGPage,
   fetchPages as fetchJGPages,
   fetchPage as fetchJGPage,
+  fetchPageDonationCount as fetchJGPageDonationCount,
   createPage as createJGPage,
   updatePage as updateJGPage
 } from './justgiving'
@@ -33,6 +35,14 @@ export const fetchPages = params =>
  */
 export const fetchPage = page =>
   isJustGiving() ? fetchJGPage(page) : fetchEDHPage(page)
+
+/**
+ * @function fetches a page's donation count
+ */
+export const fetchPageDonationCount = page =>
+  isJustGiving()
+    ? fetchJGPageDonationCount(page)
+    : fetchEDHPageDonationCount(page)
 
 /**
  * @function create page

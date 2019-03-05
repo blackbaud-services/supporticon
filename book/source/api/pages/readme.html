@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.6" data-chapter-title="Pages" data-filepath="source/api/pages/readme.md" data-basepath="../../.." data-revision="Sun Feb 24 2019 23:34:00 GMT+0000 (UTC)">
+    <div class="book" data-level="1.6" data-chapter-title="Pages" data-filepath="source/api/pages/readme.md" data-basepath="../../.." data-revision="Tue Mar 05 2019 06:08:43 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -335,6 +335,8 @@
 <p>Helpers related to fetching supporter pages</p>
 <ul>
 <li><a href="#fetchpages">fetchPages</a></li>
+<li><a href="#fetchpage">fetchPage</a></li>
+<li><a href="#fetchpagedonationcount">fetchPageDonationCount</a></li>
 <li><a href="#deserializepage">deserializePage</a></li>
 <li><a href="#createpage">createPage</a></li>
 <li><a href="#updatepage">updatePage</a></li>
@@ -359,6 +361,42 @@
 fetchPages({
   campaign: <span class="hljs-string">&apos;au-123&apos;</span>
 })
+</code></pre>
+<h2 id="fetchpage"><code>fetchPage</code></h2>
+<p><strong>Purpose</strong></p>
+<p>Fetch a single page.</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><code>id</code> - the page id</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A pending promise that will either resolve to:</p>
+<ul>
+<li>Success: the page data</li>
+<li>Failure: the error encountered</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { fetchPage } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/pages&apos;</span>
+
+fetchPage(<span class="hljs-string">&apos;12345&apos;</span>)
+</code></pre>
+<h2 id="fetchpagedonationcount"><code>fetchPageDonationCount</code></h2>
+<p><strong>Purpose</strong></p>
+<p>Fetch a single page&apos;s donation count.</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><code>id</code> - the page id</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A pending promise that will either resolve to:</p>
+<ul>
+<li>Success: the number of donations received by that page</li>
+<li>Failure: the error encountered</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { fetchPage } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/pages&apos;</span>
+
+fetchPage(<span class="hljs-string">&apos;12345&apos;</span>)
 </code></pre>
 <h2 id="deserializepage"><code>deserializePage</code></h2>
 <p>A default deserializer for deserializing supporter pages</p>
