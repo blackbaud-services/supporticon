@@ -3,6 +3,8 @@
 Helpers related to fetching supporter pages
 
 - [fetchPages](#fetchpages)
+- [fetchPage](#fetchpage)
+- [fetchPageDonationCount](#fetchpagedonationcount)
 - [deserializePage](#deserializepage)
 - [createPage](#createpage)
 - [updatePage](#updatepage)
@@ -34,6 +36,56 @@ import { fetchPages } from 'supporticon/api/pages'
 fetchPages({
   campaign: 'au-123'
 })
+```
+
+## `fetchPage`
+
+**Purpose**
+
+Fetch a single page.
+
+**Params**
+
+- `id` - the page id
+
+**Returns**
+
+A pending promise that will either resolve to:
+
+- Success: the page data
+- Failure: the error encountered
+
+**Example**
+
+```javascript
+import { fetchPage } from 'supporticon/api/pages'
+
+fetchPage('12345')
+```
+
+## `fetchPageDonationCount`
+
+**Purpose**
+
+Fetch a single page's donation count.
+
+**Params**
+
+- `id` - the page id
+
+**Returns**
+
+A pending promise that will either resolve to:
+
+- Success: the number of donations received by that page
+- Failure: the error encountered
+
+**Example**
+
+```javascript
+import { fetchPage } from 'supporticon/api/pages'
+
+fetchPage('12345')
 ```
 
 ## `deserializePage`

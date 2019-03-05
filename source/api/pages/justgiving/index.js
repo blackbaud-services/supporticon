@@ -112,6 +112,12 @@ export const fetchPage = (page = required()) => {
   return get(`/v1/fundraising/${endpoint}/${page}`)
 }
 
+export const fetchPageDonationCount = (page = required()) => {
+  return get(`/v1/fundraising/pages/${page}/donations`).then(
+    data => data.pagination.totalResults
+  )
+}
+
 export const createPage = ({
   charityId = required(),
   charityOptIn = required(),
