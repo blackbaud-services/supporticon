@@ -30,17 +30,18 @@ export const fetchLeaderboard = (params = required()) => {
  */
 export const deserializeLeaderboard = (result, index) => {
   if (result.page) {
-    return deserializePage(result.page, index)
+    return deserializePage(result.page, index, result)
   } else if (result.team) {
-    return deserializePage(result.team, index)
+    return deserializePage(result.team, index, result)
   } else if (result.group) {
     return deserializeGroup(result, index)
   }
 }
 
-const deserializePage = (item, index) => ({
+const deserializePage = (item, index, baseItem) => ({
   currency: item.amount.currency.iso_code,
   currencySymbol: item.amount.currency.symbol,
+  donationCount: baseItem.count,
   groups: item.group_values,
   id: item.id,
   image: item.image.large_image_url,
@@ -51,6 +52,7 @@ const deserializePage = (item, index) => ({
   slug: item.url && last(item.url.split('/')),
   subtitle: item.charity_name,
   target: item.target_cents / 100,
+  totalDonations: baseItem.count,
   url: item.url
 })
 

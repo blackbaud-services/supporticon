@@ -67,6 +67,10 @@ export const fetchPage = (id = required()) => {
   return get(`api/v2/pages/${id}`).then(response => response.page)
 }
 
+export const fetchPageDonationCount = (id = required()) => {
+  return get(`/api/v2/pages/${id}`).then(data => data.total_donations)
+}
+
 export const createPage = ({
   token = required(),
   campaignId = required(),

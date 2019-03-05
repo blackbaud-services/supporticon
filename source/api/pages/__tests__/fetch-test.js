@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { fetchPages, fetchPage } from '..'
+import { fetchPages, fetchPage, fetchPageDonationCount } from '..'
 import { instance, updateClient } from '../../../utils/client'
 
 describe('Fetch Pages', () => {
@@ -85,6 +85,25 @@ describe('Fetch Pages', () => {
         expect(test).to.throw
       })
     })
+
+    describe('Fetch a single page donation count', () => {
+      it('uses the correct url to fetch donation count', done => {
+        fetchPageDonationCount('1234')
+
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.contain(
+            'https://everydayhero.com/api/v2/pages/1234'
+          )
+          done()
+        })
+      })
+
+      it('throws if no id is passed in', () => {
+        const test = () => fetchPageDonationCount()
+        expect(test).to.throw
+      })
+    })
   })
 
   describe('Fetch JG Pages', () => {
@@ -152,6 +171,25 @@ describe('Fetch Pages', () => {
 
       it('throws if no id is passed in', () => {
         const test = () => fetchPage()
+        expect(test).to.throw
+      })
+    })
+
+    describe('Fetch a single page donation count', () => {
+      it('uses the correct url to fetch a donation count', done => {
+        fetchPageDonationCount('my-page-shortname')
+
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.equal(
+            'https://api.justgiving.com/v1/fundraising/pages/my-page-shortname/donations'
+          )
+          done()
+        })
+      })
+
+      it('throws if no id is passed in', () => {
+        const test = () => fetchPageDonationCount()
         expect(test).to.throw
       })
     })
