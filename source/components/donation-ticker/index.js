@@ -75,7 +75,6 @@ class DonationTicker extends Component {
 
   render () {
     const { label, ticker } = this.props
-
     const { donations, status } = this.state
 
     return status === 'fetched' ? (
@@ -92,7 +91,11 @@ DonationTicker.propTypes = {
   /**
    * The campaign uid to fetch totals for
    */
-  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  campaign: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.array
+  ]),
 
   /**
    * The charity uid to fetch totals for
