@@ -79,5 +79,17 @@ describe('Fetch JG Donation Feed', () => {
         done()
       })
     })
+
+    it('for a campaign', done => {
+      fetchDonationFeed({ campaign: 'test-campaign' })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.justgiving.com/donations/v1/donations?take=100&externalref=campaignGuid:test-campaign'
+        )
+        done()
+      })
+    })
   })
 })
