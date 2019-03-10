@@ -60,6 +60,7 @@ class FitnessLeaderboard extends Component {
       endDate,
       includeManual,
       excludeVirtual,
+      excludePageIds,
       limit,
       page,
       groupID,
@@ -83,16 +84,19 @@ class FitnessLeaderboard extends Component {
       endDate,
       include_manual: includeManual,
       exclude_virtual: excludeVirtual,
-      limit,
+      limit: limit + 10,
       page,
       groupID,
       sortBy,
       q
     })
+      .then(data => data.map(deserializeFitnessLeaderboard))
+      .then(data => this.removeExcludedPages(excludePageIds, data))
+      .then(data => data.slice(0, limit))
       .then(data => {
         this.setState({
           status: 'fetched',
-          data: data.map(deserializeFitnessLeaderboard)
+          data
         })
       })
       .catch(error => {
@@ -101,6 +105,14 @@ class FitnessLeaderboard extends Component {
         })
         return Promise.reject(error)
       })
+  }
+
+  removeExcludedPages (excludePageIds, pages) {
+    return excludePageIds
+      ? pages.filter(
+        page => excludePageIds.split(',').indexOf(page.id.toString()) === -1
+      )
+      : pages
   }
 
   render () {
