@@ -75,6 +75,7 @@ export const fetchLeaderboard = (params = required()) => {
 export const deserializeLeaderboard = (supporter, index) => ({
   currency: supporter.currencyCode,
   currencySymbol: supporter.currencySymbol,
+  donationUrl: `https://www.justgiving.com/${supporter.pageShortName}/donate`,
   id: supporter.pageId,
   image:
     supporter.defaultImage ||
