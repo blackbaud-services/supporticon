@@ -1,7 +1,6 @@
 import last from 'lodash/last'
 import { get } from '../../../utils/client'
 import { required } from '../../../utils/params'
-import URL from 'url-parse'
 
 /**
  * @function fetches supporter pages ranked by funds raised
@@ -40,11 +39,12 @@ export const deserializeLeaderboard = (result, index) => {
 }
 
 const deserializePage = (item, index, baseItem) => ({
-  charityImage: item.charity_image && item.charity_image.large_image_url,
+  charity: item.charity_name,
+  charityLogo: item.charity_logo_url,
   currency: item.amount.currency.iso_code,
   currencySymbol: item.amount.currency.symbol,
   donationCount: baseItem.count,
-  donationUrl: donationUrl(item.url),
+  donationUrl: item.donation_url,
   groups: item.group_values,
   id: item.id,
   image: item.image.large_image_url,
@@ -66,18 +66,3 @@ const deserializeGroup = (item, index) => ({
   position: index + 1,
   raised: item.amount_cents / 100
 })
-
-const donationUrl = url => {
-  const parsedUrl = new URL(url)
-  const [campaignSlug, domain] = parsedUrl.hostname.split('.')
-  const [countryCode, pageSlug] = parsedUrl.pathname.substring(1).split('/')
-
-  switch (countryCode) {
-    case 'ie':
-      return undefined
-    case 'us':
-      return `https://donate.${domain}.com/${countryCode}/${campaignSlug}/${pageSlug}`
-    default:
-      return `https://heroix-${countryCode}.${domain}.com/event/${campaignSlug}/hero_page/${pageSlug}/donate`
-  }
-}
