@@ -40,6 +40,7 @@ export const deserializeLeaderboard = (result, index) => {
 }
 
 const deserializePage = (item, index, baseItem) => ({
+  charityImage: item.charity_image && item.charity_image.large_image_url,
   currency: item.amount.currency.iso_code,
   currencySymbol: item.amount.currency.symbol,
   donationCount: baseItem.count,
