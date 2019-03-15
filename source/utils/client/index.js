@@ -36,6 +36,8 @@ export const updateClient = (options = {}) => {
   Object.keys(options).map(option => {
     instance.defaults[option] = options[option]
   })
+
+  updateServicesAPIClient()
 }
 
 export const getBaseURL = () => instance.defaults.baseURL
@@ -44,6 +46,18 @@ export const getPlatform = () =>
   /justgiving/.test(instance.defaults.baseURL) ? 'justgiving' : 'everydayhero'
 
 export const isJustGiving = () => /justgiving/.test(instance.defaults.baseURL)
+export const isStaging = () => /staging/.test(instance.defaults.baseURL)
+
+// Services API Client
+export const servicesAPI = axios.create({
+  baseURL: 'https://api.blackbaud.services'
+})
+
+const updateServicesAPIClient = () => {
+  servicesAPI.defaults.baseURL = isStaging()
+    ? 'https://api-staging.blackbaud.services'
+    : 'https://api.blackbaud.services'
+}
 
 export default {
   instance,
@@ -54,5 +68,7 @@ export default {
   updateClient,
   getBaseURL,
   getPlatform,
-  isJustGiving
+  isJustGiving,
+  isStaging,
+  servicesAPI
 }
