@@ -23,6 +23,11 @@ class ProviderOauthButton extends Component {
     }
   }
 
+  componentWillUnmount () {
+    clearInterval(this.localStoragePoll)
+    clearInterval(this.isPopupClosed)
+  }
+
   componentDidMount () {
     const {
       onSuccess,
@@ -43,10 +48,10 @@ class ProviderOauthButton extends Component {
         } else {
           setLocalStorageItem(key, {})
 
-          const localStoragePoll = setInterval(() => {
+          this.localStoragePoll = setInterval(() => {
             const oauthState = getLocalStorageItem(key)
             if (oauthState.access_token) {
-              clearInterval(localStoragePoll)
+              clearInterval(this.localStoragePoll)
               this.setState({ status: 'fetched' })
               return onSuccess(oauthState)
             }
@@ -82,9 +87,9 @@ class ProviderOauthButton extends Component {
 
     this.setState({ status: 'loading' })
 
-    const isPopupClosed = setInterval(() => {
+    this.isPopupClosed = setInterval(() => {
       if (popupWindow.closed) {
-        clearInterval(isPopupClosed)
+        clearInterval(this.isPopupClosed)
         this.setState({ status: 'empty' })
 
         if (typeof onClose === 'function') {
