@@ -1,14 +1,6 @@
-import { get } from '../../../utils/client'
-import {
-  getShortName,
-  getUID,
-  required,
-  dataSource
-} from '../../../utils/params'
+import { get, servicesAPI } from '../../../utils/client'
+import { getUID, required, dataSource } from '../../../utils/params'
 import { currencySymbol, currencyCode } from '../../../utils/currencies'
-import compact from 'lodash/compact'
-import orderBy from 'lodash/orderBy'
-import range from 'lodash/range'
 
 /**
  * @function fetches fundraising pages ranked by funds raised
@@ -40,32 +32,19 @@ export const fetchLeaderboard = (params = required()) => {
         }))
       )
     default:
-      const url = `/v1/campaigns/${getShortName(params.charity)}/${getShortName(
-        params.campaign
-      )}/pages`
-      const pageSize = 100
-      const pageLimit = 10
-      const sort = pages => orderBy(pages, 'raisedAmount', 'desc')
-
-      return get(url, { pageSize, page: 1 }).then(
-        ({ totalPages, fundraisingPages }) => {
-          if (totalPages > 1) {
-            const upperLimit = Math.min(totalPages, pageLimit)
-            const paginatedRequests = range(2, upperLimit + 1).map(page => {
-              return get(url, { pageSize, page: page })
-            })
-
-            return Promise.all(paginatedRequests).then(responses => {
-              const paginatedResults = compact(
-                responses.map(res => res.fundraisingPages)
-              )
-              return sort(fundraisingPages.concat(paginatedResults))
-            })
-          }
-
-          return sort(fundraisingPages)
+      const options = {
+        params: {
+          page: params.page,
+          q: params.q
         }
-      )
+      }
+
+      return servicesAPI
+        .get(
+          `/v1/justgiving/campaigns/${getUID(params.campaign)}/leaderboard`,
+          options
+        )
+        .then(response => response.data)
   }
 }
 
@@ -84,11 +63,16 @@ export const deserializeLeaderboard = (supporter, index) => ({
         supporter.pageImages[0]
       }?template=Size200x200`
       : null),
-  name: supporter.pageTitle,
+  name:
+    supporter.pageTitle ||
+    (supporter.pageOwner && supporter.pageOwner.fullName),
   position: index + 1,
-  raised: parseFloat(supporter.amount || supporter.raisedAmount || 0),
+  raised: parseFloat(
+    supporter.amount || supporter.raisedAmount || supporter.amountRaised || 0
+  ),
   slug: supporter.pageShortName,
   subtitle: supporter.eventName,
-  target: supporter.targetAmount,
+  target: supporter.targetAmount || supporter.target,
+  totalDonations: supporter.numberOfSupporters,
   url: `https://www.justgiving.com/${supporter.pageShortName}`
 })

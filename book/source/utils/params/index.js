@@ -15,12 +15,10 @@ export const dataSource = ({ event, charity, campaign }) => {
     }
 
     return 'charity'
-  } else {
-    if (!charity || !campaign) {
-      return required()
-    }
-
+  } else if (campaign) {
     return 'campaign'
+  } else {
+    return required()
   }
 }
 

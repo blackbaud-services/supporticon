@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 import { fetchLeaderboard } from '..'
 import { fetchLeaderboard as fetchJGLeaderboard } from '../justgiving'
 import { fetchLeaderboard as fetchEDHLeaderboard } from '../everydayhero'
@@ -120,11 +120,13 @@ describe('Fetch Leaderboards', () => {
         headers: { 'x-api-key': 'abcd1234' }
       })
       moxios.install(instance)
+      moxios.install(servicesAPI)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
+      moxios.uninstall(servicesAPI)
     })
 
     it('throws if no params are passed in', () => {
@@ -133,13 +135,13 @@ describe('Fetch Leaderboards', () => {
     })
 
     it('uses the correct url to fetch a campaign leaderboard', done => {
-      fetchJGLeaderboard({ charity: 'my-charity', campaign: 'my-campaign' })
+      fetchJGLeaderboard({ campaign: 'my-campaign', page: 2 })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.justgiving.com/v1/campaigns/my-charity/my-campaign/pages'
+          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign/leaderboard'
         )
-        expect(request.url).to.contain('pageSize=100')
+        expect(request.url).to.contain('page=2')
         done()
       })
     })
