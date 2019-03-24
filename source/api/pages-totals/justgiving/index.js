@@ -1,10 +1,5 @@
-import { get } from '../../../utils/client'
-import {
-  getShortName,
-  getUID,
-  required,
-  dataSource
-} from '../../../utils/params'
+import { get, servicesAPI } from '../../../utils/client'
+import { getUID, required, dataSource } from '../../../utils/params'
 
 export const fetchPagesTotals = (params = required()) => {
   switch (dataSource(params)) {
@@ -16,10 +11,9 @@ export const fetchPagesTotals = (params = required()) => {
       // No API method supports total number of pages for a charity
       return required()
     default:
-      return get(
-        `v1/campaigns/${getShortName(params.charity)}/${getShortName(
-          params.campaign
-        )}/pages`
-      ).then(response => response.totalFundraisingPages)
+      return servicesAPI
+        .get(`/v1/justgiving/campaigns/${getUID(params.campaign)}/leaderboard`)
+        .then(response => response.data)
+        .then(data => data.meta.totalPages)
   }
 }

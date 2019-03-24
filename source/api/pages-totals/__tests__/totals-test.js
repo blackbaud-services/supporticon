@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 import { fetchPagesTotals } from '..'
 import { fetchPagesTotals as fetchEDHPagesTotals } from '../everydayhero'
 import { fetchPagesTotals as fetchJGPagesTotals } from '../justgiving'
@@ -59,11 +59,13 @@ describe('Fetch Pages Totals', () => {
         headers: { 'x-api-key': 'abcd1234' }
       })
       moxios.install(instance)
+      moxios.install(servicesAPI)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
+      moxios.uninstall(servicesAPI)
     })
 
     it('uses the correct url to fetch totals for an event', done => {
@@ -72,6 +74,17 @@ describe('Fetch Pages Totals', () => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
           'https://api.justgiving.com/v1/event/12345/pages'
+        )
+        done()
+      })
+    })
+
+    it('uses the correct url to fetch totals for a campaign', done => {
+      fetchJGPagesTotals({ campaign: 12345 })
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.equal(
+          'https://api.blackbaud.services/v1/justgiving/campaigns/12345/leaderboard'
         )
         done()
       })
