@@ -36,10 +36,15 @@ export const fetchCampaignGroups = (id = required()) =>
 
 export const deserializeCampaign = campaign => ({
   name: campaign.name,
+  summary: campaign.description,
   id: campaign.id,
   uuid: campaign.uuid,
   slug: campaign.slug,
   url: campaign.url,
+  target: null,
+  raised: campaign.fundsRaised.cents / 100,
+  raisedOffline: null,
+  totalDonations: null,
   getStartedUrl: campaign.get_started_url,
   donateUrl: campaign.donate_url
 })
