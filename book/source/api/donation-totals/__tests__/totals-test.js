@@ -89,11 +89,11 @@ describe('Fetch Donation Totals', () => {
     })
 
     it('uses the correct url to fetch totals for a campaign', done => {
-      fetchJGDonationTotals({ charity: 'my-charity', campaign: 'my-campaign' })
+      fetchJGDonationTotals({ campaign: 'my-campaign' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/campaigns/my-charity/my-campaign'
+          'https://api.justgiving.com/campaigns/v2/campaign/my-campaign'
         )
         done()
       })
