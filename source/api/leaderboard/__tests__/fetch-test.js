@@ -135,13 +135,12 @@ describe('Fetch Leaderboards', () => {
     })
 
     it('uses the correct url to fetch a campaign leaderboard', done => {
-      fetchJGLeaderboard({ campaign: 'my-campaign', page: 2 })
+      fetchJGLeaderboard({ campaign: 'my-campaign' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
           'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign/leaderboard'
         )
-        expect(request.url).to.contain('page=2')
         done()
       })
     })
