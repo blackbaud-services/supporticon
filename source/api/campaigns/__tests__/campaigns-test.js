@@ -105,38 +105,24 @@ describe('Fetch Campaigns', () => {
       moxios.uninstall(instance)
     })
 
-    it('fetches campaigns using the provided params', done => {
-      fetchCampaigns({ charity: 'my-charity' })
-      moxios.wait(() => {
-        const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain(
-          'https://api.justgiving.com/v1/campaigns'
-        )
-        expect(request.url).to.contain('my-charity')
-        done()
-      })
-    })
-
-    it('throws if campaigns are requested, but no parameters are provided', () => {
-      const test = () => fetchCampaigns()
-      expect(test).to.throw
-    })
-
     it('fetches a single campaign', done => {
-      fetchCampaign({ charity: 'my-charity', campaign: 'my-campaign' })
+      fetchCampaign('my-campaign')
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain(
-          'https://api.justgiving.com/v1/campaigns'
+        expect(request.url).to.equal(
+          'https://api.justgiving.com/campaigns/v2/campaign/my-campaign'
         )
-        expect(request.url).to.contain('my-charity')
-        expect(request.url).to.contain('my-campaign')
         done()
       })
     })
 
     it('throws if a campaign is requested, but no campaign id is supplied', () => {
       const test = () => fetchCampaign()
+      expect(test).to.throw
+    })
+
+    it('throws if multiple campaigns are requested', () => {
+      const test = () => fetchCampaigns({ charity: 'foo' })
       expect(test).to.throw
     })
 

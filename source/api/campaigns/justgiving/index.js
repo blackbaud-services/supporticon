@@ -1,33 +1,26 @@
 import { get } from '../../../utils/client'
-import { getShortName, required } from '../../../utils/params'
+import { required } from '../../../utils/params'
 
-export const c = {
-  ENDPOINT: 'v1/campaigns'
-}
+export const fetchCampaigns = () =>
+  Promise.reject(new Error('This is method is not supported for JustGiving'))
 
-export const fetchCampaigns = (params = required()) =>
-  get(`${c.ENDPOINT}/${getShortName(params.charity)}`).then(
-    response => response.campaignsDetails
-  )
-
-export const fetchCampaign = ({
-  charity = required(),
-  campaign = required()
-}) => get(`${c.ENDPOINT}/${getShortName(charity)}/${getShortName(campaign)}`)
+export const fetchCampaign = (id = required()) =>
+  get(`/campaigns/v2/campaign/${id}`)
 
 export const fetchCampaignGroups = (id = required()) =>
-  Promise.reject('This method is not supported for JustGiving')
+  Promise.reject(new Error('This method is not supported for JustGiving'))
 
 export const deserializeCampaign = campaign => {
-  const { id, campaignUrl, causeId } = campaign
-  const slug = campaignUrl.split('/')[campaignUrl.split('/').length - 1]
-
   return {
-    name: campaign.campaignPageName,
-    id,
-    slug,
-    url: campaignUrl,
-    getStartedUrl: `https://www.justgiving.com/fundraising-page/creation/?cid=${id}&causeId=${causeId}`,
-    donateUrl: `https://link.justgiving.com/v1/campaign/donate/campaignId/${id}`
+    name: campaign.title,
+    summary: campaign.summary,
+    id: campaign.campaignGuid,
+    slug: campaign.shortName,
+    target: campaign.targetAmount,
+    raised: campaign.donationSummary.totalAmount,
+    raisedOffline: campaign.donationSummary.offlineAmount,
+    totalDonations: campaign.donationSummary.totalNumberOfDonations,
+    getStartedUrl: null,
+    donateUrl: null
   }
 }
