@@ -42,7 +42,7 @@ export const deserializeCampaign = campaign => ({
   slug: campaign.slug,
   url: campaign.url,
   target: null,
-  raised: campaign.fundsRaised.cents / 100,
+  raised: campaign.funds_raised.cents / 100,
   raisedOffline: null,
   totalDonations: null,
   getStartedUrl: campaign.get_started_url,
