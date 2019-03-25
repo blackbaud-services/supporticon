@@ -32,20 +32,44 @@ export const fetchLeaderboard = (params = required()) => {
         }))
       )
     default:
-      const options = {
-        params: {
-          page: params.page,
-          q: params.q
-        }
-      }
-
-      return servicesAPI
-        .get(
-          `/v1/justgiving/campaigns/${getUID(params.campaign)}/leaderboard`,
-          options
-        )
-        .then(response => response.data)
+      return recusivelyFetchJGLeaderboard(
+        getUID(params.campaign),
+        params.q,
+        params.limit
+      )
   }
+}
+
+const recusivelyFetchJGLeaderboard = (
+  campaign,
+  q,
+  limit = 10,
+  results = [],
+  page = 1
+) => {
+  const options = {
+    params: { page, q }
+  }
+
+  return servicesAPI
+    .get(`/v1/justgiving/campaigns/${campaign}/leaderboard`, options)
+    .then(response => response.data)
+    .then(data => {
+      const { currentPage, totalPages } = data.meta
+      const updatedResults = [...results, ...data.results]
+
+      if (currentPage === totalPages || page * 10 >= limit) {
+        return updatedResults
+      } else {
+        return recusivelyFetchJGLeaderboard(
+          campaign,
+          q,
+          limit,
+          updatedResults,
+          page + 1
+        )
+      }
+    })
 }
 
 /**
@@ -64,7 +88,11 @@ export const deserializeLeaderboard = (supporter, index) => ({
       ? `https://images.jg-cdn.com/image/${
         supporter.pageImages[0]
       }?template=Size200x200`
-      : null),
+      : supporter.pageOwner
+        ? `https://www.justgiving.com/fundraising/images/user-profile/${
+          supporter.pageOwner.accountId
+        }`
+        : null),
   name:
     supporter.pageTitle ||
     (supporter.pageOwner && supporter.pageOwner.fullName),
