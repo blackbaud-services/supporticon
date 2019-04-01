@@ -207,7 +207,7 @@ ProviderOauthButton.propTypes = {
   /**
    * The third-party provider to connect with
    */
-  provider: PropTypes.oneOf(['facebook', 'mapmyfitness', 'strava']),
+  provider: PropTypes.oneOf(['facebook', 'mapmyfitness', 'strava', 'fitbit']),
 
   /**
    * A valid return_to url for the specified EDH OAuthApplication
