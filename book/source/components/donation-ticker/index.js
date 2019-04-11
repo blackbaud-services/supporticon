@@ -30,11 +30,20 @@ class DonationTicker extends Component {
   }
 
   fetchData () {
-    const { campaign, charity, includeOffline, page, sort, team } = this.props
+    const {
+      campaign,
+      charity,
+      fetchAll,
+      includeOffline,
+      page,
+      sort,
+      team
+    } = this.props
 
     fetchDonationFeed({
       campaign,
       charity,
+      fetchAll,
       includeOffline,
       page,
       sort,
@@ -130,6 +139,11 @@ DonationTicker.propTypes = {
   format: PropTypes.string,
 
   /**
+   * Recursively fetch all donations (up to 5000)
+   */
+  fetchAll: PropTypes.bool,
+
+  /**
    * Donation display format
    */
   layout: PropTypes.oneOf([
@@ -161,6 +175,7 @@ DonationTicker.propTypes = {
 }
 
 DonationTicker.defaultProps = {
+  fetchAll: false,
   format: '0,0[.]00',
   layout: 'name-amount',
   ticker: {}

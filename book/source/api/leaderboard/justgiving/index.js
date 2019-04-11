@@ -32,7 +32,7 @@ export const fetchLeaderboard = (params = required()) => {
         }))
       )
     default:
-      return recusivelyFetchJGLeaderboard(
+      return recursivelyFetchJGLeaderboard(
         getUID(params.campaign),
         params.q,
         params.limit
@@ -40,7 +40,7 @@ export const fetchLeaderboard = (params = required()) => {
   }
 }
 
-const recusivelyFetchJGLeaderboard = (
+const recursivelyFetchJGLeaderboard = (
   campaign,
   q,
   limit = 10,
@@ -61,7 +61,7 @@ const recusivelyFetchJGLeaderboard = (
       if (currentPage === totalPages || page * 10 >= limit) {
         return updatedResults
       } else {
-        return recusivelyFetchJGLeaderboard(
+        return recursivelyFetchJGLeaderboard(
           campaign,
           q,
           limit,
