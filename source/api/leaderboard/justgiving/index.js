@@ -1,4 +1,4 @@
-import { get, servicesAPI } from '../../../utils/client'
+import { get, isStaging, servicesAPI } from '../../../utils/client'
 import { getUID, required, dataSource } from '../../../utils/params'
 import { currencySymbol, currencyCode } from '../../../utils/currencies'
 
@@ -75,34 +75,38 @@ const recursivelyFetchJGLeaderboard = (
 /**
  * @function a default deserializer for leaderboard pages
  */
-export const deserializeLeaderboard = (supporter, index) => ({
-  currency: supporter.currencyCode,
-  currencySymbol: supporter.currencySymbol,
-  donationUrl: `https://www.justgiving.com/fundraising/${
-    supporter.pageShortName
-  }/donate`,
-  id: supporter.pageId,
-  image:
-    supporter.defaultImage ||
-    (supporter.pageImages
-      ? `https://images.jg-cdn.com/image/${
-        supporter.pageImages[0]
-      }?template=Size200x200`
-      : supporter.pageOwner
-        ? `https://www.justgiving.com/fundraising/images/user-profile/${
-          supporter.pageOwner.accountId
-        }`
-        : null),
-  name:
-    supporter.pageTitle ||
-    (supporter.pageOwner && supporter.pageOwner.fullName),
-  position: index + 1,
-  raised: parseFloat(
-    supporter.amount || supporter.raisedAmount || supporter.amountRaised || 0
-  ),
-  slug: supporter.pageShortName,
-  subtitle: supporter.eventName,
-  target: supporter.targetAmount || supporter.target,
-  totalDonations: supporter.numberOfSupporters,
-  url: `https://www.justgiving.com/${supporter.pageShortName}`
-})
+export const deserializeLeaderboard = (supporter, index) => {
+  const subdomain = isStaging() ? 'www.staging' : 'www'
+
+  return {
+    currency: supporter.currencyCode,
+    currencySymbol: supporter.currencySymbol,
+    donationUrl: `https://${subdomain}.justgiving.com/fundraising/${
+      supporter.pageShortName
+    }/donate`,
+    id: supporter.pageId,
+    image:
+      supporter.defaultImage ||
+      (supporter.pageImages
+        ? `https://images${subdomain.replace('www', '')}.jg-cdn.com/image/${
+          supporter.pageImages[0]
+        }?template=Size200x200`
+        : supporter.pageOwner
+          ? `https://${subdomain}.justgiving.com/fundraising/images/user-profile/${
+            supporter.pageOwner.accountId
+          }`
+          : null),
+    name:
+      supporter.pageTitle ||
+      (supporter.pageOwner && supporter.pageOwner.fullName),
+    position: index + 1,
+    raised: parseFloat(
+      supporter.amount || supporter.raisedAmount || supporter.amountRaised || 0
+    ),
+    slug: supporter.pageShortName,
+    subtitle: supporter.eventName,
+    target: supporter.targetAmount || supporter.target,
+    totalDonations: supporter.numberOfSupporters,
+    url: `https://${subdomain}.justgiving.com/${supporter.pageShortName}`
+  }
+}

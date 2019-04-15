@@ -6,7 +6,7 @@ import merge from 'lodash/merge'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { signUp } from '../../api/authentication'
-import { isJustGiving } from '../../utils/client'
+import { isJustGiving, isStaging } from '../../utils/client'
 import { renderInput, renderFormFields } from '../../utils/form'
 
 import Form from 'constructicon/form'
@@ -39,9 +39,11 @@ class SignupForm extends Component {
     } = this.props
 
     const platform = isJustGiving() ? 'JustGiving' : 'everydayhero'
+    const jgSubdomain = isStaging() ? 'www.staging' : 'www'
+    const edhDomain = isStaging() ? 'everydayhero-staging' : 'everydayhero'
     const defaultResetPasswordUrl = isJustGiving()
-      ? 'https://www.justgiving.com/sso/resetpassword?ReturnUrl=https%3A%2F%2Fwww.justgiving.com%2F&Context=consumer&ActionType=set_profile'
-      : `https://everydayhero.com/${country}/passwords/new`
+      ? `https://${jgSubdomain}.justgiving.com/sso/resetpassword?ReturnUrl=https%3A%2F%2F${jgSubdomain}.justgiving.com%2F&Context=consumer&ActionType=set_profile`
+      : `https://${edhDomain}.com/${country}/passwords/new`
 
     return form.submit().then(data => {
       this.setState({
