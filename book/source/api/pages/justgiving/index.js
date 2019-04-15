@@ -1,19 +1,20 @@
 import moment from 'moment'
 import lodashGet from 'lodash/get'
-import { get, put } from '../../../utils/client'
+import { get, put, isStaging } from '../../../utils/client'
 import { getUID, getShortName, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
 export const deserializePage = page => {
+  const subdomain = isStaging() ? 'www.staging' : 'www'
   const url =
     page.Link ||
-    `https://${page.domain || 'www.justgiving.com'}/fundraising/${
-      page.pageShortName
-    }`
+    `https://${subdomain}.justgiving.com/fundraising/${page.pageShortName}`
 
   const getImage = () => {
     if (page.pageImages && page.pageImages.length > 0) {
-      return `https://images.jg-cdn.com/image/${page.pageImages[0]}`
+      return `https://images${subdomain.replace('www', '')}.jg-cdn.com/image/${
+        page.pageImages[0]
+      }`
     }
 
     return (

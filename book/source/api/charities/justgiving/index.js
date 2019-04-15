@@ -1,4 +1,4 @@
-import { get } from '../../../utils/client'
+import { get, isStaging } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 export const c = {
@@ -28,16 +28,17 @@ export const searchCharities = (params = required()) => {
 
 export const deserializeCharity = charity => {
   const id = charity.id || charity.Id
+  const subdomain = isStaging() ? 'www.staging' : 'www'
 
   return {
     active: true,
     categories: charity.categories,
     country: charity.countryCode || charity.CountryCode,
     description: charity.description || charity.Description,
-    donateUrl: `https://www.justgiving.com/onecheckout/donation/direct/${id}`,
+    donateUrl: `https://${subdomain}.justgiving.com/onecheckout/donation/direct/${id}`,
     email: charity.emailAddress,
     events: charity.EventIds,
-    getStartedUrl: `https://www.justgiving.com/fundraising-page/creation/?cid=${id}`,
+    getStartedUrl: `https://${subdomain}.justgiving.com/fundraising-page/creation/?cid=${id}`,
     id: charity.id || charity.Id,
     logo: charity.logoAbsoluteUrl || charity.Logo,
     name: charity.name || charity.Name,
