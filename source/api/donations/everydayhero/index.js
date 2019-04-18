@@ -1,6 +1,9 @@
 import { post } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
+export const fetchDonation = () =>
+  Promise.reject(new Error('This method is not supported by Everydayhero'))
+
 export const replyToDonation = ({
   pageId = required(),
   donationId = required(),
