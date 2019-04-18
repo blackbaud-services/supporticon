@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.2" data-chapter-title="Donations" data-filepath="source/api/donations/readme.md" data-basepath="../../.." data-revision="Mon Apr 15 2019 05:21:14 GMT+0000 (UTC)">
+    <div class="book" data-level="1.2" data-chapter-title="Donations" data-filepath="source/api/donations/readme.md" data-basepath="../../.." data-revision="Thu Apr 18 2019 01:43:35 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -334,8 +334,28 @@
                         <h1 id="goal">Goal</h1>
 <p>Helpers related to interacting with donations</p>
 <ul>
+<li><a href="#fetchDonation">fetchDonation</a></li>
 <li><a href="#replyToDonation">replyToDonation</a></li>
+<li><a href="#deserializeDonation">deserializeDonation</a></li>
 </ul>
+<h2 id="fetchdonation"><code>fetchDonation</code></h2>
+<p><strong>Purpose</strong></p>
+<p>Fetch donation by ID (JG only)</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><code>id</code> - the donation id</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A pending promise that will either resolve to:</p>
+<ul>
+<li>Success: the donation data</li>
+<li>Failure: the error encountered</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { fetchDonation } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/donations&apos;</span>
+
+fetchDonation(<span class="hljs-string">&apos;12345&apos;</span>)
+</code></pre>
 <h2 id="replytodonation"><code>replyToDonation</code></h2>
 <p>Replies to a donation</p>
 <p><strong>Params</strong></p>
@@ -352,13 +372,31 @@
 <li>Failure: the error</li>
 </ul>
 <p><strong>Example</strong></p>
-<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { replyToDonation } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/replyToDonation&apos;</span>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { replyToDonation } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/donations&apos;</span>
 
 replyToDonation({
   pageId: 12345,
   donationId: <span class="hljs-string">&apos;au-1234&apos;</span>,
   caption: <span class="hljs-string">&apos;Thanks mate&apos;</span>
 })
+</code></pre>
+<h2 id="deserializedonation"><code>deserializeDonation</code></h2>
+<p>A default deserializer for deserializing donations</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><code>data</code> {Object} a single donation to deserialize</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>The deserialized donation</p>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { deserializeDonation } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/donations&apos;</span>
+
+// ...
+
+return {
+  status: <span class="hljs-string">&apos;fetched&apos;</span>,
+  data: payload.data.map(deserializeDonation)
+}
 </code></pre>
 
                     
