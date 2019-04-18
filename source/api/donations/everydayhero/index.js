@@ -17,3 +17,14 @@ export const replyToDonation = ({
     { headers }
   )
 }
+
+export const deserializeDonation = donation => ({
+  amount: donation.amount.cents / 100,
+  anonymous: donation.anonymous,
+  createdAt: donation.created_at,
+  currency: donation.amount.currency.iso_code,
+  message: donation.message,
+  name: donation.nickname,
+  page: donation.page_id,
+  reply: donation.thankyou_message
+})
