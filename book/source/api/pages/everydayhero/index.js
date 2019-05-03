@@ -72,66 +72,74 @@ export const fetchPageDonationCount = (id = required()) => {
 }
 
 export const createPage = ({
-  token = required(),
-  campaignId = required(),
   birthday = required(),
-  name,
-  target,
-  nickname,
-  slug,
-  image,
+  campaignDate,
+  campaignId = required(),
   charityId,
+  directMarketingConsent,
   expiresAt,
   fitnessGoal,
-  campaignDate,
+  giftAid,
   groupValues,
+  image,
+  inviteToken,
+  name,
+  nickname,
   skipNotification,
-  directMarketingConsent,
-  inviteToken
+  slug,
+  story,
+  target,
+  token = required(),
+  user
 }) => {
   return post(`/api/v2/pages?access_token=${token}`, {
-    campaign_id: campaignId,
     birthday,
-    name,
-    target,
-    nickname,
-    slug,
-    image,
+    campaign_date: campaignDate,
+    campaign_id: campaignId,
     charity_id: charityId,
+    direct_marketing_consent: directMarketingConsent,
     expires_at: expiresAt,
     fitness_goal: fitnessGoal,
-    campaign_date: campaignDate,
+    gift_aid_eligible: giftAid,
     group_values: groupValues,
+    image,
+    name,
+    nickname,
     skip_notification: skipNotification,
-    direct_marketing_consent: directMarketingConsent,
-    token: inviteToken
+    slug,
+    story,
+    target,
+    token: inviteToken,
+    uid: user
   }).then(response => response.page)
 }
 
 export const updatePage = (
   pageId,
   {
-    token = required(),
-    name,
-    target,
-    slug,
-    story,
-    image,
+    campaignDate,
     expiresAt,
     fitnessGoal,
-    campaignDate,
-    groupValues
+    groupValues,
+    image,
+    name,
+    redirectTo,
+    slug,
+    story,
+    target,
+    token = required()
   }
 ) => {
   return put(`/api/v2/pages/${pageId}?access_token=${token}`, {
-    name,
-    target,
-    slug,
-    story,
-    image,
+    campaign_date: campaignDate,
     expires_at: expiresAt,
     fitness_goal: fitnessGoal,
-    campaign_date: campaignDate,
-    group_values: groupValues
+    group_values: groupValues,
+    image,
+    name,
+    redirect_to: redirectTo,
+    slug,
+    story,
+    target
   }).then(response => response.page)
 }
