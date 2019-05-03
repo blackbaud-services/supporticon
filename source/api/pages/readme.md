@@ -127,6 +127,7 @@ See [the API documentation](http://developer.everydayhero.com/pages/#create-an-i
 - `charityId` (String) Charity UID
 - `image` (String) Image URL for page avatar
 - `name` (String) Page Name
+- `story` (String) Page story
 - `nickname` (String) Page Nickname
 - `slug` (String) Page URL slug
 - `target` (String) Page fundraising target/goal (in cents)
@@ -135,6 +136,7 @@ See [the API documentation](http://developer.everydayhero.com/pages/#create-an-i
 - `fitnessGoal` (String) Page fitness goal (in metres)
 - `campaignDate` (String) Optional page date
 - `groupValues` (Hash/Array) Campaign group values for the page
+- `giftAid` (Boolean) If page eligable for gift aid
 - `inviteToken` (String) Team invite token
 
 **Returns**
