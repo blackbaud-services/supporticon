@@ -1,7 +1,7 @@
 const defaultMappings = {
   campaign: 'campaign_id',
   charity: 'charity_id',
-  endDate: 'end_date',
+  endDate: 'end_at',
   filter: 'q',
   group: 'group_value',
   pageIds: 'page_ids',
