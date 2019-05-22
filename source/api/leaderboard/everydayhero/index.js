@@ -12,7 +12,6 @@ export const fetchLeaderboard = (params = required()) => {
   }
 
   const mappings = {
-    endDate: 'end_at',
     excludePageIds: 'exclude_page_ids',
     groupID: 'group_id',
     maxAmount: 'max_amount_cents',
