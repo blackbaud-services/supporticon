@@ -6,6 +6,7 @@ import InputDate from 'constructicon/input-date'
 import InputField from 'constructicon/input-field'
 import InputSearch from 'constructicon/input-search'
 import InputSelect from 'constructicon/input-select'
+import Label from 'constructicon/label'
 
 export const renderInput = type => {
   switch (type) {
@@ -15,6 +16,8 @@ export const renderInput = type => {
       return InputSearch
     case 'select':
       return InputSelect
+    case 'label':
+      return Label
     default:
       return InputField
   }
