@@ -105,6 +105,22 @@ describe('Fetch Campaigns', () => {
       moxios.uninstall(instance)
     })
 
+    it('fetches multiple campaigns if ids are passed', done => {
+      fetchCampaigns({ ids: ['my-campaign', 'another-campaign'] })
+      moxios.wait(() => {
+        const firstRequest = moxios.requests.at(0)
+        const secondRequest = moxios.requests.at(1)
+
+        expect(firstRequest.url).to.equal(
+          'https://api.justgiving.com/campaigns/v2/campaign/my-campaign'
+        )
+        expect(secondRequest.url).to.equal(
+          'https://api.justgiving.com/campaigns/v2/campaign/another-campaign'
+        )
+        done()
+      })
+    })
+
     it('fetches a single campaign', done => {
       fetchCampaign('my-campaign')
       moxios.wait(() => {
@@ -121,7 +137,7 @@ describe('Fetch Campaigns', () => {
       expect(test).to.throw
     })
 
-    it('throws if multiple campaigns are requested', () => {
+    it('throws if multiple campaigns are requested without ids', () => {
       const test = () => fetchCampaigns({ charity: 'foo' })
       expect(test).to.throw
     })
