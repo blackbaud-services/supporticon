@@ -1,8 +1,17 @@
 import { get, isStaging } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
-export const fetchCampaigns = () =>
-  Promise.reject(new Error('This is method is not supported for JustGiving'))
+export const fetchCampaigns = ({ ids }) => {
+  if (!ids) {
+    return Promise.reject(
+      new Error('This is method only supports an array of GUIDs for JustGiving')
+    )
+  }
+
+  return Promise.resolve()
+    .then(() => (Array.isArray(ids) ? ids : ids.split(',')))
+    .then(ids => Promise.all(ids.map(fetchCampaign)))
+}
 
 export const fetchCampaign = (id = required()) =>
   get(`/campaigns/v2/campaign/${id}`)
