@@ -1,10 +1,20 @@
-import { get } from '../../../utils/client'
+import { get, servicesAPI } from '../../../utils/client'
 import { getShortName, getUID } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
-export const fetchDonationFeed = ({ campaign, charity, page, donationRef }) => {
+export const fetchDonationFeed = ({
+  campaign,
+  charity,
+  event,
+  page,
+  donationRef
+}) => {
   if (charity) {
     return fetchDonationFeedForCharity(charity)
+  }
+
+  if (event) {
+    return fetchDonationFeedForEvent(event)
   }
 
   if (campaign) {
@@ -24,20 +34,25 @@ export const fetchDonationFeed = ({ campaign, charity, page, donationRef }) => {
   )
 }
 
+const fetchDonations = params =>
+  servicesAPI
+    .get('/v1/justgiving/donations', { params })
+    .then(response => response.data)
+    .then(data => data.results)
+
+const fetchDonationFeedForCharity = charity =>
+  fetchDonations({ charityId: getUID(charity) })
+
+const fetchDonationFeedForEvent = event =>
+  fetchDonations({ eventId: getUID(event) })
+
+const fetchDonationFeedForCampaign = campaign =>
+  fetchDonations({ campaignGuid: getUID(campaign) })
+
 const fetchDonationFeedForPage = page =>
   get(`v1/fundraising/pages/${getShortName(page)}/donations?pageSize=150`).then(
     data => data.donations
   )
-
-const fetchDonationFeedForCharity = charity =>
-  get(`v1/charity/${getUID(charity)}/donations`).then(data => data.donations)
-
-const fetchDonationFeedForCampaign = campaign =>
-  get(
-    `donations/v1/donations?take=100&externalref=campaignGuid:${getUID(
-      campaign
-    )}`
-  ).then(data => data.results)
 
 const fetchDonationFeedByRef = ref =>
   get(`v1/donation/ref/${ref}`).then(data => data.donations)
