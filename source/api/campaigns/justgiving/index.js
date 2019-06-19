@@ -1,4 +1,4 @@
-import { get, isStaging } from '../../../utils/client'
+import { isStaging, servicesAPI } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 export const fetchCampaigns = ({ ids }) => {
@@ -14,7 +14,9 @@ export const fetchCampaigns = ({ ids }) => {
 }
 
 export const fetchCampaign = (id = required()) =>
-  get(`/campaigns/v2/campaign/${id}`)
+  servicesAPI
+    .get(`/v1/justgiving/campaigns/${id}`)
+    .then(response => response.data)
 
 export const fetchCampaignGroups = (id = required()) =>
   Promise.reject(new Error('This method is not supported for JustGiving'))
@@ -35,6 +37,9 @@ export const deserializeCampaign = campaign => {
     getStartedUrl: `https://${subdomain}.justgiving.com/fundraising-page/creation?campaignGuid=${
       campaign.campaignGuid
     }`,
-    donateUrl: null
+    url: `https://${subdomain}.justgiving.com/campaign/${campaign.shortName}`,
+    donateUrl: `https://${subdomain}.justgiving.com/campaign/${
+      campaign.shortName
+    }`
   }
 }
