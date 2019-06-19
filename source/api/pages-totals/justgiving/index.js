@@ -14,6 +14,6 @@ export const fetchPagesTotals = (params = required()) => {
       return servicesAPI
         .get(`/v1/justgiving/campaigns/${getUID(params.campaign)}/leaderboard`)
         .then(response => response.data)
-        .then(data => data.meta.totalPages)
+        .then(data => data.meta.totalResults)
   }
 }
