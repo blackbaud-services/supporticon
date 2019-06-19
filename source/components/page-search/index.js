@@ -95,12 +95,20 @@ PageSearch.propTypes = {
   /**
    * The campaign uid to fetch pages for
    */
-  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  campaign: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.array
+  ]),
 
   /**
    * The charity uid to fetch pages for
    */
-  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  charity: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.array
+  ]),
 
   /**
    * The event id
