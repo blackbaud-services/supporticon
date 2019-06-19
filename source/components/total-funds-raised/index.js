@@ -99,12 +99,20 @@ TotalFundsRaised.propTypes = {
   /**
    * The campaign uid to fetch totals for
    */
-  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  campaign: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.array
+  ]),
 
   /**
    * The charity uid to fetch totals for
    */
-  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  activity: PropTypes.oneOf([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.array
+  ]),
 
   /**
    * Country code for API (JG only)
@@ -112,6 +120,7 @@ TotalFundsRaised.propTypes = {
   country: PropTypes.oneOf([
     'au',
     'ca',
+    'gb',
     'hk',
     'ie',
     'nz',
