@@ -33,6 +33,7 @@ class DonationTicker extends Component {
     const {
       campaign,
       charity,
+      event,
       fetchAll,
       includeOffline,
       page,
@@ -43,6 +44,7 @@ class DonationTicker extends Component {
     fetchDonationFeed({
       campaign,
       charity,
+      event,
       fetchAll,
       includeOffline,
       page,
@@ -98,7 +100,7 @@ class DonationTicker extends Component {
 
 DonationTicker.propTypes = {
   /**
-   * The campaign uid to fetch totals for
+   * The campaign uid to fetch feed for
    */
   campaign: PropTypes.oneOfType([
     PropTypes.string,
@@ -107,7 +109,7 @@ DonationTicker.propTypes = {
   ]),
 
   /**
-   * The charity uid to fetch totals for
+   * The charity uid to fetch feed for
    */
   charity: PropTypes.oneOfType([
     PropTypes.string,
@@ -116,7 +118,12 @@ DonationTicker.propTypes = {
   ]),
 
   /**
-   * The page uid to fetch totals for
+   * The event id to fetch feed for
+   */
+  event: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+
+  /**
+   * The page uid to fetch feed for
    */
   page: PropTypes.oneOfType([
     PropTypes.string,
@@ -125,7 +132,7 @@ DonationTicker.propTypes = {
   ]),
 
   /**
-   * The team uid to fetch totals for
+   * The team uid to fetch feed for
    */
   team: PropTypes.oneOfType([
     PropTypes.string,

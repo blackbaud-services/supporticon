@@ -1,6 +1,6 @@
 import moxios from 'moxios'
 import { fetchDonationFeed } from '..'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 
 describe('Fetch EDH Donation Feed', () => {
   beforeEach(() => {
@@ -47,11 +47,13 @@ describe('Fetch JG Donation Feed', () => {
       headers: { 'x-api-key': 'abcd1234' }
     })
     moxios.install(instance)
+    moxios.install(servicesAPI)
   })
 
   afterEach(() => {
     updateClient({ baseURL: 'https://everydayhero.com' })
     moxios.uninstall(instance)
+    moxios.uninstall(servicesAPI)
   })
 
   describe('uses the correct url', () => {
@@ -61,7 +63,7 @@ describe('Fetch JG Donation Feed', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.eql(
-          'https://api.justgiving.com/v1/charity/12345/donations'
+          'https://api.blackbaud.services/v1/justgiving/donations?charityId=12345'
         )
         done()
       })
@@ -81,12 +83,12 @@ describe('Fetch JG Donation Feed', () => {
     })
 
     it('for a campaign', done => {
-      fetchDonationFeed({ campaign: 'test-campaign' })
+      fetchDonationFeed({ campaign: { uid: '1234-abcd-5678' } })
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.justgiving.com/donations/v1/donations?take=100&externalref=campaignGuid:test-campaign'
+          'https://api.blackbaud.services/v1/justgiving/donations?campaignGuid=1234-abcd-5678'
         )
         done()
       })
