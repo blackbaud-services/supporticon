@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 
 import { fetchCampaigns, fetchCampaign, fetchCampaignGroups } from '..'
 
@@ -98,11 +98,13 @@ describe('Fetch Campaigns', () => {
         headers: { 'x-api-key': 'abcd1234' }
       })
       moxios.install(instance)
+      moxios.install(servicesAPI)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
+      moxios.uninstall(servicesAPI)
     })
 
     it('fetches multiple campaigns if ids are passed', done => {
@@ -112,10 +114,10 @@ describe('Fetch Campaigns', () => {
         const secondRequest = moxios.requests.at(1)
 
         expect(firstRequest.url).to.equal(
-          'https://api.justgiving.com/campaigns/v2/campaign/my-campaign'
+          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign'
         )
         expect(secondRequest.url).to.equal(
-          'https://api.justgiving.com/campaigns/v2/campaign/another-campaign'
+          'https://api.blackbaud.services/v1/justgiving/campaigns/another-campaign'
         )
         done()
       })
@@ -126,7 +128,7 @@ describe('Fetch Campaigns', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/campaigns/v2/campaign/my-campaign'
+          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign'
         )
         done()
       })
