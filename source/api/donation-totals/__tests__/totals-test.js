@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 import { fetchDonationTotals } from '..'
 
 import {
@@ -59,11 +59,13 @@ describe('Fetch Donation Totals', () => {
         headers: { 'x-api-key': 'abcd1234' }
       })
       moxios.install(instance)
+      moxios.install(servicesAPI)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
+      moxios.uninstall(servicesAPI)
     })
 
     it('uses the correct url to fetch totals for an event', done => {
@@ -93,7 +95,7 @@ describe('Fetch Donation Totals', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/campaigns/v2/campaign/my-campaign'
+          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign'
         )
         done()
       })
