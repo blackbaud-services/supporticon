@@ -1,5 +1,6 @@
 import client from '../../../utils/client'
 import get from 'lodash/get'
+import { fetchCampaign } from '../../campaigns'
 import { getUID, required, dataSource } from '../../../utils/params'
 import { currencyCode } from '../../../utils/currencies'
 
@@ -13,7 +14,7 @@ export const fetchDonationTotals = (params = required()) => {
       // No API method supports total funds raised for a charity
       return required()
     default:
-      return client.get(`campaigns/v2/campaign/${getUID(params.campaign)}`)
+      return fetchCampaign(getUID(params.campaign))
   }
 }
 
