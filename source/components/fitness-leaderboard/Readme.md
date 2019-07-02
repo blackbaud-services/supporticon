@@ -15,6 +15,7 @@
   campaign='au-24234'
   limit={100}
   pageSize={10}
+  showPage
 />
 ```
 
