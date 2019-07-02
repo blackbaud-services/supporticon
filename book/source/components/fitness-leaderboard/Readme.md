@@ -8,6 +8,17 @@
 />
 ```
 
+*Paginated Leaderboard*
+
+```
+<FitnessLeaderboard
+  campaign='au-24234'
+  limit={100}
+  pageSize={10}
+  showPage
+/>
+```
+
 *Leaderboard by Team*
 
 ```
@@ -24,6 +35,7 @@
   campaign='au-21937'
   type='group'
   groupID={58}
+  excludePageIds={['Sydney, NSW']}
 />
 ```
 

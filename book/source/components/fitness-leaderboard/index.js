@@ -1,9 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
+
 import Filter from 'constructicon/filter'
-import LeaderboardWrapper from 'constructicon/leaderboard'
+import Grid from 'constructicon/grid'
 import LeaderboardItem from 'constructicon/leaderboard-item'
+import LeaderboardWrapper from 'constructicon/leaderboard'
+import Pagination from 'constructicon/pagination'
+import PaginationLink from 'constructicon/pagination-link'
+import RichText from 'constructicon/rich-text'
 
 import {
   fetchFitnessLeaderboard,
@@ -90,8 +95,8 @@ class FitnessLeaderboard extends Component {
       sortBy,
       q
     })
+      .then(data => this.removeExcludedPages(excludePageIds, data, type))
       .then(data => data.map(deserializeFitnessLeaderboard))
-      .then(data => this.removeExcludedPages(excludePageIds, data))
       .then(data => data.slice(0, limit))
       .then(data => {
         this.setState({
@@ -107,18 +112,24 @@ class FitnessLeaderboard extends Component {
       })
   }
 
-  removeExcludedPages (excludePageIds, pages) {
-    return excludePageIds
-      ? pages.filter(
-        page => excludePageIds.split(',').indexOf(page.id.toString()) === -1
-      )
-      : pages
+  removeExcludedPages (excludePageIds, pages, type) {
+    if (!excludePageIds) return pages
+
+    return pages.filter(page => {
+      const item = deserializeFitnessLeaderboard(page)
+      const id = type === 'group' ? item.name : item.id
+
+      const excluded = Array.isArray(excludePageIds)
+        ? excludePageIds
+        : excludePageIds.split(',')
+
+      return excluded.indexOf(id.toString()) === -1
+    })
   }
 
   render () {
     const { status, data = [] } = this.state
-
-    const { leaderboard, filter } = this.props
+    const { leaderboard, filter, pageSize, showPage } = this.props
 
     return (
       <div>
@@ -126,9 +137,42 @@ class FitnessLeaderboard extends Component {
         <LeaderboardWrapper
           loading={status === 'fetching'}
           error={status === 'failed'}
-          children={data.map(this.renderLeader)}
           {...leaderboard}
-        />
+        >
+          {data.length && (
+            <Pagination max={pageSize} toPaginate={data}>
+              {({
+                currentPage,
+                isPaginated,
+                prev,
+                next,
+                canPrev,
+                canNext,
+                pageOf
+              }) => (
+                <div>
+                  {currentPage.map(this.renderLeader)}
+                  {pageSize &&
+                    isPaginated && (
+                    <Grid align='center' justify='center'>
+                      <PaginationLink
+                        onClick={prev}
+                        direction='prev'
+                        disabled={!canPrev}
+                      />
+                      {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                      <PaginationLink
+                        onClick={next}
+                        direction='next'
+                        disabled={!canNext}
+                      />
+                    </Grid>
+                  )}
+                </div>
+              )}
+            </Pagination>
+          )}
+        </LeaderboardWrapper>
       </div>
     )
   }
@@ -144,6 +188,7 @@ class FitnessLeaderboard extends Component {
         image={leader.image}
         amount={this.getMetric(leader)}
         href={leader.url}
+        rank={leader.position}
         {...leaderboardItem}
       />
     )
@@ -231,6 +276,11 @@ FitnessLeaderboard.propTypes = {
   limit: PropTypes.number,
 
   /**
+   * The number of records to show per page, disables pagination if not specified.
+   */
+  pageSize: PropTypes.number,
+
+  /**
    * The page to fetch
    */
   page: PropTypes.number,
@@ -238,7 +288,7 @@ FitnessLeaderboard.propTypes = {
   /**
    * The group ID to group the leaderboard by (only relevant if type is group)
    */
-  groupID: PropTypes.number,
+  groupID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /**
    * The type of measurement to sort by
@@ -270,6 +320,7 @@ FitnessLeaderboard.defaultProps = {
   limit: 10,
   page: 1,
   filter: {},
+  showPage: false,
   sortBy: 'distance'
 }
 

@@ -2,11 +2,14 @@ import React, { Component } from 'react'
 import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
+
 import Filter from 'constructicon/filter'
-import LeaderboardWrapper from 'constructicon/leaderboard'
-import LeaderboardItem from 'constructicon/leaderboard-item'
 import Grid from 'constructicon/grid'
+import LeaderboardItem from 'constructicon/leaderboard-item'
+import LeaderboardWrapper from 'constructicon/leaderboard'
+import Pagination from 'constructicon/pagination'
 import PaginationLink from 'constructicon/pagination-link'
+import RichText from 'constructicon/rich-text'
 
 import { fetchLeaderboard, deserializeLeaderboard } from '../../api/leaderboard'
 
@@ -16,13 +19,9 @@ class Leaderboard extends Component {
     this.fetchLeaderboard = this.fetchLeaderboard.bind(this)
     this.setFilter = this.setFilter.bind(this)
     this.renderLeader = this.renderLeader.bind(this)
-    this.paginateLeaderboard = this.paginateLeaderboard.bind(this)
-    this.prevPage = this.prevPage.bind(this)
-    this.nextPage = this.nextPage.bind(this)
     this.state = {
       status: 'fetching',
-      q: null,
-      currentPage: 1
+      q: null
     }
   }
 
@@ -53,33 +52,13 @@ class Leaderboard extends Component {
     this.fetchLeaderboard(q)
   }
 
-  paginateLeaderboard () {
-    const { pageSize } = this.props
-    const { currentPage, data = [] } = this.state
-    const currentIndex = (currentPage - 1) * pageSize
-    const pagedLeaderboard = data.slice(currentIndex, currentIndex + pageSize)
+  removeExcludedGroups (groups, values) {
+    if (!values) return groups
 
-    return pagedLeaderboard.map(this.renderLeader)
-  }
-
-  hasNextPage () {
-    const { pageSize } = this.props
-    const { currentPage, data = [] } = this.state
-    const totalPages = data.length / pageSize
-
-    return currentPage < totalPages
-  }
-
-  prevPage () {
-    if (this.state.currentPage > 1) {
-      this.setState({ currentPage: this.state.currentPage - 1 })
-    }
-  }
-
-  nextPage () {
-    if (this.hasNextPage()) {
-      this.setState({ currentPage: this.state.currentPage + 1 })
-    }
+    return groups.filter(item => {
+      const excluded = Array.isArray(values) ? values : values.split(',')
+      return excluded.indexOf(item.group.value.toString()) === -1
+    })
   }
 
   handleData (data, excludeOffline) {
@@ -134,7 +113,7 @@ class Leaderboard extends Component {
       country,
       endDate,
       event,
-      excludePageIds,
+      excludePageIds: type === 'group' ? undefined : excludePageIds,
       group,
       groupID,
       limit,
@@ -146,6 +125,12 @@ class Leaderboard extends Component {
       startDate,
       type
     })
+      .then(
+        data =>
+          type === 'group'
+            ? this.removeExcludedGroups(data, excludePageIds)
+            : data
+      )
       .then(data => {
         this.setState({
           status: 'fetched',
@@ -161,9 +146,8 @@ class Leaderboard extends Component {
   }
 
   render () {
-    const { status, data = [], currentPage } = this.state
-
-    const { leaderboard, filter, pageSize } = this.props
+    const { status, data = [] } = this.state
+    const { leaderboard, filter, pageSize, showPage } = this.props
 
     return (
       <div>
@@ -173,22 +157,40 @@ class Leaderboard extends Component {
           error={status === 'failed'}
           {...leaderboard}
         >
-          {pageSize ? this.paginateLeaderboard() : data.map(this.renderLeader)}
+          {data.length && (
+            <Pagination max={pageSize} toPaginate={data}>
+              {({
+                currentPage,
+                isPaginated,
+                prev,
+                next,
+                canPrev,
+                canNext,
+                pageOf
+              }) => (
+                <div>
+                  {currentPage.map(this.renderLeader)}
+                  {pageSize &&
+                    isPaginated && (
+                    <Grid align='center' justify='center'>
+                      <PaginationLink
+                        onClick={prev}
+                        direction='prev'
+                        disabled={!canPrev}
+                      />
+                      {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                      <PaginationLink
+                        onClick={next}
+                        direction='next'
+                        disabled={!canNext}
+                      />
+                    </Grid>
+                  )}
+                </div>
+              )}
+            </Pagination>
+          )}
         </LeaderboardWrapper>
-        {pageSize && (
-          <Grid justify={'center'}>
-            <PaginationLink
-              onClick={this.prevPage}
-              direction='prev'
-              disabled={currentPage <= 1}
-            />
-            <PaginationLink
-              onClick={this.nextPage}
-              direction='next'
-              disabled={!this.hasNextPage()}
-            />
-          </Grid>
-        )}
       </div>
     )
   }
@@ -284,7 +286,7 @@ Leaderboard.propTypes = {
   /**
    * The group ID to group the leaderboard by (only relevant if type is group)
    */
-  groupID: PropTypes.number,
+  groupID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /**
    * Props to be passed to the Constructicon Leaderboard component
@@ -309,6 +311,7 @@ Leaderboard.propTypes = {
 
 Leaderboard.defaultProps = {
   limit: 10,
+  showPage: false,
   page: 1,
   filter: {}
 }
