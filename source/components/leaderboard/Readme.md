@@ -12,7 +12,7 @@
 ```
 <Leaderboard
   campaign='au-23374'
-  limit={15}
+  limit={50}
   pageSize={10}
 />
 ```
