@@ -94,8 +94,8 @@ class FitnessLeaderboard extends Component {
       sortBy,
       q
     })
+      .then(data => this.removeExcludedPages(excludePageIds, data, type))
       .then(data => data.map(deserializeFitnessLeaderboard))
-      .then(data => this.removeExcludedPages(excludePageIds, data))
       .then(data => data.slice(0, limit))
       .then(data => {
         this.setState({
@@ -111,12 +111,19 @@ class FitnessLeaderboard extends Component {
       })
   }
 
-  removeExcludedPages (excludePageIds, pages) {
-    return excludePageIds
-      ? pages.filter(
-        page => excludePageIds.split(',').indexOf(page.id.toString()) === -1
-      )
-      : pages
+  removeExcludedPages (excludePageIds, pages, type) {
+    if (!excludePageIds) return pages
+
+    return pages.filter(page => {
+      const item = deserializeFitnessLeaderboard(page)
+      const id = type === 'group' ? item.name : item.id
+
+      const excluded = Array.isArray(excludePageIds)
+        ? excludePageIds
+        : excludePageIds.split(',')
+
+      return excluded.indexOf(id.toString()) === -1
+    })
   }
 
   render () {

@@ -51,6 +51,15 @@ class Leaderboard extends Component {
     this.fetchLeaderboard(q)
   }
 
+  removeExcludedGroups (groups, values) {
+    if (!values) return groups
+
+    return groups.filter(item => {
+      const excluded = Array.isArray(values) ? values : values.split(',')
+      return excluded.indexOf(item.group.value.toString()) === -1
+    })
+  }
+
   handleData (data, excludeOffline) {
     const leaderboardData = data.map(deserializeLeaderboard)
 
@@ -103,7 +112,7 @@ class Leaderboard extends Component {
       country,
       endDate,
       event,
-      excludePageIds,
+      excludePageIds: type === 'group' ? undefined : excludePageIds,
       group,
       groupID,
       limit,
@@ -115,6 +124,12 @@ class Leaderboard extends Component {
       startDate,
       type
     })
+      .then(
+        data =>
+          type === 'group'
+            ? this.removeExcludedGroups(data, excludePageIds)
+            : data
+      )
       .then(data => {
         this.setState({
           status: 'fetched',
