@@ -8,6 +8,16 @@
 />
 ```
 
+*Paginated Leaderboard*
+
+```
+<FitnessLeaderboard
+  campaign='au-24234'
+  limit={100}
+  pageSize={10}
+/>
+```
+
 *Leaderboard by Team*
 
 ```

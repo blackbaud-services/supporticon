@@ -261,7 +261,7 @@ Leaderboard.propTypes = {
   /**
    * The group ID to group the leaderboard by (only relevant if type is group)
    */
-  groupID: PropTypes.number,
+  groupID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /**
    * Props to be passed to the Constructicon Leaderboard component
