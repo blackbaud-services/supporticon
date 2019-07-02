@@ -61,8 +61,8 @@ class Leaderboard extends Component {
     })
   }
 
-  handleData (data, excludeOffline) {
-    const leaderboardData = data.map(deserializeLeaderboard)
+  handleData (data, excludeOffline, deserializeMethod) {
+    const leaderboardData = data.map(deserializeMethod)
 
     if (excludeOffline) {
       return orderBy(
@@ -86,6 +86,7 @@ class Leaderboard extends Component {
       campaign,
       charity,
       country,
+      deserializeMethod,
       endDate,
       event,
       excludeOffline,
@@ -134,7 +135,11 @@ class Leaderboard extends Component {
       .then(data => {
         this.setState({
           status: 'fetched',
-          data: this.handleData(data, excludeOffline)
+          data: this.handleData(
+            data,
+            excludeOffline,
+            deserializeMethod || deserializeLeaderboard
+          )
         })
       })
       .catch(error => {
@@ -287,6 +292,11 @@ Leaderboard.propTypes = {
    * The group ID to group the leaderboard by (only relevant if type is group)
    */
   groupID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+  /**
+   * Override the deserializeLeaderboard method
+   */
+  deserializeMethod: PropTypes.func,
 
   /**
    * Props to be passed to the Constructicon Leaderboard component
