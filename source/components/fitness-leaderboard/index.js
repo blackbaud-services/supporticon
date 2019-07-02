@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
+
 import Filter from 'constructicon/filter'
-import LeaderboardWrapper from 'constructicon/leaderboard'
+import Grid from 'constructicon/grid'
 import LeaderboardItem from 'constructicon/leaderboard-item'
+import LeaderboardWrapper from 'constructicon/leaderboard'
+import Pagination from 'constructicon/pagination'
+import PaginationLink from 'constructicon/pagination-link'
 
 import {
   fetchFitnessLeaderboard,
@@ -117,8 +121,7 @@ class FitnessLeaderboard extends Component {
 
   render () {
     const { status, data = [] } = this.state
-
-    const { leaderboard, filter } = this.props
+    const { leaderboard, filter, pageSize } = this.props
 
     return (
       <div>
@@ -126,9 +129,33 @@ class FitnessLeaderboard extends Component {
         <LeaderboardWrapper
           loading={status === 'fetching'}
           error={status === 'failed'}
-          children={data.map(this.renderLeader)}
           {...leaderboard}
-        />
+        >
+          {data.length && (
+            <Pagination max={pageSize} toPaginate={data}>
+              {({ currentPage, isPaginated, prev, next, canPrev, canNext }) => (
+                <div>
+                  {currentPage.map(this.renderLeader)}
+                  {pageSize &&
+                    isPaginated && (
+                    <Grid justify='center'>
+                      <PaginationLink
+                        onClick={prev}
+                        direction='prev'
+                        disabled={!canPrev}
+                      />
+                      <PaginationLink
+                        onClick={next}
+                        direction='next'
+                        disabled={!canNext}
+                      />
+                    </Grid>
+                  )}
+                </div>
+              )}
+            </Pagination>
+          )}
+        </LeaderboardWrapper>
       </div>
     )
   }
@@ -144,6 +171,7 @@ class FitnessLeaderboard extends Component {
         image={leader.image}
         amount={this.getMetric(leader)}
         href={leader.url}
+        rank={leader.position}
         {...leaderboardItem}
       />
     )
@@ -229,6 +257,11 @@ FitnessLeaderboard.propTypes = {
    * The number of records to fetch
    */
   limit: PropTypes.number,
+
+  /**
+   * The number of records to show per page, disables pagination if not specified.
+   */
+  pageSize: PropTypes.number,
 
   /**
    * The page to fetch
