@@ -59,6 +59,7 @@ class FitnessLeaderboard extends Component {
       campaign,
       charity,
       country,
+      deserializeMethod,
       type,
       group,
       startDate,
@@ -96,7 +97,9 @@ class FitnessLeaderboard extends Component {
       q
     })
       .then(data => this.removeExcludedPages(excludePageIds, data, type))
-      .then(data => data.map(deserializeFitnessLeaderboard))
+      .then(data =>
+        data.map(deserializeMethod || deserializeFitnessLeaderboard)
+      )
       .then(data => data.slice(0, limit))
       .then(data => {
         this.setState({
@@ -289,6 +292,11 @@ FitnessLeaderboard.propTypes = {
    * The group ID to group the leaderboard by (only relevant if type is group)
    */
   groupID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+  /**
+   * Override the deserializeLeaderboard method
+   */
+  deserializeMethod: PropTypes.func,
 
   /**
    * The type of measurement to sort by
