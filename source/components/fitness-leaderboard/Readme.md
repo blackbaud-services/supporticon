@@ -34,6 +34,7 @@
   campaign='au-21937'
   type='group'
   groupID={58}
+  excludePageIds={['Sydney, NSW']}
 />
 ```
 
