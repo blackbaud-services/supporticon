@@ -9,6 +9,7 @@ import LeaderboardItem from 'constructicon/leaderboard-item'
 import LeaderboardWrapper from 'constructicon/leaderboard'
 import Pagination from 'constructicon/pagination'
 import PaginationLink from 'constructicon/pagination-link'
+import RichText from 'constructicon/rich-text'
 
 import { fetchLeaderboard, deserializeLeaderboard } from '../../api/leaderboard'
 
@@ -146,7 +147,7 @@ class Leaderboard extends Component {
 
   render () {
     const { status, data = [] } = this.state
-    const { leaderboard, filter, pageSize } = this.props
+    const { leaderboard, filter, pageSize, showPage } = this.props
 
     return (
       <div>
@@ -158,17 +159,26 @@ class Leaderboard extends Component {
         >
           {data.length && (
             <Pagination max={pageSize} toPaginate={data}>
-              {({ currentPage, isPaginated, prev, next, canPrev, canNext }) => (
+              {({
+                currentPage,
+                isPaginated,
+                prev,
+                next,
+                canPrev,
+                canNext,
+                pageOf
+              }) => (
                 <div>
                   {currentPage.map(this.renderLeader)}
                   {pageSize &&
                     isPaginated && (
-                    <Grid justify='center'>
+                    <Grid align='center' justify='center'>
                       <PaginationLink
                         onClick={prev}
                         direction='prev'
                         disabled={!canPrev}
                       />
+                      {showPage && <RichText size={-1}>{pageOf}</RichText>}
                       <PaginationLink
                         onClick={next}
                         direction='next'
@@ -301,6 +311,7 @@ Leaderboard.propTypes = {
 
 Leaderboard.defaultProps = {
   limit: 10,
+  showPage: false,
   page: 1,
   filter: {}
 }
