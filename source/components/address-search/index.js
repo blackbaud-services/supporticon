@@ -12,6 +12,7 @@ import InputSelect from 'constructicon/input-select'
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
 import InputSearch from 'constructicon/input-search'
+import Section from 'constructicon/section'
 
 class AddressSearch extends Component {
   constructor (props) {
@@ -87,12 +88,17 @@ class AddressSearch extends Component {
   }
 
   renderLabel () {
-    const { onCancel, onCancelLabel } = this.props
+    const { onCancel, onCancelLabel, required } = this.props
 
     return (
       <Grid spacing={{ x: 0.5 }}>
         <GridColumn xs={5}>
           <span>Address</span>
+          {required && (
+            <Section foreground='danger' spacing={0} tag='span'>
+              *
+            </Section>
+          )}
         </GridColumn>
         {onCancel && (
           <GridColumn xs={7} xsAlign='right'>

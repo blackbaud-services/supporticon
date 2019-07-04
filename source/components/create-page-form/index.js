@@ -238,6 +238,7 @@ class CreatePageForm extends Component {
           onCancel={() => this.setState({ manualAddress: true })}
           onChange={this.handleAddressLookup}
           inputProps={inputField}
+          required
           validations={form.fields.streetAddress.validations}
         />
       )
@@ -422,23 +423,28 @@ const form = props => {
         label: 'Country',
         initial: props.country,
         options: countries,
+        required: true,
         validators: [validators.required('Please select a country')]
       },
       streetAddress: {
         label: 'Street Address',
+        required: true,
         validators: [validators.required('Please enter a street address')]
       },
       extendedAddress: {},
       locality: {
         label: 'Town/Suburb',
+        required: true,
         validators: [validators.required('Please enter a town/suburb')]
       },
       region: {
         label: 'State',
+        required: true,
         validators: [validators.required('Please enter a state')]
       },
       postCode: {
         label: 'Post Code',
+        required: true,
         validators: [validators.required('Please enter a post code')]
       }
     })
