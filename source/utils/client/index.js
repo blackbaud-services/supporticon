@@ -38,6 +38,7 @@ export const updateClient = (options = {}) => {
   })
 
   updateServicesAPIClient()
+  updateMetadataAPIClient()
 }
 
 export const getBaseURL = () => instance.defaults.baseURL
@@ -59,6 +60,21 @@ const updateServicesAPIClient = () => {
     : 'https://api.blackbaud.services'
 }
 
+// Metadata API Client
+export const metadataAPI = axios.create({
+  baseURL: 'https://metadata.blackbaud.services'
+})
+
+const updateMetadataAPIClient = () => {
+  metadataAPI.defaults.baseURL = isJustGiving()
+    ? isStaging()
+      ? 'https://metadata-staging.blackbaud.services'
+      : 'https://metadata.blackbaud.services'
+    : isStaging()
+      ? 'https://mds.everydayhero-staging.io'
+      : 'https://mds-engineering.everydayhero.com'
+}
+
 export default {
   instance,
   get,
@@ -70,5 +86,6 @@ export default {
   getPlatform,
   isJustGiving,
   isStaging,
-  servicesAPI
+  servicesAPI,
+  metadataAPI
 }
