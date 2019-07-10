@@ -97,7 +97,7 @@ class CreatePageForm extends Component {
         .then(() => createPage(dataPayload))
         .then(result => {
           this.setState({ status: 'fetched' })
-          return onSuccess(result)
+          return onSuccess(result, dataPayload)
         })
         .catch(error => {
           switch (error.status) {
