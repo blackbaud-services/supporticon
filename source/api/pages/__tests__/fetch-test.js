@@ -1,6 +1,6 @@
 import moxios from 'moxios'
 import { fetchPages, fetchPage, fetchPageDonationCount } from '..'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 
 describe('Fetch Pages', () => {
   beforeEach(() => {
@@ -109,33 +109,35 @@ describe('Fetch Pages', () => {
   describe('Fetch JG Pages', () => {
     beforeEach(() => {
       updateClient({ baseURL: 'https://api.justgiving.com' })
+      moxios.install(servicesAPI)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
+      moxios.uninstall(servicesAPI)
     })
 
     describe('Fetch many pages', () => {
       it('uses the correct url to fetch pages', done => {
-        fetchPages({ campaign: 'CAMPAIGN_ID' })
+        fetchPages({ event: 'EVENT_ID' })
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
           expect(request.url).to.contain(
             'https://api.justgiving.com/v1/onesearch'
           )
-          expect(request.url).to.contain('campaignId=CAMPAIGN_ID')
+          expect(request.url).to.contain('eventId=EVENT_ID')
           done()
         })
       })
 
-      it('uses the uid name as the param when an object is supplied', done => {
-        fetchPages({ campaign: { uid: 'UID', shortName: 'SHORT_NAME' } })
+      it('uses the correct url to fetch when campaign is supplied', done => {
+        fetchPages({ campaign: 'UID' })
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
           expect(request.url).to.contain(
-            'https://api.justgiving.com/v1/onesearch'
+            'https://api.blackbaud.services/v1/justgiving/campaigns'
           )
-          expect(request.url).to.contain('campaignId=UID')
+          expect(request.url).to.contain('UID')
           done()
         })
       })

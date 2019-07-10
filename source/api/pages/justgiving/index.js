@@ -1,6 +1,6 @@
 import moment from 'moment'
 import lodashGet from 'lodash/get'
-import { get, put, isStaging } from '../../../utils/client'
+import { get, put, isStaging, servicesAPI } from '../../../utils/client'
 import { getUID, getShortName, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
@@ -21,7 +21,11 @@ export const deserializePage = page => {
       page.defaultImage ||
       page.Logo ||
       lodashGet(page, 'image.url') ||
-      lodashGet(page, 'images[0].url')
+      lodashGet(page, 'images[0].url') ||
+      `https://${subdomain}.justgiving.com/fundraising/images/user-profile/${lodashGet(
+        page,
+        'pageOwner.accountId'
+      )}`
     )
   }
 
@@ -37,18 +41,28 @@ export const deserializePage = page => {
     groups: null,
     id: page.pageId || page.Id,
     image: getImage(),
-    name: page.title || page.pageTitle || page.Name,
-    owner: page.owner || page.OwnerFullName,
+    name:
+      page.title ||
+      page.pageTitle ||
+      page.Name ||
+      lodashGet(page, 'pageOwner.fullName'),
+    owner:
+      page.owner || page.OwnerFullName || lodashGet(page, 'pageOwner.fullName'),
     raised: parseFloat(
       page.grandTotalRaisedExcludingGiftAid ||
         page.Amount ||
         page.raisedAmount ||
+        page.amountRaised ||
         0
     ),
     slug: page.pageShortName,
     story: page.story || page.ProfileWhat || page.ProfileWhy,
     target: parseFloat(
-      page.fundraisingTarget || page.TargetAmount || page.targetAmount || 0
+      page.fundraisingTarget ||
+        page.TargetAmount ||
+        page.targetAmount ||
+        page.target ||
+        0
     ),
     teamPageId: null,
     url,
@@ -91,6 +105,14 @@ export const fetchPages = (params = required()) => {
     return get(
       `/v1/campaigns/${getShortName(charity)}/${getShortName(campaign)}/pages`
     ).then(response => response.fundraisingPages)
+  }
+
+  if (campaign && !event) {
+    return servicesAPI
+      .get(`/v1/justgiving/campaigns/${getUID(campaign)}/leaderboard`, {
+        params: args
+      })
+      .then(({ data }) => data.results)
   }
 
   return get('/v1/onesearch', {
