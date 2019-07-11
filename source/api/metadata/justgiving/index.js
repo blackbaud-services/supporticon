@@ -2,6 +2,15 @@ import { metadataAPI } from '../../../utils/client'
 import { required } from '../../../utils/params'
 import keys from 'lodash/keys'
 
+export const deserializeMetadata = (metadata = []) =>
+  metadata.reduce(
+    (keys, { key, value, id }) => ({
+      ...keys,
+      [key]: { id, value }
+    }),
+    {}
+  )
+
 export const fetchMetadata = ({
   app = required(),
   token = required(),
