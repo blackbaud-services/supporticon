@@ -2,6 +2,15 @@ import { metadataAPI } from '../../../utils/client'
 import { required } from '../../../utils/params'
 import keys from 'lodash/keys'
 
+export const deserializeMetadata = ({ id, labels = [], type }) =>
+  keys(labels).reduce(
+    (keys, key) => ({
+      ...keys,
+      [key]: { id, value: labels[key], type }
+    }),
+    {}
+  )
+
 export const fetchMetadata = ({
   token = required(),
   id = required(),
@@ -11,7 +20,6 @@ export const fetchMetadata = ({
     .get(`/api/v1/metadata`, { params: { token, type, ids: id } })
     .then(response => response.data.metadata)
     .then(data => data[0])
-    .then((data = {}) => data.labels)
 
 export const createMetadata = ({
   token = required(),
