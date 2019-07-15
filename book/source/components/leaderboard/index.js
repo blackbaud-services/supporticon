@@ -61,24 +61,18 @@ class Leaderboard extends Component {
     })
   }
 
-  handleData (data, excludeOffline, deserializeMethod) {
-    const leaderboardData = data.map(deserializeMethod)
+  handleData (data, excludeOffline, deserializeMethod, limit) {
+    const leaderboardData = data
+      .map(deserializeMethod)
+      .map(
+        item =>
+          excludeOffline
+            ? { ...item, raised: item.raised - item.offline }
+            : item
+      )
+      .map((item, index) => ({ ...item, position: index + 1 }))
 
-    if (excludeOffline) {
-      return orderBy(
-        leaderboardData.map(item => ({
-          ...item,
-          raised: item.raised - item.offline
-        })),
-        ['raised'],
-        ['desc']
-      ).map((item, index) => ({
-        ...item,
-        position: index + 1
-      }))
-    }
-
-    return leaderboardData
+    return orderBy(leaderboardData, ['raised'], ['desc']).slice(0, limit)
   }
 
   fetchLeaderboard (q, refresh) {
@@ -117,7 +111,7 @@ class Leaderboard extends Component {
       excludePageIds: type === 'group' ? undefined : excludePageIds,
       group,
       groupID,
-      limit,
+      limit: limit + 5,
       maxAmount,
       minAmount,
       page,
@@ -138,7 +132,8 @@ class Leaderboard extends Component {
           data: this.handleData(
             data,
             excludeOffline,
-            deserializeMethod || deserializeLeaderboard
+            deserializeMethod || deserializeLeaderboard,
+            limit
           )
         })
       })
