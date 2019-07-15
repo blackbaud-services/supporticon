@@ -62,23 +62,17 @@ class Leaderboard extends Component {
   }
 
   handleData (data, excludeOffline, deserializeMethod) {
-    const leaderboardData = data.map(deserializeMethod)
+    const leaderboardData = data
+      .map(deserializeMethod)
+      .map(
+        item =>
+          excludeOffline
+            ? { ...item, raised: item.raised - item.offline }
+            : item
+      )
+      .map((item, index) => ({ ...item, position: index + 1 }))
 
-    if (excludeOffline) {
-      return orderBy(
-        leaderboardData.map(item => ({
-          ...item,
-          raised: item.raised - item.offline
-        })),
-        ['raised'],
-        ['desc']
-      ).map((item, index) => ({
-        ...item,
-        position: index + 1
-      }))
-    }
-
-    return leaderboardData
+    return orderBy(leaderboardData, ['raised'], ['desc'])
   }
 
   fetchLeaderboard (q, refresh) {
