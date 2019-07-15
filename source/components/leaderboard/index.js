@@ -61,7 +61,7 @@ class Leaderboard extends Component {
     })
   }
 
-  handleData (data, excludeOffline, deserializeMethod) {
+  handleData (data, excludeOffline, deserializeMethod, limit) {
     const leaderboardData = data
       .map(deserializeMethod)
       .map(
@@ -72,7 +72,7 @@ class Leaderboard extends Component {
       )
       .map((item, index) => ({ ...item, position: index + 1 }))
 
-    return orderBy(leaderboardData, ['raised'], ['desc'])
+    return orderBy(leaderboardData, ['raised'], ['desc']).slice(0, limit)
   }
 
   fetchLeaderboard (q, refresh) {
@@ -111,7 +111,7 @@ class Leaderboard extends Component {
       excludePageIds: type === 'group' ? undefined : excludePageIds,
       group,
       groupID,
-      limit,
+      limit: limit + 5,
       maxAmount,
       minAmount,
       page,
@@ -132,7 +132,8 @@ class Leaderboard extends Component {
           data: this.handleData(
             data,
             excludeOffline,
-            deserializeMethod || deserializeLeaderboard
+            deserializeMethod || deserializeLeaderboard,
+            limit
           )
         })
       })
