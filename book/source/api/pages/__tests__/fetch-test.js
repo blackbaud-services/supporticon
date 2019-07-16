@@ -160,6 +160,17 @@ describe('Fetch Pages', () => {
         })
       })
 
+      it('uses the correct url to fetch a page by slug if optional param is passed', done => {
+        fetchPage(123, true)
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.equal(
+            'https://api.justgiving.com/v1/fundraising/pages/123'
+          )
+          done()
+        })
+      })
+
       it('uses an alternate url to fetch a page by id', done => {
         fetchPage('123')
         moxios.wait(() => {
