@@ -26,5 +26,6 @@ export const deserializeDonation = donation => ({
   message: donation.message,
   name: donation.nickname,
   page: donation.page_id,
-  reply: donation.thankyou_message
+  reply: donation.thankyou_message,
+  id: donation.uid
 })
