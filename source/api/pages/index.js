@@ -33,8 +33,8 @@ export const fetchPages = params =>
 /**
  * @function fetches a single page
  */
-export const fetchPage = page =>
-  isJustGiving() ? fetchJGPage(page) : fetchEDHPage(page)
+export const fetchPage = (...args) =>
+  isJustGiving() ? fetchJGPage(...args) : fetchEDHPage(...args)
 
 /**
  * @function fetches a page's donation count
