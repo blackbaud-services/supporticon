@@ -63,6 +63,17 @@ const fields = {
 />
 ```
 
+### With charity select
+
+```
+<CreatePageForm
+  campaignId='au-6839'
+  token='1234abcd'
+  includeCharitySearch='select'
+  onSuccess={(result) => alert(JSON.stringify(result))}
+/>
+```
+
 ### With address (EDH only)
 
 ```
