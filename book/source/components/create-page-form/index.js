@@ -18,6 +18,7 @@ import countries from '../../utils/countries'
 
 import AddressSearch from '../address-search'
 import CharitySearch from '../charity-search'
+import CharitySelect from '../charity-select'
 import Form from 'constructicon/form'
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
@@ -207,11 +208,17 @@ class CreatePageForm extends Component {
                 />
               )
             case 'charityId':
-              return (
+              return field.type === 'search' ? (
                 <CharitySearch
                   key={field.name}
                   campaign={campaignId}
                   onChange={charity => field.onChange(charity.id)}
+                  inputProps={{ ...field, ...inputField }}
+                />
+              ) : (
+                <CharitySelect
+                  key={field.name}
+                  campaign={campaignId}
                   inputProps={{ ...field, ...inputField }}
                 />
               )
@@ -333,9 +340,9 @@ CreatePageForm.propTypes = {
   token: PropTypes.string.isRequired,
 
   /**
-   * Include a charity search field
+   * Include a charity search field - can be either "search" or "select" (defaults to search)
    */
-  includeCharitySearch: PropTypes.bool,
+  includeCharitySearch: PropTypes.oneOf([PropTypes.bool, 'search', 'select']),
 
   /**
    * Include phone in page creation
@@ -412,7 +419,10 @@ const form = props => {
     ...(props.includeCharitySearch && {
       charityId: {
         label: 'Charity',
-        type: 'search',
+        type:
+          typeof props.includeCharitySearch === 'string'
+            ? props.includeCharitySearch
+            : 'search',
         order: 2,
         required: true,
         validators: [validators.required('Please select your charity')]
