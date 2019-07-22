@@ -71,9 +71,10 @@ class Leaderboard extends Component {
             ? { ...item, raised: item.raised - item.offline }
             : item
       )
-      .map((item, index) => ({ ...item, position: index + 1 }))
 
-    return orderBy(leaderboardData, ['raised'], ['desc']).slice(0, limit)
+    return orderBy(leaderboardData, ['raised'], ['desc'])
+      .map((item, index) => ({ ...item, position: index + 1 }))
+      .slice(0, limit)
   }
 
   fetchLeaderboard (q, refresh) {
