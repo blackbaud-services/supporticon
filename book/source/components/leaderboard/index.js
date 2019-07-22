@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
+import { isJustGiving } from '../../utils/client'
 
 import Filter from 'constructicon/filter'
 import Grid from 'constructicon/grid'
@@ -111,7 +112,7 @@ class Leaderboard extends Component {
       excludePageIds: type === 'group' ? undefined : excludePageIds,
       group,
       groupID,
-      limit: limit + 5,
+      limit: isJustGiving() ? limit : limit + 5,
       maxAmount,
       minAmount,
       page,
