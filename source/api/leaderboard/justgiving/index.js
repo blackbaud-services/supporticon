@@ -9,7 +9,8 @@ export const fetchLeaderboard = (params = required()) => {
   switch (dataSource(params)) {
     case 'event':
       return get(`/v1/event/${getUID(params.event)}/leaderboard`, {
-        currency: currencyCode(params.country)
+        currency: currencyCode(params.country),
+        maxResults: params.limit
       }).then(response =>
         response.pages.map(page => ({
           ...page,
