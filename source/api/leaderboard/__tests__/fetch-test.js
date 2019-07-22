@@ -167,6 +167,17 @@ describe('Fetch Leaderboards', () => {
       })
     })
 
+    it('allows you to specify the number of pages to return', done => {
+      fetchJGLeaderboard({ event: 12345, limit: 50 })
+      moxios.wait(function () {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.equal(
+          'https://api.justgiving.com/v1/event/12345/leaderboard?currency=GBP&maxResults=50'
+        )
+        done()
+      })
+    })
+
     it('throws if incorrect params are passed in for an event leaderboard', () => {
       const test = () => fetchJGLeaderboard({ event: 'my-event' })
       expect(test).to.throw
