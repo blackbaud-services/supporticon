@@ -55,6 +55,17 @@ class PageSearch extends Component {
       })
   }
 
+  getSubtitle (subtitle, page) {
+    switch (subtitle) {
+      case 'campaign':
+        return page.campaign && page.campaign.name
+      case 'charity':
+        return page.charity && page.charity.name
+      default:
+        return null
+    }
+  }
+
   render () {
     return (
       <SearchForm
@@ -68,6 +79,7 @@ class PageSearch extends Component {
 
   renderResults () {
     const { status, q, data = [] } = this.state
+    const { subtitle } = this.props
 
     return (
       <SearchResults
@@ -80,7 +92,7 @@ class PageSearch extends Component {
           <SearchResult
             key={i}
             title={page.name}
-            subtitle={page.charity && page.charity.name}
+            subtitle={this.getSubtitle(subtitle, page)}
             image={page.image}
             url={page.url}
             {...this.props.searchResult}
@@ -136,6 +148,11 @@ PageSearch.propTypes = {
   page: PropTypes.number,
 
   /**
+   * What to use as the subtitle on the results
+   */
+  subtitle: PropTypes.oneOf(['charity', 'campaign', 'none']),
+
+  /**
    * Props to be passed to the SearchForm component
    */
   searchForm: PropTypes.object,
@@ -158,7 +175,8 @@ PageSearch.propTypes = {
 
 PageSearch.defaultProps = {
   limit: 10,
-  type: 'individual'
+  type: 'individual',
+  subtitle: 'charity'
 }
 
 export default PageSearch
