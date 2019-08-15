@@ -13,7 +13,7 @@
 
 ```
 <DonationTicker
-  charity='au-23374'
+  campaign='au-23374'
   format='0a'
   layout='amount-only'
   ticker={{
@@ -21,5 +21,15 @@
     foreground: 'light',
     speed: 'fast'
   }}
+/>
+```
+
+*Donor Message*
+
+```
+<DonationTicker
+  campaign='au-23374'
+  label='Messages'
+  layout='name-message'
 />
 ```

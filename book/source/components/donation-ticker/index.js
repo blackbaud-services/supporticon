@@ -36,6 +36,7 @@ class DonationTicker extends Component {
       event,
       fetchAll,
       includeOffline,
+      layout,
       page,
       sort,
       team
@@ -52,7 +53,15 @@ class DonationTicker extends Component {
       team
     })
       .then(donations => donations.map(deserializeDonation))
-      .then(donations => donations.filter(donation => !donation.anonymous))
+      .then(donations =>
+        donations.filter(donation => {
+          if (donation.anonymous) return false
+          if (layout.indexOf('amount') > -1) return !!donation.amount
+          if (layout.indexOf('message') > -1) return !!donation.message
+          if (layout.indexOf('name') > -1) return !!donation.name
+          return true
+        })
+      )
       .then(donations =>
         donations.map(donation => this.formatDonation(donation))
       )
@@ -69,6 +78,23 @@ class DonationTicker extends Component {
         return donation.name
       case 'amount-only':
         return formattedAmount
+      case 'message-only':
+        return donation.message
+      case 'name-message':
+        return <span>{[donation.name, donation.message].join(' - ')}</span>
+      case 'message-amount':
+        return (
+          <span>
+            {donation.message} <strong>{formattedAmount}</strong>
+          </span>
+        )
+      case 'name-message-amount':
+        return (
+          <span>
+            {[donation.name, donation.message].join(' - ')}{' '}
+            <strong>{formattedAmount}</strong>
+          </span>
+        )
       case 'amount-name':
         return (
           <span>
@@ -156,8 +182,12 @@ DonationTicker.propTypes = {
   layout: PropTypes.oneOf([
     'amount-name',
     'name-amount',
+    'name-message',
+    'name-message-amount',
+    'message-amount',
     'amount-only',
-    'name-only'
+    'name-only',
+    'message-only'
   ]),
 
   /**
