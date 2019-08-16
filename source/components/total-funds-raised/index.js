@@ -79,8 +79,8 @@ class TotalFundsRaised extends Component {
 
   renderAmount () {
     const { status, data = {} } = this.state
-
-    const { format, offset, multiplier } = this.props
+    const { currency, format, offset, multiplier } = this.props
+    const formatMethod = currency ? 'formatCurrency' : 'format'
 
     switch (status) {
       case 'fetching':
@@ -88,9 +88,7 @@ class TotalFundsRaised extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return numbro((offset + data.raised) * multiplier).formatCurrency(
-          format
-        )
+        return numbro((offset + data.raised) * multiplier)[formatMethod](format)
     }
   }
 }
@@ -129,6 +127,11 @@ TotalFundsRaised.propTypes = {
     'us',
     'za'
   ]),
+
+  /**
+   * Format as currency?
+   */
+  currency: PropTypes.bool,
 
   /**
    * Exclude offline donations?
@@ -194,6 +197,7 @@ TotalFundsRaised.propTypes = {
 }
 
 TotalFundsRaised.defaultProps = {
+  currency: true,
   excludeOffline: false,
   format: '0,0',
   label: 'Funds Raised',
