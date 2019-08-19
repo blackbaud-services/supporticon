@@ -73,7 +73,7 @@ describe('Fetch Donation Totals', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/event/12345/leaderboard?currency=GBP'
+          'https://api.justgiving.com/v1/events/leaderboard?eventid=12345&currency=GBP'
         )
         done()
       })
@@ -84,7 +84,7 @@ describe('Fetch Donation Totals', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/event/12345/leaderboard?currency=EUR'
+          'https://api.justgiving.com/v1/events/leaderboard?eventid=12345&currency=EUR'
         )
         done()
       })

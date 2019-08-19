@@ -1,5 +1,10 @@
 import { get, isStaging, servicesAPI } from '../../../utils/client'
-import { getUID, required, dataSource } from '../../../utils/params'
+import {
+  getUID,
+  required,
+  dataSource,
+  paramsSerializer
+} from '../../../utils/params'
 import { currencySymbol, currencyCode } from '../../../utils/currencies'
 
 /**
@@ -8,10 +13,18 @@ import { currencySymbol, currencyCode } from '../../../utils/currencies'
 export const fetchLeaderboard = (params = required()) => {
   switch (dataSource(params)) {
     case 'event':
-      return get(`/v1/event/${getUID(params.event)}/leaderboard`, {
-        currency: currencyCode(params.country),
-        maxResults: params.limit
-      }).then(response =>
+      return get(
+        '/v1/events/leaderboard',
+        {
+          eventid: Array.isArray(params.event)
+            ? params.event.map(getUID)
+            : getUID(params.event),
+          currency: currencyCode(params.country),
+          maxResults: params.limit
+        },
+        {},
+        { paramsSerializer }
+      ).then(response =>
         response.pages.map(page => ({
           ...page,
           raisedAmount: page.amount,

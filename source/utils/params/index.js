@@ -1,11 +1,13 @@
+import keys from 'lodash/keys'
+
 export const required = () => {
   throw new Error('Required parameter not supplied')
 }
 
 export const dataSource = ({ event, charity, campaign }) => {
   if (event) {
-    if (isNaN(event) && isNaN(event.uid)) {
-      throw new Error('Event parameter must be an ID')
+    if (isNaN(event) && isNaN(event.uid) && !Array.isArray(event)) {
+      throw new Error('Event parameter must be an ID or an array')
     }
 
     return 'event'
@@ -26,3 +28,19 @@ export const getUID = data => (typeof data === 'object' ? data.uid : data)
 
 export const getShortName = data =>
   typeof data === 'object' ? data.shortName : data
+
+export const paramsSerializer = params =>
+  keys(params)
+    .map(key => {
+      const value = params[key]
+
+      if (!value) return false
+
+      if (Array.isArray(value)) {
+        return value.map(val => [key, val].join('=')).join('&')
+      }
+
+      return [key, value].join('=')
+    })
+    .filter(Boolean)
+    .join('&')
