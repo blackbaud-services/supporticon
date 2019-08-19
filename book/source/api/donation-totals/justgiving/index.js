@@ -1,15 +1,28 @@
 import client from '../../../utils/client'
 import get from 'lodash/get'
 import { fetchCampaign } from '../../campaigns'
-import { getUID, required, dataSource } from '../../../utils/params'
+import {
+  getUID,
+  required,
+  dataSource,
+  paramsSerializer
+} from '../../../utils/params'
 import { currencyCode } from '../../../utils/currencies'
 
 export const fetchDonationTotals = (params = required()) => {
   switch (dataSource(params)) {
     case 'event':
-      return client.get(`v1/event/${getUID(params.event)}/leaderboard`, {
-        currency: currencyCode(params.country)
-      })
+      return client.get(
+        '/v1/events/leaderboard',
+        {
+          eventid: Array.isArray(params.event)
+            ? params.event.map(getUID)
+            : getUID(params.event),
+          currency: currencyCode(params.country)
+        },
+        {},
+        { paramsSerializer }
+      )
     case 'charity':
       // No API method supports total funds raised for a charity
       return required()

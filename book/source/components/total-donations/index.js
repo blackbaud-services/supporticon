@@ -104,6 +104,15 @@ TotalDonations.propTypes = {
   ]),
 
   /**
+   * The event uid to fetch totals for (JG only)
+   */
+  event: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.array
+  ]),
+
+  /**
    * The charity uid to fetch totals for
    */
   activity: PropTypes.oneOf([

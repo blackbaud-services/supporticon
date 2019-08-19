@@ -235,6 +235,15 @@ Leaderboard.propTypes = {
   ]),
 
   /**
+   * The event uid to fetch pages for (JG only)
+   */
+  event: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.array
+  ]),
+
+  /**
    * Country code for API (JG only)
    */
   country: PropTypes.oneOf([
