@@ -30,6 +30,7 @@ export const deserializePage = page => {
     story: page.story,
     target: page.metrics ? page.metrics.fundraising.goal : page.target_cents,
     teamPageId: page.team_page_id,
+    teamRole: page.team_role,
     url: page.url,
     uuid: page.uuid
   }
