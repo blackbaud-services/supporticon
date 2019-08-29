@@ -13,7 +13,7 @@ export const getAddressDetails = (id = required(), region = 'au') => {
 
 export const deserializeAddress = address => ({
   streetAddress: address.street_address,
-  extendedAddress: address.extendedAddress,
+  extendedAddress: address.extended_address,
   locality: address.locality,
   region: address.region,
   postCode: address.postal_code
