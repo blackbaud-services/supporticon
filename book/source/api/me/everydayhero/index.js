@@ -34,7 +34,8 @@ export const updateCurrentUser = ({
   name,
   address = {},
   birthday,
-  phone
+  phone,
+  nickname
 }) =>
   put(`api/v1/me?access_token=${token}`, {
     user: {
@@ -45,7 +46,8 @@ export const updateCurrentUser = ({
         postal_code: address.postCode,
         ...omit(address, ['streetAddress', 'extendedAddress', 'postCode'])
       },
-      birthday: birthday,
-      phone: phone
+      birthday,
+      phone,
+      nickname
     }
   })

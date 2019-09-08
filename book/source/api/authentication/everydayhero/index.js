@@ -38,7 +38,8 @@ export const signUp = ({
   email = required(),
   password = required(),
   phone = required(),
-  country = 'au'
+  country = 'au',
+  nickname
 }) =>
   post('api/v2/authentication/sign_up', {
     client_id: clientId,
@@ -47,7 +48,8 @@ export const signUp = ({
       name,
       email,
       password,
-      phone
+      phone,
+      nickname
     }
   }).then(data => ({
     userId: data.user_id,
