@@ -77,6 +77,7 @@ class AddressSearch extends Component {
             onChange={this.handleSelect}
             onSearch={this.handleQuery}
             results={results}
+            showMore
             status={status}
             validations={validations}
             value={value}
