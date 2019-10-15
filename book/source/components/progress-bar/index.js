@@ -55,7 +55,7 @@ class ProgressBar extends Component {
       startDate
     })
       .then(data => deserializeDonationTotals(data, excludeOffline))
-      .then(data => this.setState({ status: 'fetched', raised: data.raised }))
+      .then(data => this.setState({ status: 'fetched', ...data }))
       .catch(() => this.setState({ status: 'failed' }))
   }
 
@@ -67,9 +67,10 @@ class ProgressBar extends Component {
   }
 
   calculatePercentage () {
-    const { offset, target } = this.props
-    const { raised = 0 } = this.state
-    return Math.min(100, Math.floor(((raised + offset) / target) * 100))
+    const { offset, target, useDonationCount } = this.props
+    const { raised = 0, donations = 0 } = this.state
+    const amount = useDonationCount ? donations : raised
+    return Math.min(100, Math.floor(((amount + offset) / target) * 100))
   }
 
   render () {
@@ -85,10 +86,11 @@ class ProgressBar extends Component {
       raisedLabel,
       remainingLabel,
       target,
-      targetLabel
+      targetLabel,
+      useDonationCount
     } = this.props
 
-    const { raised, status } = this.state
+    const { raised, donations, status } = this.state
 
     return status === 'fetched' ? (
       <Grid spacing={0.25} {...grid}>
@@ -96,7 +98,11 @@ class ProgressBar extends Component {
           <Metric
             align='left'
             label={raisedLabel}
-            amount={numbro(raised + offset).formatCurrency(format)}
+            amount={
+              useDonationCount
+                ? numbro(donations + offset).format(format)
+                : numbro(raised + offset).formatCurrency(format)
+            }
             {...metric}
           />
         </GridColumn>
@@ -104,7 +110,11 @@ class ProgressBar extends Component {
           <Metric
             align='right'
             label={targetLabel}
-            amount={numbro(target).formatCurrency(format)}
+            amount={
+              useDonationCount
+                ? numbro(target).format(format)
+                : numbro(target).formatCurrency(format)
+            }
             {...metric}
           />
         </GridColumn>
@@ -263,7 +273,12 @@ ProgressBar.propTypes = {
   /**
    * Interval (in milliseconds) to refresh data from API
    */
-  refreshInterval: PropTypes.number
+  refreshInterval: PropTypes.number,
+
+  /**
+   * use number of donations instead of amount raised
+   */
+  useDonationCount: PropTypes.bool
 }
 
 ProgressBar.defaultProps = {
