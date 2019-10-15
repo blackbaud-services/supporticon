@@ -10,6 +10,16 @@
 ```
 <ProgressBar
   campaign='au-21638'
+  useDonationCount
+  raisedLabel='Donations'
+  targetLabel='Target'
+  target={1000}
+/>
+```
+
+```
+<ProgressBar
+  campaign='au-21638'
   raisedLabel='Raised'
   targetLabel='Target'
   target={200000}
