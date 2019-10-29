@@ -1,6 +1,5 @@
-import client from '../../../utils/client'
+import client, { servicesAPI } from '../../../utils/client'
 import get from 'lodash/get'
-import { fetchCampaign } from '../../campaigns'
 import {
   getUID,
   required,
@@ -27,16 +26,22 @@ export const fetchDonationTotals = (params = required()) => {
       // No API method supports total funds raised for a charity
       return required()
     default:
-      return fetchCampaign(getUID(params.campaign))
+      return servicesAPI
+        .get(`/v1/justgiving/campaigns/${getUID(params.campaign)}/leaderboard`)
+        .then(response => response.data)
   }
 }
 
 export const deserializeDonationTotals = totals => ({
   raised:
-    totals.totalRaised ||
-    totals.raisedAmount ||
-    get(totals, 'donationSummary.totalAmount') ||
-    0,
+    totals.currency === 'GBP'
+      ? totals.raisedAmountOfflineInGBP + totals.raisedAmount
+      : totals.totalRaised ||
+        totals.raisedAmount ||
+        get(totals, 'meta.totalAmount') ||
+        get(totals, 'donationSummary.totalAmount') ||
+        0,
+  offline: totals.offlineAmount || 0,
   donations:
     totals.numberOfDirectDonations ||
     get(totals, 'donationSummary.totalNumberOfDonations') ||

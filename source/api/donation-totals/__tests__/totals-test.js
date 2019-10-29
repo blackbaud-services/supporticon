@@ -95,7 +95,7 @@ describe('Fetch Donation Totals', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign'
+          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign/leaderboard'
         )
         done()
       })
@@ -123,11 +123,12 @@ describe('Deserialize donation totals', () => {
   describe('Deserialize JG donation totals', () => {
     it('Defaults falsy donation sums to 0', () => {
       const deserializedDonationTotals = deserializeJGTotals({
-        totalRaised: 0
+        raisedAmount: 0
       })
 
       expect(deserializedDonationTotals).to.deep.equal({
         raised: 0,
+        offline: 0,
         donations: 0
       })
     })
