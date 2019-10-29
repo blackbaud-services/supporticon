@@ -28,7 +28,8 @@ export const deserializePage = page => {
     raised: amountInCents / 100,
     slug: page.slug,
     story: page.story,
-    target: page.metrics ? page.metrics.fundraising.goal : page.target_cents,
+    target:
+      (page.metrics ? page.metrics.fundraising.goal : page.target_cents) / 100,
     teamPageId: page.team_page_id,
     teamRole: page.team_role,
     url: page.url,
