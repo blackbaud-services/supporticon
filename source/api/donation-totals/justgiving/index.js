@@ -32,11 +32,12 @@ export const fetchDonationTotals = (params = required()) => {
 }
 
 export const deserializeDonationTotals = totals => ({
-  raised:
-    totals.totalRaised ||
-    totals.raisedAmount ||
-    get(totals, 'donationSummary.totalAmount') ||
-    0,
+  raised: totals.raisedAmountOfflineInGBP
+    ? totals.totalRaised + totals.raisedAmountOfflineInGBP
+    : totals.totalRaised ||
+      totals.raisedAmount ||
+      get(totals, 'donationSummary.totalAmount') ||
+      0,
   donations:
     totals.numberOfDirectDonations ||
     get(totals, 'donationSummary.totalNumberOfDonations') ||
