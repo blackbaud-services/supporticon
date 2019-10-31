@@ -37,6 +37,18 @@ describe('Fetch Pages', () => {
         })
       })
 
+      it('sets the limit on the request', done => {
+        fetchPages({ campaign_id: 'au-6839', allPages: true, limit: 50 })
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.contain(
+            'https://everydayhero.com/api/v2/pages'
+          )
+          expect(request.url).to.contain('limit=50')
+          done()
+        })
+      })
+
       it('throws if no params are passed in', () => {
         const test = () => fetchPages()
         expect(test).to.throw
@@ -178,6 +190,18 @@ describe('Fetch Pages', () => {
           expect(request.url).to.equal(
             'https://api.justgiving.com/v1/fundraising/pagebyid/123'
           )
+          done()
+        })
+      })
+
+      it('fetches pages by event with the correct pageSize', done => {
+        fetchPages({ event: '123', allPages: true, limit: 50 })
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.contain(
+            'https://api.justgiving.com/v1/event/123/pages'
+          )
+          expect(request.url).to.contain('pageSize=50')
           done()
         })
       })

@@ -96,7 +96,9 @@ export const fetchPages = (params = required()) => {
   }
 
   if (allPages && event) {
-    return get(`/v1/event/${getUID(event)}/pages`).then(
+    const mappings = { limit: 'pageSize' }
+
+    return get(`/v1/event/${getUID(event)}/pages`, args, { mappings }).then(
       response => response.fundraisingPages
     )
   }
