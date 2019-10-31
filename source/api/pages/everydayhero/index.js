@@ -1,3 +1,4 @@
+import lodashGet from 'lodash/get'
 import { get, post, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
@@ -10,9 +11,14 @@ export const deserializePage = page => {
 
   return {
     active: page.active || page.state === 'active',
-    campaign: page.campaign || page.campaign_name,
+    campaign:
+      lodashGet(page, 'campaign.name') || page.campaign || page.campaign_name,
     campaignDate: page.campaign_date || page.event_date,
-    charity: page.charity || page.beneficiary || page.charity_name,
+    charity:
+      lodashGet(page, 'charity.name') ||
+      page.charity ||
+      page.beneficiary ||
+      page.charity_name,
     coordinates: page.coordinate,
     donationUrl: page.donation_url,
     expired: page.expired,
@@ -24,7 +30,7 @@ export const deserializePage = page => {
     id: page.id,
     image: page.image && page.image.large_image_url,
     name: page.name,
-    owner: page.owner_uid || page.user_id,
+    owner: lodashGet(page, 'supporter.name') || page.owner_uid || page.user_id,
     raised: amountInCents / 100,
     slug: page.slug,
     story: page.story,

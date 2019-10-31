@@ -56,13 +56,11 @@ class PageSearch extends Component {
   }
 
   getSubtitle (subtitle, page) {
-    switch (subtitle) {
-      case 'campaign':
-        return page.campaign && page.campaign.name
-      case 'charity':
-        return page.charity && page.charity.name
+    switch (typeof subtitle) {
+      case 'function':
+        return subtitle(page)
       default:
-        return null
+        return page[subtitle] ? page[subtitle] : null
     }
   }
 
@@ -150,7 +148,7 @@ PageSearch.propTypes = {
   /**
    * What to use as the subtitle on the results
    */
-  subtitle: PropTypes.oneOf(['charity', 'campaign', 'none']),
+  subtitle: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 
   /**
    * Props to be passed to the SearchForm component
