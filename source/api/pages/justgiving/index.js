@@ -31,7 +31,7 @@ export const deserializePage = page => {
 
   return {
     active: [page.status, page.pageStatus].indexOf('Active') > -1,
-    campaign: page.eventId || page.EventId,
+    campaign: page.Subtext || page.eventId || page.EventId,
     campaignDate: jsonDate(page.eventDate) || page.EventDate,
     charity: page.charity || page.CharityId,
     coordinates: null,

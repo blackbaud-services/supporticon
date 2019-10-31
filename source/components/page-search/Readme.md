@@ -2,14 +2,15 @@
 
 ```
 <PageSearch
-  campaign='au-21638'
+  campaign='au-24854'
 />
 ```
 
-### JustGiving
+*Custom subtitle*
 
 ```
 <PageSearch
-  event='4111382'
+  campaign='au-24854'
+  subtitle={(page) => `$${page.raised} raised`}
 />
 ```
