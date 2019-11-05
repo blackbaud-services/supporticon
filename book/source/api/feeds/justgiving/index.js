@@ -1,3 +1,4 @@
+import qs from 'query-string'
 import { get, servicesAPI } from '../../../utils/client'
 import { getShortName, getUID } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
@@ -35,7 +36,8 @@ const fetchDonations = ({ event, charity, campaign }) =>
         eventId: mapValue(event),
         charityId: mapValue(charity),
         campaignGuid: mapValue(campaign)
-      }
+      },
+      paramsSerializer: params => qs.stringify(params, { arrayFormat: 'comma' })
     })
     .then(response => response.data)
     .then(data => data.results)
