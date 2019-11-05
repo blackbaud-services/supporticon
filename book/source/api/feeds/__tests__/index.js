@@ -93,5 +93,59 @@ describe('Fetch JG Donation Feed', () => {
         done()
       })
     })
+
+    it('for multiple campaigns', done => {
+      fetchDonationFeed({ campaign: ['1234-abcd-5678', 'abcd-1234-9876'] })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.blackbaud.services/v1/justgiving/donations'
+        )
+        expect(request.url).to.contain('campaignGuid[]=1234-abcd-5678')
+        expect(request.url).to.contain('campaignGuid[]=abcd-1234-9876')
+        done()
+      })
+    })
+
+    it('for an event', done => {
+      fetchDonationFeed({ event: { uid: '1234' } })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.blackbaud.services/v1/justgiving/donations?eventId=1234'
+        )
+        done()
+      })
+    })
+
+    it('for multiple events', done => {
+      fetchDonationFeed({ event: [{ uid: '1234' }, { uid: '5678' }] })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.blackbaud.services/v1/justgiving/donations'
+        )
+        expect(request.url).to.contain('eventId[]=1234')
+        expect(request.url).to.contain('eventId[]=5678')
+        done()
+      })
+    })
+
+    it('for an event and a campaign', done => {
+      fetchDonationFeed({ event: { uid: '1234' }, campaign: '1234-abcd-5678' })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.blackbaud.services/v1/justgiving/donations'
+        )
+        expect(request.url).to.contain('eventId=1234')
+        expect(request.url).to.contain('campaignGuid=1234-abcd-5678')
+        done()
+      })
+    })
   })
 })
