@@ -9,18 +9,6 @@ export const fetchDonationFeed = ({
   page,
   donationRef
 }) => {
-  if (charity) {
-    return fetchDonationFeedForCharity(charity)
-  }
-
-  if (event) {
-    return fetchDonationFeedForEvent(event)
-  }
-
-  if (campaign) {
-    return fetchDonationFeedForCampaign(campaign)
-  }
-
   if (page) {
     return fetchDonationFeedForPage(page)
   }
@@ -29,25 +17,28 @@ export const fetchDonationFeed = ({
     return fetchDonationFeedByRef(donationRef)
   }
 
+  if (charity || campaign || event) {
+    return fetchDonations({ charity, campaign, event })
+  }
+
   return Promise.reject(
     'You must pass a charity UID, page shortName, campaign GUID or donationRef for this method'
   )
 }
 
-const fetchDonations = params =>
+const mapValue = v => (Array.isArray(v) ? v.map(getUID) : getUID(v))
+
+const fetchDonations = ({ event, charity, campaign }) =>
   servicesAPI
-    .get('/v1/justgiving/donations', { params })
+    .get('/v1/justgiving/donations', {
+      params: {
+        eventId: mapValue(event),
+        charityId: mapValue(charity),
+        campaignGuid: mapValue(campaign)
+      }
+    })
     .then(response => response.data)
     .then(data => data.results)
-
-const fetchDonationFeedForCharity = charity =>
-  fetchDonations({ charityId: getUID(charity) })
-
-const fetchDonationFeedForEvent = event =>
-  fetchDonations({ eventId: getUID(event) })
-
-const fetchDonationFeedForCampaign = campaign =>
-  fetchDonations({ campaignGuid: getUID(campaign) })
 
 const fetchDonationFeedForPage = page =>
   get(`v1/fundraising/pages/${getShortName(page)}/donations?pageSize=150`).then(
