@@ -102,8 +102,9 @@ describe('Fetch JG Donation Feed', () => {
         expect(request.url).to.contain(
           'https://api.blackbaud.services/v1/justgiving/donations'
         )
-        expect(request.url).to.contain('campaignGuid[]=1234-abcd-5678')
-        expect(request.url).to.contain('campaignGuid[]=abcd-1234-9876')
+        expect(request.url).to.contain(
+          'campaignGuid=1234-abcd-5678,abcd-1234-9876'
+        )
         done()
       })
     })
@@ -128,8 +129,7 @@ describe('Fetch JG Donation Feed', () => {
         expect(request.url).to.contain(
           'https://api.blackbaud.services/v1/justgiving/donations'
         )
-        expect(request.url).to.contain('eventId[]=1234')
-        expect(request.url).to.contain('eventId[]=5678')
+        expect(request.url).to.contain('eventId=1234,5678')
         done()
       })
     })
