@@ -19,7 +19,9 @@ export const fetchDonationFeed = ({
   }
 
   if (charity || campaign || event) {
-    return fetchDonations({ charity, campaign, event })
+    return fetchDonations({ charity, campaign, event }).then(
+      data => data.results
+    )
   }
 
   return Promise.reject(
@@ -29,7 +31,7 @@ export const fetchDonationFeed = ({
 
 const mapValue = v => (Array.isArray(v) ? v.map(getUID) : getUID(v))
 
-const fetchDonations = ({ event, charity, campaign }) =>
+export const fetchDonations = ({ event, charity, campaign }) =>
   servicesAPI
     .get('/v1/justgiving/donations', {
       params: {
@@ -40,7 +42,6 @@ const fetchDonations = ({ event, charity, campaign }) =>
       paramsSerializer: params => qs.stringify(params, { arrayFormat: 'comma' })
     })
     .then(response => response.data)
-    .then(data => data.results)
 
 const fetchDonationFeedForPage = page =>
   get(`v1/fundraising/pages/${getShortName(page)}/donations?pageSize=150`).then(
