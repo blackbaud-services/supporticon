@@ -6,28 +6,37 @@ import {
   dataSource,
   paramsSerializer
 } from '../../../utils/params'
+import { fetchDonations } from '../../feeds/justgiving'
 import { currencyCode } from '../../../utils/currencies'
 
 export const fetchDonationTotals = (params = required()) => {
   switch (dataSource(params)) {
     case 'event':
-      return client.get(
-        '/v1/events/leaderboard',
-        {
-          eventid: Array.isArray(params.event)
-            ? params.event.map(getUID)
-            : getUID(params.event),
-          currency: currencyCode(params.country)
-        },
-        {},
-        { paramsSerializer }
-      )
+      const requestParams = {
+        eventid: Array.isArray(params.event)
+          ? params.event.map(getUID)
+          : getUID(params.event),
+        currency: currencyCode(params.country)
+      }
+
+      return Promise.all([
+        fetchDonations(params),
+        client.get(
+          '/v1/events/leaderboard',
+          requestParams,
+          {},
+          { paramsSerializer }
+        )
+      ]).then(([feed, totals]) => ({
+        ...feed.meta,
+        ...totals
+      }))
     case 'charity':
       // No API method supports total funds raised for a charity
       return required()
     default:
       return servicesAPI
-        .get(`/v1/justgiving/campaigns/${getUID(params.campaign)}/leaderboard`)
+        .get(`/v1/justgiving/campaigns/${getUID(params.campaign)}`)
         .then(response => response.data)
   }
 }
@@ -43,6 +52,7 @@ export const deserializeDonationTotals = totals => ({
         0,
   offline: totals.offlineAmount || 0,
   donations:
+    totals.totalResults ||
     totals.numberOfDirectDonations ||
     get(totals, 'donationSummary.totalNumberOfDonations') ||
     0

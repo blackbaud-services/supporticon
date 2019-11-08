@@ -71,8 +71,14 @@ describe('Fetch Donation Totals', () => {
     it('uses the correct url to fetch totals for an event', done => {
       fetchJGDonationTotals({ event: 12345 })
       moxios.wait(() => {
-        const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal(
+        const firstRequest = moxios.requests.first()
+        const secondRequest = moxios.requests.mostRecent()
+
+        expect(firstRequest.url).to.equal(
+          'https://api.blackbaud.services/v1/justgiving/donations?eventId=12345'
+        )
+
+        expect(secondRequest.url).to.equal(
           'https://api.justgiving.com/v1/events/leaderboard?eventid=12345&currency=GBP'
         )
         done()
@@ -95,7 +101,7 @@ describe('Fetch Donation Totals', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign/leaderboard'
+          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign'
         )
         done()
       })
