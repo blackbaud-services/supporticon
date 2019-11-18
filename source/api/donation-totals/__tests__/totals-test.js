@@ -106,6 +106,17 @@ describe('Fetch Donation Totals', () => {
         done()
       })
     })
+
+    it('uses the correct url to fetch totals for a charity', done => {
+      fetchJGDonationTotals({ charity: 1234 })
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.include(
+          'https://api.justgiving.com/donationsleaderboards/v1/totals?charityIds=1234'
+        )
+        done()
+      })
+    })
   })
 })
 
