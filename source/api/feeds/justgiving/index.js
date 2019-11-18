@@ -1,6 +1,6 @@
 import qs from 'query-string'
 import { get, servicesAPI } from '../../../utils/client'
-import { getShortName, getUID } from '../../../utils/params'
+import { getUID } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
 export const fetchDonationFeed = ({
@@ -10,43 +10,35 @@ export const fetchDonationFeed = ({
   page,
   donationRef
 }) => {
-  if (page) {
-    return fetchDonationFeedForPage(page)
-  }
-
   if (donationRef) {
     return fetchDonationFeedByRef(donationRef)
   }
 
-  if (charity || campaign || event) {
-    return fetchDonations({ charity, campaign, event }).then(
+  if (charity || campaign || event || page) {
+    return fetchDonations({ charity, campaign, event, page }).then(
       data => data.results
     )
   }
 
   return Promise.reject(
-    'You must pass a charity UID, page shortName, campaign GUID or donationRef for this method'
+    'You must pass a charity UID, event ID, page ID, campaign GUID or donationRef for this method'
   )
 }
 
 const mapValue = v => (Array.isArray(v) ? v.map(getUID) : getUID(v))
 
-export const fetchDonations = ({ event, charity, campaign }) =>
+export const fetchDonations = ({ event, charity, campaign, page }) =>
   servicesAPI
     .get('/v1/justgiving/donations', {
       params: {
-        eventId: mapValue(event),
+        campaignGuid: mapValue(campaign),
         charityId: mapValue(charity),
-        campaignGuid: mapValue(campaign)
+        eventId: mapValue(event),
+        fundraisingPageId: mapValue(page)
       },
       paramsSerializer: params => qs.stringify(params, { arrayFormat: 'comma' })
     })
     .then(response => response.data)
-
-const fetchDonationFeedForPage = page =>
-  get(`v1/fundraising/pages/${getShortName(page)}/donations?pageSize=150`).then(
-    data => data.donations
-  )
 
 const fetchDonationFeedByRef = ref =>
   get(`v1/donation/ref/${ref}`).then(data => data.donations)
