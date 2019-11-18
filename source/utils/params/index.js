@@ -4,8 +4,16 @@ export const required = () => {
   throw new Error('Required parameter not supplied')
 }
 
+const isEmpty = val => {
+  if (Array.isArray(val)) {
+    return val.length === 0
+  } else {
+    return !val
+  }
+}
+
 export const dataSource = ({ event, charity, campaign }) => {
-  if (event) {
+  if (!isEmpty(event)) {
     if (isNaN(event) && isNaN(event.uid) && !Array.isArray(event)) {
       throw new Error('Event parameter must be an ID or an array')
     }
