@@ -70,14 +70,13 @@ describe('Fetch JG Donation Feed', () => {
     })
 
     it('for a page', done => {
-      fetchDonationFeed({ page: { shortName: 'test-page' } })
+      fetchDonationFeed({ page: 123456 })
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.justgiving.com/v1/fundraising/pages/test-page/donations'
+          'https://api.blackbaud.services/v1/justgiving/donations?fundraisingPageId=123456'
         )
-        expect(request.url).to.contain('pageSize=150')
         done()
       })
     })
