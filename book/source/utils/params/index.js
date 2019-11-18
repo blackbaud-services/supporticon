@@ -20,10 +20,6 @@ export const dataSource = ({ event, charity, campaign }) => {
 
     return 'event'
   } else if (charity && !campaign) {
-    if (isNaN(charity) && isNaN(charity.uid)) {
-      throw new Error('Charity parameter must be an ID')
-    }
-
     return 'charity'
   } else if (campaign) {
     return 'campaign'

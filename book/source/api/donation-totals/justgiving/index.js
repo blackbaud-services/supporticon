@@ -1,4 +1,4 @@
-import client, { servicesAPI } from '../../../utils/client'
+import client from '../../../utils/client'
 import get from 'lodash/get'
 import {
   getUID,
@@ -6,24 +6,23 @@ import {
   dataSource,
   paramsSerializer
 } from '../../../utils/params'
+import { fetchCampaign } from '../../campaigns'
 import { fetchDonations } from '../../feeds/justgiving'
 import { currencyCode } from '../../../utils/currencies'
 
 export const fetchDonationTotals = (params = required()) => {
   switch (dataSource(params)) {
     case 'event':
-      const requestParams = {
-        eventid: Array.isArray(params.event)
-          ? params.event.map(getUID)
-          : getUID(params.event),
-        currency: currencyCode(params.country)
-      }
-
       return Promise.all([
         fetchDonations(params),
         client.get(
           '/v1/events/leaderboard',
-          requestParams,
+          {
+            eventid: Array.isArray(params.event)
+              ? params.event.map(getUID)
+              : getUID(params.event),
+            currency: currencyCode(params.country)
+          },
           {},
           { paramsSerializer }
         )
@@ -32,28 +31,54 @@ export const fetchDonationTotals = (params = required()) => {
         ...totals
       }))
     case 'charity':
-      // No API method supports total funds raised for a charity
-      return required()
+      return client.get(
+        'donationsleaderboards/v1/totals',
+        {
+          charityIds: Array.isArray(params.charity)
+            ? params.charity.map(getUID)
+            : getUID(params.charity),
+          currencyCode: currencyCode(params.country)
+        },
+        {},
+        { paramsSerializer }
+      )
     default:
-      return servicesAPI
-        .get(`/v1/justgiving/campaigns/${getUID(params.campaign)}`)
-        .then(response => response.data)
+      const mapTotals = data => ({
+        ...data,
+        totalRaised:
+          data.donationSummary.totalAmount - data.donationSummary.totalGiftAid,
+        totalResults: data.donationSummary.totalNumberOfDonations
+      })
+
+      return Array.isArray(params.campaign)
+        ? Promise.all(params.campaign.map(getUID).map(fetchCampaign))
+          .then(campaigns => campaigns.map(mapTotals))
+          .then(campaigns =>
+            campaigns.reduce(
+              (acc, { totalRaised, totalResults }) => ({
+                totalRaised: acc.totalRaised + totalRaised,
+                totalResults: acc.totalResults + totalResults
+              }),
+              { totalRaised: 0, totalResults: 0 }
+            )
+          )
+        : fetchCampaign(getUID(params.campaign)).then(mapTotals)
   }
 }
 
 export const deserializeDonationTotals = totals => ({
   raised:
-    totals.currency === 'GBP'
-      ? totals.raisedAmountOfflineInGBP + totals.raisedAmount
-      : totals.totalRaised ||
-        totals.raisedAmount ||
-        get(totals, 'meta.totalAmount') ||
-        get(totals, 'donationSummary.totalAmount') ||
-        0,
-  offline: totals.offlineAmount || 0,
+    totals.totalRaised ||
+    totals.raisedAmount ||
+    get(totals, 'meta.totalAmount') ||
+    get(totals, 'donationSummary.totalAmount') ||
+    get(totals, 'totals.donationTotalAmount') ||
+    0,
+  offline: totals.offlineAmount || totals.raisedAmountOfflineInGBP || 0,
   donations:
     totals.totalResults ||
     totals.numberOfDirectDonations ||
     get(totals, 'donationSummary.totalNumberOfDonations') ||
+    get(totals, 'totals.donationCount') ||
     0
 })
