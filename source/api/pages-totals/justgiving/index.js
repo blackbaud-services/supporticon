@@ -1,19 +1,40 @@
-import { get, servicesAPI } from '../../../utils/client'
-import { getUID, required, dataSource } from '../../../utils/params'
+import { get } from '../../../utils/client'
+import {
+  getUID,
+  required,
+  dataSource,
+  paramsSerializer
+} from '../../../utils/params'
+import { currencyCode } from '../../../utils/currencies'
+
+const fetchEvent = id =>
+  get(`v1/event/${id}/pages`).then(response => response.totalFundraisingPages)
 
 export const fetchPagesTotals = (params = required()) => {
   switch (dataSource(params)) {
     case 'event':
-      return get(`v1/event/${getUID(params.event)}/pages`).then(
-        response => response.totalFundraisingPages
-      )
-    case 'charity':
-      // No API method supports total number of pages for a charity
-      return required()
+      return Array.isArray(params.event)
+        ? Promise.all(params.event.map(getUID).map(fetchEvent)).then(events =>
+          events.reduce((acc, total) => acc + total, 0)
+        )
+        : fetchEvent(getUID(params.event))
     default:
-      return servicesAPI
-        .get(`/v1/justgiving/campaigns/${getUID(params.campaign)}/leaderboard`)
-        .then(response => response.data)
-        .then(data => data.meta.totalResults)
+      return get(
+        'donationsleaderboards/v1/leaderboard',
+        {
+          ...params,
+          currencyCode: currencyCode(params.country)
+        },
+        {
+          mappings: {
+            charity: 'charityIds',
+            campaign: 'campaignGuids',
+            page: 'pageGuids',
+            excludePageIds: 'excludePageGuids',
+            limit: 'take'
+          }
+        },
+        { paramsSerializer }
+      ).then(data => data.totalResults)
   }
 }
