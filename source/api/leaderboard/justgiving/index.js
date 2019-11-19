@@ -11,6 +11,14 @@ import { currencySymbol, currencyCode } from '../../../utils/currencies'
  * @function fetches fundraising pages ranked by funds raised
  */
 export const fetchLeaderboard = (params = required()) => {
+  if (params.campaign && params.allPages) {
+    return recursivelyFetchJGLeaderboard(
+      getUID(params.campaign),
+      params.q,
+      params.limit
+    )
+  }
+
   switch (dataSource(params)) {
     case 'event':
       return get(
@@ -33,24 +41,37 @@ export const fetchLeaderboard = (params = required()) => {
           currencySymbol: currencySymbol(response.currency)
         }))
       )
-    case 'charity':
-      return get(`/v1/charity/${getUID(params.charity)}/leaderboard`, {
-        currency: currencyCode(params.country)
-      }).then(response =>
-        response.pages.map(page => ({
-          ...page,
-          raisedAmount: page.amount,
-          eventName: response.name,
-          currencyCode: response.currency,
-          currencySymbol: response.currencySymbol
-        }))
-      )
     default:
-      return recursivelyFetchJGLeaderboard(
-        getUID(params.campaign),
-        params.q,
-        params.limit
+      return get(
+        'donationsleaderboards/v1/leaderboard',
+        {
+          ...params,
+          currencyCode: currencyCode(params.country)
+        },
+        {
+          mappings: {
+            charity: 'charityIds',
+            campaign: 'campaignGuids',
+            excludePageIds: 'excludePageGuids',
+            limit: 'take'
+          }
+        },
+        { paramsSerializer }
       )
+        .then(response => response.results.filter(res => res.page))
+        .then(results =>
+          results.map(result => ({
+            ...result,
+            ...result.page,
+            eventName: [
+              result.page.owner.firstName,
+              result.page.owner.lastName
+            ].join(' '),
+            pageImages: [result.page.photo],
+            pageShortName: result.page.shortName,
+            numberOfSupporters: result.donationCount
+          }))
+        )
   }
 }
 
@@ -112,6 +133,7 @@ export const deserializeLeaderboard = (supporter, index) => {
           : null),
     name:
       supporter.pageTitle ||
+      supporter.name ||
       (supporter.pageOwner && supporter.pageOwner.fullName),
     position: index + 1,
     raised: parseFloat(
