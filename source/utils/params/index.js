@@ -19,9 +19,9 @@ export const dataSource = ({ event, charity, campaign }) => {
     }
 
     return 'event'
-  } else if (charity && !campaign) {
+  } else if (!isEmpty(charity) && isEmpty(campaign)) {
     return 'charity'
-  } else if (campaign) {
+  } else if (!isEmpty(campaign)) {
     return 'campaign'
   } else {
     return required()
