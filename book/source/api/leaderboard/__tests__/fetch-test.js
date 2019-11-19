@@ -135,7 +135,18 @@ describe('Fetch Leaderboards', () => {
     })
 
     it('uses the correct url to fetch a campaign leaderboard', done => {
-      fetchJGLeaderboard({ campaign: 'my-campaign' })
+      fetchJGLeaderboard({ campaign: '1234' })
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.justgiving.com/donationsleaderboards/v1/leaderboard?campaignGuids=1234'
+        )
+        done()
+      })
+    })
+
+    it('uses the correct url to fetch a campaign leaderboard with all pages', done => {
+      fetchJGLeaderboard({ campaign: 'my-campaign', allPages: true })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
@@ -198,8 +209,8 @@ describe('Fetch Leaderboards', () => {
       fetchJGLeaderboard({ charity: 4567 })
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/charity/4567/leaderboard?currency=GBP'
+        expect(request.url).to.include(
+          'https://api.justgiving.com/donationsleaderboards/v1/leaderboard?charityIds=4567'
         )
         done()
       })
