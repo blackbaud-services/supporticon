@@ -1,3 +1,5 @@
+import { getUID } from '../params'
+
 const defaultMappings = {
   campaign: 'campaign_id',
   charity: 'charity_id',
@@ -9,7 +11,13 @@ const defaultMappings = {
   type: 'group_by'
 }
 
-const defaultTransforms = {}
+const transformUid = v => (Array.isArray(v) ? v.map(getUID) : getUID(v))
+
+const defaultTransforms = {
+  charity: transformUid,
+  campaign: transformUid,
+  event: transformUid
+}
 
 export default (params = {}, options = {}) => {
   const {
