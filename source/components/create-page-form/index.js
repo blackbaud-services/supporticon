@@ -15,6 +15,7 @@ import { isJustGiving } from '../../utils/client'
 import { renderInput, renderFormFields } from '../../utils/form'
 import withGroups from './with-groups'
 import countries from '../../utils/countries'
+import * as addressHelpers from '../../utils/address'
 
 import AddressSearch from '../address-search'
 import CharitySearch from '../charity-search'
@@ -443,17 +444,17 @@ const form = props => {
       },
       extendedAddress: {},
       locality: {
-        label: 'Town/Suburb',
+        label: addressHelpers.localityLabel(props.country),
         required: true,
         validators: [validators.required('Please enter a town/suburb')]
       },
       region: {
-        label: 'State',
+        label: addressHelpers.regionLabel(props.country),
         required: true,
         validators: [validators.required('Please enter a state')]
       },
       postCode: {
-        label: 'Post Code',
+        label: addressHelpers.postCodeLabel(props.country),
         required: true,
         validators: [validators.required('Please enter a post code')]
       }
