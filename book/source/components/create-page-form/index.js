@@ -261,10 +261,18 @@ class CreatePageForm extends Component {
           <InputField {...form.fields.extendedAddress} {...inputField} />
         </GridColumn>
         <GridColumn>
-          <InputField {...form.fields.locality} {...inputField} />
+          <InputField
+            {...form.fields.locality}
+            {...inputField}
+            label={addressHelpers.localityLabel(form.values.country || country)}
+          />
         </GridColumn>
         <GridColumn md={country ? 6 : 4}>
-          <InputField {...form.fields.region} {...inputField} />
+          <InputField
+            {...form.fields.region}
+            {...inputField}
+            label={addressHelpers.regionLabel(form.values.country || country)}
+          />
         </GridColumn>
         {!country && (
           <GridColumn md={4}>
@@ -272,7 +280,11 @@ class CreatePageForm extends Component {
           </GridColumn>
         )}
         <GridColumn md={country ? 6 : 4}>
-          <InputField {...form.fields.postCode} {...inputField} />
+          <InputField
+            {...form.fields.postCode}
+            {...inputField}
+            label={addressHelpers.postCodeLabel(form.values.country || country)}
+          />
         </GridColumn>
       </Grid>
     )
@@ -435,6 +447,7 @@ const form = props => {
         initial: props.country,
         options: countries,
         required: true,
+        placeholder: 'Select Country',
         validators: [validators.required('Please select a country')]
       },
       streetAddress: {
@@ -444,17 +457,14 @@ const form = props => {
       },
       extendedAddress: {},
       locality: {
-        label: addressHelpers.localityLabel(props.country),
         required: true,
         validators: [validators.required('Please enter a town/suburb')]
       },
       region: {
-        label: addressHelpers.regionLabel(props.country),
         required: true,
         validators: [validators.required('Please enter a state')]
       },
       postCode: {
-        label: addressHelpers.postCodeLabel(props.country),
         required: true,
         validators: [validators.required('Please enter a post code')]
       }
