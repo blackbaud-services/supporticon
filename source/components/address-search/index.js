@@ -20,7 +20,7 @@ class AddressSearch extends Component {
     this.handleQuery = this.handleQuery.bind(this)
     this.handleSelect = this.handleSelect.bind(this)
     this.state = {
-      country: props.country,
+      country: props.country || '',
       results: [],
       status: null,
       value: null
@@ -52,7 +52,6 @@ class AddressSearch extends Component {
 
   render () {
     const { error, inputProps, validations } = this.props
-
     const { country, results, status, value } = this.state
 
     return (
@@ -65,6 +64,7 @@ class AddressSearch extends Component {
               onBlur={country => this.setState({ country })}
               onChange={country => this.setState({ country })}
               options={countries}
+              placeholder='Select Country'
               value={country}
             />
           </GridColumn>
