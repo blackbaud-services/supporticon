@@ -5,7 +5,7 @@ export default [
   { label: 'New Zealand', value: 'nz' },
   { label: 'Ireland', value: 'ie' },
   { label: 'Canada', value: 'ca' },
-  { label: '==============================', value: '', disabled: true },
+  { label: '==============================', disabled: true },
   { label: 'Afghanistan', value: 'af' },
   { label: 'Åland Islands', value: 'ax' },
   { label: 'Albania', value: 'al' },
