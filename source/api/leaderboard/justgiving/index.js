@@ -63,10 +63,11 @@ export const fetchLeaderboard = (params = required()) => {
           results.map(result => ({
             ...result,
             ...result.page,
-            eventName: [
-              result.page.owner.firstName,
-              result.page.owner.lastName
-            ].join(' '),
+            eventName: result.page.owner
+              ? [result.page.owner.firstName, result.page.owner.lastName].join(
+                ' '
+              )
+              : 'Unknown',
             pageImages: [result.page.photo],
             pageShortName: result.page.shortName,
             numberOfSupporters: result.donationCount

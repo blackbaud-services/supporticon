@@ -154,6 +154,7 @@ export const createPage = ({
   attribution,
   authType = 'Basic',
   campaignGuid,
+  campaignId,
   causeId,
   charityFunded,
   charityOptIn = false,
@@ -182,7 +183,7 @@ export const createPage = ({
     {
       activityType,
       attribution,
-      campaignGuid,
+      campaignGuid: campaignGuid || campaignId,
       causeId,
       charityFunded,
       charityId,

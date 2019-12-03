@@ -8,7 +8,12 @@ const defaults = {
 
 export const instance = axios.create(defaults)
 
-export const get = (endpoint = required(), params, options = {}, config = {}) =>
+export const get = (
+  endpoint = required(),
+  params,
+  options = {},
+  config = { headers: { Accept: 'application/json' } }
+) =>
   instance
     .get(endpoint, { params: map(params, options), ...config })
     .then(response => response.data)
