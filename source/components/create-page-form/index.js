@@ -458,15 +458,36 @@ const form = props => {
       extendedAddress: {},
       locality: {
         required: true,
-        validators: [validators.required('Please enter a town/suburb')]
+        validators: [
+          (val, { country }) =>
+            validators.required(
+              `Please enter a ${addressHelpers
+                .localityLabel(country)
+                .toLowerCase()}`
+            )(val)
+        ]
       },
       region: {
         required: true,
-        validators: [validators.required('Please enter a state')]
+        validators: [
+          (val, { country }) =>
+            validators.required(
+              `Please enter a ${addressHelpers
+                .regionLabel(country)
+                .toLowerCase()}`
+            )(val)
+        ]
       },
       postCode: {
         required: true,
-        validators: [validators.required('Please enter a post code')]
+        validators: [
+          (val, { country }) =>
+            validators.required(
+              `Please enter a ${addressHelpers
+                .postCodeLabel(country)
+                .toLowerCase()}`
+            )(val)
+        ]
       }
     })
   }
