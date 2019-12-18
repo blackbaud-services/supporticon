@@ -140,7 +140,8 @@ class SignupForm extends Component {
       'townOrCity',
       'countyOrState',
       'country',
-      'postcodeOrZipcode'
+      'postcodeOrZipcode',
+      'terms'
     ])
   }
 
@@ -153,6 +154,7 @@ class SignupForm extends Component {
       grid,
       gridColumn,
       includeAddress,
+      includeTerms,
       inputField,
       legend,
       submit
@@ -227,6 +229,8 @@ class SignupForm extends Component {
           )
         )}
 
+        {includeTerms && <InputField {...form.fields.terms} {...inputField} />}
+
         {this.customFields(form.fields).map(field => {
           const Tag = renderInput(field.type)
           return <Tag key={field.name} {...field} {...inputField} />
@@ -278,6 +282,11 @@ SignupForm.propTypes = {
   includeAddress: PropTypes.bool,
 
   /**
+   * Include terms checkbox
+   */
+  includeTerms: PropTypes.bool,
+
+  /**
    * Props to be passed to the InputField components
    */
   inputField: PropTypes.object,
@@ -316,6 +325,7 @@ SignupForm.defaultProps = {
 const form = props => {
   const includeCountry = !isJustGiving() && !props.country
   const includeAddress = isJustGiving() && props.includeAddress
+  const includeTerms = props.includeTerms
 
   const fields = merge(
     {
@@ -465,6 +475,41 @@ const form = props => {
         maxLength: 8,
         required: true,
         validators: [validators.required('Please enter your postcode / zip')]
+      }
+    },
+    includeTerms && {
+      terms: {
+        label: isJustGiving() ? (
+          <span>
+            I agree to JustGiving's{' '}
+            <a target='_blank' href='https://www.justgiving.com/info/privacy/'>
+              Privacy Policy
+            </a>{' '}
+            and{' '}
+            <a
+              target='_blank'
+              href='https://www.justgiving.com/info/terms-of-service/'
+            >
+              Terms of Service
+            </a>
+          </span>
+        ) : (
+          <span>
+            I agree to Everydayhero's{' '}
+            <a target='_blank' href='https://everydayhero.com/au/terms/privacy'>
+              Privacy Policy
+            </a>{' '}
+            and{' '}
+            <a target='_blank' href='https://everydayhero.com/au/terms'>
+              Terms and Conditions
+            </a>
+          </span>
+        ),
+        type: 'checkbox',
+        required: true,
+        validators: [
+          validators.required('You must agree to the terms to continue')
+        ]
       }
     },
     props.fields
