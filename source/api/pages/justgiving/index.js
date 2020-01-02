@@ -66,7 +66,8 @@ export const deserializePage = page => {
         page.target ||
         0
     ),
-    teamPageId: null,
+    teamPageId: page.teams.length > 0 ? page.teams[0].teamGuid : null,
+    teamShortName: page.teams.length > 0 ? page.teams[0].teamShortName : null,
     url,
     uuid: null
   }
