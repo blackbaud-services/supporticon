@@ -43,6 +43,7 @@ export const deserializePage = page => {
     groups: null,
     id: page.pageId || page.Id,
     image: getImage(),
+    imageCount: page.imageCount,
     name:
       page.title ||
       page.pageTitle ||
