@@ -27,7 +27,7 @@ export const deserializePage = page => {
       : page.fitness_activity_overview,
     fitnessGoal: page.fitness_goal,
     groups: page.page_groups,
-    hasUpdatedImage: page.meta.has_set_image,
+    hasUpdatedImage: page.meta && page.meta.has_set_image,
     id: page.id,
     image: page.image && page.image.large_image_url,
     name: page.name,
