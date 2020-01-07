@@ -2,12 +2,12 @@ import { get, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 export const deserializeTeam = team => ({
-  id: team.id,
-  leader: null,
+  id: team.teamGuid,
+  leader: team.captain.userGuid,
   name: team.name,
-  pages: team.teamMembers,
-  raised: team.raisedSoFar,
-  slug: team.teamShortName
+  pages: team.membership.members,
+  raised: team.donationSummary.totalAmount,
+  slug: team.shortName
 })
 
 export const fetchTeams = () => {
@@ -17,7 +17,7 @@ export const fetchTeams = () => {
 }
 
 export const fetchTeam = (id = required()) => {
-  return get(`v1/team/${id}`)
+  return get(`v1/teams/${id}/full`)
 }
 
 export const createTeam = ({

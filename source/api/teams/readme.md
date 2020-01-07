@@ -67,12 +67,12 @@ fetchTeams({
 
 **Purpose**
 
-Fetch a team for an authenticated user.
+Fetch a specific team by id.
 
 **Params**
 
 - `id` (Integer) Team ID _required_
-- `token` (String) OAuth User Token _required_
+- `token` (String) OAuth User Token _required EDH only_
 
 **Returns**
 
