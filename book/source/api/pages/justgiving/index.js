@@ -41,6 +41,7 @@ export const deserializePage = page => {
     donationUrl: [url, 'donate'].join('/'),
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
     groups: null,
+    hasUpdatedImage: page.imageCount !== '1',
     id: page.pageId || page.Id,
     image: getImage(),
     name:
