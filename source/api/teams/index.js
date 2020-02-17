@@ -19,9 +19,8 @@ import {
 export const deserializeTeam = team =>
   isJustGiving() ? deserializeJGTeam(team) : deserializeEDHTeam(team)
 
-export const fetchTeams = params => {
-  return isJustGiving() ? fetchJGTeams(params) : fetchEDHTeams(params)
-}
+export const fetchTeams = params =>
+  isJustGiving() ? fetchJGTeams(params) : fetchEDHTeams(params)
 
 export const fetchTeam = params =>
   isJustGiving() ? fetchJGTeam(params) : fetchEDHTeam(params)
