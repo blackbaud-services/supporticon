@@ -14,11 +14,11 @@ describe('Fetch Teams', () => {
   describe('Fetch EDH Teams', () => {
     describe('Fetch many teams', () => {
       it('uses the correct url to fetch teams', done => {
-        fetchTeams({ token: '123456' })
+        fetchTeams({ campaign: 'abc123' })
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
           expect(request.url).to.contain(
-            'https://everydayhero.com/api/v2/teams'
+            'https://everydayhero.com/api/v2/pages?type=team&campaign_id=abc123'
           )
           done()
         })
@@ -32,13 +32,12 @@ describe('Fetch Teams', () => {
 
     describe('Fetch a single team', () => {
       it('uses the correct url to fetch a single team', done => {
-        fetchTeam({ id: '1234', token: '123456' })
+        fetchTeam('1234')
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
           expect(request.url).to.contain(
-            'https://everydayhero.com/api/v2/teams'
+            'https://everydayhero.com/api/v2/pages/1234'
           )
-          expect(request.url).to.contain('1234')
           done()
         })
       })
@@ -62,9 +61,16 @@ describe('Fetch Teams', () => {
     })
 
     describe('Fetch many teams', () => {
-      it('throws unsupported error', () => {
-        const test = () => fetchTeams()
-        expect(test).to.throw
+      it('uses the correct url to fetch teams', done => {
+        fetchTeams({ campaign: 'abc123' })
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.contain(
+            'https://api.justgiving.com/campaigns/v1/teams/search'
+          )
+          expect(request.url).to.contain('CampaignGuid=abc123')
+          done()
+        })
       })
     })
 
@@ -73,8 +79,9 @@ describe('Fetch Teams', () => {
         fetchTeam('my-team')
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
-          expect(request.url).to.contain('https://api.justgiving.com/v1/team')
-          expect(request.url).to.contain('my-team')
+          expect(request.url).to.contain(
+            'https://api.justgiving.com/campaigns/v1/teams/my-team/full'
+          )
           done()
         })
       })

@@ -55,8 +55,8 @@ describe('Join a Team', () => {
 
     it('hits the JG api with the correct url and data', done => {
       joinTeam({
-        id: 'my-team',
-        page: 'my-page',
+        teamSlug: 'my-team',
+        pageSlug: 'my-page',
         token: '012345abcdef'
       })
 
@@ -65,10 +65,10 @@ describe('Join a Team', () => {
         const data = JSON.parse(request.config.data)
 
         expect(request.url).to.contain(
-          'https://api.justgiving.com/v1/team/join'
+          'https://api.justgiving.com/v2/teams/join/my-team'
         )
         expect(request.config.headers['Authorization']).to.eql(
-          'Basic 012345abcdef'
+          'Bearer 012345abcdef'
         )
         expect(data.pageShortName).to.eql('my-page')
         done()

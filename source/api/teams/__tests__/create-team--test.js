@@ -58,20 +58,24 @@ describe('Create a Team', () => {
       createTeam({
         token: '012345abcdef',
         name: 'My Team',
-        slug: 'my-team',
         story: 'Lorem ipsum',
-        target: 1000
+        target: 1000,
+        campaignId: 'abc123',
+        captainSlug: 'captain'
       })
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         const data = JSON.parse(request.config.data)
 
-        expect(request.url).to.contain('https://api.justgiving.com/v1/team')
+        expect(request.url).to.contain('https://api.justgiving.com/v2/teams')
         expect(request.config.headers['Authorization']).to.eql(
-          'Basic 012345abcdef'
+          'Bearer 012345abcdef'
         )
-        expect(data.teamShortName).to.eql('my-team')
+        expect(data.name).to.eql('My Team')
+        expect(data.campaignGuid).to.eql('abc123')
+        expect(data.captainPageShortName).to.eql('captain')
+        expect(data.teamTarget).to.eql(1000)
         done()
       })
     })
