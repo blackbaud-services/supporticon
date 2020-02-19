@@ -10,5 +10,5 @@ ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
 
 # Publish docs to Github Pages
 npm install yarn -g
-yarn
+yarn install --ignore-engines
 npm run docs:deploy
