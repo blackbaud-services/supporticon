@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import URL from 'url-parse'
 import omit from 'lodash/omit'
 import snakeCase from 'lodash/snakeCase'
-import { getBaseURL, isJustGiving } from '../../utils/client'
+import { getBaseURL, isJustGiving, servicesAPI } from '../../utils/client'
 import {
   getLocalStorageItem,
   setLocalStorageItem
@@ -16,6 +16,7 @@ class ProviderOauthButton extends Component {
   constructor (props) {
     super(props)
     this.handleAuth = this.handleAuth.bind(this)
+    this.handleSuccess = this.handleSuccess.bind(this)
     this.providerUrl = this.providerUrl.bind(this)
 
     this.state = {
@@ -52,8 +53,7 @@ class ProviderOauthButton extends Component {
             const oauthState = getLocalStorageItem(key)
             if (oauthState.access_token) {
               clearInterval(this.localStoragePoll)
-              this.setState({ status: 'fetched' })
-              return onSuccess(oauthState)
+              return this.handleSuccess(oauthState)
             }
           }, 1000)
         }
@@ -67,12 +67,36 @@ class ProviderOauthButton extends Component {
             if (event.origin !== validSourceOrigin) {
               return
             }
-            setTimeout(() => this.setState({ status: 'fetched' }), 500)
-            return onSuccess(event.data)
+            return this.handleSuccess(event.data)
           },
           false
         )
       }
+    }
+  }
+
+  handleSuccess (data) {
+    const { onSuccess, provider } = this.props
+
+    if (provider === 'justgiving') {
+      servicesAPI
+        .post('/v1/justgiving/oauth/connect', data)
+        .then(response => response.data)
+        .then(data => ({
+          token: data.access_token,
+          refreshToken: data.refresh_token
+        }))
+        .then(data => {
+          this.setState({ status: 'fetched' })
+          onSuccess(data)
+        })
+        .catch(error => {
+          this.setState({ status: 'empty' })
+          return Promise.reject(error)
+        })
+    } else {
+      setTimeout(() => this.setState({ status: 'fetched' }), 500)
+      onSuccess(data)
     }
   }
 
@@ -102,18 +126,40 @@ class ProviderOauthButton extends Component {
   providerUrl () {
     const { clientId, provider, redirectUri } = this.props
 
-    const params = {
-      clientId,
-      forceProvider: provider,
-      redirectUri,
-      responseType: 'token'
+    if (isJustGiving()) {
+      if (provider !== 'justgiving') {
+        throw new Error(
+          `JustGiving does not support ${provider} authentication`
+        )
+      }
+
+      const params = {
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: 'code'
+      }
+
+      const urlParams = Object.keys(params)
+        .map(key => `${key}=${encodeURIComponent(params[key])}`)
+        .join('&')
+
+      const baseURL = getBaseURL().replace('api', 'identity')
+
+      return `${baseURL}/connect/authorize?${urlParams}&scope=openid+profile+email+account+fundraise+offline_access`
+    } else {
+      const params = {
+        clientId,
+        forceProvider: provider,
+        redirectUri,
+        responseType: 'token'
+      }
+
+      const urlParams = Object.keys(params)
+        .map(key => `${snakeCase(key)}=${encodeURIComponent(params[key])}`)
+        .join('&')
+
+      return `${getBaseURL()}/oauth/authorize?${urlParams}`
     }
-
-    const urlParams = Object.keys(params)
-      .map(key => `${snakeCase(key)}=${encodeURIComponent(params[key])}`)
-      .join('&')
-
-    return `${getBaseURL()}/oauth/authorize?${urlParams}`
   }
 
   parseOauthHash (hash) {
@@ -137,10 +183,6 @@ class ProviderOauthButton extends Component {
       : status === 'fetched'
         ? 'check'
         : provider
-
-    if (isJustGiving()) {
-      return null
-    }
 
     const actionProps = popup
       ? {
@@ -207,7 +249,13 @@ ProviderOauthButton.propTypes = {
   /**
    * The third-party provider to connect with
    */
-  provider: PropTypes.oneOf(['facebook', 'mapmyfitness', 'strava', 'fitbit']),
+  provider: PropTypes.oneOf([
+    'facebook',
+    'mapmyfitness',
+    'strava',
+    'fitbit',
+    'justgiving'
+  ]),
 
   /**
    * A valid return_to url for the specified EDH OAuthApplication
