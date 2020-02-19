@@ -7,7 +7,8 @@ node -v
 
 # Publish to NPM
 echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
-yarn
+npm install yarn -g
+yarn install --ignore-engines
 npm run build
 npm run deploy:prepare
 npm publish npm-supporticon

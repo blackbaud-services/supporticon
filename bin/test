@@ -2,5 +2,6 @@
 
 set -eu pipefail
 
-yarn
+npm install yarn -g
+yarn install --ignore-engines
 yarn test
