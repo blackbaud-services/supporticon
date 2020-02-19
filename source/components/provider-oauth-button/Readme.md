@@ -42,3 +42,16 @@ You can disable the default popup functionality by setting `popup` to false.
   useLocalStorage
 />
 ```
+
+### JustGiving OAuth
+
+```
+<ProviderOauthButton
+  clientId='44f34c65'
+  label='Login with JustGiving'
+  provider='justgiving'
+  redirectUri='https://oauth.blackbaud-sites.com/'
+  onClose={() => console.log('Popup closed!')}
+  onSuccess={(result) => alert(JSON.stringify(result))}
+/>
+```
