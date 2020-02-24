@@ -37,6 +37,7 @@ class DonationTicker extends Component {
       fetchAll,
       includeOffline,
       layout,
+      limit,
       page,
       sort,
       team
@@ -48,6 +49,7 @@ class DonationTicker extends Component {
       event,
       fetchAll,
       includeOffline,
+      limit,
       page,
       sort,
       team
@@ -194,6 +196,11 @@ DonationTicker.propTypes = {
    * Label text
    */
   label: PropTypes.string,
+
+  /**
+   * Limit of API requests to make (EDH)
+   */
+  limit: PropTypes.number,
 
   /**
    * Include offline donations

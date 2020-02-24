@@ -30,8 +30,9 @@ const fetchFeed = params => {
 const recursivelyFetchFeed = (params, feed = [], index = 1) =>
   fetchFeed({ ...params, index }).then(({ results, meta: { pagination } }) => {
     const updatedResults = [...feed, ...results]
+    const limit = params.limit || 50
 
-    return pagination.last_page || index >= 50
+    return pagination.last_page || index >= limit
       ? updatedResults
       : recursivelyFetchFeed(params, updatedResults, index + 1)
   })
