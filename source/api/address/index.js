@@ -16,17 +16,13 @@ import {
  * @function search an address
  */
 export const searchAddress = (query, region) =>
-  isJustGiving()
-    ? searchJGAddress(query, region)
-    : searchEDHAddress(query, region)
+  isJustGiving() ? searchJGAddress(query) : searchEDHAddress(query, region)
 
 /**
  * @function get address details
  */
 export const getAddressDetails = (id, region) =>
-  isJustGiving()
-    ? getJGAddressDetails(id, region)
-    : getEDHAddressDetails(id, region)
+  isJustGiving() ? getJGAddressDetails(id) : getEDHAddressDetails(id, region)
 
 /**
  * @function deserialize an address

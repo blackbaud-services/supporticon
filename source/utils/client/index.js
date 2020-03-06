@@ -75,6 +75,11 @@ const updateMetadataAPIClient = () => {
       : 'https://mds-engineering.everydayhero.com'
 }
 
+// JG WWW API Client
+export const jgClient = axios.create({
+  baseURL: 'https://www.justgiving.com'
+})
+
 export default {
   instance,
   get,
@@ -87,5 +92,6 @@ export default {
   isJustGiving,
   isStaging,
   servicesAPI,
-  metadataAPI
+  metadataAPI,
+  jgClient
 }
