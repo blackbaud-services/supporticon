@@ -1,6 +1,6 @@
 import moxios from 'moxios'
 import { searchAddress, getAddressDetails } from '..'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, jgClient, updateClient } from '../../../utils/client'
 
 describe('Search Address EDH', () => {
   beforeEach(() => {
@@ -76,34 +76,52 @@ describe('Get Address Details EDH', () => {
 
 describe('Search Address JG', () => {
   beforeEach(() => {
-    moxios.install(instance)
     updateClient({ baseURL: 'https://api.justgiving.com' })
+    moxios.install(instance)
+    moxios.install(jgClient)
   })
 
   afterEach(() => {
-    moxios.uninstall(instance)
     updateClient({ baseURL: 'https://everydayhero.com' })
+    moxios.uninstall(instance)
+    moxios.uninstall(jgClient)
   })
 
-  it('throws unsupported error', () => {
-    const test = () => searchAddress('Foo street')
-    expect(test).to.throw
+  it('uses the correct url', done => {
+    searchAddress('SW1A1AA')
+
+    moxios.wait(() => {
+      const request = moxios.requests.mostRecent()
+      expect(request.url).to.eql(
+        'https://www.justgiving.com/address/paf-tuples-by-postcode/SW1A1AA'
+      )
+      done()
+    })
   })
 })
 
 describe('Get Address Details JG', () => {
   beforeEach(() => {
-    moxios.install(instance)
     updateClient({ baseURL: 'https://api.justgiving.com' })
+    moxios.install(instance)
+    moxios.install(jgClient)
   })
 
   afterEach(() => {
-    moxios.uninstall(instance)
     updateClient({ baseURL: 'https://everydayhero.com' })
+    moxios.uninstall(instance)
+    moxios.uninstall(jgClient)
   })
 
-  it('throws unsupported error', () => {
-    const test = () => getAddressDetails('Foo street')
-    expect(test).to.throw
+  it('uses the correct url', done => {
+    getAddressDetails('1234')
+
+    moxios.wait(() => {
+      const request = moxios.requests.mostRecent()
+      expect(request.url).to.eql(
+        'https://www.justgiving.com/address/paf-by-id/1234'
+      )
+      done()
+    })
   })
 })
