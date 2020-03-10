@@ -22,19 +22,19 @@ export const fetchTeam = (id = required()) => {
 }
 
 export const createTeam = ({ token = required(), page = required(), name }) => {
+  const payload = {
+    individual_page_id: page,
+    name
+  }
+
+  const options = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
   return client
-    .post(
-      'api/v2/teams',
-      {
-        individual_page_id: page,
-        name
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    )
+    .post('api/v2/teams', payload, options)
     .then(response => response.page)
 }
 
@@ -43,17 +43,17 @@ export const joinTeam = ({
   page = required(),
   token = required()
 }) => {
+  const payload = {
+    individual_page_id: page
+  }
+
+  const options = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
   return client
-    .post(
-      `api/v2/teams/${id}/join-requests`,
-      {
-        individual_page_id: page
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    )
+    .post(`api/v2/teams/${id}/join-requests`, payload, options)
     .then(response => response.team)
 }
