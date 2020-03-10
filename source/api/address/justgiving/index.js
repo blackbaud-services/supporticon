@@ -2,8 +2,6 @@ import { jgClient } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 export const searchAddress = (postcode = required()) => {
-  console.log('hello')
-
   return jgClient
     .get(`/address/paf-tuples-by-postcode/${postcode}`)
     .then(({ data }) => {
