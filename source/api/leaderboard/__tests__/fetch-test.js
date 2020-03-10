@@ -145,6 +145,17 @@ describe('Fetch Leaderboards', () => {
       })
     })
 
+    it('uses the correct url to fetch a team leaderboard', done => {
+      fetchJGLeaderboard({ campaign: '1234', type: 'team' })
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.justgiving.com/donationsleaderboards/v1/leaderboard?campaignGuids=1234&groupBy=TeamGuid'
+        )
+        done()
+      })
+    })
+
     it('uses the correct url to fetch a campaign leaderboard with all pages', done => {
       fetchJGLeaderboard({ campaign: 'my-campaign', allPages: true })
       moxios.wait(() => {
