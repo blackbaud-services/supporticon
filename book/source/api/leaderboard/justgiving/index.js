@@ -42,6 +42,8 @@ export const fetchLeaderboard = (params = required()) => {
         }))
       )
     default:
+      const isTeam = params.type === 'team'
+
       return get(
         'donationsleaderboards/v1/leaderboard',
         {
@@ -53,26 +55,50 @@ export const fetchLeaderboard = (params = required()) => {
             charity: 'charityIds',
             campaign: 'campaignGuids',
             excludePageIds: 'excludePageGuids',
-            limit: 'take'
+            limit: 'take',
+            type: 'groupBy'
+          },
+          transforms: {
+            type: val => (isTeam ? 'TeamGuid' : 'PageGuid')
           }
         },
         { paramsSerializer }
       )
-        .then(response => response.results.filter(res => res.page))
-        .then(results =>
-          results.map(result => ({
-            ...result,
-            ...result.page,
-            eventName: [
-              result.page.owner.firstName,
-              result.page.owner.lastName
-            ].join(' '),
-            pageImages: [result.page.photo],
-            pageShortName: result.page.shortName,
-            numberOfSupporters: result.donationCount
-          }))
-        )
+        .then(response => response.results)
+        .then(results => filterLeaderboardResults(results, isTeam))
+        .then(results => mapLeaderboardResults(results, isTeam))
   }
+}
+
+const filterLeaderboardResults = (results = [], isTeam) => {
+  return results.filter(result => (isTeam ? result.team : result.page))
+}
+
+const mapLeaderboardResults = (results = [], isTeam) => {
+  return results.map(result => {
+    return isTeam
+      ? {
+        ...result,
+        ...result.team,
+        eventName: [
+          result.team.captain.firstName,
+          result.team.captain.lastName
+        ].join(' '),
+        pageImages: [result.team.coverImageName],
+        numberOfSupporters: result.team.numberOfSupporters
+      }
+      : {
+        ...result,
+        ...result.page,
+        eventName: [
+          result.page.owner.firstName,
+          result.page.owner.lastName
+        ].join(' '),
+        pageImages: [result.page.photo],
+        pageShortName: result.page.shortName,
+        numberOfSupporters: result.donationCount
+      }
+  })
 }
 
 const recursivelyFetchJGLeaderboard = (
@@ -137,7 +163,11 @@ export const deserializeLeaderboard = (supporter, index) => {
       (supporter.pageOwner && supporter.pageOwner.fullName),
     position: index + 1,
     raised: parseFloat(
-      supporter.amount || supporter.raisedAmount || supporter.amountRaised || 0
+      supporter.amount ||
+        supporter.raisedAmount ||
+        supporter.amountRaised ||
+        supporter.donationAmount ||
+        0
     ),
     slug: supporter.pageShortName,
     subtitle: supporter.eventName,
