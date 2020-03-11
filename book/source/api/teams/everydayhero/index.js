@@ -1,54 +1,41 @@
-import { get, post } from '../../../utils/client'
+import get from 'lodash/get'
+import * as client from '../../../utils/client'
+import { fetchPages } from '../../pages'
 import { required } from '../../../utils/params'
 
 export const deserializeTeam = team => ({
   id: team.id,
-  leader: team.leader_id,
+  leader: team.team_leader_page_uid,
   name: team.name,
-  pages: team.page_ids,
-  raised: null,
-  slug: null
+  owner: team.owner_uid,
+  pages: team.team_member_uids,
+  raised: get(team, 'amount.cents'),
+  slug: team.slug,
+  url: team.url
 })
 
-export const fetchTeams = ({ token = required() }) => {
-  return get(
-    'api/v2/teams',
-    {},
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  ).then(response => response.teams)
-}
+export const fetchTeams = args =>
+  fetchPages({ type: 'team', allPages: true, ...args })
 
-export const fetchTeam = ({ id = required(), token = required() }) => {
-  return get(
-    `api/v2/teams/${id}`,
-    {},
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  ).then(response => response.team)
+export const fetchTeam = (id = required()) => {
+  return client.get(`api/v2/pages/${id}`).then(response => response.page)
 }
 
 export const createTeam = ({ token = required(), page = required(), name }) => {
-  return post(
-    'api/v2/teams',
-    {
-      individual_page_id: page,
-      name
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+  const payload = {
+    individual_page_id: page,
+    name
+  }
+
+  const options = {
+    headers: {
+      Authorization: `Bearer ${token}`
     }
-  ).then(response => response.page)
+  }
+
+  return client
+    .post('api/v2/teams', payload, options)
+    .then(response => response.page)
 }
 
 export const joinTeam = ({
@@ -56,15 +43,17 @@ export const joinTeam = ({
   page = required(),
   token = required()
 }) => {
-  return post(
-    `api/v2/teams/${id}/join-requests`,
-    {
-      individual_page_id: page
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+  const payload = {
+    individual_page_id: page
+  }
+
+  const options = {
+    headers: {
+      Authorization: `Bearer ${token}`
     }
-  ).then(response => response.team)
+  }
+
+  return client
+    .post(`api/v2/teams/${id}/join-requests`, payload, options)
+    .then(response => response.team)
 }
