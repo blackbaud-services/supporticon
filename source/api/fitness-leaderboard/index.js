@@ -8,7 +8,7 @@ import {
 import {
   deserializeFitnessLeaderboard as deserializeJGFitnessLeaderboard,
   fetchFitnessLeaderboard as fetchJGFitnessLeaderboard
-} from './everydayhero'
+} from './justgiving'
 
 /**
  * @function fetches supporter pages ranked by fitness activities
