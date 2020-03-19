@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
 import { fetchFitnessLeaderboard } from '../../api/fitness-leaderboard'
+import { fetchFitnessTotals } from '../../api/fitness-totals'
+import { isJustGiving } from '../../utils/client'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -11,6 +13,8 @@ class TotalElevation extends Component {
   constructor () {
     super()
     this.fetchData = this.fetchData.bind(this)
+    this.fetchEDHElevation = this.fetchEDHElevation.bind(this)
+    this.fetchJGElevation = this.fetchJGElevation.bind(this)
     this.state = { status: 'fetching' }
   }
 
@@ -26,25 +30,34 @@ class TotalElevation extends Component {
   }
 
   fetchData () {
+    const fetchElevation = isJustGiving()
+      ? this.fetchJGElevation
+      : this.fetchEDHElevation
+
+    fetchElevation()
+      .then(data => this.setState({ data, status: 'fetched' }))
+      .catch(error => {
+        this.setState({ status: 'failed' })
+        return Promise.reject(error)
+      })
+  }
+
+  fetchEDHElevation () {
     const { activity, campaign, includeManual } = this.props
 
-    fetchFitnessLeaderboard({
+    return fetchFitnessLeaderboard({
       activity,
       campaign,
       include_manual: includeManual,
       limit: 9999,
       sortBy: 'elevation'
-    })
-      .then(data =>
-        this.setState({
-          data: this.calculateTotal(data),
-          status: 'fetched'
-        })
-      )
-      .catch(error => {
-        this.setState({ status: 'failed' })
-        return Promise.reject(error)
-      })
+    }).then(data => this.calculateTotal(data))
+  }
+
+  fetchJGElevation () {
+    const { campaign } = this.props
+
+    return fetchFitnessTotals(campaign).then(totals => totals.elevation)
   }
 
   calculateTotal (data) {

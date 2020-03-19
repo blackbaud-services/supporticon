@@ -63,6 +63,7 @@ const addValuesFromAllCampaigns = (campaigns, fitnessType, key) =>
   )
 
 const filterTypes = (results, types) => {
-  const filtered = pick(results, types)
+  const typesArray = typeof types === 'string' ? [types] : types
+  const filtered = pick(results, typesArray)
   return !isEmpty(filtered) ? filtered : results
 }

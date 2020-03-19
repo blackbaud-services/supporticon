@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
-import { fetchCampaign, fetchCampaigns } from '../../api/campaigns'
+import { fetchFitnessTotals } from '../../api/fitness-totals'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -26,69 +26,16 @@ class TotalDistance extends Component {
   }
 
   fetchData () {
-    const { campaign } = this.props
+    const { activity, campaign } = this.props
 
-    if (Array.isArray(campaign)) {
-      fetchCampaigns({ ids: campaign })
-        .then(data => {
-          let total = 0
-          data.map(campaign => {
-            total += this.calculateTotal(campaign)
-          })
-
-          this.setState({
-            status: 'fetched',
-            data: total
-          })
-        })
-        .catch(error => {
-          this.setState({ status: 'failed' })
-          return Promise.reject(error)
-        })
-    } else {
-      fetchCampaign(campaign)
-        .then(data => {
-          this.setState({
-            status: 'fetched',
-            data: this.calculateTotal(data)
-          })
-        })
-        .catch(error => {
-          this.setState({ status: 'failed' })
-          return Promise.reject(error)
-        })
-    }
-  }
-
-  getDistanceForActivityType (overview, type) {
-    const metrics = overview[type]
-    return metrics ? metrics.distance_in_meters : 0
-  }
-
-  calculateTotal (data) {
-    const { activity } = this.props
-    switch (typeof activity) {
-      case 'string':
-        return this.getDistanceForActivityType(
-          data.fitness_activity_overview,
-          activity
-        )
-      case 'object':
-        return activity.reduce(
-          (total, type) =>
-            (total += this.getDistanceForActivityType(
-              data.fitness_activity_overview,
-              type
-            )),
-          0
-        )
-      default:
-        return Object.keys(data.fitness_activity_overview).reduce(
-          (total, type) =>
-            (total += data.fitness_activity_overview[type].distance_in_meters),
-          0
-        )
-    }
+    fetchFitnessTotals(campaign, activity)
+      .then(totals =>
+        this.setState({ status: 'fetched', data: totals.distance })
+      )
+      .catch(error => {
+        this.setState({ status: 'failed' })
+        return Promise.reject(error)
+      })
   }
 
   render () {
