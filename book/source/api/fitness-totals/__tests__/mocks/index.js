@@ -15,6 +15,15 @@ export const singleCampaign = {
   }
 }
 
+export const singleJGCampaign = {
+  status: 200,
+  response: {
+    totalAmount: 100,
+    totalAmountElevation: 50,
+    totalAmountTaken: 100
+  }
+}
+
 export const multipleCampaigns = {
   status: 200,
   response: {
