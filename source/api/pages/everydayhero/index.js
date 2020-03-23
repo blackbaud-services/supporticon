@@ -26,6 +26,7 @@ export const deserializePage = page => {
       ? page.metrics.fitness
       : page.fitness_activity_overview,
     fitnessGoal: page.fitness_goal,
+    fitnessTotalDistance: getTotalDistance(page),
     groups: page.page_groups,
     hasUpdatedImage: page.meta && page.meta.has_set_image,
     id: page.id,
@@ -42,6 +43,18 @@ export const deserializePage = page => {
     url: page.url,
     uuid: page.uuid
   }
+}
+
+const getTotalDistance = page => {
+  if (page.fitness_activity_overview) {
+    const overview = page.fitness_activity_overview
+
+    return Object.keys(overview).reduce((total, key) => {
+      return total + overview[key].distance_in_meters
+    }, 0)
+  }
+
+  return lodashGet(page, 'metrics.fitness.total_in_meters', 0)
 }
 
 export const fetchPages = (params = required()) => {
