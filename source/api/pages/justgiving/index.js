@@ -40,6 +40,9 @@ export const deserializePage = page => {
     createdAt: jsonDate(page.createdDate) || page.CreatedDate,
     donationUrl: [url, 'donate'].join('/'),
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
+    fitness: {},
+    fitnessGoal: 0,
+    fitnessDistanceTotal: lodashGet(page, 'fitness.totalAmount'),
     groups: null,
     hasUpdatedImage: page.imageCount !== '1',
     id: page.pageId || page.Id,
@@ -138,9 +141,19 @@ export const fetchPages = (params = required()) => {
   )
 }
 
-export const fetchPage = (page = required(), slug) => {
+export const fetchPage = (page = required(), slug, options = {}) => {
   const endpoint = slug ? 'pages' : isNaN(page) ? 'pages' : 'pagebyid'
-  return get(`/v1/fundraising/${endpoint}/${page}`)
+
+  const fetchers = [
+    get(`/v1/fundraising/${endpoint}/${page}`),
+    options.includeFitness && fetchPageFitness(page)
+  ]
+
+  return Promise.all(fetchers).then(([page, fitness]) => ({ ...page, fitness }))
+}
+
+const fetchPageFitness = page => {
+  return get(`/v1/fitness/fundraising/${page}`)
 }
 
 export const fetchPageDonationCount = (page = required()) => {
