@@ -33,16 +33,58 @@ describe('Fetch Fitness Activities', () => {
 
   describe('Fetch JG fitness activities', () => {
     beforeEach(() => {
-      updateClient({ baseURL: 'https://api.justgiving.com' })
+      updateClient({
+        baseURL: 'https://api.justgiving.com',
+        headers: { 'x-api-key': 'abcd1234' }
+      })
+      return moxios.install(instance)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
+      return moxios.uninstall(instance)
     })
 
-    it('is not supported', () => {
-      const test = () => fetchFitnessActivities({ campaign: 'campaign' })
+    it('throws with incorrect params', () => {
+      const test = () => fetchFitnessActivities({ charity: 'charity' })
       expect(test).to.throw
+    })
+
+    it('fetches activities for a campaign', done => {
+      fetchFitnessActivities({ campaign: '12345678' })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.justgiving.com/v1/fitness/campaign'
+        )
+        expect(request.url).to.contain('campaignGuid=12345678')
+        done()
+      })
+    })
+
+    it('fetches activities for a page', done => {
+      fetchFitnessActivities({ page: 'test-page' })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.justgiving.com/v1/fitness/fundraising/test-page'
+        )
+        done()
+      })
+    })
+
+    it('fetches activities for a team', done => {
+      fetchFitnessActivities({ team: 'test-team' })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.justgiving.com/v1/fitness/teams/test-team'
+        )
+        done()
+      })
     })
   })
 })
