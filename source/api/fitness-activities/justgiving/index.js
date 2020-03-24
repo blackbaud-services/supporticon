@@ -1,5 +1,7 @@
-import { get } from '../../../utils/client'
+import moment from 'moment'
+import { get, post } from '../../../utils/client'
 import { paramsSerializer, required } from '../../../utils/params'
+import { convertToMeters, convertToSeconds } from '../../../utils/units'
 import jsonDate from '../../../utils/jsonDate'
 
 export const deserializeFitnessActivity = (activity = required()) => ({
@@ -45,8 +47,40 @@ export const fetchFitnessActivities = (params = required()) => {
   return required()
 }
 
-export const createFitnessActivity = (params = required()) =>
-  Promise.reject(new Error('This method is not supported by JustGiving'))
+export const createFitnessActivity = ({
+  pageSlug = required(),
+  token = required(),
+  caption,
+  description,
+  distance = 0,
+  duration = 0,
+  durationUnit,
+  elevation = 0,
+  elevationUnit,
+  startedAt,
+  type = 'walk',
+  unit
+}) =>
+  post(
+    '/v1/fitness',
+    {
+      dateCreated: moment(startedAt).isBefore(moment(), 'day')
+        ? moment(startedAt).format('DD/MM/YYYY')
+        : null,
+      description: description,
+      distance: convertToMeters(distance, unit),
+      duration: convertToSeconds(duration, durationUnit),
+      elevation: convertToMeters(elevation, elevationUnit || unit),
+      shortName: pageSlug,
+      title: caption,
+      type
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
 
 export const updateFitnessActivity = (id = required(), params = required()) =>
   Promise.reject(new Error('This method is not supported by JustGiving'))
