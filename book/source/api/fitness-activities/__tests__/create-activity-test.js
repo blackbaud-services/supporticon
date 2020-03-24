@@ -58,22 +58,36 @@ describe('Create Fitness Activity', () => {
 
   describe('Create JG fitness activity', () => {
     beforeEach(() => {
-      updateClient({ baseURL: 'https://api.justgiving.com' })
+      updateClient({
+        baseURL: 'https://api.justgiving.com',
+        headers: { 'x-api-key': 'abcd1234' }
+      })
+      return moxios.install(instance)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
+      return moxios.uninstall(instance)
     })
 
-    it('is not supported', () => {
-      const test = () =>
-        createFitnessActivity({
-          token: 'token',
-          type: 'sport',
-          duration: 10
-        })
-
+    it('throws with missing required params', () => {
+      const test = () => createFitnessActivity({ distance: 123 })
       expect(test).to.throw
+    })
+
+    it('hits the JG api with the correct url and data', done => {
+      createFitnessActivity({
+        token: '012345abcdef',
+        pageSlug: 'my-page',
+        type: 'walk',
+        duration: 60
+      })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain('https://api.justgiving.com/v1/fitness')
+        done()
+      })
     })
   })
 })
