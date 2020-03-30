@@ -14,11 +14,12 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   externalId: !activity.ExternalId ? null : activity.ExternalId,
   eventId: activity.EventId,
   id: activity.FitnessGuid,
+  manual: activity.ActivityType === 'Manual',
   page: activity.PageGuid,
   slug: activity.PageShortName,
   teamId: activity.TeamGuid,
   caption: activity.Title,
-  type: activity.ActivityType
+  type: activity.Type || activity.ActivityType
 })
 
 export const fetchFitnessActivities = (params = required()) => {
