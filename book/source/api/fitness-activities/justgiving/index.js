@@ -14,30 +14,33 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   externalId: !activity.ExternalId ? null : activity.ExternalId,
   eventId: activity.EventId,
   id: activity.FitnessGuid,
+  manual: activity.ActivityType === 'Manual',
   page: activity.PageGuid,
   slug: activity.PageShortName,
   teamId: activity.TeamGuid,
   caption: activity.Title,
-  type: activity.ActivityType
+  type: activity.Type || activity.ActivityType
 })
 
 export const fetchFitnessActivities = (params = required()) => {
   const limit = params.limit || 1000
+  const offset = params.offset || 0
 
   if (params.page) {
-    return get(`/v1/fitness/fundraising/${params.page}`, { limit }).then(
-      response => response.activities
-    )
+    return get(`/v1/fitness/fundraising/${params.page}`, {
+      limit,
+      offset
+    }).then(response => response.activities)
   }
 
   if (params.team) {
-    return get(`/v1/fitness/teams/${params.team}`, { limit }).then(
+    return get(`/v1/fitness/teams/${params.team}`, { limit, offset }).then(
       response => response.activities
     )
   }
 
   if (params.campaign) {
-    const query = { campaignGuid: params.campaign }
+    const query = { campaignGuid: params.campaign, limit, offset }
 
     return get('/v1/fitness/campaign', query, {}, { paramsSerializer }).then(
       response => response.activities
