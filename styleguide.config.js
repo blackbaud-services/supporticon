@@ -87,14 +87,6 @@ module.exports = {
     {
       name: 'Authentication',
       components: () => [
-        path.resolve(__dirname, 'source/components/address-search', 'index.js'),
-        path.resolve(__dirname, 'source/components/charity-search', 'index.js'),
-        path.resolve(__dirname, 'source/components/charity-select', 'index.js'),
-        path.resolve(
-          __dirname,
-          'source/components/create-page-form',
-          'index.js'
-        ),
         path.resolve(__dirname, 'source/components/login-form', 'index.js'),
         path.resolve(
           __dirname,
@@ -112,6 +104,24 @@ module.exports = {
           'source/components/single-sign-on-link',
           'index.js'
         )
+      ]
+    },
+    {
+      name: 'Forms',
+      components: () => [
+        path.resolve(__dirname, 'source/components/address-search', 'index.js'),
+        path.resolve(__dirname, 'source/components/charity-search', 'index.js'),
+        path.resolve(__dirname, 'source/components/charity-select', 'index.js'),
+        path.resolve(
+          __dirname,
+          'source/components/create-fitness-form',
+          'index.js'
+        ),
+        path.resolve(
+          __dirname,
+          'source/components/create-page-form',
+          'index.js'
+        ),
       ]
     }
   ],
