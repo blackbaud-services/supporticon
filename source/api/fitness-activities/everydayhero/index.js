@@ -2,6 +2,7 @@ import moment from 'moment'
 import uuid from 'uuid/v1'
 import { destroy, get, post, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
+import { convertToMeters, convertToSeconds } from '../../../utils/units'
 
 export const deserializeFitnessActivity = (activity = required()) => ({
   calories: activity.calories,
@@ -43,32 +44,33 @@ export const fetchFitnessActivities = (params = required()) =>
 export const createFitnessActivity = ({
   token = required(),
   type = required(),
-  duration = required(),
-  manual = true,
-  startedAt = moment().toISOString(),
-  uid = uuid(),
-  visible = true,
   calories,
   caption,
   coordinates,
   description,
-  distance,
-  distanceInMeters,
+  distance = 0,
+  duration = 0,
+  durationUnit,
+  elevation = 0,
   elevationSeries,
+  elevationUnit,
+  manual = true,
   pageId,
+  startedAt = moment().toISOString(),
   trainer,
+  uid = uuid(),
   unit,
-  virtual
+  virtual,
+  visible = true
 }) =>
   post(`/api/v2/fitness_activities?access_token=${token}`, {
     calories,
     caption,
     coordinates,
     description,
-    distance_in_meters: distanceInMeters,
-    distance,
-    duration_in_seconds: duration,
-    elevation_series: elevationSeries,
+    distance_in_meters: convertToMeters(distance, unit),
+    duration_in_seconds: convertToSeconds(duration, durationUnit),
+    elevation: convertToMeters(elevation, elevationUnit || unit),
     manual,
     page_id: pageId,
     public: visible,
@@ -76,7 +78,6 @@ export const createFitnessActivity = ({
     trainer,
     type,
     uid,
-    unit,
     virtual
   })
 

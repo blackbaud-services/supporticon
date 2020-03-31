@@ -2163,10 +2163,10 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constructicon@^2.2.5:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-2.2.5.tgz#dbc1ec177222889e07d57c7a1f988824bfef2cfd"
-  integrity sha512-btbK3KoDkaY3KUwLcIh+fQVMtVV2L9AWYWp4TOc2ZwWEh5jhRRBDZpz92xST9Pw/kZJIrjAD1XF9v0ngiR1Cvw==
+constructicon@^2.2.10:
+  version "2.2.10"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-2.2.10.tgz#24b67065b1fbb4adaca7618292316af3c5acbc50"
+  integrity sha512-b04+uCUPJqvqJjxYbm+Vep8/NuNGjzZsmU4rr/2Zf6exd0fADTAqBC9CoMXO3oUZJ9YK0+kGvDmetGfnbwXNAw==
   dependencies:
     emotion "^9.2.6"
     emotion-server "^9.2.6"
