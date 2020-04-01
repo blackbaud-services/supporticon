@@ -36,3 +36,17 @@
   groupID={58}
 />
 ```
+
+*Custom amount leaderboard (1 per $1000 raised)*
+
+```
+<Leaderboard
+  campaign='au-23374'
+  currency={false}
+  limit={50}
+  multiplier={0.001}
+  offset={-500}
+  page={1}
+  pageSize={5}
+/>
+```

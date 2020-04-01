@@ -198,7 +198,14 @@ class Leaderboard extends Component {
   }
 
   renderLeader (leader, i) {
-    const { leaderboardItem = {} } = this.props
+    const {
+      currency,
+      format,
+      leaderboardItem = {},
+      multiplier,
+      offset
+    } = this.props
+    const formatMethod = currency ? 'formatCurrency' : 'format'
 
     return (
       <LeaderboardItem
@@ -206,7 +213,9 @@ class Leaderboard extends Component {
         title={leader.name}
         subtitle={leader.subtitle}
         image={leader.image}
-        amount={numbro(leader.raised).formatCurrency('0,0')}
+        amount={numbro((offset + leader.raised) * multiplier)[formatMethod](
+          format
+        )}
         href={leader.url}
         rank={leader.position}
         {...leaderboardItem}
@@ -320,16 +329,40 @@ Leaderboard.propTypes = {
   filter: PropTypes.any,
 
   /**
+   * Format page amount as currency?
+   */
+  currency: PropTypes.bool,
+
+  /**
+   * The number format of the page amount
+   */
+  format: PropTypes.string,
+
+  /**
+   * Offset to be applied to each page amount
+   */
+  offset: PropTypes.number,
+
+  /**
+   * The amount to multiply each page amount by for custom conversions
+   */
+  multiplier: PropTypes.number,
+
+  /**
    * Interval (in milliseconds) to refresh data from API
    */
   refreshInterval: PropTypes.number
 }
 
 Leaderboard.defaultProps = {
+  currency: true,
+  filter: {},
+  format: '0,0',
   limit: 10,
-  showPage: false,
+  multiplier: 1,
+  offset: 0,
   page: 1,
-  filter: {}
+  showPage: false
 }
 
 export default Leaderboard
