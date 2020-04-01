@@ -35,7 +35,12 @@ class CreateFitnessForm extends Component {
       const dataPayload = merge(data, {
         pageId,
         pageSlug,
-        token
+        token,
+        type: isJustGiving()
+          ? data.type
+          : data.type === 'ride'
+            ? 'bike'
+            : data.type
       })
 
       return Promise.resolve()
@@ -276,6 +281,7 @@ const form = props => {
           type: 'number',
           label: props.distanceLabel,
           initial: '0',
+          min: 0,
           required: true,
           validators: [
             validators.required(
@@ -287,7 +293,7 @@ const form = props => {
           label: 'Activity Type',
           type: 'select',
           initial: props.type,
-          options: ['walk', 'run', 'ride', 'swim', 'hike'].map(value => ({
+          options: props.types.map(value => ({
             value,
             label: capitalize(value)
           }))
@@ -318,7 +324,8 @@ const form = props => {
           duration: {
             type: 'number',
             label: 'Time',
-            initial: '0'
+            initial: '0',
+            min: 0
           },
           durationUnit: {
             type: 'select',
@@ -333,7 +340,8 @@ const form = props => {
           elevation: {
             type: 'number',
             label: 'Elevation',
-            initial: '0'
+            initial: '0',
+            min: 0
           },
           elevationUnit: {
             type: 'select',
