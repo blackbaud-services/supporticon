@@ -25,6 +25,7 @@
 <FitnessLeaderboard
   campaign='au-21937'
   type='team'
+  miles
 />
 ```
 
@@ -45,5 +46,41 @@
 <FitnessLeaderboard
   campaign='nz-1608'
   sortBy='elevation'
+  miles
+/>
+```
+
+*Leaderboard by Duration*
+
+```
+<FitnessLeaderboard
+  campaign='nz-1608'
+  sortBy='duration'
+  limit={50}
+  page={1}
+  pageSize={5}
+/>
+```
+
+*Leaderboard by Calories*
+
+```
+<FitnessLeaderboard
+  campaign='nz-1608'
+  sortBy='calories'
+/>
+```
+
+*Custom metric leaderboard (1 per 100km logged)*
+
+```
+<FitnessLeaderboard
+  campaign='au-21638'
+  limit={50}
+  multiplier={0.00001}
+  offset={-50000}
+  page={1}
+  pageSize={5}
+  units={false}
 />
 ```

@@ -1,6 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
+import {
+  formatDistance,
+  formatDuration,
+  formatElevation
+} from '../../utils/fitness'
 
 import Filter from 'constructicon/filter'
 import Grid from 'constructicon/grid'
@@ -198,21 +203,22 @@ class FitnessLeaderboard extends Component {
   }
 
   getMetric (leader) {
-    const { miles, sortBy } = this.props
+    const { miles, multiplier, offset, sortBy, units } = this.props
 
     switch (sortBy) {
       case 'calories':
-        return `${numbro(leader.calories).format('0,0')} cals`
+        return `${numbro((offset + leader.calories) * multiplier).format(
+          '0,0'
+        )} cals`
       case 'duration':
-        return `${numbro(leader.duration).format('0,0')} secs`
+        return formatDuration((offset + leader.duration) * multiplier)
       case 'elevation':
-        const elevation = miles ? leader.elevation * 3.28084 : leader.elevation
-        return `${numbro(elevation).format('0,0')} ${miles ? 'ft' : 'm'}`
+        return formatElevation((offset + leader.elevation) * multiplier, miles)
       default:
-        const distance = miles
-          ? leader.distance / 1609.34
-          : leader.distance / 1000
-        return `${numbro(distance).format('0,0')} ${miles ? 'mi.' : 'kms'}`
+        const distance = (offset + leader.distance) * multiplier
+        return units
+          ? formatDistance(distance, miles)
+          : numbro(distance).format('0,0')
     }
   }
 }
@@ -319,17 +325,35 @@ FitnessLeaderboard.propTypes = {
   filter: PropTypes.any,
 
   /**
+   * Include distance units?
+   */
+  units: PropTypes.bool,
+
+  /**
+   * Offset to be applied to each page distance
+   */
+  offset: PropTypes.number,
+
+  /**
+   * The amount to multiply each page distance by for custom conversions
+   */
+  multiplier: PropTypes.number,
+
+  /**
    * Interval (in milliseconds) to refresh data from API
    */
   refreshInterval: PropTypes.number
 }
 
 FitnessLeaderboard.defaultProps = {
-  limit: 10,
-  page: 1,
   filter: {},
+  limit: 10,
+  multiplier: 1,
+  offset: 0,
+  page: 1,
   showPage: false,
-  sortBy: 'distance'
+  sortBy: 'distance',
+  units: true
 }
 
 export default FitnessLeaderboard
