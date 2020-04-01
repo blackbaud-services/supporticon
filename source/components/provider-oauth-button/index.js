@@ -124,9 +124,25 @@ class ProviderOauthButton extends Component {
   }
 
   providerUrl () {
-    const { clientId, provider, redirectUri } = this.props
+    const { clientId, provider, redirectUri, token } = this.props
 
-    if (isJustGiving()) {
+    if (isJustGiving() && provider === 'strava') {
+      const baseURL = 'https://www.strava.com/oauth/authorize'
+
+      const params = {
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: 'code',
+        scope: 'read,activity:read',
+        state: token
+      }
+
+      const urlParams = Object.keys(params)
+        .map(key => `${key}=${encodeURIComponent(params[key])}`)
+        .join('&')
+
+      return `${baseURL}?${urlParams}`
+    } else if (isJustGiving()) {
       if (provider !== 'justgiving') {
         throw new Error(
           `JustGiving does not support ${provider} authentication`
@@ -205,6 +221,7 @@ class ProviderOauthButton extends Component {
           'onSuccess',
           'popupWindowFeatures',
           'redirectUri',
+          'token',
           'useLocalStorage'
         ])}
       >
@@ -260,7 +277,12 @@ ProviderOauthButton.propTypes = {
   /**
    * A valid return_to url for the specified EDH OAuthApplication
    */
-  redirectUri: PropTypes.string.isRequired
+  redirectUri: PropTypes.string.isRequired,
+
+  /**
+   * The token of the existing user (used when connecting JG account to Strava)
+   */
+  token: PropTypes.string
 }
 
 ProviderOauthButton.defaultProps = {
