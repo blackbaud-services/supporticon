@@ -64,10 +64,13 @@ class ProviderOauthButton extends Component {
         addEventListener(
           'message',
           event => {
-            if (event.origin !== validSourceOrigin) {
-              return
+            const data = event.data
+            const isValid =
+              event.origin === validSourceOrigin || data === 'strava connected'
+
+            if (isValid) {
+              return this.handleSuccess(data)
             }
-            return this.handleSuccess(event.data)
           },
           false
         )
