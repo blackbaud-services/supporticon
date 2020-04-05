@@ -20,7 +20,8 @@ class ProviderOauthButton extends Component {
     this.providerUrl = this.providerUrl.bind(this)
 
     this.state = {
-      status: 'empty'
+      status: 'empty',
+      success: false
     }
   }
 
@@ -82,8 +83,9 @@ class ProviderOauthButton extends Component {
     const { onSuccess, provider } = this.props
 
     if (provider === 'justgiving') {
-      servicesAPI
-        .post('/v1/justgiving/oauth/connect', data)
+      Promise.resolve()
+        .then(() => this.setState({ success: true }))
+        .then(() => servicesAPI.post('/v1/justgiving/oauth/connect', data))
         .then(response => response.data)
         .then(data => ({
           token: data.access_token,
@@ -98,6 +100,7 @@ class ProviderOauthButton extends Component {
           return Promise.reject(error)
         })
     } else {
+      this.setState({ success: true })
       setTimeout(() => this.setState({ status: 'fetched' }), 500)
       onSuccess(data)
     }
@@ -116,8 +119,9 @@ class ProviderOauthButton extends Component {
 
     this.isPopupClosed = setInterval(() => {
       if (popupWindow.closed) {
+        const { success } = this.state
         clearInterval(this.isPopupClosed)
-        this.setState({ status: 'empty' })
+        this.setState({ status: success ? 'loading' : 'empty' })
 
         if (typeof onClose === 'function') {
           return onClose(popupWindow)
