@@ -84,7 +84,7 @@ describe('Fetch Pages Totals', () => {
       moxios.wait(function () {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.include(
-          'https://api.justgiving.com/donationsleaderboards/v1/leaderboard?campaignGuids=12345'
+          'https://api.blackbaud.services/v1/justgiving/campaigns/12345/leaderboard'
         )
         done()
       })
