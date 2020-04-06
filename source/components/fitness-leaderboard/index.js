@@ -275,7 +275,7 @@ FitnessLeaderboard.propTypes = {
   excludeVirtual: PropTypes.bool,
 
   /**
-   * Unit
+   * Use imperial units (miles, feet, yards)
    */
   miles: PropTypes.bool,
 
