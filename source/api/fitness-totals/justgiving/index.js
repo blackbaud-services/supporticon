@@ -13,6 +13,7 @@ export const fetchFitnessTotals = (campaign = required()) => {
     .get('/v1/fitness/campaign', query, {}, { paramsSerializer })
     .then(result => ({
       distance: result.totalAmount,
+      duration: result.totalAmountTaken,
       elevation: result.totalAmountElevation
     }))
 }
