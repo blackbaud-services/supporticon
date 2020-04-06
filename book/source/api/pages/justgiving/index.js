@@ -46,7 +46,7 @@ export const deserializePage = page => {
     groups: null,
     hasUpdatedImage: page.imageCount !== '1',
     id: page.pageId || page.Id,
-    image: getImage(),
+    image: getImage().split('?')[0] + '?template=CrowdfundingOwnerAvatar',
     name:
       page.title ||
       page.pageTitle ||
