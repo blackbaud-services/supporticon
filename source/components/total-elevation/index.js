@@ -4,6 +4,7 @@ import numbro from 'numbro'
 import { fetchFitnessLeaderboard } from '../../api/fitness-leaderboard'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
 import { isJustGiving } from '../../utils/client'
+import { formatElevation } from '../../utils/fitness'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -79,8 +80,8 @@ class TotalElevation extends Component {
 
   renderAmount () {
     const { status, data } = this.state
-
-    const { format, offset, multiplier, suffix } = this.props
+    const { format, miles, multiplier, offset, units } = this.props
+    const amount = (offset + data) * multiplier
 
     switch (status) {
       case 'fetching':
@@ -88,7 +89,9 @@ class TotalElevation extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return `${numbro((offset + data) * multiplier).format(format)}${suffix}`
+        return units
+          ? formatElevation(amount, miles)
+          : numbro(amount).format(format)
     }
   }
 }
@@ -131,9 +134,14 @@ TotalElevation.propTypes = {
   label: PropTypes.string,
 
   /**
-   * The suffix to display
+   * Use imperial units (miles, feet, yards)
    */
-  suffix: PropTypes.string,
+  miles: PropTypes.bool,
+
+  /**
+   * Include elevation units?
+   */
+  units: PropTypes.bool,
 
   /**
    * The icon to use
@@ -159,11 +167,12 @@ TotalElevation.propTypes = {
 }
 
 TotalElevation.defaultProps = {
-  label: 'Total Elevation',
-  offset: 0,
-  multiplier: 1,
   format: '0,0',
-  suffix: 'm'
+  label: 'Total Elevation',
+  miles: false,
+  multiplier: 1,
+  offset: 0,
+  units: true
 }
 
 export default TotalElevation

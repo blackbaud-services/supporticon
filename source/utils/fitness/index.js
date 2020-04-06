@@ -34,7 +34,7 @@ export const formatDuration = duration => {
 
 export const formatElevation = (elevation, miles) => {
   if (miles) {
-    return numbro(units.convertMetersToFeet(elevation)).format('0,00') + ' ft'
+    return numbro(units.convertMetersToFeet(elevation)).format('0,0') + ' ft'
   } else {
     return numbro(elevation).format('0,0') + ' m'
   }
