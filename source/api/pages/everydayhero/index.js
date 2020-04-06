@@ -26,9 +26,11 @@ export const deserializePage = page => {
       ? page.metrics.fitness
       : page.fitness_activity_overview,
     fitnessGoal: page.fitness_goal,
-    fitnessTotalDistance: getTotalDistance(page),
+    fitnessDistanceTotal: getTotalDistance(page),
     groups: page.page_groups,
+    hasSelfDonated: page.meta && page.meta.self_donated,
     hasUpdatedImage: page.meta && page.meta.has_set_image,
+    hasUpdatedStory: page.meta && page.meta.has_set_story,
     id: page.id,
     image: page.image && page.image.large_image_url,
     name: page.name,

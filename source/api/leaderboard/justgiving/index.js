@@ -151,7 +151,7 @@ export const deserializeLeaderboard = (supporter, index) => {
       (supporter.pageImages
         ? `https://images${subdomain.replace('www', '')}.jg-cdn.com/image/${
           supporter.pageImages[0]
-        }?template=Size200x200`
+        }?template=Size186x186Crop`
         : supporter.pageOwner
           ? `https://${subdomain}.justgiving.com/fundraising/images/user-profile/${
             supporter.pageOwner.accountId
