@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
+import { formatDistance } from '../../utils/fitness'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -53,8 +54,8 @@ class TotalDistance extends Component {
 
   renderAmount () {
     const { status, data } = this.state
-
-    const { format, offset, multiplier, suffix } = this.props
+    const { format, miles, multiplier, offset, units } = this.props
+    const amount = (offset + data) * multiplier
 
     switch (status) {
       case 'fetching':
@@ -62,9 +63,9 @@ class TotalDistance extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return `${numbro(((offset + data) / 1000) * multiplier).format(
-          format
-        )}${suffix}`
+        return units
+          ? formatDistance(amount, miles)
+          : numbro(amount).format(format)
     }
   }
 }
@@ -102,9 +103,14 @@ TotalDistance.propTypes = {
   format: PropTypes.string,
 
   /**
-   * The suffix to be appended
+   * Use imperial units (miles, feet, yards)
    */
-  suffix: PropTypes.string,
+  miles: PropTypes.bool,
+
+  /**
+   * Include distance units?
+   */
+  units: PropTypes.bool,
 
   /**
    * The icon to use
@@ -130,11 +136,12 @@ TotalDistance.propTypes = {
 }
 
 TotalDistance.defaultProps = {
-  label: 'Total Distance',
-  offset: 0,
-  multiplier: 1,
   format: '0,0',
-  suffix: 'km'
+  label: 'Total Distance',
+  miles: false,
+  multiplier: 1,
+  offset: 0,
+  units: true
 }
 
 export default TotalDistance

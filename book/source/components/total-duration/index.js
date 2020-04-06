@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
+import { formatDuration } from '../../utils/fitness'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -53,8 +54,8 @@ class TotalDuration extends Component {
 
   renderAmount () {
     const { status, data } = this.state
-
-    const { format, offset, multiplier } = this.props
+    const { format, multiplier, offset, units } = this.props
+    const amount = (offset + data) * multiplier
 
     switch (status) {
       case 'fetching':
@@ -62,7 +63,7 @@ class TotalDuration extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return numbro(((offset + data) / 3600) * multiplier).format(format)
+        return units ? formatDuration(amount) : numbro(amount).format(format)
     }
   }
 }
@@ -117,16 +118,22 @@ TotalDuration.propTypes = {
   metric: PropTypes.object,
 
   /**
+   * Include time units?
+   */
+  units: PropTypes.bool,
+
+  /**
    * Interval (in milliseconds) to refresh data from API
    */
   refreshInterval: PropTypes.number
 }
 
 TotalDuration.defaultProps = {
+  format: '0,0',
   label: 'Total Duration',
-  offset: 0,
   multiplier: 1,
-  format: '0,0'
+  offset: 0,
+  units: true
 }
 
 export default TotalDuration
