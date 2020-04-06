@@ -6,6 +6,27 @@ export const convertMetersToKm = data => data / 1000
 export const convertMetersToMiles = data => data * 0.000621371
 export const convertMetersToFeet = data => data * 3.28084
 
+export const convertMetersToUnit = (amount, unit) => {
+  if (isNaN(amount)) {
+    return 0
+  }
+
+  switch (unit) {
+    case 'km':
+    case 'kilometers':
+    case 'kilometres':
+      return convertMetersToKm(amount)
+    case 'mi':
+    case 'miles':
+      return convertMetersToMiles(amount)
+    case 'ft':
+    case 'feet':
+      return convertMetersToFeet(amount)
+    default:
+      return Number(amount)
+  }
+}
+
 export const convertToMeters = (amount, unit = 'm') => {
   if (isNaN(amount)) {
     return 0
