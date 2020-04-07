@@ -4,10 +4,15 @@ import { fetchPage, fetchPages } from '../../pages'
 import { required } from '../../../utils/params'
 
 export const deserializeTeam = team => ({
+  active: team.active || team.state === 'active',
+  campaign: team.campaign_name,
+  campaignId: team.campaign_uid,
+  charity: team.charity_name,
+  charityId: team.charity_uid,
   id: team.id,
+  fitnessGoal: team.fitness_goal,
+  image: team.image && team.image.large_image_url,
   leader: team.team_leader_page_uid,
-  name: team.name,
-  owner: team.owner_uid,
   members: get(team, 'members', []).map(member => ({
     userId: member.owner_uid,
     image: get(member, 'image.large_image_url'),
@@ -16,10 +21,15 @@ export const deserializeTeam = team => ({
     slug: member.slug,
     status: member.status
   })),
+  name: team.name,
+  owner: team.owner_uid,
   pages: team.team_member_uids,
-  raised: get(team, 'amount.cents'),
+  raised: get(team, 'amount.cents') / 100,
   slug: team.slug,
-  url: team.url
+  story: team.story,
+  target: team.target_cents / 100,
+  url: team.url,
+  uuid: team.uuid
 })
 
 export const fetchTeams = args =>
