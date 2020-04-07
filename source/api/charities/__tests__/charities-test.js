@@ -119,5 +119,19 @@ describe('Search charities', () => {
         done()
       })
     })
+
+    it('searches charities within a campaign', done => {
+      searchCharities({ q: 'foo', campaign: 'test' })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.contain(
+          'https://api.justgiving.com/v1/campaign/autocomplete'
+        )
+        expect(request.url).to.contain('campaignGuid=test')
+        expect(request.url).to.contain('q=foo')
+        done()
+      })
+    })
   })
 })
