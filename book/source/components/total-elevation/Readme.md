@@ -7,6 +7,14 @@
 />
 ```
 
+### Multiple campaigns
+
+```
+<TotalElevation
+  campaign={['nz-1608', 'nz-1223']}
+/>
+```
+
 ### Mutiplier & offset
 
 ```
@@ -15,13 +23,5 @@
   multiplier={0.5}
   offset={1}
   units={false}
-/>
-```
-
-### Multiple campaigns
-
-```
-<TotalElevation
-  campaign={['nz-1608', 'nz-1223']}
 />
 ```
