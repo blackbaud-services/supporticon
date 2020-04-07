@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { fetchTeams, fetchTeam } from '..'
+import { fetchTeams, fetchTeam, fetchTeamBySlug } from '..'
 import { instance, updateClient } from '../../../utils/client'
 
 describe('Fetch Teams', () => {
@@ -42,6 +42,54 @@ describe('Fetch Teams', () => {
         })
       })
 
+      it('uses the correct urls to fetch a single team by slug', done => {
+        const params = {
+          slug: 'my-team',
+          campaignSlug: 'my-campaign',
+          countryCode: 'au'
+        }
+
+        fetchTeamBySlug(params)
+        moxios.wait(() => {
+          const v3Request = moxios.requests.at(0)
+          v3Request.respondWith({
+            status: 200,
+            response: {
+              page: {
+                id: 123
+              }
+            }
+          })
+
+          moxios.wait(() => {
+            const v2Request = moxios.requests.at(1)
+            v2Request.respondWith({
+              status: 200,
+              response: {
+                page: {
+                  team_member_uids: [1, 2, 3]
+                }
+              }
+            })
+
+            moxios.wait(() => {
+              const membersRequest = moxios.requests.at(2)
+
+              expect(v3Request.url).to.contain(
+                'https://everydayhero.com/api/v3/prerelease/pages/au/my-campaign/my-team'
+              )
+              expect(v2Request.url).to.contain(
+                'https://everydayhero.com/api/v2/pages/123'
+              )
+              expect(membersRequest.url).to.contain(
+                'https://everydayhero.com/api/v2/pages?ids=1,2,3'
+              )
+              done()
+            })
+          })
+        })
+      })
+
       it('throws if no params are passed in', () => {
         const test = () => fetchTeam()
         expect(test).to.throw
@@ -76,11 +124,22 @@ describe('Fetch Teams', () => {
 
     describe('Fetch a single team', () => {
       it('uses the correct url to fetch a single team', done => {
-        fetchTeam('my-team')
+        fetchTeam('uuid')
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
           expect(request.url).to.contain(
-            'https://api.justgiving.com/campaigns/v1/teams/my-team/full'
+            'https://api.justgiving.com/campaigns/v1/teams/uuid/full'
+          )
+          done()
+        })
+      })
+
+      it('uses the correct url to fetch a single team by short name', done => {
+        fetchTeamBySlug('my-team')
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.contain(
+            'https://api.justgiving.com/campaigns/v1/teams/by-short-name/my-team/full'
           )
           done()
         })

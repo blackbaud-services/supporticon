@@ -10,6 +10,14 @@ export const deserializeTeam = team => {
     id: team.teamGuid,
     leader: get(team, 'captain.firstName'),
     name: team.name,
+    members: get(team, 'membership.members', []).map(member => ({
+      userId: member.userGuid,
+      image: member.profileImage,
+      id: member.fundraisingPageGuid,
+      name: member.fundraisingPageName,
+      slug: member.fundraisingPageShortName,
+      status: member.fundraisingPageStatus
+    })),
     pages: team.numberOfSupporters,
     raised: get(team, 'donationSummary.totalAmount'),
     slug: team.shortName,
@@ -32,6 +40,10 @@ export const fetchTeams = (options = required()) => {
 
 export const fetchTeam = (id = required()) => {
   return client.get(`/campaigns/v1/teams/${id}/full`)
+}
+
+export const fetchTeamBySlug = (slug = required()) => {
+  return client.get(`/campaigns/v1/teams/by-short-name/${slug}/full`)
 }
 
 export const createTeam = params => {
