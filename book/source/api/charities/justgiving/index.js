@@ -2,6 +2,7 @@ import { get, isStaging } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 export const c = {
+  CAMPAIGN_SEARCH_ENDPOINT: 'v1/campaign/autocomplete',
   ENDPOINT: 'v1/charity',
   SEARCH_ENDPOINT: 'v1/onesearch'
 }
@@ -12,18 +13,29 @@ export const fetchCharities = (params = required()) =>
 export const fetchCharity = (id = required()) => get(`${c.ENDPOINT}/${id}`)
 
 export const searchCharities = (params = required()) => {
-  const finalParams = {
-    ...params,
-    i: 'Charity'
-  }
+  if (params.campaign) {
+    const finalParams = {
+      ...params,
+      field: 'charityNameSuggest',
+      maxResults: params.limit,
+      campaignGuid: params.campaign
+    }
 
-  return get(c.SEARCH_ENDPOINT, finalParams).then(
-    response =>
-      (response.GroupedResults &&
-        response.GroupedResults.length &&
-        response.GroupedResults[0].Results) ||
-      []
-  )
+    return get(c.CAMPAIGN_SEARCH_ENDPOINT, finalParams)
+  } else {
+    const finalParams = {
+      ...params,
+      i: 'Charity'
+    }
+
+    return get(c.SEARCH_ENDPOINT, finalParams).then(
+      response =>
+        (response.GroupedResults &&
+          response.GroupedResults.length &&
+          response.GroupedResults[0].Results) ||
+        []
+    )
+  }
 }
 
 export const deserializeCharity = charity => {
@@ -43,7 +55,8 @@ export const deserializeCharity = charity => {
     logo: charity.logoAbsoluteUrl || charity.Logo,
     name: charity.name || charity.Name,
     registrationNumber: charity.registrationNumber,
-    slug: charity.pageShortName || charity.Link.split('/').pop(),
+    slug:
+      charity.pageShortName || (charity.Link && charity.Link.split('/').pop()),
     url: charity.profilePageUrl
   }
 }
