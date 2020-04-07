@@ -2,15 +2,25 @@ import get from 'lodash/get'
 import slugify from 'slugify'
 import * as client from '../../../utils/client'
 import { required } from '../../../utils/params'
+import { parseText } from '../../../utils/justgiving'
 
 export const deserializeTeam = team => {
   const subdomain = client.isStaging() ? 'www.staging' : 'www'
+  const members = get(team, 'membership.members', [])
 
   return {
+    active: team.status === 'active',
+    campaign: get(team, 'campaign.title'),
+    campaignId: get(team, 'campaign.campaignGuid'),
+    charity: get(team, 'charity.name'),
+    charityId: get(team, 'charity.charityId'),
+    event: team.eventId,
     id: team.teamGuid,
+    image: `https://images${subdomain.replace('www', '')}.jg-cdn.com/image/${
+      team.coverPhotoImageId
+    }?template=CrowdfundingOwnerAvatar`,
     leader: get(team, 'captain.firstName'),
-    name: team.name,
-    members: get(team, 'membership.members', []).map(member => ({
+    members: members.map(member => ({
       userId: member.userGuid,
       image: member.profileImage,
       id: member.fundraisingPageGuid,
@@ -18,10 +28,15 @@ export const deserializeTeam = team => {
       slug: member.fundraisingPageShortName,
       status: member.fundraisingPageStatus
     })),
-    pages: team.numberOfSupporters,
+    name: team.name,
+    owner: get(team, 'captain.userGuid'),
+    pages: members.map(page => page.fundraisingPageGuid),
     raised: get(team, 'donationSummary.totalAmount'),
     slug: team.shortName,
-    url: `https://${subdomain}.justgiving.com/team/${team.shortName}`
+    story: parseText(team.story),
+    target: get(team, 'fundraisingConfiguration.targetAmount'),
+    url: `https://${subdomain}.justgiving.com/team/${team.shortName}`,
+    uuid: team.teamGuid
   }
 }
 
