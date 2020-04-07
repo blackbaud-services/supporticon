@@ -63,7 +63,9 @@ export const fetchPages = (params = required()) => {
   const { allPages, ...finalParams } = params
   const mappings = { type: 'type' }
   const transforms = allPages
-    ? {}
+    ? {
+      ids: v => (Array.isArray(v) ? v.join(',') : v)
+    }
     : {
       type: v => (v === 'individual' ? 'user' : v)
     }
