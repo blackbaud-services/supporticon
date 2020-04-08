@@ -14,12 +14,15 @@ export const deserializeTeam = team => ({
   image: team.image && team.image.large_image_url,
   leader: team.team_leader_page_uid,
   members: get(team, 'members', []).map(member => ({
-    userId: member.owner_uid,
-    image: get(member, 'image.large_image_url'),
     id: member.id,
+    image: get(member, 'image.large_image_url'),
     name: member.name,
+    raised: get(member, 'amount.cents') / 100,
     slug: member.slug,
-    status: member.status
+    status: member.status,
+    target: member.target_cents / 100,
+    url: member.url,
+    userId: member.owner_uid
   })),
   name: team.name,
   owner: team.owner_uid,

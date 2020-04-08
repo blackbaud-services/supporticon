@@ -27,8 +27,8 @@ export const fetchTeams = params =>
 export const fetchTeam = params =>
   isJustGiving() ? fetchJGTeam(params) : fetchEDHTeam(params)
 
-export const fetchTeamBySlug = params =>
-  isJustGiving() ? fetchJGTeamBySlug(params) : fetchEDHTeamBySlug(params)
+export const fetchTeamBySlug = (...args) =>
+  isJustGiving() ? fetchJGTeamBySlug(...args) : fetchEDHTeamBySlug(...args)
 
 export const createTeam = params =>
   isJustGiving() ? createJGTeam(params) : createEDHTeam(params)
