@@ -48,3 +48,8 @@ export const paramsSerializer = params =>
     })
     .filter(Boolean)
     .join('&')
+
+export const isURL = str => {
+  const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/
+  return urlRegex.test(str)
+}
