@@ -1,5 +1,5 @@
 import { get, isStaging } from '../../../utils/client'
-import { required } from '../../../utils/params'
+import { required, paramsSerializer, isURL } from '../../../utils/params'
 
 export const c = {
   CAMPAIGN_SEARCH_ENDPOINT: 'v1/campaign/autocomplete',
@@ -21,7 +21,12 @@ export const searchCharities = (params = required()) => {
       campaignGuid: params.campaign
     }
 
-    return get(c.CAMPAIGN_SEARCH_ENDPOINT, finalParams)
+    return get(
+      c.CAMPAIGN_SEARCH_ENDPOINT,
+      finalParams,
+      {},
+      { paramsSerializer }
+    )
   } else {
     const finalParams = {
       ...params,
@@ -41,6 +46,7 @@ export const searchCharities = (params = required()) => {
 export const deserializeCharity = charity => {
   const id = charity.id || charity.Id
   const subdomain = isStaging() ? 'www.staging' : 'www'
+  const imageSubdomain = isStaging() ? 'images.staging' : 'images'
 
   return {
     active: true,
@@ -52,7 +58,11 @@ export const deserializeCharity = charity => {
     events: charity.EventIds,
     getStartedUrl: `https://${subdomain}.justgiving.com/fundraising-page/creation/?cid=${id}`,
     id: charity.id || charity.Id,
-    logo: charity.logoAbsoluteUrl || charity.Logo,
+    logo:
+      charity.logoAbsoluteUrl ||
+      (isURL(charity.Logo)
+        ? charity.Logo
+        : `https://${imageSubdomain}.justgiving.com/image/${charity.Logo}`),
     name: charity.name || charity.Name,
     registrationNumber: charity.registrationNumber,
     slug:
