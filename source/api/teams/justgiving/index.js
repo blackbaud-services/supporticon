@@ -1,6 +1,7 @@
 import get from 'lodash/get'
 import slugify from 'slugify'
 import * as client from '../../../utils/client'
+import { fetchPage, deserializePage } from '../../pages'
 import { required } from '../../../utils/params'
 import { parseText } from '../../../utils/justgiving'
 
@@ -20,17 +21,24 @@ export const deserializeTeam = team => {
       team.coverPhotoImageId
     }?template=CrowdfundingOwnerAvatar`,
     leader: get(team, 'captain.firstName'),
-    members: members.map(member => ({
-      userId: member.userGuid,
-      image: member.profileImage,
-      id: member.fundraisingPageGuid,
-      name: member.fundraisingPageName,
-      slug: member.fundraisingPageShortName,
-      status: member.fundraisingPageStatus
-    })),
+    members: members.map(
+      member =>
+        member.pageId
+          ? deserializePage(member)
+          : {
+            id: member.fundraisingPageGuid,
+            name: member.fundraisingPageName,
+            slug: member.fundraisingPageShortName,
+            status: member.fundraisingPageStatus,
+            url: `https://${subdomain}.justgiving.com/fundraising/${
+              team.fundraisingPageShortName
+            }`,
+            userId: member.userGuid
+          }
+    ),
     name: team.name,
     owner: get(team, 'captain.userGuid'),
-    pages: members.map(page => page.fundraisingPageGuid),
+    pages: members.map(page => page.fundraisingPageGuid || page.pageGuid),
     raised: get(team, 'donationSummary.totalAmount'),
     slug: team.shortName,
     story: parseText(team.story),
@@ -57,8 +65,23 @@ export const fetchTeam = (id = required()) => {
   return client.get(`/campaigns/v1/teams/${id}/full`)
 }
 
-export const fetchTeamBySlug = (slug = required()) => {
-  return client.get(`/campaigns/v1/teams/by-short-name/${slug}/full`)
+export const fetchTeamBySlug = (slug = required(), options = {}) => {
+  return client
+    .get(`/campaigns/v1/teams/by-short-name/${slug}/full`)
+    .then(team => {
+      if (options.includePages) {
+        return Promise.all(
+          team.membership.members.map(page =>
+            fetchPage(page.fundraisingPageShortName)
+          )
+        ).then(members => ({
+          ...team,
+          membership: { ...team.membership, members }
+        }))
+      }
+
+      return Promise.resolve(team)
+    })
 }
 
 export const createTeam = params => {
