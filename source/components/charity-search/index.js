@@ -68,7 +68,7 @@ CharitySearch.propTypes = {
   /**
    * Only show charities in this campaign
    */
-  campaign: PropTypes.oneOf([PropTypes.string, PropTypes.array]),
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
    * The props to be passed to the input search component
