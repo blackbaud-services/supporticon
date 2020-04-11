@@ -1,5 +1,8 @@
 import moment from 'moment'
+import first from 'lodash/first'
 import lodashGet from 'lodash/get'
+import slugify from 'slugify'
+import uuid from 'uuid/v1'
 import { get, put, isStaging, servicesAPI } from '../../../utils/client'
 import { getUID, getShortName, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
@@ -9,6 +12,10 @@ export const deserializePage = page => {
   const url =
     page.Link ||
     `https://${subdomain}.justgiving.com/fundraising/${page.pageShortName}`
+
+  const linkDomain = isStaging()
+    ? 'link.staging.justgiving.com'
+    : 'link.justgiving.com'
 
   const getImage = () => {
     if (page.pageImages && page.pageImages.length > 0) {
@@ -38,7 +45,8 @@ export const deserializePage = page => {
     charity: page.charity || page.CharityId,
     coordinates: null,
     createdAt: jsonDate(page.createdDate) || page.CreatedDate,
-    donationUrl: [url, 'donate'].join('/'),
+    donationUrl: `http://${linkDomain}/v1/fundraisingpage/donate/pageId/${page.pageId ||
+      page.Id}`,
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
     fitness: {},
     fitnessGoal: 0,
@@ -164,9 +172,9 @@ export const fetchPageDonationCount = (page = required()) => {
 
 export const createPage = ({
   charityId = required(),
-  slug = required(),
   title = required(),
   token = required(),
+  slug,
   activityType,
   attribution,
   authType = 'Basic',
@@ -195,43 +203,55 @@ export const createPage = ({
   theme,
   videos
 }) => {
-  return put(
-    '/v1/fundraising/pages',
-    {
-      activityType,
-      attribution,
-      campaignGuid: campaignGuid || campaignId,
-      causeId,
-      charityFunded,
-      charityId,
-      charityOptIn,
-      companyAppealId,
-      consistentErrorResponses,
-      currency,
-      customCodes,
-      eventDate,
-      eventId,
-      eventName,
-      expiryDate,
-      images,
-      isGiftAidable: giftAid,
-      pageShortName: slug,
-      pageStory: story,
-      pageSummaryWhat: summaryWhat,
-      pageSummaryWhy: summaryWhy,
-      pageTitle: title,
-      reference,
-      rememberedPersonReference,
-      targetAmount: target,
-      teamId,
-      theme,
-      videos
-    },
-    {
-      headers: {
-        Authorization: [authType, token].join(' ')
+  return getPageShortName(title, slug).then(pageShortName => {
+    return put(
+      '/v1/fundraising/pages',
+      {
+        activityType,
+        attribution,
+        campaignGuid: campaignGuid || campaignId,
+        causeId,
+        charityFunded,
+        charityId,
+        charityOptIn,
+        companyAppealId,
+        consistentErrorResponses,
+        currency,
+        customCodes,
+        eventDate,
+        eventId,
+        eventName,
+        expiryDate,
+        images,
+        isGiftAidable: giftAid,
+        pageShortName,
+        pageStory: story,
+        pageSummaryWhat: summaryWhat,
+        pageSummaryWhy: summaryWhy,
+        pageTitle: title,
+        reference,
+        rememberedPersonReference,
+        targetAmount: target,
+        teamId,
+        theme,
+        videos
+      },
+      {
+        headers: {
+          Authorization: [authType, token].join(' ')
+        }
       }
-    }
+    )
+  })
+}
+
+export const getPageShortName = (title, slug) => {
+  const params = {
+    preferredName: slug || slugify(title, { lower: true })
+  }
+
+  return get('/v1/fundraising/pages/suggest', params).then(
+    result => first(result.Names) || uuid()
   )
 }
 

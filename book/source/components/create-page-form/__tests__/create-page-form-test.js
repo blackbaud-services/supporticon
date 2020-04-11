@@ -212,7 +212,7 @@ describe('Components | CreatePageForm', () => {
       const inputs = wrapper.find('input')
       const button = wrapper.find('button')
 
-      expect(inputs.length).to.eql(2)
+      expect(inputs.length).to.eql(1)
       expect(button.length).to.eql(1)
       expect(button.text()).to.eql('Create Page')
     })
@@ -242,7 +242,7 @@ describe('Components | CreatePageForm', () => {
         />
       )
       const inputs = wrapper.find('input')
-      expect(inputs.length).to.eql(3)
+      expect(inputs.length).to.eql(2)
     })
   })
 })
