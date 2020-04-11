@@ -25,7 +25,6 @@ import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
 import InputField from 'constructicon/input-field'
 import InputSelect from 'constructicon/input-select'
-import InputSlug from '../input-slug'
 
 class CreatePageForm extends Component {
   constructor () {
@@ -35,8 +34,7 @@ class CreatePageForm extends Component {
     this.state = {
       manualAddress: false,
       status: 'empty',
-      errors: [],
-      slugAvailable: false
+      errors: []
     }
   }
 
@@ -55,10 +53,6 @@ class CreatePageForm extends Component {
     } = this.props
 
     return form.submit().then(data => {
-      if (form.fields.slug && !this.state.slugAvailable) {
-        return
-      }
-
       this.setState({
         errors: [],
         status: 'fetching'
@@ -197,17 +191,6 @@ class CreatePageForm extends Component {
       >
         {this.getAutoRenderedFields(form.fields).map(field => {
           switch (field.name) {
-            case 'slug':
-              return (
-                <InputSlug
-                  key={field.name}
-                  {...field}
-                  {...inputField}
-                  handleFetch={slugAvailable =>
-                    this.setState({ slugAvailable })
-                  }
-                />
-              )
             case 'charityId':
               return field.type === 'search' ? (
                 <CharitySearch
@@ -389,21 +372,6 @@ const form = props => {
         maxLength: 255,
         placeholder: 'Title of your fundraising page',
         validators: [validators.required('Please enter a page title')]
-      },
-      slug: {
-        label: 'Page URL',
-        type: 'text',
-        order: 2,
-        required: true,
-        maxLength: 255,
-        placeholder: 'URL for your fundraising page',
-        onKeyDown: e => e.which === 32 && e.preventDefault(),
-        validators: [
-          validators.required('Please enter your page URL'),
-          validators.slug(
-            'Please enter a valid URL using only letters, numbers or hyphens (-)'
-          )
-        ]
       }
     }
     : {
