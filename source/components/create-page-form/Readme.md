@@ -96,3 +96,14 @@ const fields = {
   onSuccess={(result) => alert(JSON.stringify(result))}
 />
 ```
+
+### With initial values
+
+```
+<CreatePageForm
+  campaignId='au-0'
+  initialValues={{ birthday: '2010-01-01' }}
+  token='1234abcd'
+  onSuccess={(result) => alert(JSON.stringify(result))}
+/>
+```
