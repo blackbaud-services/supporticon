@@ -348,7 +348,12 @@ CreatePageForm.propTypes = {
   /**
    * Include address search in the page creation
    */
-  includeAddress: PropTypes.bool
+  includeAddress: PropTypes.bool,
+
+  /**
+   * Provide initial values for any fields
+   */
+  initialValues: PropTypes.object
 }
 
 CreatePageForm.defaultProps = {
@@ -356,6 +361,7 @@ CreatePageForm.defaultProps = {
   charityFunded: false,
   disableInvalidForm: false,
   fields: {},
+  initialValues: {},
   submit: 'Create Page'
 }
 
@@ -460,8 +466,21 @@ const form = props => {
     })
   }
 
+  const allFields = merge(defaultFields, optionalFields, props.fields)
+
+  const allFieldsWithValues = Object.keys(props.initialValues).reduce(
+    (fields, key) => ({
+      ...fields,
+      [key]: {
+        ...fields[key],
+        initial: props.initialValues[key]
+      }
+    }),
+    allFields
+  )
+
   return {
-    fields: merge(defaultFields, optionalFields, props.fields)
+    fields: allFieldsWithValues
   }
 }
 
