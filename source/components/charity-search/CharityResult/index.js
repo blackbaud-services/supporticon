@@ -4,21 +4,24 @@ import GridColumn from 'constructicon/grid-column'
 import Heading from 'constructicon/heading'
 import Image from 'constructicon/image'
 import InputSearchResult from 'constructicon/input-search-result'
-import RichText from 'constructicon/rich-text'
 
 const CharityResult = ({ isActive, result }) => (
-  <InputSearchResult isActive={isActive} spacing={1}>
-    <Grid align='center' spacing={0.5}>
-      <GridColumn xs={2}>
-        <Image alt={result.name} maxHeight={1.5} src={result.logo} />
-      </GridColumn>
+  <InputSearchResult isActive={isActive} spacing={{ x: 1, y: 0.25 }}>
+    <Grid align='center' spacing={0.25}>
       <GridColumn xs={10}>
-        <Heading size={0} spacing={{ b: 0.25 }}>
+        <Heading size={0} spacing={{ y: 0.375 }}>
           {result.name}
         </Heading>
-        <RichText lineClamp={2} size={-1}>
-          <p>{result.description}</p>
-        </RichText>
+      </GridColumn>
+      <GridColumn xs={2} xsAlign='right'>
+        {result.logo && (
+          <Image
+            alt={result.name}
+            maxHeight={1.25}
+            src={result.logo}
+            styles={{ display: 'inline-block' }}
+          />
+        )}
       </GridColumn>
     </Grid>
   </InputSearchResult>

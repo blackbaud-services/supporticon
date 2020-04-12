@@ -23,7 +23,7 @@ class CharitySearch extends Component {
 
     Promise.resolve()
       .then(() => this.setState({ status: 'fetching' }))
-      .then(() => searchCharities({ campaign, country, q }))
+      .then(() => searchCharities({ campaign, country, q, limit: 25 }))
       .then(results => results.map(deserializeCharity))
       .then(results => this.setState({ results, status: 'fetched' }))
       .catch(error => {
@@ -52,6 +52,7 @@ class CharitySearch extends Component {
         onSearch={this.handleQuery}
         ResultComponent={ResultComponent}
         results={results}
+        showMore
         status={status}
         value={value}
       />
