@@ -469,13 +469,17 @@ const form = props => {
   const allFields = merge(defaultFields, optionalFields, props.fields)
 
   const allFieldsWithValues = Object.keys(props.initialValues).reduce(
-    (fields, key) => ({
-      ...fields,
-      [key]: {
-        ...fields[key],
-        initial: props.initialValues[key]
+    (fields, key) => {
+      if (!fields[key]) return fields
+
+      return {
+        ...fields,
+        [key]: {
+          ...fields[key],
+          initial: props.initialValues[key]
+        }
       }
-    }),
+    },
     allFields
   )
 
