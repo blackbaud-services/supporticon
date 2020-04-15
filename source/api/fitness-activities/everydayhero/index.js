@@ -34,12 +34,20 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   virtual: activity.virtual
 })
 
-const mappings = { type: 'type' }
+export const fetchFitnessActivities = (params = required()) => {
+  const mappings = {
+    campaign: 'campaign_id',
+    charity: 'charity_id',
+    page: 'page_id',
+    team: 'team_id',
+    type: 'type',
+    index: 'page'
+  }
 
-export const fetchFitnessActivities = (params = required()) =>
-  get('api/v2/search/fitness_activities', params, { mappings }).then(
+  return get('api/v2/search/fitness_activities', params, { mappings }).then(
     response => response.fitness_activities
   )
+}
 
 export const createFitnessActivity = ({
   token = required(),
