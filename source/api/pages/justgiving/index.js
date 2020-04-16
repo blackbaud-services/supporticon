@@ -5,7 +5,7 @@ import lodashGet from 'lodash/get'
 import slugify from 'slugify'
 import uuid from 'uuid/v1'
 import { get, put, isStaging, servicesAPI } from '../../../utils/client'
-import { getUID, getShortName, required } from '../../../utils/params'
+import { getUID, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
 export const deserializePage = page => {
@@ -119,12 +119,6 @@ export const fetchPages = (params = required()) => {
     return get(`/v1/event/${getUID(event)}/pages`, args, { mappings }).then(
       response => response.fundraisingPages
     )
-  }
-
-  if (allPages && campaign && charity) {
-    return get(
-      `/v1/campaigns/${getShortName(charity)}/${getShortName(campaign)}/pages`
-    ).then(response => response.fundraisingPages)
   }
 
   if (campaign && !event) {

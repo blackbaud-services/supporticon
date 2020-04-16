@@ -28,7 +28,14 @@ export const dataSource = ({ event, charity, campaign }) => {
   }
 }
 
-export const getUID = data => (typeof data === 'object' ? data.uid : data)
+export const getUID = data => {
+  switch (typeof data) {
+    case 'object':
+      return Array.isArray(data) ? getUID(data[0]) : data.uid
+    default:
+      return data
+  }
+}
 
 export const getShortName = data =>
   typeof data === 'object' ? data.shortName : data
