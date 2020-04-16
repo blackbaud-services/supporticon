@@ -122,6 +122,16 @@ module.exports = {
           'source/components/create-page-form',
           'index.js'
         ),
+        path.resolve(
+          __dirname,
+          'source/components/create-team-form',
+          'index.js'
+        ),
+        path.resolve(
+          __dirname,
+          'source/components/join-team-form',
+          'index.js'
+        )
       ]
     }
   ],
