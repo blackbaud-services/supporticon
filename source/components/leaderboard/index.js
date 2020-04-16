@@ -152,47 +152,47 @@ class Leaderboard extends Component {
     const { leaderboard, filter, pageSize, showPage } = this.props
 
     return (
-      <div className='s9n-leaderboard'>
+      <div>
         {filter && <Filter onChange={this.setFilter} {...filter} />}
-        {data.length && (
-          <Pagination max={pageSize} toPaginate={data}>
-            {({
-              currentPage,
-              isPaginated,
-              prev,
-              next,
-              canPrev,
-              canNext,
-              pageOf
-            }) => (
-              <div>
-                <LeaderboardWrapper
-                  loading={status === 'fetching'}
-                  error={status === 'failed'}
-                  {...leaderboard}
-                >
+        <LeaderboardWrapper
+          loading={status === 'fetching'}
+          error={status === 'failed'}
+          {...leaderboard}
+        >
+          {data.length && (
+            <Pagination max={pageSize} toPaginate={data}>
+              {({
+                currentPage,
+                isPaginated,
+                prev,
+                next,
+                canPrev,
+                canNext,
+                pageOf
+              }) => (
+                <div>
                   {currentPage.map(this.renderLeader)}
-                </LeaderboardWrapper>
-                {pageSize &&
-                  isPaginated && (
-                  <Grid align='center' justify='center'>
-                    <PaginationLink
-                      onClick={prev}
-                      direction='prev'
-                      disabled={!canPrev}
-                    />
-                    {showPage && <RichText size={-1}>{pageOf}</RichText>}
-                    <PaginationLink
-                      onClick={next}
-                      direction='next'
-                      disabled={!canNext}
-                    />
-                  </Grid>
-                )}
-              </div>
-            )}
-          </Pagination>
-        )}
+                  {pageSize &&
+                    isPaginated && (
+                    <Grid align='center' justify='center'>
+                      <PaginationLink
+                        onClick={prev}
+                        direction='prev'
+                        disabled={!canPrev}
+                      />
+                      {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                      <PaginationLink
+                        onClick={next}
+                        direction='next'
+                        disabled={!canNext}
+                      />
+                    </Grid>
+                  )}
+                </div>
+              )}
+            </Pagination>
+          )}
+        </LeaderboardWrapper>
       </div>
     )
   }
