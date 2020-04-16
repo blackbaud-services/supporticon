@@ -44,7 +44,7 @@ class PageSearch extends Component {
       .then(data => {
         this.setState({
           status: 'fetched',
-          data: data.map(deserializePage)
+          data: data.map(this.props.deserializeMethod || deserializePage)
         })
       })
       .catch(error => {
@@ -144,6 +144,11 @@ PageSearch.propTypes = {
    * The page to fetch
    */
   page: PropTypes.number,
+
+  /**
+   * Override the deserializePage method
+   */
+  deserializeMethod: PropTypes.func,
 
   /**
    * What to use as the subtitle on the results
