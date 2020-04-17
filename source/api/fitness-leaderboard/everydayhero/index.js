@@ -1,3 +1,4 @@
+import last from 'lodash/last'
 import { get } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
@@ -53,30 +54,31 @@ export const deserializeFitnessLeaderboard = (result, index) => {
 }
 
 const deserializePage = (item, result, index) => ({
-  position: index + 1,
-  id: item.id,
-  name: item.name,
+  calories: result.calories,
   charity: item.charity_name,
   charityLogo: item.charity_logo_url,
-  url: item.url,
-  donationUrl: item.donation_url,
-  image: item.image.medium_image_url,
-  raised: item.amount.cents,
-  groups: item.group_values,
   distance: result.distance_in_meters,
+  donationUrl: item.donation_url,
+  duration: result.duration_in_seconds,
   elevation: result.elevation_in_meters,
-  calories: result.calories,
-  duration: result.duration_in_seconds
+  groups: item.group_values,
+  id: item.id,
+  image: item.image.medium_image_url,
+  name: item.name,
+  position: index + 1,
+  raised: item.amount.cents,
+  slug: item.url && last(item.url.split('/')),
+  url: item.url
 })
 
 const deserializeGroup = (item, index) => ({
-  position: index + 1,
+  calories: item.calories,
   count: item.count,
+  distance: item.distance_in_meters,
+  duration: item.duration_in_seconds,
+  elevation: item.elevation_in_meters,
   id: item.group.id,
   name: item.group.value,
-  raised: item.amount_cents / 100,
-  distance: item.distance_in_meters,
-  elevation: item.elevation_in_meters,
-  calories: item.calories,
-  duration: item.duration_in_seconds
+  position: index + 1,
+  raised: item.amount_cents / 100
 })
