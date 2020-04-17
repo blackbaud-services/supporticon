@@ -22,6 +22,7 @@ export const deserializeFitnessLeaderboard = (item, index) => {
     position: index + 1,
     id: item.ID,
     name: get(item, 'Details.Name'),
+    slug: get(item, 'Details.Url'),
     url: `https://${subdomain}.justgiving.com/fundraising/${get(
       item,
       'Details.Url'
