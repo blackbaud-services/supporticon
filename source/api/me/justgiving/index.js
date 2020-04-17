@@ -60,12 +60,29 @@ export const deserializeUser = user => ({
   uuid: user.userId
 })
 
-export const fetchCurrentUser = ({ token = required(), authType = 'Basic' }) =>
-  jgIdentityClient.get('connect/userinfo', {
-    headers: {
-      Authorization: [authType, token].join(' ')
-    }
-  })
+export const fetchCurrentUser = ({
+  token = required(),
+  authType = 'Basic'
+}) => {
+  if (authType === 'Basic') {
+    get(
+      'v1/account',
+      {},
+      {},
+      {
+        headers: {
+          Authorization: [authType, token].join(' ')
+        }
+      }
+    )
+  } else {
+    return jgIdentityClient.get('connect/userinfo', {
+      headers: {
+        Authorization: [authType, token].join(' ')
+      }
+    })
+  }
+}
 
 export const updateCurrentUser = ({
   token = required(),
