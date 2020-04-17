@@ -39,6 +39,7 @@ export const updateClient = (options = {}) => {
 
   updateServicesAPIClient()
   updateMetadataAPIClient()
+  updateJGIdentityClient()
 }
 
 export const getBaseURL = () => instance.defaults.baseURL
@@ -79,6 +80,16 @@ const updateMetadataAPIClient = () => {
 export const jgClient = axios.create({
   baseURL: 'https://www.justgiving.com'
 })
+
+export const jgIdentityClient = axios.create({
+  baseURL: 'https://identity.justgiving.com'
+})
+
+const updateJGIdentityClient = () => {
+  jgIdentityClient.defaults.baseURL = isStaging()
+    ? 'https://identity.staging.justgiving.com'
+    : 'https://identity.justgiving.com'
+}
 
 export default {
   instance,

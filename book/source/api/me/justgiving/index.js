@@ -1,4 +1,4 @@
-import { get, put } from '../../../utils/client'
+import { get, put, jgIdentityClient } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 const countryCode = country => {
@@ -33,42 +33,57 @@ const formattedAddress = ({
   )
 
 export const deserializeUser = user => ({
-  address: {
-    streetAddress: user.address.line1,
-    extendedAddress: user.address.line2,
-    locality: user.address.townOrCity,
-    state: user.address.countyOrState,
-    postcode: user.address.postcodeOrZipcode,
-    country: user.address.country
-  },
+  address: user.address
+    ? {
+      streetAddress: user.address.line1,
+      extendedAddress: user.address.line2,
+      locality: user.address.townOrCity,
+      state: user.address.countyOrState,
+      postcode: user.address.postcodeOrZipcode,
+      country: user.address.country
+    }
+    : {},
   birthday: null,
   country: user.country,
   countryCode: countryCode(user.country),
   email: user.email,
-  firstName: user.firstName,
-  formattedAddress: formattedAddress(user.address),
-  id: user.accountId,
-  image: user.profileImageUrls.length
-    ? user.profileImageUrls[0]['Value']
-    : null,
-  lastName: user.lastName,
-  name: [user.firstName, user.lastName].join(' '),
+  firstName: user.firstName || user.given_name,
+  formattedAddress: user.address ? formattedAddress(user.address) : null,
+  id: user.accountId || user.justgiving_consumer_id,
+  image:
+    user.profileImageUrls && user.profileImageUrls.length
+      ? user.profileImageUrls[0]['Value']
+      : null,
+  lastName: user.lastName || user.family_name,
+  name: user.name || [user.firstName, user.lastName].join(' '),
   pageCount: user.activePageCount,
   phone: null,
-  uuid: user.userId
+  uuid: user.userId || user.sub
 })
 
-export const fetchCurrentUser = ({ token = required(), authType = 'Basic' }) =>
-  get(
-    'v1/account',
-    {},
-    {},
-    {
+export const fetchCurrentUser = ({
+  token = required(),
+  authType = 'Basic'
+}) => {
+  if (authType === 'Basic') {
+    return get(
+      'v1/account',
+      {},
+      {},
+      {
+        headers: {
+          Authorization: [authType, token].join(' ')
+        }
+      }
+    )
+  } else {
+    return jgIdentityClient.get('connect/userinfo', {
       headers: {
         Authorization: [authType, token].join(' ')
       }
-    }
-  )
+    })
+  }
+}
 
 export const updateCurrentUser = ({
   token = required(),
