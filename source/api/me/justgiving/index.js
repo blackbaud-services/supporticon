@@ -47,17 +47,17 @@ export const deserializeUser = user => ({
   country: user.country,
   countryCode: countryCode(user.country),
   email: user.email,
-  firstName: user.firstName,
+  firstName: user.firstName || user.given_name,
   formattedAddress: user.address ? formattedAddress(user.address) : null,
-  id: user.accountId,
+  id: user.accountId || user.justgiving_consumer_id,
   image: user.profileImageUrls.length
     ? user.profileImageUrls[0]['Value']
     : null,
-  lastName: user.lastName,
-  name: [user.firstName, user.lastName].join(' '),
+  lastName: user.lastName || user.family_name,
+  name: user.name || [user.firstName, user.lastName].join(' '),
   pageCount: user.activePageCount,
   phone: null,
-  uuid: user.userId
+  uuid: user.userId || user.sub
 })
 
 export const fetchCurrentUser = ({
