@@ -95,6 +95,7 @@ export const fetchPages = (params = required()) => {
     campaign,
     charity,
     event,
+    ids,
     token,
     userPages,
     ...args
@@ -111,6 +112,12 @@ export const fetchPages = (params = required()) => {
         }
       }
     )
+  }
+
+  if (allPages && ids) {
+    const pageIds = Array.isArray(ids) ? ids : ids.split(',')
+
+    return Promise.all(pageIds.map(fetchPage))
   }
 
   if (allPages && event) {
