@@ -50,9 +50,10 @@ export const deserializeUser = user => ({
   firstName: user.firstName || user.given_name,
   formattedAddress: user.address ? formattedAddress(user.address) : null,
   id: user.accountId || user.justgiving_consumer_id,
-  image: user.profileImageUrls.length
-    ? user.profileImageUrls[0]['Value']
-    : null,
+  image:
+    user.profileImageUrls && user.profileImageUrls.length
+      ? user.profileImageUrls[0]['Value']
+      : null,
   lastName: user.lastName || user.family_name,
   name: user.name || [user.firstName, user.lastName].join(' '),
   pageCount: user.activePageCount,
