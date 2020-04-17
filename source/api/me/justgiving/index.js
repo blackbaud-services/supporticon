@@ -1,4 +1,4 @@
-import { get, put, jgIdentityClient } from '../../../utils/client'
+import { put, jgIdentityClient } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 const countryCode = country => {
