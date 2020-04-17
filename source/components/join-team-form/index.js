@@ -31,7 +31,11 @@ class JoinTeamForm extends React.Component {
     fetchTeams(params)
       .then(teams => teams.map(deserializeTeam))
       .then(teams =>
-        teams.map(team => ({ id: team.id, slug: team.slug, label: team.name }))
+        teams.map(team => ({
+          id: team.owner || team.id,
+          slug: team.slug,
+          label: team.name
+        }))
       )
       .then(teams => this.setState({ status: 'fetched', teams }))
   }
@@ -124,7 +128,7 @@ JoinTeamForm.propTypes = {
   /**
    * The page (id) you want to add to the team
    */
-  pageId: PropTypes.string,
+  pageId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /**
    * The page (slug) you want to add to the team

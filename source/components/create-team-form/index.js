@@ -95,7 +95,7 @@ CreateTeamForm.propTypes = {
   /**
    * The page (id) you want to add to the team
    */
-  pageId: PropTypes.string,
+  pageId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /**
    * The page (slug) you want to add to the team
