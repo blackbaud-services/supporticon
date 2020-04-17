@@ -80,6 +80,10 @@ export const jgClient = axios.create({
   baseURL: 'https://www.justgiving.com'
 })
 
+export const jgIdentityClient = axios.create({
+  baseURL: 'https://identity.justgiving.com'
+})
+
 export default {
   instance,
   get,
