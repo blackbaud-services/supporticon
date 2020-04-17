@@ -7,7 +7,7 @@ export const isValidJSON = json => {
   }
 }
 
-export const parseText = text => {
+export const parseText = (text = '') => {
   const content = text.replace(/\n/g, ' ')
 
   if (isValidJSON(content)) {
