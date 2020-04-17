@@ -87,8 +87,8 @@ export const jgIdentityClient = axios.create({
 
 const updateJGIdentityClient = () => {
   jgIdentityClient.defaults.baseURL = isStaging()
-    ? 'https://identity.justgiving.com'
-    : 'https://identity.staging.justgiving.com'
+    ? 'https://identity.staging.justgiving.com'
+    : 'https://identity.justgiving.com'
 }
 
 export default {
