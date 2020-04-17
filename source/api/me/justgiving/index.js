@@ -1,4 +1,4 @@
-import { put, jgIdentityClient } from '../../../utils/client'
+import { get, put, jgIdentityClient } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 const countryCode = country => {
@@ -65,7 +65,7 @@ export const fetchCurrentUser = ({
   authType = 'Basic'
 }) => {
   if (authType === 'Basic') {
-    get(
+    return get(
       'v1/account',
       {},
       {},
