@@ -2,7 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import withForm from 'constructicon/with-form'
 import form from './form'
-import { deserializeTeam, fetchTeams, joinTeam } from '../../api/teams'
+import {
+  deserializeTeam,
+  fetchTeam,
+  fetchTeams,
+  joinTeam
+} from '../../api/teams'
 
 import Form from 'constructicon/form'
 import InputSearch from 'constructicon/input-search'
@@ -32,7 +37,8 @@ class JoinTeamForm extends React.Component {
       .then(teams => teams.map(deserializeTeam))
       .then(teams =>
         teams.map(team => ({
-          id: team.owner || team.id,
+          id: team.id,
+          owner: team.owner,
           slug: team.slug,
           label: team.name
         }))
@@ -56,7 +62,7 @@ class JoinTeamForm extends React.Component {
       this.setState({ status: 'fetching' })
 
       const params = {
-        id: data.team.id,
+        id: data.team.owner || data.team.id,
         page: pageId,
         pageSlug: pageSlug,
         teamSlug: data.team.slug,
@@ -65,6 +71,7 @@ class JoinTeamForm extends React.Component {
 
       return Promise.resolve()
         .then(() => joinTeam(params))
+        .then(() => fetchTeam(data.team.id))
         .then(team => deserializeTeam(team))
         .then(team => {
           this.setState({ status: 'fetched' })
