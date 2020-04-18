@@ -77,11 +77,13 @@ export const fetchCurrentUser = ({
       }
     )
   } else {
-    return jgIdentityClient.get('connect/userinfo', {
-      headers: {
-        Authorization: [authType, token].join(' ')
-      }
-    })
+    return jgIdentityClient
+      .get('connect/userinfo', {
+        headers: {
+          Authorization: [authType, token].join(' ')
+        }
+      })
+      .then(response => response.data)
   }
 }
 
