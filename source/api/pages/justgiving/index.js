@@ -1,6 +1,5 @@
 import moment from 'moment'
 import first from 'lodash/first'
-import last from 'lodash/last'
 import lodashGet from 'lodash/get'
 import slugify from 'slugify'
 import uuid from 'uuid/v1'
