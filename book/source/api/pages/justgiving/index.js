@@ -1,6 +1,5 @@
 import moment from 'moment'
 import first from 'lodash/first'
-import last from 'lodash/last'
 import lodashGet from 'lodash/get'
 import slugify from 'slugify'
 import uuid from 'uuid/v1'
@@ -257,10 +256,7 @@ export const getPageShortName = (title, slug) => {
   }
 
   return get('/v1/fundraising/pages/suggest', params).then(
-    result =>
-      first(result.Names) === params.preferredName
-        ? params.preferredName
-        : last(result.Names) || uuid()
+    result => first(result.Names) || uuid()
   )
 }
 
