@@ -161,6 +161,9 @@ export const deserializeLeaderboard = (supporter, index) => {
       supporter.pageTitle ||
       supporter.name ||
       (supporter.pageOwner && supporter.pageOwner.fullName),
+    offline: parseFloat(
+      supporter.totalRaisedOffline || supporter.raisedOfflineAmount || 0
+    ),
     position: index + 1,
     raised: parseFloat(
       supporter.amount ||

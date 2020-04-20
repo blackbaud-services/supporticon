@@ -36,6 +36,16 @@ export const deserializePage = page => {
     )
   }
 
+  const onlineAmount = parseFloat(
+    page.totalRaisedOnline ||
+      page.Amount ||
+      page.raisedAmount ||
+      page.amountRaised ||
+      0
+  )
+
+  const offlineAmount = parseFloat(page.totalRaisedOffline || 0)
+
   return {
     active:
       (!page.status && !page.pageStatus) ||
@@ -62,13 +72,7 @@ export const deserializePage = page => {
       lodashGet(page, 'pageOwner.fullName'),
     owner:
       page.owner || page.OwnerFullName || lodashGet(page, 'pageOwner.fullName'),
-    raised: parseFloat(
-      page.grandTotalRaisedExcludingGiftAid ||
-        page.Amount ||
-        page.raisedAmount ||
-        page.amountRaised ||
-        0
-    ),
+    raised: onlineAmount + offlineAmount,
     slug: page.pageShortName,
     story: page.story || page.ProfileWhat || page.ProfileWhy,
     target: parseFloat(
