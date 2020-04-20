@@ -25,21 +25,22 @@ export const deserializeCampaign = campaign => {
   const subdomain = isStaging() ? 'www.staging' : 'www'
 
   return {
-    name: campaign.title,
-    summary: campaign.summary,
-    id: campaign.campaignGuid,
+    donateUrl: `http://${subdomain.replace(
+      'www',
+      'link'
+    )}/v1/campaign/donate/campaignGuid/${campaign.campaignGuid}`,
     eventId: campaign.eventId,
-    slug: campaign.shortName,
-    target: campaign.targetAmount,
-    raised: campaign.donationSummary.totalAmount,
-    raisedOffline: campaign.donationSummary.offlineAmount,
-    totalDonations: campaign.donationSummary.totalNumberOfDonations,
     getStartedUrl: `https://${subdomain}.justgiving.com/fundraising-page/creation?campaignGuid=${
       campaign.campaignGuid
     }`,
-    url: `https://${subdomain}.justgiving.com/campaign/${campaign.shortName}`,
-    donateUrl: `https://${subdomain}.justgiving.com/campaign/${
-      campaign.shortName
-    }`
+    id: campaign.campaignGuid,
+    name: campaign.title,
+    raised: campaign.donationSummary.totalAmount,
+    raisedOffline: campaign.donationSummary.offlineAmount,
+    slug: campaign.shortName,
+    summary: campaign.summary,
+    target: campaign.targetAmount,
+    totalDonations: campaign.donationSummary.totalNumberOfDonations,
+    url: `https://${subdomain}.justgiving.com/campaign/${campaign.shortName}`
   }
 }
