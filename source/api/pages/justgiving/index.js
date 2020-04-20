@@ -257,10 +257,7 @@ export const getPageShortName = (title, slug) => {
   }
 
   return get('/v1/fundraising/pages/suggest', params).then(
-    result =>
-      first(result.Names) === params.preferredName
-        ? params.preferredName
-        : last(result.Names) || uuid()
+    result => first(result.Names) || uuid()
   )
 }
 
