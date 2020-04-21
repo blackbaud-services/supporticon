@@ -28,7 +28,7 @@ export const deserializeCampaign = campaign => {
     donateUrl: `http://${subdomain.replace(
       'www',
       'link'
-    )}/v1/campaign/donate/campaignGuid/${campaign.campaignGuid}`,
+    )}.justgiving.com/v1/campaign/donate/campaignGuid/${campaign.campaignGuid}`,
     eventId: campaign.eventId,
     getStartedUrl: `https://${subdomain}.justgiving.com/fundraising-page/creation?campaignGuid=${
       campaign.campaignGuid
