@@ -6,7 +6,8 @@ import {
   fetchTeam as fetchJGTeam,
   fetchTeamBySlug as fetchJGTeamBySlug,
   createTeam as createJGTeam,
-  joinTeam as joinJGTeam
+  joinTeam as joinJGTeam,
+  updateTeam as updateJGTeam
 } from './justgiving'
 
 import {
@@ -15,7 +16,8 @@ import {
   fetchTeam as fetchEDHTeam,
   fetchTeamBySlug as fetchEDHTeamBySlug,
   createTeam as createEDHTeam,
-  joinTeam as joinEDHTeam
+  joinTeam as joinEDHTeam,
+  updateTeam as updateEDHTeam
 } from './everydayhero'
 
 export const deserializeTeam = team =>
@@ -35,3 +37,6 @@ export const createTeam = params =>
 
 export const joinTeam = params =>
   isJustGiving() ? joinJGTeam(params) : joinEDHTeam(params)
+
+export const updateTeam = (...args) =>
+  isJustGiving() ? updateJGTeam(...args) : updateEDHTeam(...args)
