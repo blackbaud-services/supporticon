@@ -17,6 +17,7 @@ export const searchCharities = (params = required()) => {
     const finalParams = {
       ...params,
       field: 'charityNameSuggest',
+      includeFuzzySearch: true,
       maxResults: params.limit,
       campaignGuid: params.campaign
     }
