@@ -1,5 +1,6 @@
 import get from 'lodash/get'
 import * as client from '../../../utils/client'
+import { getDistanceTotal, getDurationTotal } from '../../../utils/fitness'
 import { fetchPage, fetchPages, updatePage } from '../../pages'
 import { required } from '../../../utils/params'
 
@@ -10,6 +11,8 @@ export const deserializeTeam = team => ({
   charity: team.charity_name,
   charityId: team.charity_uid,
   id: team.id,
+  fitnessDistanceTotal: getDistanceTotal(team),
+  fitnessDurationTotal: getDurationTotal(team),
   fitnessGoal: team.fitness_goal,
   image: team.image && team.image.large_image_url,
   leader: team.team_leader_page_uid,
