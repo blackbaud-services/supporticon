@@ -1,5 +1,6 @@
 import lodashGet from 'lodash/get'
 import { get, post, put } from '../../../utils/client'
+import { getDistanceTotal, getDurationTotal } from '../../../utils/fitness'
 import { required } from '../../../utils/params'
 
 export const deserializePage = page => {
@@ -26,7 +27,8 @@ export const deserializePage = page => {
       ? page.metrics.fitness
       : page.fitness_activity_overview,
     fitnessGoal: page.fitness_goal,
-    fitnessDistanceTotal: getTotalDistance(page),
+    fitnessDistanceTotal: getDistanceTotal(page),
+    fitnessDurationTotal: getDurationTotal(page),
     groups: page.page_groups,
     hasSelfDonated: page.meta && page.meta.self_donated,
     hasUpdatedImage: page.meta && page.meta.has_set_image,
@@ -45,18 +47,6 @@ export const deserializePage = page => {
     url: page.url,
     uuid: page.uuid
   }
-}
-
-const getTotalDistance = page => {
-  if (page.fitness_activity_overview) {
-    const overview = page.fitness_activity_overview
-
-    return Object.keys(overview).reduce((total, key) => {
-      return total + overview[key].distance_in_meters
-    }, 0)
-  }
-
-  return lodashGet(page, 'metrics.fitness.total_in_meters', 0)
 }
 
 export const fetchPages = (params = required()) => {

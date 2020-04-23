@@ -1,5 +1,6 @@
 import numbro from 'numbro'
 import moment from 'moment'
+import get from 'lodash/get'
 import * as units from '../units'
 
 export const formatDistance = (distance, miles) => {
@@ -38,4 +39,28 @@ export const formatElevation = (elevation, miles) => {
   } else {
     return numbro(elevation).format('0,0') + ' m'
   }
+}
+
+export const getDistanceTotal = (page = {}) => {
+  if (page.fitness_activity_overview) {
+    const overview = page.fitness_activity_overview
+
+    return Object.keys(overview).reduce((total, key) => {
+      return total + overview[key].distance_in_meters
+    }, 0)
+  }
+
+  return get(page, 'metrics.fitness.total_in_meters', 0)
+}
+
+export const getDurationTotal = (page = {}) => {
+  if (page.fitness_activity_overview) {
+    const overview = page.fitness_activity_overview
+
+    return Object.keys(overview).reduce((total, key) => {
+      return total + overview[key].duration_in_seconds
+    }, 0)
+  }
+
+  return get(page, 'metrics.fitness.total_in_meters', 0)
 }
