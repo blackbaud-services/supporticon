@@ -19,9 +19,11 @@ export const deserializeTeam = team => {
     fitnessDistanceTotal: get(team, 'fitness.totalAmount', 0),
     fitnessDurationTotal: get(team, 'fitness.totalAmountTaken', 0),
     id: team.teamGuid,
-    image: `https://images${subdomain.replace('www', '')}.jg-cdn.com/image/${
-      team.coverPhotoImageId
-    }?template=CrowdfundingOwnerAvatar`,
+    image: team.coverPhotoId
+      ? `https://images${subdomain.replace('www', '')}.jg-cdn.com/image/${
+        team.coverPhotoImageId
+      }?template=CrowdfundingOwnerAvatar`
+      : null,
     leader: get(team, 'captain.userGuid'),
     members: members.map(
       member =>
