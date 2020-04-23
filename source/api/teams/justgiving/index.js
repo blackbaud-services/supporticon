@@ -16,6 +16,8 @@ export const deserializeTeam = team => {
     charity: get(team, 'charity.name'),
     charityId: get(team, 'charity.charityId'),
     event: team.eventId,
+    fitnessDistanceTotal: get(team, 'fitness.totalAmount', 0),
+    fitnessDurationTotal: get(team, 'fitness.totalAmountTaken', 0),
     id: team.teamGuid,
     image: `https://images${subdomain.replace('www', '')}.jg-cdn.com/image/${
       team.coverPhotoImageId
@@ -68,6 +70,15 @@ export const fetchTeam = (id = required()) => {
 export const fetchTeamBySlug = (slug = required(), options = {}) => {
   return client
     .get(`/campaigns/v1/teams/by-short-name/${slug}/full`)
+    .then(team => {
+      if (options.includeFitness) {
+        return client
+          .get(`v1/fitness/teams/${team.teamGuid}`)
+          .then(fitness => ({ ...team, fitness }))
+      }
+
+      return team
+    })
     .then(team => {
       if (options.includePages) {
         return Promise.all(
