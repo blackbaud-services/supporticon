@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 import * as client from '../../../utils/client'
-import { fetchPage, fetchPages } from '../../pages'
+import { fetchPage, fetchPages, updatePage } from '../../pages'
 import { required } from '../../../utils/params'
 
 export const deserializeTeam = team => ({
@@ -90,3 +90,5 @@ export const joinTeam = ({
     .post(`api/v2/teams/${id}/join-requests`, payload, options)
     .then(response => response.team)
 }
+
+export const updateTeam = updatePage
