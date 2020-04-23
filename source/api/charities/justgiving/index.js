@@ -64,7 +64,7 @@ export const deserializeCharity = charity => {
       (isURL(charity.Logo)
         ? charity.Logo
         : `https://${imageSubdomain}.justgiving.com/image/${charity.Logo}`),
-    name: charity.name || charity.Name,
+    name: charity.displayName || charity.name || charity.Name,
     registrationNumber: charity.registrationNumber,
     slug:
       charity.pageShortName || (charity.Link && charity.Link.split('/').pop()),
