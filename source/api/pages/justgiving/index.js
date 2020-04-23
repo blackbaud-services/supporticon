@@ -272,6 +272,7 @@ export const updatePage = (
     authType = 'Basic',
     image,
     name,
+    offline,
     story,
     summaryWhat,
     summaryWhy,
@@ -298,6 +299,12 @@ export const updatePage = (
         put(
           `/v1/fundraising/pages/${slug}/pagetitle`,
           { pageTitle: name },
+          config
+        ),
+      offline &&
+        put(
+          `/v1/fundraising/pages/${slug}/offline`,
+          { amount: offline },
           config
         ),
       story &&
