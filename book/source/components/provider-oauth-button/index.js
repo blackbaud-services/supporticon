@@ -42,10 +42,12 @@ class ProviderOauthButton extends Component {
     if (popup && typeof onSuccess === 'function') {
       if (useLocalStorage) {
         const key = `app-oauth-state-${provider}`
-        const hash = this.parseOauthHash(window.location.hash)
+        const data = this.parseOauthData(
+          window.location.search || window.location.hash
+        )
 
-        if (hash.access_token) {
-          setLocalStorageItem(key, hash)
+        if (data.access_token || data.code) {
+          setLocalStorageItem(key, data)
           window.opener && window.close()
         } else {
           setLocalStorageItem(key, {})
@@ -75,6 +77,16 @@ class ProviderOauthButton extends Component {
           },
           false
         )
+      }
+    }
+
+    if (provider === 'justgiving') {
+      const data = this.parseOauthData(
+        window.location.search || window.location.hash
+      )
+
+      if (data.access_token || data.code) {
+        return this.handleSuccess(data)
       }
     }
   }
@@ -131,7 +143,7 @@ class ProviderOauthButton extends Component {
   }
 
   providerUrl () {
-    const { clientId, provider, redirectUri, token } = this.props
+    const { clientId, homeUrl, provider, redirectUri, token } = this.props
 
     if (isJustGiving() && provider === 'strava') {
       const baseURL = 'https://www.strava.com/oauth/authorize'
@@ -159,7 +171,8 @@ class ProviderOauthButton extends Component {
       const params = {
         client_id: clientId,
         redirect_uri: redirectUri,
-        response_type: 'code'
+        response_type: 'code',
+        state: homeUrl && encodeURIComponent(`home=${homeUrl}`)
       }
 
       const urlParams = Object.keys(params)
@@ -185,8 +198,8 @@ class ProviderOauthButton extends Component {
     }
   }
 
-  parseOauthHash (hash) {
-    return hash
+  parseOauthData (data) {
+    return data
       .substring(1)
       .split('&')
       .reduce(function (params, part) {
@@ -282,14 +295,19 @@ ProviderOauthButton.propTypes = {
   ]),
 
   /**
-   * A valid return_to url for the specified EDH OAuthApplication
+   * A valid return_to url for the specified OAuthApplication
    */
   redirectUri: PropTypes.string.isRequired,
 
   /**
    * The token of the existing user (used when connecting JG account to Strava)
    */
-  token: PropTypes.string
+  token: PropTypes.string,
+
+  /**
+   * Home URl that our oauth handler (oauth.blackbaud-sites.com) will redirect to
+   */
+  homeUrl: PropTypes.string
 }
 
 ProviderOauthButton.defaultProps = {
