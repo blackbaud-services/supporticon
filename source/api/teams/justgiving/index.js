@@ -1,5 +1,6 @@
 import get from 'lodash/get'
 import slugify from 'slugify'
+import { v4 as uuid } from 'uuid'
 import * as client from '../../../utils/client'
 import { fetchPage, deserializePage } from '../../pages'
 import { required } from '../../../utils/params'
@@ -97,6 +98,11 @@ export const fetchTeamBySlug = (slug = required(), options = {}) => {
     })
 }
 
+export const checkTeamSlugAvailable = (slug = required()) =>
+  fetchTeamBySlug(slug)
+    .then(() => Promise.resolve([slug, uuid()].join('-')))
+    .catch(() => Promise.resolve(slug))
+
 export const createTeam = params => {
   const {
     authType = 'Bearer',
@@ -105,6 +111,7 @@ export const createTeam = params => {
     story = required(),
     captainSlug = required(),
     coverPhotoId,
+    slug,
     target = 1000,
     targetType = 'Fixed',
     targetCurrency = 'GBP',
@@ -124,7 +131,7 @@ export const createTeam = params => {
     story,
     targetCurrency,
     targetType,
-    teamShortName: slugify(params.name),
+    teamShortName: slug || slugify(params.name, { lower: true, strict: true }),
     teamTarget: target,
     teamType
   }
@@ -135,8 +142,10 @@ export const createTeam = params => {
     }
   }
 
-  return client
-    .put('/v2/teams', payload, options)
+  return checkTeamSlugAvailable(payload.teamShortName)
+    .then(teamShortName =>
+      client.put('/v2/teams', { ...payload, teamShortName }, options)
+    )
     .then(
       res =>
         res.errorMessage ? Promise.reject(new Error(res.errorMessage)) : res
