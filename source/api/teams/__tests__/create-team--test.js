@@ -65,18 +65,29 @@ describe('Create a Team', () => {
       })
 
       moxios.wait(() => {
-        const request = moxios.requests.mostRecent()
-        const data = JSON.parse(request.config.data)
+        const shortNameRequest = moxios.requests.mostRecent()
 
-        expect(request.url).to.contain('https://api.justgiving.com/v2/teams')
-        expect(request.config.headers['Authorization']).to.eql(
-          'Bearer 012345abcdef'
+        shortNameRequest.respondWith({ status: 404 })
+
+        expect(shortNameRequest.url).to.contain(
+          'https://api.justgiving.com/campaigns/v1/teams/by-short-name/my-team/full'
         )
-        expect(data.name).to.eql('My Team')
-        expect(data.campaignGuid).to.eql('abc123')
-        expect(data.captainPageShortName).to.eql('captain')
-        expect(data.teamTarget).to.eql(1000)
-        done()
+
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          const data = JSON.parse(request.config.data)
+
+          expect(request.url).to.contain('https://api.justgiving.com/v2/teams')
+          expect(request.config.headers['Authorization']).to.eql(
+            'Bearer 012345abcdef'
+          )
+          expect(data.name).to.eql('My Team')
+          expect(data.teamShortName).to.eql('my-team')
+          expect(data.campaignGuid).to.eql('abc123')
+          expect(data.captainPageShortName).to.eql('captain')
+          expect(data.teamTarget).to.eql(1000)
+          done()
+        })
       })
     })
   })
