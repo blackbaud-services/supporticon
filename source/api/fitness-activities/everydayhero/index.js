@@ -1,5 +1,5 @@
 import moment from 'moment'
-import uuid from 'uuid/v1'
+import { v4 as uuid } from 'uuid'
 import { destroy, get, post, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 import { convertToMeters, convertToSeconds } from '../../../utils/units'
