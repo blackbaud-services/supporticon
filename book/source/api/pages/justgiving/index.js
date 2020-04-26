@@ -2,7 +2,7 @@ import moment from 'moment'
 import first from 'lodash/first'
 import lodashGet from 'lodash/get'
 import slugify from 'slugify'
-import uuid from 'uuid/v1'
+import { v4 as uuid } from 'uuid'
 import { get, put, isStaging, servicesAPI } from '../../../utils/client'
 import { getUID, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
@@ -257,7 +257,7 @@ export const createPage = ({
 
 export const getPageShortName = (title, slug) => {
   const params = {
-    preferredName: slug || slugify(title, { lower: true })
+    preferredName: slug || slugify(title, { lower: true, strict: true })
   }
 
   return get('/v1/fundraising/pages/suggest', params).then(
