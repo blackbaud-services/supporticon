@@ -1,3 +1,4 @@
+import lodashGet from 'lodash/get'
 import { get, isStaging, servicesAPI } from '../../../utils/client'
 import {
   getUID,
@@ -80,12 +81,23 @@ const mapLeaderboardResults = (results = [], isTeam) => {
       ? {
         ...result,
         ...result.team,
+        currencyCode: lodashGet(
+          result.team,
+          'fundraisingConfiguration.currencyCode'
+        ),
         eventName: [
           result.team.captain.firstName,
           result.team.captain.lastName
         ].join(' '),
+        numberOfSupporters: result.team.numberOfSupporters,
+        pageId: result.id,
         pageImages: [result.team.coverImageName],
-        numberOfSupporters: result.team.numberOfSupporters
+        pageShortName: result.team.shortName,
+        target: lodashGet(
+          result.team,
+          'fundraisingConfiguration.targetAmount'
+        ),
+        type: 'team'
       }
       : {
         ...result,
@@ -96,7 +108,8 @@ const mapLeaderboardResults = (results = [], isTeam) => {
         ].join(' '),
         pageImages: [result.page.photo],
         pageShortName: result.page.shortName,
-        numberOfSupporters: result.donationCount
+        numberOfSupporters: result.donationCount,
+        type: 'individual'
       }
   })
 }
@@ -138,13 +151,16 @@ const recursivelyFetchJGLeaderboard = (
  */
 export const deserializeLeaderboard = (supporter, index) => {
   const subdomain = isStaging() ? 'www.staging' : 'www'
+  const isTeam = supporter.type === 'team'
 
   return {
     currency: supporter.currencyCode,
     currencySymbol: supporter.currencySymbol,
-    donationUrl: `https://${subdomain}.justgiving.com/fundraising/${
-      supporter.pageShortName
-    }/donate`,
+    donationUrl: isTeam
+      ? null
+      : `https://${subdomain}.justgiving.com/fundraising/${
+        supporter.pageShortName
+      }/donate`,
     id: supporter.pageId,
     image:
       supporter.defaultImage ||
@@ -175,7 +191,11 @@ export const deserializeLeaderboard = (supporter, index) => {
     slug: supporter.pageShortName,
     subtitle: supporter.eventName,
     target: supporter.targetAmount || supporter.target,
-    totalDonations: supporter.numberOfSupporters,
-    url: `https://${subdomain}.justgiving.com/${supporter.pageShortName}`
+    totalDonations: supporter.numberOfSupporters || supporter.donationCount,
+    url: `https://${subdomain}.justgiving.com/${
+      isTeam
+        ? ['team', supporter.pageShortName].join('/')
+        : supporter.pageShortName
+    }`
   }
 }
