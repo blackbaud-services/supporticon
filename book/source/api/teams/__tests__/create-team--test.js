@@ -1,6 +1,6 @@
 import moxios from 'moxios'
 import { createTeam } from '..'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 
 describe('Create a Team', () => {
   beforeEach(() => {
@@ -41,11 +41,13 @@ describe('Create a Team', () => {
   describe('Create JG Team', () => {
     beforeEach(() => {
       moxios.install(instance)
+      moxios.install(servicesAPI)
       updateClient({ baseURL: 'https://api.justgiving.com' })
     })
 
     afterEach(() => {
       moxios.uninstall(instance)
+      moxios.uninstall(servicesAPI)
       updateClient({ baseURL: 'https://everydayhero.com' })
     })
 
@@ -70,7 +72,7 @@ describe('Create a Team', () => {
         shortNameRequest.respondWith({ status: 404 })
 
         expect(shortNameRequest.url).to.contain(
-          'https://api.justgiving.com/campaigns/v1/teams/by-short-name/my-team/full'
+          'https://api.blackbaud.services/v1/justgiving/proxy/campaigns/v1/teams/by-short-name/my-team/full'
         )
 
         moxios.wait(() => {
