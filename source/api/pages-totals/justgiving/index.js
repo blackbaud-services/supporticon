@@ -23,7 +23,7 @@ export const fetchPagesTotals = (params = required()) => {
     default:
       return Promise.reject(
         new Error(
-          'This is method currently only supports using the event parameter for JustGiving'
+          'This method currently only supports using the event parameter for JustGiving'
         )
       )
   }
