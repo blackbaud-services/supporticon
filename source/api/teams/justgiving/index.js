@@ -61,18 +61,21 @@ export const fetchTeams = (options = required()) => {
     Take: limit
   }
 
-  return client
-    .get('campaigns/v1/teams/search', params)
+  return client.servicesAPI
+    .get('/v1/justgiving/proxy/campaigns/v1/teams/search', { params })
     .then(data => data.results)
 }
 
 export const fetchTeam = (id = required()) => {
-  return client.get(`/campaigns/v1/teams/${id}/full`)
+  return client.servicesAPI
+    .get(`/v1/justgiving/proxy/campaigns/v1/teams/${id}/full`)
+    .then(response => response.data)
 }
 
 export const fetchTeamBySlug = (slug = required(), options = {}) => {
-  return client
-    .get(`/campaigns/v1/teams/by-short-name/${slug}/full`)
+  return client.servicesAPI
+    .get(`/v1/justgiving/proxy/campaigns/v1/teams/by-short-name/${slug}/full`)
+    .then(response => response.data)
     .then(team => {
       if (options.includeFitness) {
         return client
@@ -194,31 +197,14 @@ export const updateTeam = (
 ) => {
   const headers = { Authorization: `Bearer ${token}` }
 
-  return Promise.all([
-    updateTeamName(id, name, headers),
-    story && updateTeamStory(id, story, headers),
-    target && updateTeamTarget(id, target, currency, headers)
-  ]).then(() => ({ success: true }))
-}
+  const payload = {
+    teamGuid: id,
+    coverPhotoImageId: image,
+    currency,
+    name,
+    story,
+    target
+  }
 
-const updateTeamName = (teamGuid, name, headers) => {
-  const payload = { name, teamGuid }
-  return client.put(`/campaigns/v1/teams/${teamGuid}/details/name`, payload, {
-    headers
-  })
-}
-
-const updateTeamStory = (teamGuid, rawStory, headers) => {
-  const story = `[{"type":"paragraph","nodes":[{"type":"text","ranges":[{"text":"${rawStory}"}]}]}]`
-  const payload = { teamGuid, story }
-  return client.put(`/campaigns/v1/teams/${teamGuid}/details`, payload, {
-    headers
-  })
-}
-
-const updateTeamTarget = (teamGuid, targetAmount, currencyCode, headers) => {
-  const payload = { teamGuid, targetAmount, currencyCode }
-  return client.put(`/campaigns/v1/teams/${teamGuid}/fundraising`, payload, {
-    headers
-  })
+  return client.put(`/v1/teamsv2/${id}`, payload, { headers })
 }
