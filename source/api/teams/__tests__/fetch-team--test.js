@@ -1,6 +1,6 @@
 import moxios from 'moxios'
 import { fetchTeams, fetchTeam, fetchTeamBySlug } from '..'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 
 describe('Fetch Teams', () => {
   beforeEach(() => {
@@ -100,11 +100,13 @@ describe('Fetch Teams', () => {
   describe('Fetch JG Teams', () => {
     beforeEach(() => {
       moxios.install(instance)
+      moxios.install(servicesAPI)
       updateClient({ baseURL: 'https://api.justgiving.com' })
     })
 
     afterEach(() => {
       moxios.uninstall(instance)
+      moxios.uninstall(servicesAPI)
       updateClient({ baseURL: 'https://everydayhero.com' })
     })
 
@@ -114,7 +116,7 @@ describe('Fetch Teams', () => {
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
           expect(request.url).to.contain(
-            'https://api.justgiving.com/campaigns/v1/teams/search'
+            'https://api.blackbaud.services/v1/justgiving/proxy/campaigns/v1/teams/search'
           )
           expect(request.url).to.contain('CampaignGuid=abc123')
           done()
@@ -128,7 +130,7 @@ describe('Fetch Teams', () => {
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
           expect(request.url).to.contain(
-            'https://api.justgiving.com/campaigns/v1/teams/uuid/full'
+            'https://api.blackbaud.services/v1/justgiving/proxy/campaigns/v1/teams/uuid/full'
           )
           done()
         })
@@ -139,7 +141,7 @@ describe('Fetch Teams', () => {
         moxios.wait(() => {
           const request = moxios.requests.mostRecent()
           expect(request.url).to.contain(
-            'https://api.justgiving.com/campaigns/v1/teams/by-short-name/my-team/full'
+            'https://api.blackbaud.services/v1/justgiving/proxy/campaigns/v1/teams/by-short-name/my-team/full'
           )
           done()
         })
