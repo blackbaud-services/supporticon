@@ -78,16 +78,5 @@ describe('Fetch Pages Totals', () => {
         done()
       })
     })
-
-    it('uses the correct url to fetch totals for a campaign', done => {
-      fetchJGPagesTotals({ campaign: 12345 })
-      moxios.wait(function () {
-        const request = moxios.requests.mostRecent()
-        expect(request.url).to.include(
-          'https://api.blackbaud.services/v1/justgiving/campaigns/12345/leaderboard'
-        )
-        done()
-      })
-    })
   })
 })
