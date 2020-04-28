@@ -7,8 +7,8 @@ export const formatDistance = (distance, miles) => {
   if (miles) {
     const distanceInMiles = units.convertMetersToMiles(distance)
 
-    return distanceInMiles < 1
-      ? numbro(distanceInMiles * 5280).format('0,0') + ' yd'
+    return distanceInMiles < 0.5
+      ? numbro(distanceInMiles * 1760).format('0,0') + ' yd'
       : numbro(distanceInMiles).format('0,0[.]0') + ' mi'
   } else {
     return distance < 1000
