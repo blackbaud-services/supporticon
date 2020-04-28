@@ -63,7 +63,7 @@ export const fetchTeams = (options = required()) => {
 
   return client.servicesAPI
     .get('/v1/justgiving/proxy/campaigns/v1/teams/search', { params })
-    .then(data => data.results)
+    .then(response => response.data.results)
 }
 
 export const fetchTeam = (id = required()) => {
