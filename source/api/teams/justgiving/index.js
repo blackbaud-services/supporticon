@@ -3,12 +3,22 @@ import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
 import * as client from '../../../utils/client'
 import { fetchPage, deserializePage } from '../../pages'
-import { required } from '../../../utils/params'
+import { paramsSerializer, required } from '../../../utils/params'
 import { parseText } from '../../../utils/justgiving'
 
 export const deserializeTeam = team => {
   const subdomain = client.isStaging() ? 'www.staging' : 'www'
   const members = get(team, 'membership.members', [])
+  const imageUrl = (image, template = '') => {
+    if (image) {
+      const urlBase = `https://images${
+        client.isStaging() ? '.staging' : ''
+      }.jg-cdn.com`
+      return `${urlBase}/image/${image}?template=CrowdfundingOwnerAvatar`
+    }
+
+    return null
+  }
 
   return {
     active: team.status === 'active',
@@ -20,12 +30,11 @@ export const deserializeTeam = team => {
     fitnessDistanceTotal: get(team, 'fitness.totalAmount', 0),
     fitnessDurationTotal: get(team, 'fitness.totalAmountTaken', 0),
     id: team.teamGuid,
-    image: team.coverPhotoId
-      ? `https://images${subdomain.replace('www', '')}.jg-cdn.com/image/${
-        team.coverPhotoImageId
-      }?template=CrowdfundingOwnerAvatar`
-      : null,
-    leader: get(team, 'captain.userGuid'),
+    image: imageUrl(team.coverPhotoImageId || team.coverImageName),
+    leader: [
+      get(team, 'captain.firstName'),
+      get(team, 'captain.lastName')
+    ].join(' '),
     members: members.map(
       member =>
         member.pageId
@@ -62,7 +71,10 @@ export const fetchTeams = (options = required()) => {
   }
 
   return client.servicesAPI
-    .get('/v1/justgiving/proxy/campaigns/v1/teams/search', { params })
+    .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
+      params,
+      paramsSerializer
+    })
     .then(response => response.data.results)
 }
 

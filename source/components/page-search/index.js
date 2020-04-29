@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { fetchPages, deserializePage } from '../../api/pages'
+import { fetchTeams, deserializeTeam } from '../../api/teams'
+import { isJustGiving } from '../../utils/client'
+
 import SearchForm from 'constructicon/search-form'
 import SearchResult from 'constructicon/search-result'
 import SearchResults from 'constructicon/search-results'
-
-import { fetchPages, deserializePage } from '../../api/pages'
 
 class PageSearch extends Component {
   constructor () {
@@ -12,8 +14,59 @@ class PageSearch extends Component {
     this.sendQuery = this.sendQuery.bind(this)
     this.state = {
       status: 'inactive',
-      data: []
+      data: [],
+      teams: []
     }
+  }
+
+  componentDidMount () {
+    const { campaign, type } = this.props
+
+    if (isJustGiving() && type !== 'individual') {
+      fetchTeams({ campaign, limit: 1000 })
+        .then(teams => teams.map(deserializeTeam))
+        .then(teams =>
+          teams.map(team => ({
+            ...team,
+            defaultImage:
+              team.image ||
+              'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
+            Link: team.url,
+            owner: team.leader,
+            pageId: team.id,
+            pageShortName: team.slug,
+            raisedAmount: team.raised,
+            title: team.name,
+            type: 'team'
+          }))
+        )
+        .then(teams => this.setState({ teams }))
+    }
+  }
+
+  handleFetch (params) {
+    if (isJustGiving()) {
+      const handleFetchTeams = () =>
+        Promise.resolve(
+          this.state.teams.filter(
+            team =>
+              team.name.toLowerCase().indexOf(params.q.toLowerCase()) !== -1
+          )
+        )
+
+      switch (params.type) {
+        case 'team':
+          return handleFetchTeams()
+        case 'all':
+          return Promise.all([fetchPages(params), handleFetchTeams()]).then(
+            ([pages, teams]) => [...pages, ...teams]
+          )
+        default:
+          return fetchPages(params)
+      }
+    }
+
+    return fetchPages(params)
   }
 
   sendQuery (query) {
@@ -30,7 +83,7 @@ class PageSearch extends Component {
       status: 'fetching'
     })
 
-    return fetchPages({
+    return this.handleFetch({
       q: query,
       campaign: this.props.campaign,
       charity: this.props.charity,
