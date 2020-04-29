@@ -3,6 +3,15 @@ import { get, post, put } from '../../../utils/client'
 import { getDistanceTotal, getDurationTotal } from '../../../utils/fitness'
 import { required } from '../../../utils/params'
 
+const getPageType = ownerType => {
+  switch (ownerType) {
+    case 'Team':
+      return 'team'
+    default:
+      return 'individual'
+  }
+}
+
 export const deserializePage = page => {
   const amountInCents = page.metrics
     ? page.metrics.fundraising.total_in_cents
@@ -44,6 +53,7 @@ export const deserializePage = page => {
       (page.metrics ? page.metrics.fundraising.goal : page.target_cents) / 100,
     teamPageId: page.team_page_id,
     teamRole: page.team_role,
+    type: getPageType(page.type || page.owner_type),
     url: page.url,
     uuid: page.uuid
   }
