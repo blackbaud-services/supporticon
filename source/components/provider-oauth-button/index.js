@@ -237,6 +237,7 @@ class ProviderOauthButton extends Component {
         {...actionProps}
         {...omit(props, [
           'clientId',
+          'homeUrl',
           'onClose',
           'onSuccess',
           'popupWindowFeatures',

@@ -4,7 +4,7 @@ import lodashGet from 'lodash/get'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
 import { get, put, servicesAPI } from '../../../utils/client'
-import { baseUrl, imageUrl } from '../../../utils/justgiving'
+import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import { getUID, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
@@ -20,12 +20,7 @@ export const deserializePage = page => {
       imageUrl(lodashGet(page, 'pageImages[0]')) ||
       lodashGet(page, 'image.url') ||
       lodashGet(page, 'images[0].url') ||
-      (lodashGet(page, 'pageOwner.accountId') &&
-        [
-          baseUrl(),
-          'fundraising/images/user-profile',
-          lodashGet(page, 'pageOwner.accountId')
-        ].join('/'))
+      apiImageUrl(shortName)
     )
   }
 

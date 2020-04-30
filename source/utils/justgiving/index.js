@@ -1,4 +1,4 @@
-import { isStaging } from '../client'
+import { isStaging, servicesAPI } from '../client'
 
 export const isValidJSON = json => {
   try {
@@ -28,3 +28,8 @@ export const imageUrl = (image, template = 'CrowdfundingOwnerAvatar') => {
     ? `${baseUrl('images')}/image/${image}?template=${template}`
     : null
 }
+
+export const apiImageUrl = (slug, template = 'CrowdfundingOwnerAvatar') =>
+  `${
+    servicesAPI.defaults.baseURL
+  }/v1/justgiving/pages/${slug}/image?template=${template}`
