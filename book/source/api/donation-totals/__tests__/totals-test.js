@@ -107,6 +107,17 @@ describe('Fetch Donation Totals', () => {
       })
     })
 
+    it('uses the correct url to fetch totals for multiple campaigns', done => {
+      fetchJGDonationTotals({ campaign: ['1234', '5678'] })
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.equal(
+          'https://api.justgiving.com/donationsleaderboards/v1/totals?campaignGuids=1234&campaignGuids=5678&currencyCode=GBP'
+        )
+        done()
+      })
+    })
+
     it('uses the correct url to fetch totals for a charity', done => {
       fetchJGDonationTotals({ charity: 1234 })
       moxios.wait(() => {
