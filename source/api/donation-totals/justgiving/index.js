@@ -51,17 +51,15 @@ export const fetchDonationTotals = (params = required()) => {
       })
 
       return Array.isArray(params.campaign)
-        ? Promise.all(params.campaign.map(getUID).map(fetchCampaign))
-          .then(campaigns => campaigns.map(mapTotals))
-          .then(campaigns =>
-            campaigns.reduce(
-              (acc, { totalRaised, totalResults }) => ({
-                totalRaised: acc.totalRaised + totalRaised,
-                totalResults: acc.totalResults + totalResults
-              }),
-              { totalRaised: 0, totalResults: 0 }
-            )
-          )
+        ? client.get(
+          'donationsleaderboards/v1/totals',
+          {
+            campaignGuids: params.campaign.map(getUID),
+            currencyCode: currencyCode(params.country)
+          },
+          {},
+          { paramsSerializer }
+        )
         : fetchCampaign(getUID(params.campaign)).then(mapTotals)
   }
 }
