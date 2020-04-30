@@ -63,7 +63,7 @@ export const deserializePage = page => {
     fitnessDistanceTotal: lodashGet(page, 'fitness.totalAmount', 0),
     fitnessDurationTotal: lodashGet(page, 'fitness.totalAmountTaken', 0),
     groups: null,
-    hasUpdatedImage: page.imageCount !== '1',
+    hasUpdatedImage: page.imageCount && parseInt(page.imageCount) > 1,
     id: page.pageId || page.Id,
     image: getImage().split('?')[0] + '?template=CrowdfundingOwnerAvatar',
     name:
@@ -230,10 +230,11 @@ export const createPage = ({
         eventId,
         eventName,
         expiryDate,
-        images: [
-          ...(image ? [{ url: image, isDefault: true }] : []),
-          ...images
-        ],
+        images: images.length
+          ? images
+          : image
+            ? [{ url: image, isDefault: true }]
+            : undefined,
         isGiftAidable: giftAid,
         pageShortName,
         pageStory: story,
