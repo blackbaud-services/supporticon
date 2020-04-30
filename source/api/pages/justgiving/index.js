@@ -3,36 +3,29 @@ import first from 'lodash/first'
 import lodashGet from 'lodash/get'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
-import { get, put, isStaging, servicesAPI } from '../../../utils/client'
+import { get, put, servicesAPI } from '../../../utils/client'
+import { baseUrl, imageUrl } from '../../../utils/justgiving'
 import { getUID, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
 export const deserializePage = page => {
-  const subdomain = isStaging() ? 'www.staging' : 'www'
-  const url =
-    page.Link ||
-    `https://${subdomain}.justgiving.com/fundraising/${page.pageShortName}`
-
-  const linkDomain = isStaging()
-    ? 'link.staging.justgiving.com'
-    : 'link.justgiving.com'
+  const shortName = page.shortName || page.pageShortName
 
   const getImage = () => {
-    if (page.pageImages && page.pageImages.length > 0) {
-      return `https://images${subdomain.replace('www', '')}.jg-cdn.com/image/${
-        page.pageImages[0]
-      }`
-    }
-
     return (
       page.defaultImage ||
       page.Logo ||
+      page.Photo ||
+      imageUrl(page.photo) ||
+      imageUrl(lodashGet(page, 'pageImages[0]')) ||
       lodashGet(page, 'image.url') ||
       lodashGet(page, 'images[0].url') ||
-      `https://${subdomain}.justgiving.com/fundraising/images/user-profile/${lodashGet(
-        page,
-        'pageOwner.accountId'
-      )}`
+      (lodashGet(page, 'pageOwner.accountId') &&
+        [
+          baseUrl(),
+          'fundraising/images/user-profile',
+          lodashGet(page, 'pageOwner.accountId')
+        ].join('/'))
     )
   }
 
@@ -55,8 +48,11 @@ export const deserializePage = page => {
     charity: page.charity || page.CharityId,
     coordinates: null,
     createdAt: jsonDate(page.createdDate) || page.CreatedDate,
-    donationUrl: `http://${linkDomain}/v1/fundraisingpage/donate/pageId/${page.pageId ||
-      page.Id}`,
+    donationUrl: [
+      baseUrl('link'),
+      'v1/fundraisingpage/donate/pageId',
+      page.pageId || page.Id
+    ].join('/'),
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
     fitness: {},
     fitnessGoal: 0,
@@ -65,16 +61,23 @@ export const deserializePage = page => {
     groups: null,
     hasUpdatedImage: page.imageCount && parseInt(page.imageCount) > 1,
     id: page.pageId || page.Id,
-    image: getImage().split('?')[0] + '?template=CrowdfundingOwnerAvatar',
+    image:
+      getImage() &&
+      getImage().split('?')[0] + '?template=CrowdfundingOwnerAvatar',
     name:
       page.title ||
       page.pageTitle ||
       page.Name ||
+      page.name ||
+      page.PageName ||
       lodashGet(page, 'pageOwner.fullName'),
     owner:
-      page.owner || page.OwnerFullName || lodashGet(page, 'pageOwner.fullName'),
+      page.owner ||
+      page.OwnerFullName ||
+      page.PageOwner ||
+      lodashGet(page, 'pageOwner.fullName'),
     raised: onlineAmount + offlineAmount,
-    slug: page.pageShortName,
+    slug: shortName,
     story: page.story || page.ProfileWhat || page.ProfileWhy,
     target: parseFloat(
       page.fundraisingTarget ||
@@ -88,7 +91,7 @@ export const deserializePage = page => {
     teamShortName:
       page.teams && page.teams.length > 0 ? page.teams[0].teamShortName : null,
     type: page.type || 'individual',
-    url,
+    url: page.Link || page.PageUrl || `${baseUrl()}/fundraising/${shortName}`,
     uuid: null
   }
 }

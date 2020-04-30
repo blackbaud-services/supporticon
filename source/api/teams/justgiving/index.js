@@ -4,21 +4,10 @@ import { v4 as uuid } from 'uuid'
 import * as client from '../../../utils/client'
 import { fetchPage, deserializePage } from '../../pages'
 import { paramsSerializer, required } from '../../../utils/params'
-import { parseText } from '../../../utils/justgiving'
+import { baseUrl, imageUrl, parseText } from '../../../utils/justgiving'
 
 export const deserializeTeam = team => {
-  const subdomain = client.isStaging() ? 'www.staging' : 'www'
   const members = get(team, 'membership.members', [])
-  const imageUrl = (image, template = '') => {
-    if (image) {
-      const urlBase = `https://images${
-        client.isStaging() ? '.staging' : ''
-      }.jg-cdn.com`
-      return `${urlBase}/image/${image}?template=CrowdfundingOwnerAvatar`
-    }
-
-    return null
-  }
 
   return {
     active: team.status === 'active',
@@ -44,9 +33,7 @@ export const deserializeTeam = team => {
             name: member.fundraisingPageName,
             slug: member.fundraisingPageShortName,
             status: member.fundraisingPageStatus,
-            url: `https://${subdomain}.justgiving.com/fundraising/${
-              team.fundraisingPageShortName
-            }`,
+            url: `${baseUrl()}/fundraising/${team.fundraisingPageShortName}`,
             userId: member.userGuid
           }
     ),
@@ -57,7 +44,7 @@ export const deserializeTeam = team => {
     slug: team.shortName,
     story: parseText(team.story),
     target: get(team, 'fundraisingConfiguration.targetAmount'),
-    url: `https://${subdomain}.justgiving.com/team/${team.shortName}`,
+    url: `${baseUrl()}/team/${team.shortName}`,
     uuid: team.teamGuid
   }
 }
