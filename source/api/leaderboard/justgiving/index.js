@@ -1,5 +1,6 @@
 import lodashGet from 'lodash/get'
-import { get, isStaging, servicesAPI } from '../../../utils/client'
+import { get, servicesAPI } from '../../../utils/client'
+import { baseUrl, imageUrl } from '../../../utils/justgiving'
 import {
   getUID,
   required,
@@ -150,7 +151,6 @@ const recursivelyFetchJGLeaderboard = (
  * @function a default deserializer for leaderboard pages
  */
 export const deserializeLeaderboard = (supporter, index) => {
-  const subdomain = isStaging() ? 'www.staging' : 'www'
   const isTeam = supporter.type === 'team'
 
   return {
@@ -158,21 +158,17 @@ export const deserializeLeaderboard = (supporter, index) => {
     currencySymbol: supporter.currencySymbol,
     donationUrl: isTeam
       ? null
-      : `https://${subdomain}.justgiving.com/fundraising/${
-        supporter.pageShortName
-      }/donate`,
+      : `${baseUrl()}/fundraising/${supporter.pageShortName}/donate`,
     id: supporter.pageId,
     image:
-      supporter.defaultImage ||
-      (supporter.pageImages
-        ? `https://images${subdomain.replace('www', '')}.jg-cdn.com/image/${
-          supporter.pageImages[0]
-        }?template=Size186x186Crop`
-        : supporter.pageOwner
-          ? `https://${subdomain}.justgiving.com/fundraising/images/user-profile/${
-            supporter.pageOwner.accountId
-          }`
-          : null),
+      imageUrl(
+        supporter.defaultImage || lodashGet(supporter, 'pageImages[0]'),
+        'Size186x186Crop'
+      ) || supporter.pageOwner
+        ? `${baseUrl()}/fundraising/images/user-profile/${
+          supporter.pageOwner.accountId
+        }`
+        : 'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
     name:
       supporter.pageTitle ||
       supporter.name ||
@@ -192,10 +188,10 @@ export const deserializeLeaderboard = (supporter, index) => {
     subtitle: supporter.eventName,
     target: supporter.targetAmount || supporter.target,
     totalDonations: supporter.numberOfSupporters || supporter.donationCount,
-    url: `https://${subdomain}.justgiving.com/${
-      isTeam
-        ? ['team', supporter.pageShortName].join('/')
-        : supporter.pageShortName
-    }`
+    url: [
+      baseUrl(),
+      isTeam ? 'team' : 'fundraising',
+      supporter.pageShortName
+    ].join('/')
   }
 }

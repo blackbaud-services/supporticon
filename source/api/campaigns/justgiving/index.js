@@ -1,4 +1,5 @@
-import { isStaging, servicesAPI } from '../../../utils/client'
+import { servicesAPI } from '../../../utils/client'
+import { baseUrl } from '../../../utils/justgiving'
 import { required } from '../../../utils/params'
 
 export const fetchCampaigns = ({ ids }) => {
@@ -21,26 +22,23 @@ export const fetchCampaign = (id = required()) =>
 export const fetchCampaignGroups = (id = required()) =>
   Promise.reject(new Error('This method is not supported for JustGiving'))
 
-export const deserializeCampaign = campaign => {
-  const subdomain = isStaging() ? 'www.staging' : 'www'
-
-  return {
-    donateUrl: `http://${subdomain.replace(
-      'www',
-      'link'
-    )}.justgiving.com/v1/campaign/donate/campaignGuid/${campaign.campaignGuid}`,
-    eventId: campaign.eventId,
-    getStartedUrl: `https://${subdomain}.justgiving.com/fundraising-page/creation?campaignGuid=${
-      campaign.campaignGuid
-    }`,
-    id: campaign.campaignGuid,
-    name: campaign.title,
-    raised: campaign.donationSummary.totalAmount,
-    raisedOffline: campaign.donationSummary.offlineAmount,
-    slug: campaign.shortName,
-    summary: campaign.summary,
-    target: campaign.targetAmount,
-    totalDonations: campaign.donationSummary.totalNumberOfDonations,
-    url: `https://${subdomain}.justgiving.com/campaign/${campaign.shortName}`
-  }
-}
+export const deserializeCampaign = campaign => ({
+  donateUrl: [
+    baseUrl('link'),
+    'v1/campaign/donate/campaignGuid',
+    campaign.campaignGuid
+  ].join('/'),
+  eventId: campaign.eventId,
+  getStartedUrl: `${baseUrl()}/fundraising-page/creation?campaignGuid=${
+    campaign.campaignGuid
+  }`,
+  id: campaign.campaignGuid,
+  name: campaign.title,
+  raised: campaign.donationSummary.totalAmount,
+  raisedOffline: campaign.donationSummary.offlineAmount,
+  slug: campaign.shortName,
+  summary: campaign.summary,
+  target: campaign.targetAmount,
+  totalDonations: campaign.donationSummary.totalNumberOfDonations,
+  url: `${baseUrl()}/campaign/${campaign.shortName}`
+})
