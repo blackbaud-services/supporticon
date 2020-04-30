@@ -1,6 +1,6 @@
 import lodashGet from 'lodash/get'
 import { get, servicesAPI } from '../../../utils/client'
-import { baseUrl, imageUrl } from '../../../utils/justgiving'
+import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import {
   getUID,
   required,
@@ -161,14 +161,11 @@ export const deserializeLeaderboard = (supporter, index) => {
       : `${baseUrl()}/fundraising/${supporter.pageShortName}/donate`,
     id: supporter.pageId,
     image:
-      imageUrl(
-        supporter.defaultImage || lodashGet(supporter, 'pageImages[0]'),
-        'Size186x186Crop'
-      ) || supporter.pageOwner
-        ? `${baseUrl()}/fundraising/images/user-profile/${
-          supporter.pageOwner.accountId
-        }`
-        : 'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
+      supporter.defaultImage ||
+      imageUrl(lodashGet(supporter, 'pageImages[0]'), 'Size186x186Crop') ||
+      (isTeam
+        ? 'https://assets.blackbaud-sites.com/images/supporticon/user.svg'
+        : apiImageUrl(supporter.pageShortName, 'Size186x186Crop')),
     name:
       supporter.pageTitle ||
       supporter.name ||
