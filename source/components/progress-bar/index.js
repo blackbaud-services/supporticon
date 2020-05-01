@@ -52,6 +52,7 @@ class ProgressBar extends Component {
       endDate,
       event,
       group,
+      includeOffline: !excludeOffline,
       startDate
     })
       .then(data => deserializeDonationTotals(data, excludeOffline))
