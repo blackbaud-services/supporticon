@@ -47,6 +47,7 @@ class TotalFundsRaised extends Component {
       event,
       country,
       group,
+      includeOffline: !excludeOffline,
       startDate,
       endDate
     })

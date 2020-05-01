@@ -47,6 +47,7 @@ class TotalDonations extends Component {
       event,
       country,
       group,
+      includeOffline: !excludeOffline,
       startDate,
       endDate
     })
