@@ -3,7 +3,8 @@ import first from 'lodash/first'
 import lodashGet from 'lodash/get'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
-import { get, put, servicesAPI } from '../../../utils/client'
+import { get, put } from '../../../utils/client'
+import { fetchLeaderboard } from '../../leaderboard'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import { getUID, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
@@ -132,11 +133,7 @@ export const fetchPages = (params = required()) => {
   }
 
   if (campaign && !event) {
-    return servicesAPI
-      .get(`/v1/justgiving/campaigns/${getUID(campaign)}/leaderboard`, {
-        params: args
-      })
-      .then(({ data }) => data.results)
+    return fetchLeaderboard({ campaign, allPages: true, ...args })
   }
 
   return get('/v1/onesearch', {
