@@ -12,6 +12,7 @@ import * as validators from 'constructicon/lib/validators'
 import { createPage } from '../../api/pages'
 import { updateCurrentUser } from '../../api/me'
 import { isJustGiving } from '../../utils/client'
+import { currencyCode } from '../../utils/currencies'
 import { renderInput, renderFormFields } from '../../utils/form'
 import withGroups from './with-groups'
 import countries from '../../utils/countries'
@@ -46,6 +47,7 @@ class CreatePageForm extends Component {
       campaignId,
       charityFunded,
       charityId,
+      country,
       eventId,
       form,
       onSuccess,
@@ -80,6 +82,7 @@ class CreatePageForm extends Component {
           charityOptIn: true,
           eventId,
           token,
+          currency: currencyCode(country),
           groupValues: mapKeys(groupFields, (value, key) =>
             key.replace('group_values_', '')
           )
