@@ -162,6 +162,32 @@ export const fetchPage = (page = required(), slug, options = {}) => {
   return Promise.all(fetchers).then(([page, fitness]) => ({ ...page, fitness }))
 }
 
+export const fetchUserPages = ({
+  authType = 'Basic',
+  campaign,
+  charity,
+  event,
+  token = required()
+}) => {
+  const headers = {
+    Authorization: [authType, token].join(' ')
+  }
+
+  const filterByCampaign = (pages, campaign) =>
+    campaign ? pages.filter(page => page.campaignGuid === campaign) : pages
+
+  const filterByCharity = (pages, charity) =>
+    charity ? pages.filter(page => page.charityId === charity) : pages
+
+  const filterByEvent = (pages, event) =>
+    event ? pages.filter(page => page.eventId === event) : pages
+
+  return get('/v1/fundraising/pages', {}, {}, { headers })
+    .then(pages => filterByCampaign(pages, campaign))
+    .then(pages => filterByCharity(pages, charity))
+    .then(pages => filterByEvent(pages, event))
+}
+
 const fetchPageFitness = page => {
   return get(`/v1/fitness/fundraising/${page}`)
 }

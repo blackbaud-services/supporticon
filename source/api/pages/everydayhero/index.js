@@ -1,4 +1,5 @@
 import lodashGet from 'lodash/get'
+import { fetchCurrentUser } from '../../me'
 import { get, post, put } from '../../../utils/client'
 import { getDistanceTotal, getDurationTotal } from '../../../utils/fitness'
 import { required } from '../../../utils/params'
@@ -91,6 +92,26 @@ export const fetchPage = (id = required()) => {
   }
 
   return get(`api/v2/pages/${id}`).then(response => response.page)
+}
+
+export const fetchUserPages = (params = required()) => {
+  const { token = required(), ...otherParams } = params
+
+  return fetchCurrentUser({ token })
+    .then(user => user.page_ids)
+    .then((ids = []) => {
+      if (!ids.length) {
+        return null
+      }
+
+      const fetchParams = {
+        ...otherParams,
+        allPages: true,
+        ids
+      }
+
+      return fetchPages(fetchParams)
+    })
 }
 
 export const fetchPageDonationCount = (id = required()) => {
