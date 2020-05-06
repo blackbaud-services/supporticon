@@ -1,5 +1,10 @@
 import moxios from 'moxios'
-import { fetchPages, fetchPage, fetchPageDonationCount } from '..'
+import {
+  fetchPages,
+  fetchPage,
+  fetchUserPages,
+  fetchPageDonationCount
+} from '..'
 import { instance, servicesAPI, updateClient } from '../../../utils/client'
 
 describe('Fetch Pages', () => {
@@ -52,6 +57,38 @@ describe('Fetch Pages', () => {
       it('throws if no params are passed in', () => {
         const test = () => fetchPages()
         expect(test).to.throw
+      })
+    })
+
+    describe('Fetch user pages', () => {
+      it('uses the correct url to fetch user pages', done => {
+        fetchUserPages({ token: 'token', campaign: 'au-1' })
+
+        moxios.wait(() => {
+          const meRequest = moxios.requests.at(0)
+          meRequest.respondWith({
+            status: 200,
+            response: {
+              user: {
+                page_ids: [1, 2]
+              }
+            }
+          })
+
+          moxios.wait(() => {
+            const fetchRequest = moxios.requests.at(1)
+
+            expect(meRequest.url).to.contain(
+              'https://everydayhero.com/api/v1/me'
+            )
+            expect(fetchRequest.url).to.contain(
+              'https://everydayhero.com/api/v2/pages'
+            )
+            expect(fetchRequest.url).to.contain('ids=1,2')
+            expect(fetchRequest.url).to.contain('campaign_id=au-1')
+            done()
+          })
+        })
       })
     })
 
@@ -209,6 +246,19 @@ describe('Fetch Pages', () => {
       it('throws if no id is passed in', () => {
         const test = () => fetchPage()
         expect(test).to.throw
+      })
+    })
+
+    describe('Fetch a users pages', () => {
+      it('uses the correct url to fetch a single page', done => {
+        fetchUserPages({ token: 'token' })
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.equal(
+            'https://api.justgiving.com/v1/fundraising/pages'
+          )
+          done()
+        })
       })
     })
 

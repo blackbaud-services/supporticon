@@ -4,6 +4,7 @@ import {
   deserializePage as deserializeEDHPage,
   fetchPages as fetchEDHPages,
   fetchPage as fetchEDHPage,
+  fetchUserPages as fetchEDHUserPages,
   fetchPageDonationCount as fetchEDHPageDonationCount,
   createPage as createEDHPage,
   updatePage as updateEDHPage
@@ -13,6 +14,7 @@ import {
   deserializePage as deserializeJGPage,
   fetchPages as fetchJGPages,
   fetchPage as fetchJGPage,
+  fetchUserPages as fetchJGUserPages,
   fetchPageDonationCount as fetchJGPageDonationCount,
   createPage as createJGPage,
   updatePage as updateJGPage
@@ -35,6 +37,9 @@ export const fetchPages = params =>
  */
 export const fetchPage = (...args) =>
   isJustGiving() ? fetchJGPage(...args) : fetchEDHPage(...args)
+
+export const fetchUserPages = (...args) =>
+  isJustGiving() ? fetchJGUserPages(...args) : fetchEDHUserPages(...args)
 
 /**
  * @function fetches a page's donation count
