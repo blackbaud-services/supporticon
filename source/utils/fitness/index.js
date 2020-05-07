@@ -5,15 +5,11 @@ import * as units from '../units'
 
 export const formatDistance = (distance, miles) => {
   if (miles) {
-    const distanceInMiles = units.convertMetersToMiles(distance)
-
-    return distanceInMiles < 0.5
-      ? numbro(distanceInMiles * 1760).format('0,0') + ' yd'
-      : numbro(distanceInMiles).format('0,0[.]0') + ' mi'
+    return (
+      numbro(units.convertMetersToMiles(distance)).format('0,0[.]0') + ' mi'
+    )
   } else {
-    return distance < 1000
-      ? numbro(distance).format('0,0') + ' m'
-      : numbro(units.convertMetersToKm(distance)).format('0,0[.]0') + ' km'
+    return numbro(units.convertMetersToKm(distance)).format('0,0[.]0') + ' km'
   }
 }
 
