@@ -39,7 +39,7 @@ export const deserializePage = page => {
     active:
       (!page.status && !page.pageStatus) ||
       [page.status, page.pageStatus].indexOf('Inactive') > -1,
-    campaign: page.Subtext || page.eventId || page.EventId,
+    campaign: page.campaignGuid || page.Subtext || page.eventId || page.EventId,
     campaignDate: jsonDate(page.eventDate) || page.EventDate,
     charity: page.charity || page.CharityId,
     coordinates: null,
@@ -49,9 +49,10 @@ export const deserializePage = page => {
       'v1/fundraisingpage/donate/pageId',
       page.pageId || page.Id
     ].join('/'),
+    event: page.Subtext || page.eventId || page.EventId || page.eventName,
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
     fitness: {},
-    fitnessGoal: 0,
+    fitnessGoal: parseInt(page.pageSummaryWhat) || 0,
     fitnessDistanceTotal: lodashGet(page, 'fitness.totalAmount', 0),
     fitnessDurationTotal: lodashGet(page, 'fitness.totalAmountTaken', 0),
     groups: null,
