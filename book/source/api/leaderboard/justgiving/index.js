@@ -5,6 +5,7 @@ import {
   getUID,
   required,
   dataSource,
+  isEmpty,
   paramsSerializer
 } from '../../../utils/params'
 import { currencySymbol, currencyCode } from '../../../utils/currencies'
@@ -13,7 +14,7 @@ import { currencySymbol, currencyCode } from '../../../utils/currencies'
  * @function fetches fundraising pages ranked by funds raised
  */
 export const fetchLeaderboard = (params = required()) => {
-  if (params.campaign && params.allPages) {
+  if (!isEmpty(params.campaign) && params.allPages) {
     return recursivelyFetchJGLeaderboard(
       getUID(params.campaign),
       params.q,
@@ -23,6 +24,12 @@ export const fetchLeaderboard = (params = required()) => {
 
   switch (dataSource(params)) {
     case 'event':
+      if (params.type === 'team') {
+        return Promise.reject(
+          new Error('Team leaderboards by event are not supported')
+        )
+      }
+
       return get(
         '/v1/events/leaderboard',
         {
