@@ -4,7 +4,7 @@ export const required = () => {
   throw new Error('Required parameter not supplied')
 }
 
-const isEmpty = val => {
+export const isEmpty = val => {
   if (Array.isArray(val)) {
     return val.length === 0
   } else {
