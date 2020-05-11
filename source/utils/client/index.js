@@ -40,6 +40,7 @@ export const updateClient = (options = {}) => {
   updateServicesAPIClient()
   updateMetadataAPIClient()
   updateJGIdentityClient()
+  updateJGGraphqlClient()
 }
 
 export const getBaseURL = () => instance.defaults.baseURL
@@ -91,6 +92,16 @@ const updateJGIdentityClient = () => {
     : 'https://identity.justgiving.com'
 }
 
+export const jgGraphqlClient = axios.create({
+  baseURL: 'https://graphql.justgiving.com'
+})
+
+const updateJGGraphqlClient = () => {
+  jgGraphqlClient.defaults.baseURL = isStaging()
+    ? 'https://graphql.staging.justgiving.com'
+    : 'https://graphql.justgiving.com'
+}
+
 export default {
   instance,
   get,
@@ -104,5 +115,6 @@ export default {
   isStaging,
   servicesAPI,
   metadataAPI,
-  jgClient
+  jgClient,
+  jgGraphqlClient
 }

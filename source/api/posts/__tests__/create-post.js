@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, jgGraphqlClient, updateClient } from '../../../utils/client'
 import { createPost } from '..'
 
 describe('Create Post', () => {
@@ -19,7 +19,7 @@ describe('Create Post', () => {
 
     it('hits the supporter api with the correct url and data', done => {
       createPost({
-        caption: 'Test caption',
+        message: 'Test message',
         pageId: 'my-page-id',
         token: 'test-token'
       })
@@ -31,7 +31,7 @@ describe('Create Post', () => {
 
         expect(request.url).to.contain('https://everydayhero.com/api/v2/posts')
         expect(headers.Authorization).to.equal('Bearer test-token')
-        expect(data.caption).to.equal('Test caption')
+        expect(data.caption).to.equal('Test message')
         expect(data.page_id).to.equal('my-page-id')
         done()
       })
@@ -45,17 +45,19 @@ describe('Create Post', () => {
         headers: { 'x-api-key': 'abcd1234' }
       })
       moxios.install(instance)
+      moxios.install(jgGraphqlClient)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
+      moxios.uninstall(jgGraphqlClient)
     })
 
-    it('hits the supporter api with the correct url and data', done => {
+    it('hits the api with the correct url and data', done => {
       createPost({
-        caption: 'Test caption',
-        slug: 'my-page',
+        message: 'Test message',
+        pageId: 'my-page',
         token: 'test-token',
         authType: 'Bearer'
       })
@@ -65,11 +67,8 @@ describe('Create Post', () => {
         const data = JSON.parse(request.config.data)
         const headers = request.config.headers
 
-        expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/fundraising/pages/my-page/updates'
-        )
+        expect(request.url).to.equal('https://graphql.justgiving.com')
         expect(headers.Authorization).to.equal('Bearer test-token')
-        expect(data.Message).to.equal('Test caption')
         done()
       })
     })
