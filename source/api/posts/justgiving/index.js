@@ -1,5 +1,5 @@
 import lodashGet from 'lodash/get'
-import { jgGraphqlClient } from '../../../utils/client'
+import { servicesAPI } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
 export const deserializePost = post => ({
@@ -7,7 +7,19 @@ export const deserializePost = post => ({
   createdAt: post.createdAt,
   message: post.message,
   media: post.media,
-  type: post.type
+  image: lodashGet(
+    lodashGet(post, 'media', []).filter(
+      media => media.__typename === 'ImageMedia'
+    ),
+    '[0].url'
+  ),
+  type: post.type,
+  video: lodashGet(
+    lodashGet(post, 'media', []).filter(
+      media => media.__typename === 'VideoMedia'
+    ),
+    '[0].url'
+  )
 })
 
 export const fetchPosts = (slug = required()) => {
@@ -22,8 +34,8 @@ export const fetchPosts = (slug = required()) => {
             createdAt
             media {
               __typename
-              ... on ImageMedia { url caption alt }
-              ... on VideoMedia { url posterUrl }
+              ... on ImageMedia { url caption }
+              ... on VideoMedia { url }
             }
           }
         }
@@ -31,37 +43,53 @@ export const fetchPosts = (slug = required()) => {
     }
   `
 
-  return jgGraphqlClient
-    .post(null, { query })
-    .then(response => lodashGet(response.data, 'page.timeline.nodes'), [])
+  return servicesAPI
+    .post('/v1/justgiving/graphql', { query })
+    .then(response => response.data)
+    .then(result => lodashGet(result, 'data.page.timeline.nodes', []))
 }
 
 export const createPost = ({
   pageId = required(),
+  userId = required(),
   message = required(),
-  token = required()
+  token = required(),
+  image,
+  video
 }) => {
   const headers = {
     Authorization: `Bearer ${token}`
   }
+
+  const imageMedia = image ? `imageMedia: { url: "${image}" }` : ''
+  const videoMedia = video ? `videoMedia: { url: "${video}" }` : ''
+  const media = image || video ? `media: { ${imageMedia} ${videoMedia} }` : ''
 
   const query = `
     mutation {
       createTimelineEntry (
         input: {
           type: FUNDRAISING
-          pageId: ${pageId}
+          pageId: "${pageId}"
+          creatorGuid: "${userId}"
           message: "${message}"
+          ${media}
         }
       ) {
         id
         message
         createdAt
+        media {
+          __typename
+          ... on ImageMedia { url }
+          ... on VideoMedia { url }
+        }
       }
     }
   `
 
-  return jgGraphqlClient
-    .post(null, { query }, { headers })
-    .then(response => lodashGet(response.data, 'createTimelineEntry'))
+  return servicesAPI
+    .post('/v1/justgiving/graphql', { query }, { headers })
+    .then(response => response.data)
+    .then(result => lodashGet(result, 'data.createTimelineEntry'))
 }

@@ -1,9 +1,9 @@
 import moxios from 'moxios'
 import { instance, servicesAPI, updateClient } from '../../../utils/client'
-import { createPost } from '..'
+import { fetchPosts } from '..'
 
-describe('Create Post', () => {
-  describe('Create EDH Post', () => {
+describe('Fetch Posts', () => {
+  describe('Fetch EDH posts', () => {
     beforeEach(() => {
       moxios.install(instance)
     })
@@ -12,33 +12,22 @@ describe('Create Post', () => {
       moxios.uninstall(instance)
     })
 
-    it('throws if no token is passed', () => {
-      const test = () => createPost({ bogus: 'data' })
-      expect(test).to.throw
-    })
-
     it('hits the supporter api with the correct url and data', done => {
-      createPost({
-        message: 'Test message',
-        pageId: 'my-page-id',
-        token: 'test-token'
-      })
+      fetchPosts({ page_id: '123456' })
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        const data = JSON.parse(request.config.data)
-        const headers = request.config.headers
-
-        expect(request.url).to.contain('https://everydayhero.com/api/v2/posts')
-        expect(headers.Authorization).to.equal('Bearer test-token')
-        expect(data.caption).to.equal('Test message')
-        expect(data.page_id).to.equal('my-page-id')
+        expect(request.url).to.contain(
+          'https://everydayhero.com/api/v2/search/feed'
+        )
+        expect(request.url).to.contain('page_id=123456')
+        expect(request.url).to.contain('type=Post')
         done()
       })
     })
   })
 
-  describe('Create JG post', () => {
+  describe('Fetch JG posts', () => {
     beforeEach(() => {
       updateClient({
         baseURL: 'https://api.justgiving.com',
@@ -54,19 +43,8 @@ describe('Create Post', () => {
       moxios.uninstall(servicesAPI)
     })
 
-    it('throws if no token is passed', () => {
-      const test = () => createPost({ bogus: 'data' })
-      expect(test).to.throw
-    })
-
     it('hits the api with the correct url and data', done => {
-      createPost({
-        message: 'Test message',
-        pageId: '1234-3210-12345',
-        userId: '3210-1234-43210',
-        token: 'test-token',
-        authType: 'Bearer'
-      })
+      fetchPosts('my-page')
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
@@ -76,7 +54,6 @@ describe('Create Post', () => {
         expect(request.url).to.contain(
           'https://api.blackbaud.services/v1/justgiving/graphql'
         )
-        expect(headers.Authorization).to.equal('Bearer test-token')
         done()
       })
     })
