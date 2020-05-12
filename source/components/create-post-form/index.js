@@ -23,13 +23,13 @@ class CreatePostForm extends React.Component {
   handleSubmit (e) {
     e.preventDefault()
 
-    const { authType, form, onSuccess, pageId, token } = this.props
+    const { form, onSuccess, pageId, token, userId } = this.props
 
     form.submit().then(data =>
       Promise.resolve()
         .then(() => this.setState({ status: 'fetching' }))
         .then(() => data.image && uploadToFilestack(data.image, pageId))
-        .then(image => createPost({ ...data, authType, image, pageId, token }))
+        .then(image => createPost({ ...data, image, pageId, token, userId }))
         .then(data => {
           this.setState({ status: 'fetched' })
           onSuccess(data)
@@ -67,17 +67,11 @@ class CreatePostForm extends React.Component {
 }
 
 CreatePostForm.defaultProps = {
-  authType: 'Basic',
   onSuccess: () => {},
   submit: 'Post Update'
 }
 
 CreatePostForm.propTypes = {
-  /**
-   * The page owner's authentication method
-   */
-  authType: PropTypes.string,
-
   /**
    * Props to be passed to the Form component
    */
@@ -106,7 +100,12 @@ CreatePostForm.propTypes = {
   /**
    * The label for the form submit button
    */
-  submit: PropTypes.string
+  submit: PropTypes.string,
+
+  /**
+   * The page owner id (required for JG)
+   */
+  userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 }
 
 export default withForm(form)(CreatePostForm)
