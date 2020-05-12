@@ -1,4 +1,5 @@
 import get from 'lodash/get'
+import find from 'lodash/find'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
 import * as client from '../../../utils/client'
@@ -8,6 +9,7 @@ import { baseUrl, imageUrl, parseText } from '../../../utils/justgiving'
 
 export const deserializeTeam = team => {
   const members = get(team, 'membership.members', [])
+  const membersFitness = get(team, 'fitness.pages', [])
 
   return {
     active: team.status === 'active',
@@ -24,19 +26,26 @@ export const deserializeTeam = team => {
       get(team, 'captain.firstName'),
       get(team, 'captain.lastName')
     ].join(' '),
-    members: members.map(
-      member =>
-        member.pageId
-          ? deserializePage(member)
-          : {
-            id: member.fundraisingPageGuid,
-            name: member.fundraisingPageName,
-            slug: member.fundraisingPageShortName,
-            status: member.fundraisingPageStatus,
-            url: `${baseUrl()}/fundraising/${team.fundraisingPageShortName}`,
-            userId: member.userGuid
-          }
-    ),
+    members: members.map(member => {
+      const page = member.pageId
+        ? deserializePage(member)
+        : {
+          id: member.fundraisingPageGuid,
+          name: member.fundraisingPageName,
+          slug: member.fundraisingPageShortName,
+          status: member.fundraisingPageStatus,
+          url: `${baseUrl()}/fundraising/${team.fundraisingPageShortName}`,
+          userId: member.userGuid,
+          uuid: member.fundraisingPageGuid
+        }
+
+      const pageFitness = find(membersFitness, p => p.ID === page.uuid) || {}
+
+      return {
+        ...page,
+        fitnessDistanceTotal: pageFitness.TotalValue || 0
+      }
+    }),
     name: team.name,
     owner: get(team, 'captain.userGuid'),
     pages: members.map(page => page.fundraisingPageGuid || page.pageGuid),
