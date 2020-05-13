@@ -40,13 +40,22 @@ class AddressSearch extends Component {
 
   handleSelect (selected) {
     this.setState({ value: selected && selected.label })
+
     if (selected && selected.id) {
-      getAddressDetails(selected.id, this.state.country)
+      Promise.resolve()
+        .then(
+          () =>
+            selected.AddressLine1
+              ? selected
+              : getAddressDetails(selected.id, this.state.country)
+        )
         .then(address => deserializeAddress(address))
-        .then(address => {
-          address.country = this.state.country
-          this.props.onChange(address)
-        })
+        .then(address =>
+          this.props.onChange({
+            ...address,
+            country: this.state.country || address.country
+          })
+        )
     }
   }
 
