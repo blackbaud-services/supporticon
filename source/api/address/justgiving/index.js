@@ -1,20 +1,15 @@
-import { jgClient } from '../../../utils/client'
+import { servicesAPI } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
-export const searchAddress = (postcode = required()) => {
-  return jgClient
-    .get(`/address/paf-tuples-by-postcode/${postcode}`)
-    .then(({ data }) => {
-      if (data.IsSuccess) {
-        return data.IsMultiple ? data.MultipleAddresses : [data.OneAddress]
-      }
-
-      return []
-    })
-}
+export const searchAddress = (postcode = required()) =>
+  servicesAPI
+    .get(`/v1/justgiving/addresses/search/postcode/${postcode}`)
+    .then(response => response.data)
 
 export const getAddressDetails = (id = required()) =>
-  jgClient.get(`/address/paf-by-id/${id}`).then(({ data }) => data.OneAddress)
+  servicesAPI
+    .get(`/v1/justgiving/addresses/${id}`)
+    .then(response => response.data)
 
 export const deserializeAddress = address => ({
   streetAddress: address.AddressLine1,
