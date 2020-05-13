@@ -4,6 +4,7 @@ import withForm from 'constructicon/with-form'
 import form from './form'
 import { createTeam, deserializeTeam } from '../../api/teams'
 import { isJustGiving } from '../../utils/client'
+import { currencyCode } from '../../utils/currencies'
 
 import Form from 'constructicon/form'
 import InputField from 'constructicon/input-field'
@@ -18,7 +19,15 @@ class CreateTeamForm extends React.Component {
   handleCreateTeam (e) {
     e.preventDefault()
 
-    const { campaign, form, pageId, pageSlug, token, onSuccess } = this.props
+    const {
+      campaign,
+      country,
+      form,
+      pageId,
+      pageSlug,
+      token,
+      onSuccess
+    } = this.props
 
     return form.submit().then(data => {
       this.setState({ status: 'fetching' })
@@ -27,6 +36,7 @@ class CreateTeamForm extends React.Component {
         campaignId: campaign,
         captainSlug: pageSlug,
         page: pageId,
+        targetCurrency: currencyCode(country),
         token,
         ...data
       }
@@ -105,7 +115,12 @@ CreateTeamForm.propTypes = {
   /**
    * The logged in users' auth token
    */
-  token: PropTypes.string.isRequired
+  token: PropTypes.string.isRequired,
+
+  /**
+   * The country the team is being created in (sets the currency)
+   */
+  country: PropTypes.string
 }
 
 export default withForm(form)(CreateTeamForm)
