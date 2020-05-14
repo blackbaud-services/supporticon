@@ -204,7 +204,7 @@ export const createPage = ({
   title = required(),
   token = required(),
   slug,
-  activityType,
+  activityType = 'othercelebration',
   attribution,
   authType = 'Basic',
   campaignId,
@@ -237,7 +237,15 @@ export const createPage = ({
     return put(
       '/v1/fundraising/pages',
       {
-        activityType,
+        ...(eventId
+          ? {
+            eventId
+          }
+          : {
+            activityType,
+            eventDate,
+            eventName: eventName || title
+          }),
         attribution,
         campaignGuid: campaignGuid || campaignId,
         causeId,
@@ -248,9 +256,6 @@ export const createPage = ({
         consistentErrorResponses,
         currency,
         customCodes,
-        eventDate,
-        eventId,
-        eventName,
         expiryDate,
         images: images.length
           ? images
