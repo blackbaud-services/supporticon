@@ -330,10 +330,11 @@ const form = props => {
           durationUnit: {
             type: 'select',
             label: '​',
-            options: ['seconds', 'minutes', 'hours', 'days'].map(value => ({
-              value,
-              label: value
-            }))
+            options: [
+              { value: 'minutes', label: 'mins' },
+              { value: 'hours', label: 'hrs' },
+              { value: 'days', label: 'days' }
+            ]
           }
         }),
         ...(props.includeElevation && {
