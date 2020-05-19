@@ -23,6 +23,7 @@ export const fetchCampaignGroups = (id = required()) =>
   Promise.reject(new Error('This method is not supported for JustGiving'))
 
 export const deserializeCampaign = campaign => ({
+  charities: campaign.charities,
   donateUrl: [
     baseUrl('link'),
     'v1/campaign/donate/campaignGuid',
