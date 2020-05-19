@@ -204,15 +204,25 @@ export const updateTeam = (
   }
 ) => {
   const headers = { Authorization: `Bearer ${token}` }
+  const prepareStory = story =>
+    `[{"type":"paragraph","nodes":[{"type":"text","ranges":[{"text":"${story}"}]}]}]`
+  const update = (url, payload) =>
+    client.put(
+      `/campaigns/v1/teams/${id}/${url}`,
+      { teamGuid: id, ...payload },
+      { headers }
+    )
 
-  const payload = {
-    teamGuid: id,
-    coverPhotoImageId: image,
-    currency,
-    name,
-    story,
-    target
-  }
-
-  return client.put(`/v1/teamsv2/${id}`, payload, { headers })
+  return Promise.all(
+    [
+      name && update('details/name', { name }),
+      (story || image) &&
+        update('details', {
+          coverPhotoImageId: image,
+          story: prepareStory(story)
+        }),
+      target &&
+        update('fundraising', { targetAmount: target, currencyCode: currency })
+    ].filter(Boolean)
+  )
 }
