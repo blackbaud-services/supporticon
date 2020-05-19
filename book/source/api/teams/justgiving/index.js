@@ -214,5 +214,5 @@ export const updateTeam = (
     target
   }
 
-  return client.put(`/v1/teams/v2/${id}`, payload, { headers })
+  return client.put(`/v1/teamsv2/${id}`, payload, { headers })
 }
