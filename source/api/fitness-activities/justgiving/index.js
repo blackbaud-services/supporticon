@@ -18,7 +18,7 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   page: activity.PageGuid,
   slug: activity.PageShortName,
   teamId: activity.TeamGuid,
-  caption: activity.Title,
+  message: activity.Title,
   type: activity.Type || activity.ActivityType
 })
 

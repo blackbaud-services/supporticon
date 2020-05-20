@@ -27,7 +27,7 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   sourceUrl: activity.source_url,
   startedAt: activity.started_at,
   team: activity.team_id,
-  caption: activity.caption,
+  message: activity.caption,
   trainer: activity.trainer,
   type: activity.type,
   uid: activity.uid,
