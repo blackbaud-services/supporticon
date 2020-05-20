@@ -330,6 +330,7 @@ const form = props => {
           durationUnit: {
             type: 'select',
             label: '​',
+            initial: 'minutes',
             options: [
               { value: 'minutes', label: 'mins' },
               { value: 'hours', label: 'hrs' },
