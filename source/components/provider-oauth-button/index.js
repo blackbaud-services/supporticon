@@ -247,7 +247,9 @@ class ProviderOauthButton extends Component {
         ])}
       >
         <Icon name={icon} spin={isLoading} size={1.5} />
-        <span>{label}</span>
+        <span>
+          {isLoading ? label.replace('Connect', 'Connecting') : label}
+        </span>
       </Button>
     )
   }
