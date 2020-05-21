@@ -16,8 +16,6 @@ export const fetchDonationFeed = options => {
 
 const fetchFeed = params => {
   const mappings = {
-    campaign: 'campaign_id',
-    charity: 'charity_id',
     page: 'page_id',
     team: 'team_id',
     type: 'type',

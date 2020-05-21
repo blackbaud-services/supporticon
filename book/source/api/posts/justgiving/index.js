@@ -1,28 +1,27 @@
 import lodashGet from 'lodash/get'
 import { servicesAPI } from '../../../utils/client'
 import { required } from '../../../utils/params'
+import { videoRegex } from 'constructicon/lib/oembed'
+
+const getMedia = (post, filterMethod) =>
+  lodashGet(lodashGet(post, 'media', []).filter(filterMethod), '[0].url')
 
 export const deserializePost = post => ({
   id: post.id,
   createdAt: post.createdAt,
   message: post.message,
   media: post.media,
-  image: lodashGet(
-    lodashGet(post, 'media', []).filter(
-      media => media.__typename === 'ImageMedia'
-    ),
-    '[0].url'
+  image: getMedia(
+    post,
+    media => media.__typename === 'ImageMedia' && !videoRegex.test(media.url)
   ),
   type: post.type,
-  video: lodashGet(
-    lodashGet(post, 'media', []).filter(
-      media => media.__typename === 'VideoMedia'
-    ),
-    '[0].url'
-  )
+  video:
+    getMedia(post, media => media.__typename === 'VideoMedia') ||
+    getMedia(post, media => videoRegex.test(media.url))
 })
 
-export const fetchPosts = (slug = required()) => {
+export const fetchPosts = ({ slug = required() }) => {
   const query = `
     {
       page(type: FUNDRAISING, slug: "${slug}") {
