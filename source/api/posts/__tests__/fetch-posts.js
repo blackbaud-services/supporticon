@@ -44,7 +44,7 @@ describe('Fetch Posts', () => {
     })
 
     it('hits the api with the correct url and data', done => {
-      fetchPosts('my-page')
+      fetchPosts({ slug: 'my-page' })
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
