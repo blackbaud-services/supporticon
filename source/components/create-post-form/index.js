@@ -7,8 +7,13 @@ import { createPost } from '../../api/posts'
 import { uploadToFilestack } from 'constructicon/lib/filestack'
 
 import Form from 'constructicon/form'
+import Grid from 'constructicon/grid'
+import GridColumn from 'constructicon/grid-column'
 import InputField from 'constructicon/input-field'
 import InputImage from 'constructicon/input-image'
+import InputModal from './InputModal'
+import InputVideo from 'constructicon/input-video'
+import Section from 'constructicon/section'
 
 class CreatePostForm extends React.Component {
   constructor () {
@@ -16,7 +21,9 @@ class CreatePostForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this)
     this.state = {
       errors: [],
-      status: null
+      image: null,
+      status: null,
+      video: null
     }
   }
 
@@ -45,9 +52,25 @@ class CreatePostForm extends React.Component {
     )
   }
 
+  handleChangeAttachment (val, field = 'image') {
+    const { form } = this.props
+
+    if (!val) {
+      this.setState({ [field]: null })
+      return form.fields[field].onChange('')
+    }
+
+    switch (typeof val) {
+      case 'object':
+        return this.setState({ [field]: val })
+      default:
+        return form.fields[field].onChange(val)
+    }
+  }
+
   render () {
-    const { errors, status } = this.state
-    const { form, formProps, inputProps, submit } = this.props
+    const { errors, image, status, video } = this.state
+    const { buttonProps, form, formProps, inputProps, submit } = this.props
 
     return (
       <Form
@@ -60,7 +83,41 @@ class CreatePostForm extends React.Component {
         {...formProps}
       >
         <InputField {...form.fields.message} {...inputProps} />
-        <InputImage {...form.fields.image} />
+        <Section tag='fieldset' spacing={{ b: 1 }}>
+          <Grid spacing={0.5}>
+            <GridColumn sm={6}>
+              <InputModal buttonProps={buttonProps} data={image} type='image'>
+                <InputImage
+                  {...inputProps}
+                  {...form.fields.image}
+                  width={1200}
+                  height={900}
+                  onChange={val => this.handleChangeAttachment(val, 'image')}
+                  onFileChange={val =>
+                    this.handleChangeAttachment(val, 'image')
+                  }
+                />
+              </InputModal>
+            </GridColumn>
+            <GridColumn sm={6}>
+              <InputModal
+                buttonProps={buttonProps}
+                data={video}
+                type='video'
+                width={20}
+              >
+                <InputVideo
+                  {...inputProps}
+                  {...form.fields.video}
+                  onChange={val => this.handleChangeAttachment(val, 'video')}
+                  onVideoChange={val =>
+                    this.handleChangeAttachment(val, 'video')
+                  }
+                />
+              </InputModal>
+            </GridColumn>
+          </Grid>
+        </Section>
       </Form>
     )
   }
@@ -72,6 +129,16 @@ CreatePostForm.defaultProps = {
 }
 
 CreatePostForm.propTypes = {
+  /**
+   * Props to be passed to the Button component
+   */
+  buttonProps: PropTypes.object,
+
+  /**
+   * Props to be passed to the Card component
+   */
+  cardProps: PropTypes.object,
+
   /**
    * Props to be passed to the Form component
    */
