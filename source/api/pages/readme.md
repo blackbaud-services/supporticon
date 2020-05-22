@@ -138,6 +138,27 @@ See [the API documentation](http://developer.everydayhero.com/pages/#create-an-i
 - `groupValues` (Hash/Array) Campaign group values for the page
 - `giftAid` (Boolean) If page eligable for gift aid
 - `inviteToken` (String) Team invite token
+- `tags` (Array of Objects) Containing the following:
+  - `id` (String) Create unique id, needed for reference when filtering or creating leaderboards from tags
+  - `label` (String) Tag Label
+  - `value` (String) Value of Tag
+  - `aggregation` (Array of Object) Settings for how tag is grouped
+    - `segment` (String)
+    - `measurementDomains` (Array) Accepts fundraising:donations_received, ride:distance, walk:distance, any:distance
+
+**Example of tag object shape**
+```javascript
+  {
+    id: '123456',
+    label: 'branchName',
+    value: 'London',
+    aggregation: [{
+      segment: `Page:Campaign:${process.env.CAMPAIGN_GUID}`,
+      measurementDomains: ['fundraising:donations_received', 'any:distance']
+    }]
+  }
+```
+
 
 **Returns**
 
