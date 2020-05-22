@@ -128,9 +128,14 @@ export const fetchPages = (params = required()) => {
   if (allPages && event) {
     const mappings = { limit: 'pageSize' }
 
-    return get(`/v1/event/${getUID(event)}/pages`, args, { mappings }).then(
-      response => response.fundraisingPages
-    )
+    return get(`/v1/event/${getUID(event)}/pages`, args, { mappings })
+      .then(response => response.fundraisingPages)
+      .then(pages =>
+        pages.map(page => ({
+          ...page,
+          totalRaisedOffline: page.raisedAmount - page.totalRaisedOnline
+        }))
+      )
   }
 
   if (campaign && !event) {
