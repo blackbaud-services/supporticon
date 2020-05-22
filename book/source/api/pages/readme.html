@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.6" data-chapter-title="Pages" data-filepath="source/api/pages/readme.md" data-basepath="../../.." data-revision="Fri May 22 2020 02:04:47 GMT+0000 (UTC)">
+    <div class="book" data-level="1.6" data-chapter-title="Pages" data-filepath="source/api/pages/readme.md" data-basepath="../../.." data-revision="Fri May 22 2020 03:44:26 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -438,7 +438,29 @@ return {
 <li><code>groupValues</code> (Hash/Array) Campaign group values for the page</li>
 <li><code>giftAid</code> (Boolean) If page eligable for gift aid</li>
 <li><code>inviteToken</code> (String) Team invite token</li>
+<li><code>tags</code> (Array of Objects) Containing the following:<ul>
+<li><code>id</code> (String) Create unique id, needed for reference when filtering or creating leaderboards from tags</li>
+<li><code>label</code> (String) Tag Label</li>
+<li><code>value</code> (String) Value of Tag</li>
+<li><code>aggregation</code> (Array of Object) Settings for how tag is grouped<ul>
+<li><code>segment</code> (String)</li>
+<li><code>measurementDomains</code> (Array) Accepts fundraising:donations_received, ride:distance, walk:distance, any:distance</li>
 </ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example of tag object shape</strong></p>
+<pre><code class="lang-javascript">  {
+    id: <span class="hljs-string">&apos;123456&apos;</span>,
+    label: <span class="hljs-string">&apos;branchName&apos;</span>,
+    value: <span class="hljs-string">&apos;London&apos;</span>,
+    aggregation: [{
+      segment: <span class="hljs-string">`Page:Campaign:<span class="hljs-subst">${process.env.CAMPAIGN_GUID}</span>`</span>,
+      measurementDomains: [<span class="hljs-string">&apos;fundraising:donations_received&apos;</span>, <span class="hljs-string">&apos;any:distance&apos;</span>]
+    }]
+  }
+</code></pre>
 <p><strong>Returns</strong></p>
 <p>A pending promise that will either resolve to:</p>
 <ul>
