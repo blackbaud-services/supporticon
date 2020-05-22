@@ -76,6 +76,7 @@ export const deserializePage = page => {
     raised: onlineAmount + offlineAmount,
     slug: shortName,
     story: page.story || page.ProfileWhat || page.ProfileWhy,
+    tags: page.tags || [],
     target: parseFloat(
       page.fundraisingTarget ||
         page.TargetAmount ||
@@ -157,10 +158,15 @@ export const fetchPage = (page = required(), slug, options = {}) => {
 
   const fetchers = [
     get(`/v1/fundraising/${endpoint}/${page}`),
-    options.includeFitness && fetchPageFitness(page)
+    options.includeFitness && fetchPageFitness(page),
+    options.includeTags && fetchPageTags(page)
   ]
 
-  return Promise.all(fetchers).then(([page, fitness]) => ({ ...page, fitness }))
+  return Promise.all(fetchers).then(([page, fitness, tags]) => ({
+    ...page,
+    fitness,
+    ...tags
+  }))
 }
 
 export const fetchUserPages = ({
@@ -187,6 +193,10 @@ export const fetchUserPages = ({
     .then(pages => filterByCampaign(pages, campaign))
     .then(pages => filterByCharity(pages, charity))
     .then(pages => filterByEvent(pages, event))
+}
+
+export const fetchPageTags = page => {
+  return get(`v1/tags/${page}`)
 }
 
 const fetchPageFitness = page => {
@@ -228,6 +238,7 @@ export const createPage = ({
   story,
   summaryWhat,
   summaryWhy,
+  tags,
   target,
   teamId,
   theme,
@@ -270,6 +281,7 @@ export const createPage = ({
         pageTitle: title,
         reference,
         rememberedPersonReference,
+        tags,
         targetAmount: target,
         teamId,
         theme,
