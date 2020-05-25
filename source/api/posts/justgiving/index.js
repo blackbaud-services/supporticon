@@ -21,13 +21,24 @@ export const deserializePost = post => ({
     getMedia(post, media => videoRegex.test(media.url))
 })
 
-export const fetchPosts = ({ slug = required() }) => {
+export const fetchPosts = ({
+  slug = required(),
+  allPosts = false,
+  after,
+  results = [],
+  type = 'FUNDRAISING'
+}) => {
   const query = `
     {
-      page(type: FUNDRAISING, slug: "${slug}") {
-        timeline {
+      page(type: "${type}", slug: "${slug}") {
+        timeline${after ? `(after: "${after}") ` : ' '} {
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
           nodes {
             id
+            legacyId
             message
             type
             createdAt
@@ -45,7 +56,22 @@ export const fetchPosts = ({ slug = required() }) => {
   return servicesAPI
     .post('/v1/justgiving/graphql', { query })
     .then(response => response.data)
-    .then(result => lodashGet(result, 'data.page.timeline.nodes', []))
+    .then(result => {
+      const data = lodashGet(result, 'data.page.timeline', {})
+      const { pageInfo = {}, nodes = [] } = data
+      const updatedResults = [...results, ...nodes]
+
+      if (allPosts && pageInfo.hasNextPage) {
+        return fetchPosts({
+          slug,
+          after: pageInfo.endCursor,
+          results: updatedResults,
+          allPosts: true
+        })
+      } else {
+        return updatedResults
+      }
+    })
 }
 
 export const createPost = ({
