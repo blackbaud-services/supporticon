@@ -29,8 +29,8 @@ const InputModal = ({
       default:
         return {
           image: data.preview,
-          subtitle: formatFileSize(data.size),
-          title: data.name
+          subtitle: formatFileSize(data.image.size),
+          title: data.image.name
         }
     }
   }

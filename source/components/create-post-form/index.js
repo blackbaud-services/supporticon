@@ -86,7 +86,11 @@ class CreatePostForm extends React.Component {
         <Section tag='fieldset' spacing={{ b: 1 }}>
           <Grid spacing={0.5}>
             <GridColumn sm={6}>
-              <InputModal buttonProps={buttonProps} data={image} type='image'>
+              <InputModal
+                buttonProps={buttonProps}
+                data={image ? { image, preview: form.values.image } : null}
+                type='image'
+              >
                 <InputImage
                   {...inputProps}
                   {...form.fields.image}
