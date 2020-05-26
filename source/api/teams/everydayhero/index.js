@@ -46,15 +46,17 @@ export const fetchTeam = (id = required()) => {
 }
 
 export const fetchTeamBySlug = (params = required()) => {
-  return fetchPage(params)
-    .then(team => fetchPage(team.id))
-    .then(team => {
-      const ids = team.team_member_uids
-      return fetchPages({ ids, allPages: true }).then(members => ({
-        ...team,
-        members
-      }))
-    })
+  return fetchPage(params).then(data =>
+    fetchPage(data.id).then(team =>
+      fetchPages({ ids: team.team_member_uids, allPages: true }).then(
+        members => ({
+          ...team,
+          owner_uid: data.user_id,
+          members
+        })
+      )
+    )
+  )
 }
 
 export const createTeam = ({ token = required(), page = required(), name }) => {
