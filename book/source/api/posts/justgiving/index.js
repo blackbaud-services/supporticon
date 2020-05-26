@@ -30,7 +30,7 @@ export const fetchPosts = ({
 }) => {
   const query = `
     {
-      page(type: "${type}", slug: "${slug}") {
+      page(type: ${type}, slug: "${slug}") {
         timeline${after ? `(after: "${after}") ` : ' '} {
           pageInfo {
             hasNextPage
