@@ -53,7 +53,7 @@ export const deserializeUser = user => ({
   image:
     user.profileImageUrls && user.profileImageUrls.length
       ? user.profileImageUrls[0]['Value']
-      : null,
+      : 'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
   lastName: user.lastName || user.family_name,
   name: user.name || [user.firstName, user.lastName].join(' '),
   pageCount: user.activePageCount,

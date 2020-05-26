@@ -2,6 +2,14 @@ import omit from 'lodash/omit'
 import { get, put } from '../../../utils/client'
 import { required } from '../../../utils/params'
 
+const imageUrl = user =>
+  `https://supporter-1.cdn.everydayhero.com/assets/users/images/large/avatars/${[
+    user.first_name[0],
+    user.last_name[0]
+  ]
+    .join('')
+    .toUpperCase()}_C6D152.png`
+
 export const deserializeUser = user => ({
   address: {
     streetAddress: user.street_address,
@@ -18,7 +26,7 @@ export const deserializeUser = user => ({
   firstName: user.first_name,
   formattedAddress: user.formattedAddress,
   id: user.id,
-  image: null,
+  image: user.image_url || imageUrl(user),
   lastName: user.last_name,
   name: user.name,
   pageCount: user.page_ids.length,
