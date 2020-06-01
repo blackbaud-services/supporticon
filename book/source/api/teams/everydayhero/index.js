@@ -14,11 +14,11 @@ export const deserializeTeam = team => ({
   fitnessDistanceTotal: getDistanceTotal(team),
   fitnessDurationTotal: getDurationTotal(team),
   fitnessGoal: team.fitness_goal,
-  image: team.image && team.image.large_image_url,
+  image: team.image && team.image.extra_large_image_url,
   leader: team.team_leader_page_uid,
   members: get(team, 'members', []).map(member => ({
     id: member.id,
-    image: get(member, 'image.large_image_url'),
+    image: get(member, 'image.extra_large_image_url'),
     name: member.name,
     raised: get(member, 'amount.cents') / 100,
     slug: member.slug,
