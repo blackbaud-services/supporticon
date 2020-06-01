@@ -44,7 +44,7 @@ export const deserializePage = page => {
     hasUpdatedImage: page.meta && page.meta.has_set_image,
     hasUpdatedStory: page.meta && page.meta.has_set_story,
     id: page.id,
-    image: page.image && page.image.large_image_url,
+    image: page.image && page.image.extra_large_image_url,
     name: page.name,
     owner: lodashGet(page, 'supporter.name') || page.owner_uid || page.user_id,
     raised: amountInCents / 100,
