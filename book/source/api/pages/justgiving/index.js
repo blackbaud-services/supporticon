@@ -243,12 +243,14 @@ export const createPage = ({
   story,
   summaryWhat,
   summaryWhy,
-  tags,
+  tags = [],
   target,
   teamId,
   theme,
   videos
 }) => {
+  const campaign = campaignGuid || campaignId
+
   return getPageShortName(title, slug).then(pageShortName => {
     return put(
       '/v1/fundraising/pages',
@@ -263,7 +265,7 @@ export const createPage = ({
             eventName: eventName || title
           }),
         attribution,
-        campaignGuid: campaignGuid || campaignId,
+        campaignGuid: campaign,
         causeId,
         charityFunded,
         charityId,
@@ -286,7 +288,23 @@ export const createPage = ({
         pageTitle: title,
         reference,
         rememberedPersonReference,
-        tags,
+        tags: [
+          {
+            id: 'page:charity',
+            label: 'Default page charity aggregation tag',
+            value: title,
+            segment: `page:charity:${charityId}`,
+            measurementDomains: ['all']
+          },
+          campaign && {
+            id: 'page:campaign',
+            label: 'Default page campaign aggregation tag',
+            value: title,
+            segment: `page:campaign:${campaign}`,
+            measurementDomains: ['all']
+          },
+          ...tags
+        ].filter(Boolean),
         targetAmount: target,
         teamId,
         theme,
