@@ -4,7 +4,7 @@ import lodashGet from 'lodash/get'
 import lodashFilter from 'lodash/filter'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
-import { get, put, servicesAPI } from '../../../utils/client'
+import { get, post, put, servicesAPI } from '../../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import { getUID, isEqual, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
@@ -47,6 +47,7 @@ export const deserializePage = page => {
     campaign: page.campaignGuid || page.Subtext || page.eventId || page.EventId,
     campaignDate: jsonDate(page.eventDate) || page.EventDate,
     charity: page.charity || page.CharityId,
+    charityId: lodashGet(page, 'charity.id') || page.CharityId,
     coordinates: null,
     createdAt: jsonDate(page.createdDate) || page.CreatedDate,
     donationUrl: [
@@ -243,6 +244,95 @@ export const fetchPageTags = page => {
   return get(`v1/tags/${page}`)
 }
 
+export const createPageTag = ({
+  aggregation = required(),
+  id = required(),
+  label = required(),
+  slug = required(),
+  value = required()
+}) =>
+  post(
+    `/v1/tags/${slug}`,
+    {
+      aggregation,
+      id,
+      label,
+      value
+    },
+    {
+      timeout: 5000
+    }
+  )
+
+export const createPageTags = (page, aggregation = {}) =>
+  Promise.all(
+    [
+      {
+        id: 'page:totals',
+        label: 'Page Totals'
+      },
+      {
+        id: 'page:charity',
+        label: 'Charity Link',
+        value: `page:charity:${page.charityId}`,
+        segment: `page:charity:${page.charityId}`
+      },
+      {
+        id: `page:charity:${page.charityId}`,
+        label: 'Page Charity Link'
+      },
+      {
+        id: 'page:event',
+        label: 'Event Link',
+        value: `page:event:${page.event}`,
+        segment: `page:event:${page.event}`
+      },
+      {
+        label: 'Page Event Link',
+        id: `page:event:${page.event}`
+      },
+      page.campaign && {
+        id: 'page:campaign',
+        label: 'Campaign Link',
+        value: `page:campaign:${page.campaign}`,
+        segment: `page:campaign:${page.campaign}`
+      },
+      page.campaign && {
+        id: 'page:campaign:charity',
+        label: 'Charity Campaign Link',
+        value: `page:campaign:${page.campaign}:charity:${page.charityId}`,
+        segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
+      },
+      page.campaign && {
+        label: 'Page Campaign Link',
+        id: `page:campaign:${page.campaign}`
+      },
+      page.campaign && {
+        label: 'Page Charity Campaign Link',
+        id: `page:campaign:${page.campaign}:charity:${page.charityId}`
+      }
+    ]
+      .filter(Boolean)
+      .map(({ label, id, value, segment }) => {
+        const promise = () =>
+          createPageTag({
+            slug: page.slug,
+            label,
+            id,
+            value: value || `page:fundraising:${page.uuid}`,
+            aggregation: [
+              {
+                segment: segment || id,
+                measurementDomains: ['all'],
+                ...aggregation
+              }
+            ]
+          })
+
+        return promise().catch(() => promise()) // Retry if fails
+      })
+  )
+
 const fetchPageFitness = page => {
   return get(`/v1/fitness/fundraising/${page}`)
 }
@@ -294,12 +384,15 @@ export const createPage = ({
   story,
   summaryWhat,
   summaryWhy,
-  tags,
+  tags = [],
+  tagsCallback,
   target,
   teamId,
   theme,
   videos
 }) => {
+  const campaign = campaignGuid || campaignId
+
   return getPageShortName(title, slug).then(pageShortName => {
     return put(
       '/v1/fundraising/pages',
@@ -314,7 +407,7 @@ export const createPage = ({
             eventName: eventName || title
           }),
         attribution,
-        campaignGuid: campaignGuid || campaignId,
+        campaignGuid: campaign,
         causeId,
         charityFunded,
         charityId,
@@ -349,6 +442,16 @@ export const createPage = ({
         }
       }
     )
+      .then(result => fetchPage(result.pageId))
+      .then(page => {
+        createPageTags(deserializePage(page)).then(tags => {
+          if (typeof tagsCallback === 'function') {
+            tagsCallback(tags, page)
+          }
+        })
+
+        return page
+      })
   })
 }
 
