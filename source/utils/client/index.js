@@ -40,6 +40,7 @@ export const updateClient = (options = {}) => {
   updateServicesAPIClient()
   updateMetadataAPIClient()
   updateJGIdentityClient()
+  updateImagesAPIClient()
 }
 
 export const getBaseURL = () => instance.defaults.baseURL
@@ -76,6 +77,17 @@ const updateMetadataAPIClient = () => {
       : 'https://mds-engineering.everydayhero.com'
 }
 
+// JG Images Client
+export const imagesAPI = axios.create({
+  baseURL: 'https://images.justgiving.com'
+})
+
+const updateImagesAPIClient = () => {
+  imagesAPI.defaults.baseURL = isStaging()
+    ? 'https://images.staging.justgiving.com'
+    : 'https://images.justgiving.com'
+}
+
 // JG Identity Client
 export const jgIdentityClient = axios.create({
   baseURL: 'https://identity.justgiving.com'
@@ -100,5 +112,6 @@ export default {
   isStaging,
   servicesAPI,
   metadataAPI,
+  imagesAPI,
   jgIdentityClient
 }
