@@ -7,6 +7,8 @@ import { fetchPage, deserializePage } from '../../pages'
 import { paramsSerializer, required } from '../../../utils/params'
 import { baseUrl, imageUrl, parseText } from '../../../utils/justgiving'
 
+export const teamNameRegex = /[^\w\s'"!?£$€¥.,-]/gi
+
 export const deserializeTeam = team => {
   const members = get(team, 'membership.members', [])
   const membersFitness = get(team, 'fitness.pages', [])
@@ -138,7 +140,7 @@ export const createTeam = params => {
     campaignGuid: campaignId,
     captainPageShortName: captainSlug,
     coverPhotoId,
-    name,
+    name: name.replace(teamNameRegex, '').substring(0, 255),
     story,
     targetCurrency,
     targetType,
@@ -209,7 +211,7 @@ export const updateTeam = (
     teamGuid: id,
     coverPhotoImageId: image,
     currency,
-    name,
+    name: name.replace(teamNameRegex, '').substring(0, 255),
     story,
     target
   }
