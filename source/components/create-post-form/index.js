@@ -4,7 +4,7 @@ import withForm from 'constructicon/with-form'
 import get from 'lodash/get'
 import form from './form'
 import { createPost } from '../../api/posts'
-import { uploadToFilestack } from 'constructicon/lib/filestack'
+import { uploadImage } from '../../api/images'
 
 import Form from 'constructicon/form'
 import Grid from 'constructicon/grid'
@@ -35,7 +35,7 @@ class CreatePostForm extends React.Component {
     form.submit().then(data =>
       Promise.resolve()
         .then(() => this.setState({ status: 'fetching' }))
-        .then(() => data.image && uploadToFilestack(data.image, pageId))
+        .then(() => data.image && uploadImage(data.image))
         .then(image => createPost({ ...data, image, pageId, token, userId }))
         .then(data => {
           this.setState({ status: 'fetched' })
