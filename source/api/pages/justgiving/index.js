@@ -26,8 +26,10 @@ export const deserializePage = page => {
     )
   }
 
-  const getQrCodes = ({ media: { images } }) =>
-    lodashFilter(images, image => image.caption === 'qrcode')
+  const getQrCodes = page => {
+    const images = lodashGet(page, 'media.images', [])
+    return lodashFilter(images, image => image.caption === 'qrcode')
+  }
 
   const onlineAmount = parseFloat(
     page.totalRaisedOnline ||
