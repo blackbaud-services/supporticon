@@ -7,10 +7,15 @@ export const fetchDonationFeed = ({
   charity,
   event,
   page,
+  pageShortName,
   donationRef
 }) => {
   if (donationRef) {
     return fetchDonationFeedByRef(donationRef)
+  }
+
+  if (pageShortName) {
+    return fetchDonationsByShortName(pageShortName)
   }
 
   if (charity || campaign || event || page) {
@@ -20,7 +25,7 @@ export const fetchDonationFeed = ({
   }
 
   return Promise.reject(
-    'You must pass a charity UID, event ID, page ID, campaign GUID or donationRef for this method'
+    'You must pass a charity UID, event ID, page ID, page short name, campaign GUID or donationRef for this method'
   )
 }
 
@@ -40,6 +45,11 @@ export const fetchDonations = ({ event, charity, campaign, page }) =>
 
 const fetchDonationFeedByRef = ref =>
   get(`v1/donation/ref/${ref}`).then(data => data.donations)
+
+const fetchDonationsByShortName = pageShortName =>
+  get(`v1/fundraising/pages/${pageShortName}/donations`).then(
+    data => data.donations
+  )
 
 export const deserializeDonation = donation => {
   const isFromDonationsAPI = !!donation.donationId
