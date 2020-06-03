@@ -1,6 +1,7 @@
 import moment from 'moment'
 import first from 'lodash/first'
 import lodashGet from 'lodash/get'
+import lodashFilter from 'lodash/filter'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
 import { get, put } from '../../../utils/client'
@@ -23,6 +24,11 @@ export const deserializePage = page => {
       lodashGet(page, 'images[0].url') ||
       apiImageUrl(shortName)
     )
+  }
+
+  const getQrCodes = page => {
+    const images = lodashGet(page, 'media.images', [])
+    return lodashFilter(images, image => image.caption === 'qrcode')
   }
 
   const onlineAmount = parseFloat(
@@ -56,7 +62,9 @@ export const deserializePage = page => {
     fitnessDistanceTotal: lodashGet(page, 'fitness.totalAmount', 0),
     fitnessDurationTotal: lodashGet(page, 'fitness.totalAmountTaken', 0),
     groups: null,
-    hasUpdatedImage: page.imageCount && parseInt(page.imageCount) > 1,
+    hasUpdatedImage:
+      page.imageCount &&
+      parseInt(page.imageCount - getQrCodes(page).length) > 1,
     id: page.pageId || page.Id,
     image:
       getImage() &&
@@ -73,6 +81,7 @@ export const deserializePage = page => {
       page.OwnerFullName ||
       page.PageOwner ||
       lodashGet(page, 'pageOwner.fullName'),
+    qrCodes: getQrCodes(page),
     raised: onlineAmount + offlineAmount,
     slug: shortName,
     story: page.story || page.ProfileWhat || page.ProfileWhy,
