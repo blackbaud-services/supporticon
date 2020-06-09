@@ -64,7 +64,7 @@ describe('Fetch Fitness Activities', () => {
     })
 
     it('fetches activities for a page', done => {
-      fetchFitnessActivities({ page: 'test-page' })
+      fetchFitnessActivities({ page: 'test-page', useLegacy: true })
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
