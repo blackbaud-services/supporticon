@@ -42,6 +42,7 @@ export const fetchPosts = ({
             message
             type
             createdAt
+            fitnessActivity { activityType }
             media {
               __typename
               ... on ImageMedia { url caption }
@@ -69,7 +70,7 @@ export const fetchPosts = ({
           allPosts: true
         })
       } else {
-        return updatedResults
+        return updatedResults.filter(post => !post.fitnessActivity)
       }
     })
 }
