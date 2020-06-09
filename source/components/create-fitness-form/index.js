@@ -27,7 +27,7 @@ class CreateFitnessForm extends Component {
   handleSubmit (e) {
     e.preventDefault()
 
-    const { pageSlug, pageId, form, onSuccess, token } = this.props
+    const { pageSlug, pageId, form, onSuccess, token, userId } = this.props
 
     return form.submit().then(data => {
       this.setState({ errors: [], status: 'fetching' })
@@ -40,7 +40,8 @@ class CreateFitnessForm extends Component {
           ? data.type
           : data.type === 'ride'
             ? 'bike'
-            : data.type
+            : data.type,
+        userId
       })
 
       return Promise.resolve()
@@ -166,9 +167,9 @@ CreateFitnessForm.propTypes = {
   pageId: isJustGiving() ? PropTypes.string : PropTypes.string.isRequired,
 
   /**
-   * The shortName for a valid page (required - JG)
+   * The user's guid (required - JG)
    */
-  pageSlug: isJustGiving() ? PropTypes.string.isRequired : PropTypes.string,
+  userId: isJustGiving() ? PropTypes.string.isRequired : PropTypes.string,
 
   /**
    * Units of measurement (Metric or Imperial)
