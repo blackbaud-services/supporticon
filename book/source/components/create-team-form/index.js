@@ -1,4 +1,5 @@
 import React from 'react'
+import get from 'lodash/get'
 import PropTypes from 'prop-types'
 import withForm from 'constructicon/with-form'
 import form from './form'
@@ -49,11 +50,31 @@ class CreateTeamForm extends React.Component {
           return onSuccess(team)
         })
         .catch(error => {
-          const errors = [{ message: 'There was an unexpected error' }]
+          const errors = this.buildErrors(error)
           this.setState({ status: 'failed', errors })
           return Promise.reject(error)
         })
     })
+  }
+
+  buildErrors (error) {
+    const errors = get(error, 'data.error.errors', [])
+
+    if (errors.length > 0 && !isJustGiving()) {
+      return errors.map(err => {
+        switch (err.code) {
+          case 'taken':
+            return {
+              message:
+                'That name has been taken. Please try with a different team name.'
+            }
+          default:
+            return { message: `Team ${err.field} ${err.message}.` }
+        }
+      })
+    }
+
+    return [{ message: 'An error occurred creating your team.' }]
   }
 
   render () {
