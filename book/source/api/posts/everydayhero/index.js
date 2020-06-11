@@ -49,3 +49,6 @@ export const createPost = ({
 
   return post('api/v2/posts', data, { headers }).then(data => data.post)
 }
+
+export const deletePost = (params = required()) =>
+  Promise.reject(new Error('This method is not supported by Everydayhero'))
