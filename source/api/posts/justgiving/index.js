@@ -119,3 +119,22 @@ export const createPost = ({
     .then(response => response.data)
     .then(result => lodashGet(result, 'data.createTimelineEntry'))
 }
+
+export const deletePost = ({ id = required(), token = required() }) => {
+  const query = `
+    mutation {
+      deleteTimelineEntry (
+        input: {
+          id: "${id}"
+        }
+      )
+    }
+  `
+
+  const headers = { Authorization: `Bearer ${token}` }
+
+  return servicesAPI
+    .post('/v1/justgiving/graphql', { query }, { headers })
+    .then(response => response.data)
+    .then(result => lodashGet(result, 'data.deleteTimelineEntry'))
+}
