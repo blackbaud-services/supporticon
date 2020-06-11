@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 import { deleteFitnessActivity } from '..'
 
 describe('Delete Fitness Activity', () => {
@@ -45,16 +45,36 @@ describe('Delete Fitness Activity', () => {
 
   describe('Delete JG fitness activity', () => {
     beforeEach(() => {
-      updateClient({ baseURL: 'https://api.justgiving.com' })
+      updateClient({
+        baseURL: 'https://api.justgiving.com',
+        headers: { 'x-api-key': 'abcd1234' }
+      })
+      moxios.install(servicesAPI)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
+      moxios.uninstall(servicesAPI)
     })
 
-    it('is not supported', () => {
-      const test = () => deleteFitnessActivity(123, 'token')
+    it('throws if no token is passed', () => {
+      const test = () => deleteFitnessActivity({ bogus: 'data' })
       expect(test).to.throw
+    })
+
+    it('hits the api with the correct url and data', done => {
+      deleteFitnessActivity('3210-1234-43210', 'test-token')
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        const headers = request.config.headers
+
+        expect(request.url).to.contain(
+          'https://api.blackbaud.services/v1/justgiving/graphql'
+        )
+        expect(headers.Authorization).to.equal('Bearer test-token')
+        done()
+      })
     })
   })
 })
