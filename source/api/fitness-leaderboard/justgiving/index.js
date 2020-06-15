@@ -8,8 +8,7 @@ const fetchActivePages = pages => {
 
   return client.servicesAPI
     .get('/v1/justgiving/proxy/fundraising/v2/pages/bulk', {
-      params: { pageGuids },
-      paramsSerializer
+      params: { pageGuids: pageGuids.join(',') }
     })
     .then(response => response.data.results)
     .then(results => results.filter(page => page.status === 'Active'))
