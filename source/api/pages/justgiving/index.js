@@ -223,6 +223,18 @@ export const fetchPageDonationCount = (page = required()) => {
   )
 }
 
+const truncate = (string, length = 50) => {
+  if (string) {
+    return String(string).length > length
+      ? String(string)
+        .substring(0, length - 3)
+        .trim() + '...'
+      : String(string)
+  }
+
+  return undefined
+}
+
 export const createPage = ({
   charityId = required(),
   title = required(),
@@ -291,7 +303,7 @@ export const createPage = ({
         pageShortName,
         pageStory: story,
         pageSummaryWhat: summaryWhat,
-        pageSummaryWhy: summaryWhy,
+        pageSummaryWhy: truncate(summaryWhy),
         pageTitle: title,
         reference,
         rememberedPersonReference,
