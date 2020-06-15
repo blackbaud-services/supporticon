@@ -60,6 +60,7 @@ class FitnessLeaderboard extends Component {
 
   fetchLeaderboard (q, refresh) {
     const {
+      activeOnly,
       activity,
       campaign,
       charity,
@@ -85,6 +86,7 @@ class FitnessLeaderboard extends Component {
       })
 
     fetchFitnessLeaderboard({
+      activeOnly,
       activity,
       campaign,
       charity,
@@ -330,6 +332,11 @@ FitnessLeaderboard.propTypes = {
   units: PropTypes.bool,
 
   /**
+   * Only show active pages?
+   */
+  activeOnly: PropTypes.bool,
+
+  /**
    * Offset to be applied to each page distance
    */
   offset: PropTypes.number,
@@ -346,6 +353,7 @@ FitnessLeaderboard.propTypes = {
 }
 
 FitnessLeaderboard.defaultProps = {
+  activeOnly: true,
   filter: {},
   limit: 10,
   multiplier: 1,
