@@ -12,8 +12,9 @@ const fetchActivePages = pages => {
     })
     .then(response => response.data.results)
     .then(results => results.filter(page => page.status === 'Active'))
-    .then(results =>
-      pages.filter(page => pageGuids.indexOf(page.pageGuid) > -1)
+    .then(results => results.map(page => page.pageGuid))
+    .then(activePageIds =>
+      pages.filter(page => activePageIds.indexOf(page.ID) > -1)
     )
 }
 
