@@ -143,7 +143,14 @@ class ProviderOauthButton extends Component {
   }
 
   providerUrl () {
-    const { clientId, homeUrl, provider, redirectUri, token } = this.props
+    const {
+      clientId,
+      homeUrl,
+      provider,
+      redirectUri,
+      token,
+      authParams = {}
+    } = this.props
 
     if (isJustGiving() && provider === 'strava') {
       const baseURL = 'https://www.strava.com/oauth/authorize'
@@ -153,7 +160,8 @@ class ProviderOauthButton extends Component {
         redirect_uri: redirectUri,
         response_type: 'code',
         scope: 'read,activity:read',
-        state: token
+        state: token,
+        ...authParams
       }
 
       const urlParams = Object.keys(params)
@@ -172,7 +180,8 @@ class ProviderOauthButton extends Component {
         client_id: clientId,
         redirect_uri: redirectUri,
         response_type: 'code',
-        state: homeUrl && encodeURIComponent(`home=${homeUrl}`)
+        state: homeUrl && encodeURIComponent(`home=${homeUrl}`),
+        ...authParams
       }
 
       const urlParams = Object.keys(params)
@@ -187,7 +196,8 @@ class ProviderOauthButton extends Component {
         clientId,
         forceProvider: provider,
         redirectUri,
-        responseType: 'token'
+        responseType: 'token',
+        ...authParams
       }
 
       const urlParams = Object.keys(params)
@@ -312,7 +322,12 @@ ProviderOauthButton.propTypes = {
   /**
    * Home URl that our oauth handler (oauth.blackbaud-sites.com) will redirect to
    */
-  homeUrl: PropTypes.string
+  homeUrl: PropTypes.string,
+
+  /**
+   * URL Params to be passed to provider
+   */
+  authParams: PropTypes.object
 }
 
 ProviderOauthButton.defaultProps = {
