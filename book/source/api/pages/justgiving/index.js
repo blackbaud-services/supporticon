@@ -11,7 +11,8 @@ import { getUID, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
 export const deserializePage = page => {
-  const shortName = page.shortName || page.pageShortName
+  const shortName =
+    page.shortName || page.pageShortName || (page.LinkPath || '').substring(1)
 
   const getImage = () => {
     return (
