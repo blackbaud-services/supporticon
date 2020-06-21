@@ -84,6 +84,8 @@ export const deserializePage = page => {
       lodashGet(page, 'pageOwner.fullName'),
     qrCodes: getQrCodes(page),
     raised: onlineAmount + offlineAmount,
+    raisedOnline: onlineAmount,
+    raisedOffline: offlineAmount,
     slug: shortName,
     story: page.story || page.ProfileWhat || page.ProfileWhy,
     tags: page.tags || [],
