@@ -75,6 +75,7 @@ export const deserializeDonation = donation => {
     name: isFromDonationsAPI
       ? donation.donor && donation.donor.name
       : donation.donorDisplayName,
-    page: donation.pageShortName
+    page: donation.pageShortName,
+    status: donation.status
   }
 }
