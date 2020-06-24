@@ -145,6 +145,7 @@ class PageSearch extends Component {
             title={page.name}
             subtitle={this.getSubtitle(subtitle, page)}
             image={page.image}
+            label={`Support ${page.name}`}
             url={page.url}
             {...this.props.searchResult}
           />
