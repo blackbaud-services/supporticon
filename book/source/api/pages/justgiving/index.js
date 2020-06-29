@@ -41,11 +41,10 @@ export const deserializePage = page => {
   )
 
   const offlineAmount = parseFloat(page.totalRaisedOffline || 0)
+  const status = page.status || page.pageStatus
 
   return {
-    active:
-      (!page.status && !page.pageStatus) ||
-      [page.status, page.pageStatus].indexOf('Inactive') === -1,
+    active: status ? ['Inactive', 'Cancelled'].indexOf(status) === -1 : true,
     campaign: page.campaignGuid || page.Subtext || page.eventId || page.EventId,
     campaignDate: jsonDate(page.eventDate) || page.EventDate,
     charity: page.charity || page.CharityId,
