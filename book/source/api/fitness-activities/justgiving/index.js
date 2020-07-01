@@ -1,8 +1,26 @@
 import moment from 'moment'
-import { get, post } from '../../../utils/client'
+import lodashGet from 'lodash/get'
+import { get, post, servicesAPI } from '../../../utils/client'
 import { paramsSerializer, required } from '../../../utils/params'
 import { convertToMeters, convertToSeconds } from '../../../utils/units'
 import jsonDate from '../../../utils/jsonDate'
+import { encodeBase64String } from '../../../utils/base64'
+
+const getFitnessId = activity => {
+  switch (activity.ActivityType) {
+    case 'Strava':
+      return encodeBase64String(
+        [
+          'Timeline:FUNDRAISING',
+          activity.PageGuid,
+          'FITNESS:STRAVA',
+          activity.ExternalId
+        ].join(':')
+      )
+    default:
+      return activity.id || activity.Id || activity.FitnessGuid
+  }
+}
 
 export const deserializeFitnessActivity = (activity = required()) => ({
   campaign: activity.CampaignGuid,
@@ -13,7 +31,7 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   elevation: activity.Elevation,
   externalId: !activity.ExternalId ? null : activity.ExternalId,
   eventId: activity.EventId,
-  id: activity.FitnessGuid,
+  id: getFitnessId(activity),
   manual: activity.ActivityType === 'Manual',
   page: activity.PageGuid,
   slug: activity.PageShortName,
@@ -88,5 +106,21 @@ export const createFitnessActivity = ({
 export const updateFitnessActivity = (id = required(), params = required()) =>
   Promise.reject(new Error('This method is not supported by JustGiving'))
 
-export const deleteFitnessActivity = (id = required(), token = required()) =>
-  Promise.reject(new Error('This method is not supported by JustGiving'))
+export const deleteFitnessActivity = (id = required(), token = required()) => {
+  const query = `
+    mutation {
+      deleteTimelineEntry (
+        input: {
+          id: "${id}"
+        }
+      )
+    }
+  `
+
+  const headers = { Authorization: `Bearer ${token}` }
+
+  return servicesAPI
+    .post('/v1/justgiving/graphql', { query }, { headers })
+    .then(response => response.data)
+    .then(result => lodashGet(result, 'data.deleteTimelineEntry'))
+}

@@ -4,6 +4,7 @@ import omit from 'lodash/omit'
 import { getBaseURL, isJustGiving } from '../../utils/client'
 import { fetchCurrentUser } from '../../api/me'
 import { submitCrossDomainForm } from '../../utils/cross-domain'
+import { decodeBase64String } from '../../utils/base64'
 
 import Button from 'constructicon/button'
 import Loading from 'constructicon/loading'
@@ -71,7 +72,7 @@ class SingleSignOnLink extends Component {
 
     const { root } = this.refs
     const { target } = this.state
-    const decoded = window.atob(token).split(':')
+    const decoded = decodeBase64String(token).split(':')
 
     event.preventDefault()
     this.setState({ loading: true })
