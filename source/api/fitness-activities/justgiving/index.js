@@ -4,6 +4,23 @@ import { get, post, servicesAPI } from '../../../utils/client'
 import { paramsSerializer, required } from '../../../utils/params'
 import { convertToMeters, convertToSeconds } from '../../../utils/units'
 import jsonDate from '../../../utils/jsonDate'
+import { encodeBase64String } from '../../../utils/base64'
+
+const getFitnessId = activity => {
+  switch (activity.ActivityType) {
+    case 'Strava':
+      return encodeBase64String(
+        [
+          'Timeline:FUNDRAISING',
+          activity.PageGuid,
+          'FITNESS:STRAVA',
+          activity.ExternalId
+        ].join(':')
+      )
+    default:
+      return activity.id || activity.Id || activity.FitnessGuid
+  }
+}
 
 export const deserializeFitnessActivity = (activity = required()) => ({
   campaign: activity.CampaignGuid,
@@ -14,7 +31,7 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   elevation: activity.Elevation,
   externalId: !activity.ExternalId ? null : activity.ExternalId,
   eventId: activity.EventId,
-  id: activity.Id || activity.FitnessGuid,
+  id: getFitnessId(activity),
   manual: activity.ActivityType === 'Manual',
   page: activity.PageGuid,
   slug: activity.PageShortName,
