@@ -1,12 +1,12 @@
 import { get, put, post } from '../../../utils/client'
 import { required } from '../../../utils/params'
+import { encodeBase64String } from '../../../utils/base64'
 
 export const resetPassword = ({ email = required() }) =>
   get(`v1/account/${email}/requestpasswordreminder`)
 
 export const signIn = ({ email = required(), password = required() }) => {
-  const { btoa } = window
-  const token = btoa(`${email}:${password}`)
+  const token = encodeBase64String(`${email}:${password}`)
 
   return get(
     'v1/account',
@@ -59,6 +59,6 @@ export const signUp = ({
     firstName,
     lastName,
     name: [firstName, lastName].join(' '),
-    token: window.btoa(`${email}:${password}`)
+    token: encodeBase64String(`${email}:${password}`)
   }))
 }
