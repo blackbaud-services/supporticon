@@ -176,10 +176,11 @@ export const deserializeLeaderboard = (supporter, index) => {
     name:
       supporter.pageTitle ||
       supporter.name ||
-      (supporter.pageOwner && supporter.pageOwner.fullName),
+      lodashGet(supporter, 'pageOwner.fullName'),
     offline: parseFloat(
       supporter.totalRaisedOffline || supporter.raisedOfflineAmount || 0
     ),
+    owner: lodashGet(supporter, 'pageOwner.fullName') || supporter.owner,
     position: index + 1,
     raised: parseFloat(
       supporter.amount ||
@@ -189,7 +190,10 @@ export const deserializeLeaderboard = (supporter, index) => {
         0
     ),
     slug: supporter.pageShortName,
-    subtitle: supporter.eventName,
+    subtitle:
+      lodashGet(supporter, 'pageOwner.fullName') ||
+      supporter.owner ||
+      supporter.eventName,
     target: supporter.targetAmount || supporter.target,
     totalDonations: supporter.numberOfSupporters || supporter.donationCount,
     url: [
