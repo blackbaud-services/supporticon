@@ -68,6 +68,7 @@
 <FitnessLeaderboard
   campaign='nz-1608'
   sortBy='calories'
+  subtitleMethod={item => `${Math.round(item.distance / 1000)}km`}
 />
 ```
 

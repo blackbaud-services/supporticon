@@ -188,13 +188,13 @@ class FitnessLeaderboard extends Component {
   }
 
   renderLeader (leader, i) {
-    const { leaderboardItem = {} } = this.props
+    const { leaderboardItem = {}, subtitleMethod } = this.props
 
     return (
       <LeaderboardItem
         key={i}
         title={leader.name}
-        subtitle={leader.charity}
+        subtitle={subtitleMethod(leader)}
         image={leader.image}
         amount={this.getMetric(leader)}
         href={leader.url}
@@ -349,7 +349,12 @@ FitnessLeaderboard.propTypes = {
   /**
    * Interval (in milliseconds) to refresh data from API
    */
-  refreshInterval: PropTypes.number
+  refreshInterval: PropTypes.number,
+
+  /**
+   * A function to
+   */
+  subtitleMethod: PropTypes.func
 }
 
 FitnessLeaderboard.defaultProps = {
@@ -361,6 +366,7 @@ FitnessLeaderboard.defaultProps = {
   page: 1,
   showPage: false,
   sortBy: 'distance',
+  subtitleMethod: item => item.charity,
   units: true
 }
 

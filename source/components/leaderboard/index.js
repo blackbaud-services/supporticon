@@ -236,6 +236,7 @@ class Leaderboard extends Component {
       format,
       leaderboardItem = {},
       multiplier,
+      subtitleMethod,
       offset
     } = this.props
     const formatMethod = currency ? 'formatCurrency' : 'format'
@@ -244,7 +245,7 @@ class Leaderboard extends Component {
       <LeaderboardItem
         key={i}
         title={leader.name}
-        subtitle={leader.subtitle}
+        subtitle={subtitleMethod(leader)}
         image={leader.image}
         amount={numbro((offset + leader.raised) * multiplier)[formatMethod](
           format
@@ -384,7 +385,12 @@ Leaderboard.propTypes = {
   /**
    * Interval (in milliseconds) to refresh data from API
    */
-  refreshInterval: PropTypes.number
+  refreshInterval: PropTypes.number,
+
+  /**
+   * The field to show as a subtitle
+   */
+  subtitleMethod: PropTypes.func
 }
 
 Leaderboard.defaultProps = {
@@ -395,7 +401,8 @@ Leaderboard.defaultProps = {
   multiplier: 1,
   offset: 0,
   page: 1,
-  showPage: false
+  showPage: false,
+  subtitleMethod: item => item.subtitle
 }
 
 export default Leaderboard
