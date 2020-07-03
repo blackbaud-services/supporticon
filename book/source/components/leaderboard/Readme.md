@@ -48,5 +48,6 @@
   offset={-500}
   page={1}
   pageSize={5}
+  subtitleMethod={item => `$${Math.round(item.raised)}`}
 />
 ```
