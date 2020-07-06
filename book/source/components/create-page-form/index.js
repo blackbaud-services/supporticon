@@ -137,10 +137,11 @@ class CreatePageForm extends Component {
   }
 
   handleSubmitAddress (token, address) {
-    const { authType, includeAddress } = this.props
+    const { authType, includeAddress, user } = this.props
+    const { uuid, email } = user
 
     return includeAddress
-      ? updateCurrentUser({ authType, token, address })
+      ? updateCurrentUser({ uuid, email, authType, token, address })
       : Promise.resolve()
   }
 
@@ -356,7 +357,12 @@ CreatePageForm.propTypes = {
   /**
    * Provide initial values for any fields
    */
-  initialValues: PropTypes.object
+  initialValues: PropTypes.object,
+
+  /**
+   * Additional user data to pass to update user method
+   */
+  user: PropTypes.object
 }
 
 CreatePageForm.defaultProps = {
@@ -365,7 +371,8 @@ CreatePageForm.defaultProps = {
   disableInvalidForm: false,
   fields: {},
   initialValues: {},
-  submit: 'Create Page'
+  submit: 'Create Page',
+  user: {}
 }
 
 const form = props => {
