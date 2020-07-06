@@ -5,6 +5,7 @@ import {
   getAddressDetails,
   searchAddress
 } from '../../api/address'
+import { isJustGiving } from '../../utils/client'
 import countries from '../../utils/countries'
 
 import Button from 'constructicon/button'
@@ -88,6 +89,7 @@ class AddressSearch extends Component {
             results={results}
             showMore
             status={status}
+            placeholder={isJustGiving() ? 'Search postcode' : 'Search address'}
             validations={validations}
             value={value}
             {...inputProps}

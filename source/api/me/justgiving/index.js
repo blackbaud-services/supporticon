@@ -94,7 +94,7 @@ export const updateCurrentUser = ({
   authType = 'Basic',
   firstName,
   lastName,
-  address
+  address = {}
 }) =>
   put(
     `v1/account/${uuid}`,
@@ -102,7 +102,14 @@ export const updateCurrentUser = ({
       firstName,
       lastName,
       email,
-      address
+      address: {
+        line1: address.line1 || address.streetAddress,
+        line2: address.line2 || address.extendedAddress,
+        townOrCity: address.townOrCity || address.locality,
+        countyOrState: address.countyOrState || address.region,
+        postcodeOrZipcode: address.postcodeOrZipcode || address.postCode,
+        country: address.country
+      }
     },
     {
       headers: {
