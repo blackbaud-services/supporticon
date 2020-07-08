@@ -190,10 +190,7 @@ export const deserializeLeaderboard = (supporter, index) => {
         0
     ),
     slug: supporter.pageShortName,
-    subtitle:
-      lodashGet(supporter, 'pageOwner.fullName') ||
-      supporter.owner ||
-      supporter.eventName,
+    subtitle: lodashGet(supporter, 'pageOwner.fullName') || supporter.eventName,
     target: supporter.targetAmount || supporter.target,
     totalDonations: supporter.numberOfSupporters || supporter.donationCount,
     url: [
