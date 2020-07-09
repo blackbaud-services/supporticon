@@ -48,6 +48,7 @@ export const deserializePage = page => {
     name: page.name,
     owner: lodashGet(page, 'supporter.name') || page.owner_uid || page.user_id,
     raised: amountInCents / 100,
+    segmentation: deserializeSegmentation(page.page_groups),
     slug: page.slug,
     story: page.story,
     target:
@@ -58,6 +59,16 @@ export const deserializePage = page => {
     url: page.url,
     uuid: page.uuid
   }
+}
+
+const deserializeSegmentation = (groups = []) => {
+  return groups.reduce(
+    (segments, group) => ({
+      ...segments,
+      [group.key]: group.value
+    }),
+    {}
+  )
 }
 
 export const fetchPages = (params = required()) => {
