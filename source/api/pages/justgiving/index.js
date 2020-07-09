@@ -85,6 +85,7 @@ export const deserializePage = page => {
     raised: onlineAmount + offlineAmount,
     raisedOnline: onlineAmount,
     raisedOffline: offlineAmount,
+    segmentation: deserializeSegmentation(page.tags),
     slug: shortName,
     story: page.story || page.ProfileWhat || page.ProfileWhy,
     tags: page.tags || [],
@@ -103,6 +104,18 @@ export const deserializePage = page => {
     url: page.Link || page.PageUrl || `${baseUrl()}/fundraising/${shortName}`,
     uuid: page.pageGuid || page.fundraisingPageGuid
   }
+}
+
+const deserializeSegmentation = (tags = []) => {
+  return tags.reduce((segments, tag) => {
+    const key = lodashGet(tag, 'tagDefinition.id')
+    const value = lodashGet(tag, 'value')
+
+    return {
+      ...segments,
+      [key]: value
+    }
+  }, {})
 }
 
 export const fetchPages = (params = required()) => {
