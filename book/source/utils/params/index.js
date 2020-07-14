@@ -60,3 +60,5 @@ export const isURL = str => {
   const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/
   return urlRegex.test(str)
 }
+
+export const isEqual = (a, b) => String(a) === String(b)

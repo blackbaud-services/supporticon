@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid'
 import { get, put } from '../../../utils/client'
 import { fetchLeaderboard } from '../../leaderboard'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
-import { getUID, required } from '../../../utils/params'
+import { getUID, isEqual, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
 export const deserializePage = page => {
@@ -210,13 +210,15 @@ export const fetchUserPages = ({
   }
 
   const filterByCampaign = (pages, campaign) =>
-    campaign ? pages.filter(page => page.campaignGuid === campaign) : pages
+    campaign
+      ? pages.filter(page => isEqual(page.campaignGuid, campaign))
+      : pages
 
   const filterByCharity = (pages, charity) =>
-    charity ? pages.filter(page => page.charityId === charity) : pages
+    charity ? pages.filter(page => isEqual(page.charityId, charity)) : pages
 
   const filterByEvent = (pages, event) =>
-    event ? pages.filter(page => page.eventId === event) : pages
+    event ? pages.filter(page => isEqual(page.eventId, event)) : pages
 
   return get('/v1/fundraising/pages', {}, {}, { headers })
     .then(pages => filterByCampaign(pages, campaign))
