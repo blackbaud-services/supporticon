@@ -35,7 +35,8 @@ class SignupForm extends Component {
       form,
       includeAddress,
       onSuccess,
-      resetPasswordUrl
+      resetPasswordUrl,
+      resetPasswordTarget
     } = this.props
 
     const platform = isJustGiving() ? 'JustGiving' : 'everydayhero'
@@ -101,7 +102,7 @@ class SignupForm extends Component {
                             Please try again, or you can{' '}
                             <a
                               href={resetPasswordUrl || defaultResetPasswordUrl}
-                              target='_blank'
+                              target={resetPasswordTarget || '_blank'}
                             >
                               reset your {platform} password here.
                             </a>
@@ -305,6 +306,11 @@ SignupForm.propTypes = {
    * Reset password URL to display on error
    */
   resetPasswordUrl: PropTypes.string,
+
+  /**
+   * Reset password Link target (displayed on error)
+   */
+  resetPasswordTarget: PropTypes.oneOf(['_self', '_blank', '_parent', '_top']),
 
   /**
    * The label for the form submit button
