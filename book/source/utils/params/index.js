@@ -62,3 +62,21 @@ export const isURL = str => {
 }
 
 export const isEqual = (a, b) => String(a) === String(b)
+
+export const parseUrlParams = () => {
+  if (typeof window === 'undefined') {
+    return {}
+  }
+
+  const paramsArray = ['search', 'hash']
+    .map(param => window.location[param].substring(1))
+    .filter(Boolean)
+    .join('&')
+    .split('&')
+
+  return paramsArray.reduce(function (params, part) {
+    var [key, val] = part.split('=')
+    params[decodeURIComponent(key)] = decodeURIComponent(val)
+    return params
+  }, {})
+}
