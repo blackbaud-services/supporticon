@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import URL from 'url-parse'
 import omit from 'lodash/omit'
 import snakeCase from 'lodash/snakeCase'
+import { parseUrlParams } from '../../utils/params'
 import { getBaseURL, isJustGiving, servicesAPI } from '../../utils/client'
 import {
   getLocalStorageItem,
@@ -39,12 +40,11 @@ class ProviderOauthButton extends Component {
       useLocalStorage
     } = this.props
 
+    const data = parseUrlParams()
+
     if (popup && typeof onSuccess === 'function') {
       if (useLocalStorage) {
         const key = `app-oauth-state-${provider}`
-        const data = this.parseOauthData(
-          window.location.search || window.location.hash
-        )
 
         if (data.access_token || data.code) {
           setLocalStorageItem(key, data)
@@ -80,14 +80,8 @@ class ProviderOauthButton extends Component {
       }
     }
 
-    if (provider === 'justgiving') {
-      const data = this.parseOauthData(
-        window.location.search || window.location.hash
-      )
-
-      if (data.access_token || data.code) {
-        return this.handleSuccess(data)
-      }
+    if (data.access_token || data.code) {
+      return this.handleSuccess(data)
     }
   }
 
@@ -192,10 +186,14 @@ class ProviderOauthButton extends Component {
 
       return `${baseURL}/connect/authorize?${urlParams}&scope=openid+profile+email+account+fundraise+offline_access`
     } else {
+      const edhRedirectUri = homeUrl
+        ? `${redirectUri}?state=${encodeURIComponent(`home=${homeUrl}`)}`
+        : redirectUri
+
       const params = {
         clientId,
         forceProvider: provider,
-        redirectUri,
+        redirectUri: edhRedirectUri,
         responseType: 'token',
         ...authParams
       }
@@ -206,17 +204,6 @@ class ProviderOauthButton extends Component {
 
       return `${getBaseURL()}/oauth/authorize?${urlParams}`
     }
-  }
-
-  parseOauthData (data) {
-    return data
-      .substring(1)
-      .split('&')
-      .reduce(function (params, part) {
-        var item = part.split('=')
-        params[decodeURIComponent(item[0])] = decodeURIComponent(item[1])
-        return params
-      }, {})
   }
 
   render () {
