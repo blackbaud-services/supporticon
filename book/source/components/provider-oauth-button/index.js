@@ -4,6 +4,7 @@ import URL from 'url-parse'
 import omit from 'lodash/omit'
 import snakeCase from 'lodash/snakeCase'
 import { parseUrlParams } from '../../utils/params'
+import { toPromise } from '../../utils/promise'
 import { getBaseURL, isJustGiving, servicesAPI } from '../../utils/client'
 import {
   getLocalStorageItem,
@@ -88,6 +89,14 @@ class ProviderOauthButton extends Component {
   handleSuccess (data) {
     const { onSuccess, provider } = this.props
 
+    const handleAuthSuccess = data => {
+      return Promise.resolve()
+        .then(() => this.setState({ status: 'fetching' }))
+        .then(() => toPromise(onSuccess)(data))
+        .then(() => this.setState({ status: 'fetched' }))
+        .catch(() => this.setState({ status: 'empty' }))
+    }
+
     if (provider === 'justgiving') {
       Promise.resolve()
         .then(() => this.setState({ success: true }))
@@ -97,18 +106,14 @@ class ProviderOauthButton extends Component {
           token: data.access_token,
           refreshToken: data.refresh_token
         }))
-        .then(data => {
-          this.setState({ status: 'fetched' })
-          onSuccess(data)
-        })
+        .then(handleAuthSuccess)
         .catch(error => {
           this.setState({ status: 'empty' })
           return Promise.reject(error)
         })
     } else {
       this.setState({ success: true })
-      setTimeout(() => this.setState({ status: 'fetched' }), 500)
-      onSuccess(data)
+      return handleAuthSuccess(data)
     }
   }
 
@@ -208,9 +213,8 @@ class ProviderOauthButton extends Component {
 
   render () {
     const { label, popup, provider, ...props } = this.props
-
     const { status } = this.state
-    const isLoading = status === 'loading'
+    const isLoading = ['loading', 'fetching'].indexOf(status) > -1
     const icon = isLoading
       ? 'loading'
       : status === 'fetched'
@@ -245,8 +249,10 @@ class ProviderOauthButton extends Component {
       >
         <Icon name={icon} spin={isLoading} size={1.5} />
         <span>
-          {isLoading && typeof label === 'string'
-            ? label.replace('Connect', 'Connecting')
+          {isLoading
+            ? status === 'fetching'
+              ? 'Fetching data...'
+              : 'Connecting...'
             : label}
         </span>
       </Button>
