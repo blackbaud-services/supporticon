@@ -71,6 +71,7 @@ export const deserializeDonation = donation => {
       : jsonDate(donation.date),
     currency: donation.donorLocalCurrencyCode || donation.currencyCode,
     donationRef: donation.thirdPartyReference,
+    id: donation.id,
     message: donation.message || donation.donorMessage,
     name: isFromDonationsAPI
       ? donation.donor && donation.donor.name
