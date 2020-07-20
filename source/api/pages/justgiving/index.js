@@ -4,8 +4,7 @@ import lodashGet from 'lodash/get'
 import lodashFilter from 'lodash/filter'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
-import { get, put } from '../../../utils/client'
-import { fetchLeaderboard } from '../../leaderboard'
+import { get, put, servicesAPI } from '../../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import { getUID, isEqual, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
@@ -118,6 +117,20 @@ const deserializeSegmentation = (tags = []) => {
   }, {})
 }
 
+const recursivelyFetchJGPages = (campaign, page = 1, results = []) =>
+  servicesAPI
+    .get(`/v1/justgiving/campaigns/${campaign}/pages`, { params: { page } })
+    .then(response => response.data)
+    .then(data => {
+      const { currentPage, totalPages } = data.meta
+      const updatedResults = [...results, ...data.results]
+      if (Number(currentPage) === totalPages) {
+        return updatedResults
+      } else {
+        return recursivelyFetchJGPages(campaign, page + 1, updatedResults)
+      }
+    })
+
 export const fetchPages = (params = required()) => {
   const {
     allPages,
@@ -164,7 +177,7 @@ export const fetchPages = (params = required()) => {
   }
 
   if (campaign && !event) {
-    return fetchLeaderboard({ campaign, allPages: true, ...args })
+    return recursivelyFetchJGPages(campaign)
   }
 
   return get('/v1/onesearch', {
