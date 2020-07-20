@@ -40,6 +40,7 @@ export const deserializeDonation = donation => ({
   anonymous: donation.anonymous,
   createdAt: donation.created_at,
   currency: donation.amount.currency.iso_code,
+  id: donation.uid,
   message: donation.message,
   name: donation.nickname,
   page: donation.page_id,
