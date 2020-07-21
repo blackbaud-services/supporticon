@@ -1,6 +1,6 @@
 import moxios from 'moxios'
 import { fetchFitnessLeaderboard } from '..'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 
 describe('Fetch Fitness Leaderboards', () => {
   beforeEach(() => {
@@ -128,11 +128,13 @@ describe('Fetch Fitness Leaderboards', () => {
         headers: { 'x-api-key': 'abcd1234' }
       })
       moxios.install(instance)
+      moxios.install(servicesAPI)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
       moxios.uninstall(instance)
+      moxios.uninstall(servicesAPI)
     })
 
     it('throws if no params are passed in', () => {
@@ -144,16 +146,17 @@ describe('Fetch Fitness Leaderboards', () => {
       fetchFitnessLeaderboard({ campaign: '12345' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
+        const data = JSON.parse(request.config.data)
         expect(request.url).to.contain(
-          'https://api.justgiving.com/v1/fitness/campaign'
+          'https://api.blackbaud.services/v1/justgiving/graphql'
         )
-        expect(request.url).to.contain('campaignGuid=12345')
+        expect(data.query).to.contain('campaign_any_distance_12345')
         done()
       })
     })
 
     it('uses the correct url to fetch a leaderboard for multiple campaigns', done => {
-      fetchFitnessLeaderboard({ campaign: ['12345', '98765'] })
+      fetchFitnessLeaderboard({ campaign: ['12345', '98765'], useLegacy: true })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(

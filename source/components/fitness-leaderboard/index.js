@@ -366,7 +366,7 @@ FitnessLeaderboard.defaultProps = {
   page: 1,
   showPage: false,
   sortBy: 'distance',
-  subtitleMethod: item => item.charity,
+  subtitleMethod: item => item.subtitle,
   units: true
 }
 
