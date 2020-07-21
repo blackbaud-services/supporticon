@@ -4,7 +4,11 @@ import { paramsSerializer, required } from '../../../utils/params'
 import { baseUrl, imageUrl } from '../../../utils/justgiving'
 
 const fetchActivePages = pages => {
-  const pageGuids = pages.map(page => page.ID)
+  const pageGuids = pages.map(page => page.ID).filter(Boolean)
+
+  if (!pageGuids.length) {
+    return pages
+  }
 
   return client.servicesAPI
     .get('/v1/justgiving/proxy/fundraising/v2/pages/bulk', {
