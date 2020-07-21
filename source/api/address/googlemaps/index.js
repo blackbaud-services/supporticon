@@ -47,13 +47,13 @@ export const deserializePlace = address => {
 export const getAddressSuggestions = ({
   q = required(),
   country,
-  sessiontoken
+  sessiontoken = required()
 }) =>
   servicesAPI
     .post(`/v1/googlemaps/autocomplete/${q}`, { country, sessiontoken })
     .then(response => response.data)
 
-export const getPlaceDetail = (id = required(), sessiontoken) =>
+export const getPlaceDetail = (id = required(), sessiontoken = required()) =>
   servicesAPI
     .post(`/v1/googlemaps/placedetail/${id}`, { sessiontoken })
     .then(response => response.data)
