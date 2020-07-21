@@ -34,7 +34,7 @@ Pass query to get list of address suggestions for autocomplete search.
 
 - `q` (String) the search query _required_
 - `country` (String) restrict search by country (au,us,uk)
-- `sessiontoken` (String) random generated string (see [setSessionToken](#setSessionToken))
+- `sessiontoken` (String) random generated string (see [setSessionToken](#setSessionToken)) _required_
 
 **Returns**
 
@@ -59,7 +59,7 @@ Given an address id from result getAddressSuggestions, get the address details
 **Params**
 
 - id` (String) the place_id returned from getAddressSuggestions _required_
-- `sessiontoken` (String) random generated string (see [setSessionToken](#setSessionToken))
+- `sessiontoken` (String) random generated string (see [setSessionToken](#setSessionToken)) _required_
 
 **Returns**
 
