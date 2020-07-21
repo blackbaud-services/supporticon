@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid'
 import { get, post, put, servicesAPI } from '../../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import { getUID, isEqual, required } from '../../../utils/params'
+import { deserializeTotals } from '../../../utils/totals'
 import jsonDate from '../../../utils/jsonDate'
 
 export const deserializePage = page => {
@@ -59,8 +60,13 @@ export const deserializePage = page => {
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
     fitness: {},
     fitnessGoal: parseInt(page.pageSummaryWhat) || 0,
-    fitnessDistanceTotal: lodashGet(page, 'fitness.totalAmount', 0),
-    fitnessDurationTotal: lodashGet(page, 'fitness.totalAmountTaken', 0),
+    fitnessDistanceTotal:
+      lodashGet(page, 'fitness.totalAmount', 0) ||
+      lodashGet(page, 'fitness.distance', 0),
+    fitnessDurationTotal:
+      lodashGet(page, 'fitness.totalAmountTaken', 0) ||
+      lodashGet(page, 'fitness.duration', 0),
+    fitnessElevationTotal: lodashGet(page, 'fitness.elevation', 0),
     groups: null,
     hasUpdatedImage:
       page.imageCount &&
@@ -200,14 +206,21 @@ export const fetchPage = (page = required(), slug, options = {}) => {
   const endpoint = slug ? 'pages' : isNaN(page) ? 'pages' : 'pagebyid'
 
   const fetchers = [
-    get(`/v1/fundraising/${endpoint}/${page}`),
-    options.includeFitness && fetchPageFitness(page),
+    new Promise(resolve =>
+      get(`/v1/fundraising/${endpoint}/${page}`).then(
+        page =>
+          options.includeFitness
+            ? fetchPageFitness(page, options.useLegacy).then(fitness =>
+              resolve({ ...page, fitness })
+            )
+            : resolve(page)
+      )
+    ),
     options.includeTags && fetchPageTags(page)
   ]
 
-  return Promise.all(fetchers).then(([page, fitness, tags]) => ({
+  return Promise.all(fetchers).then(([page, tags]) => ({
     ...page,
-    fitness,
     ...tags
   }))
 }
@@ -244,8 +257,32 @@ export const fetchPageTags = page => {
   return get(`v1/tags/${page}`)
 }
 
-const fetchPageFitness = page => {
-  return get(`/v1/fitness/fundraising/${page}`)
+const fetchPageFitness = (page, useLegacy) => {
+  if (useLegacy) {
+    return get(`/v1/fitness/fundraising/${page.pageShortName}`)
+  }
+
+  const query = `
+    {
+      totals(
+        segment: "page:totals",
+        tagDefinitionId: "page:totals",
+        tagValue: "page:fundraising:${page.pageGuid}"
+      ) {
+        measurementDomain
+        amounts {
+          value
+          unit
+        }
+      }
+    }
+  `
+
+  return servicesAPI
+    .post('/v1/justgiving/graphql', { query })
+    .then(response => response.data)
+    .then(result => lodashGet(result, 'data.totals', []))
+    .then(deserializeTotals)
 }
 
 export const fetchPageDonationCount = (page = required()) => {
