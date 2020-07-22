@@ -7,7 +7,8 @@ import {
   fetchUserPages as fetchEDHUserPages,
   fetchPageDonationCount as fetchEDHPageDonationCount,
   createPage as createEDHPage,
-  updatePage as updateEDHPage
+  updatePage as updateEDHPage,
+  createPageTag as createEDHPageTag
 } from './everydayhero'
 
 import {
@@ -17,7 +18,8 @@ import {
   fetchUserPages as fetchJGUserPages,
   fetchPageDonationCount as fetchJGPageDonationCount,
   createPage as createJGPage,
-  updatePage as updateJGPage
+  updatePage as updateJGPage,
+  createPageTag as createJGPageTag
 } from './justgiving'
 
 /**
@@ -60,3 +62,9 @@ export const createPage = params =>
  */
 export const updatePage = (pageId, params) =>
   isJustGiving() ? updateJGPage(pageId, params) : updateEDHPage(pageId, params)
+
+/**
+ * @function create page tag
+ */
+export const createPageTag = params =>
+  isJustGiving() ? createJGPageTag(params) : createEDHPageTag(params)

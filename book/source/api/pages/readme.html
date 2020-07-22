@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.6" data-chapter-title="Pages" data-filepath="source/api/pages/readme.md" data-basepath="../../.." data-revision="Tue Jul 21 2020 21:07:43 GMT+0000 (UTC)">
+    <div class="book" data-level="1.6" data-chapter-title="Pages" data-filepath="source/api/pages/readme.md" data-basepath="../../.." data-revision="Wed Jul 22 2020 03:27:11 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -444,7 +444,7 @@ return {
 <li><code>value</code> (String) Value of Tag</li>
 <li><code>aggregation</code> (Array of Object) Settings for how tag is grouped<ul>
 <li><code>segment</code> (String)</li>
-<li><code>measurementDomains</code> (Array) Accepts fundraising:donations_received, ride:distance, walk:distance, any:distance</li>
+<li><code>measurementDomains</code> (Array) Accepts e.g. <code>all</code>, <code>fundraising:donations_received</code>, <code>ride:distance</code>, <code>walk:distance</code>, <code>any:distance</code></li>
 </ul>
 </li>
 </ul>
@@ -508,6 +508,45 @@ createPage({
 updatePage(123, {
   token: <span class="hljs-string">&apos;xxxxx&apos;</span>,
   story: <span class="hljs-string">&apos;This is an updated story&apos;</span>
+})
+</code></pre>
+<h2 id="createpagetag"><code>createPageTag</code></h2>
+<p>Create or update a Page Tag. (JG Only)</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><code>params</code> (Object) Containing the following:<ul>
+<li><code>slug</code> (String) Page slug <em>required</em></li>
+<li><code>id</code> (String) Tag definition ID, needed for reference when filtering or creating leaderboards from tags <em>required</em></li>
+<li><code>label</code> (String) Tag definition label <em>required</em></li>
+<li><code>value</code> (String) Tag value <em>required</em></li>
+<li><code>aggregation</code> (Array of Objects) Settings for how tag is grouped<ul>
+<li><code>segment</code> (String)</li>
+<li><code>measurementDomains</code> (Array) Accepts e.g. <code>all</code>, <code>fundraising:donations_received</code>, <code>ride:distance</code>, <code>walk:distance</code>, <code>any:distance</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A pending promise that will either resolve to:</p>
+<ul>
+<li>Success: the data returned from the request</li>
+<li>Failure: the error encountered</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { createPageTag } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/pages&apos;</span>
+
+createPageTag({
+  slug: <span class="hljs-string">&apos;my-page&apos;</span>,
+  label: <span class="hljs-string">&apos;State&apos;</span>,
+  id: <span class="hljs-string">&apos;state&apos;</span>,
+  value: <span class="hljs-string">&apos;Queensland&apos;</span>,
+  aggregation: [
+    {
+      segment: <span class="hljs-string">&apos;page:campaign:1234-5678-abcd-0123&apos;</span>,
+      measurementDomains: [<span class="hljs-string">&apos;all&apos;</span>]
+    }
+  ]
 })
 </code></pre>
 

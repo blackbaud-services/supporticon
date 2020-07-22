@@ -204,3 +204,6 @@ export const updatePage = (
     target
   }).then(response => response.page)
 }
+
+export const createPageTag = () =>
+  Promise.reject(new Error('This method is not supported for everydayhero'))
