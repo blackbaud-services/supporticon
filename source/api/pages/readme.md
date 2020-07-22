@@ -144,7 +144,7 @@ See [the API documentation](http://developer.everydayhero.com/pages/#create-an-i
   - `value` (String) Value of Tag
   - `aggregation` (Array of Object) Settings for how tag is grouped
     - `segment` (String)
-    - `measurementDomains` (Array) Accepts fundraising:donations_received, ride:distance, walk:distance, any:distance
+    - `measurementDomains` (Array) Accepts e.g. `all`, `fundraising:donations_received`, `ride:distance`, `walk:distance`, `any:distance`
 
 **Example of tag object shape**
 ```javascript
@@ -214,5 +214,46 @@ import { updatePage } from 'supporticon/api/pages'
 updatePage(123, {
   token: 'xxxxx',
   story: 'This is an updated story'
+})
+```
+
+## `createPageTag`
+
+Create or update a Page Tag. (JG Only)
+
+**Params**
+
+- `params` (Object) Containing the following:
+  - `slug` (String) Page slug _required_
+  - `id` (String) Tag definition ID, needed for reference when filtering or creating leaderboards from tags _required_
+  - `label` (String) Tag definition label _required_
+  - `value` (String) Tag value _required_
+  - `aggregation` (Array of Objects) Settings for how tag is grouped
+    - `segment` (String)
+    - `measurementDomains` (Array) Accepts e.g. `all`, `fundraising:donations_received`, `ride:distance`, `walk:distance`, `any:distance`
+
+**Returns**
+
+A pending promise that will either resolve to:
+
+- Success: the data returned from the request
+- Failure: the error encountered
+
+**Example**
+
+```javascript
+import { createPageTag } from 'supporticon/api/pages'
+
+createPageTag({
+  slug: 'my-page',
+  label: 'State',
+  id: 'state',
+  value: 'Queensland',
+  aggregation: [
+    {
+      segment: 'page:campaign:1234-5678-abcd-0123',
+      measurementDomains: ['all']
+    }
+  ]
 })
 ```
