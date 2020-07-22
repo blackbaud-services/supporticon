@@ -4,7 +4,7 @@ import lodashGet from 'lodash/get'
 import lodashFilter from 'lodash/filter'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
-import { get, put, servicesAPI } from '../../../utils/client'
+import { get, post, put, servicesAPI } from '../../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import { getUID, isEqual, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
@@ -263,6 +263,30 @@ const truncate = (string, length = 50) => {
   }
 
   return undefined
+}
+
+export const createPageTag = ({
+  id = required(),
+  label = required(),
+  slug = required(),
+  value = required(),
+  aggregation = []
+}) => {
+  const request = () =>
+    post(
+      `/v1/tags/${slug}`,
+      {
+        aggregation,
+        id,
+        label,
+        value
+      },
+      {
+        timeout: 5000
+      }
+    )
+
+  return request().catch(() => request()) // Retry if request fails
 }
 
 export const createPage = ({
