@@ -209,7 +209,7 @@ export const updateTeam = (
 
   const payload = {
     teamGuid: id,
-    coverPhotoImageId: image,
+    coverPhotoId: image,
     currency,
     name: name.replace(teamNameRegex, '').substring(0, 255),
     story,
