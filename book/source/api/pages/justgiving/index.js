@@ -75,11 +75,15 @@ export const deserializePage = page => {
       page.name ||
       page.PageName ||
       lodashGet(page, 'pageOwner.fullName'),
-    owner:
-      page.owner ||
-      page.OwnerFullName ||
-      page.PageOwner ||
-      lodashGet(page, 'pageOwner.fullName'),
+    owner: page.owner
+      ? !lodashGet(page, 'owner.firstName')
+        ? page.owner
+        : lodashGet(page, 'owner.firstName') +
+          ' ' +
+          lodashGet(page, 'owner.lastName')
+      : page.OwnerFullName ||
+        page.PageOwner ||
+        lodashGet(page, 'pageOwner.fullName'),
     qrCodes: getQrCodes(page),
     raised: onlineAmount + offlineAmount,
     raisedOnline: onlineAmount,
@@ -117,19 +121,37 @@ const deserializeSegmentation = (tags = []) => {
   }, {})
 }
 
-const recursivelyFetchJGPages = (campaign, page = 1, results = []) =>
-  servicesAPI
-    .get(`/v1/justgiving/campaigns/${campaign}/pages`, { params: { page } })
+const recursivelyFetchJGPages = ({
+  campaign,
+  q,
+  limit = 10,
+  results = [],
+  page = 1
+}) => {
+  const options = {
+    params: { page, q }
+  }
+  return servicesAPI
+    .get(`/v1/justgiving/campaigns/${campaign}/pages`, options)
     .then(response => response.data)
     .then(data => {
       const { currentPage, totalPages } = data.meta
       const updatedResults = [...results, ...data.results]
-      if (Number(currentPage) === totalPages) {
+
+      if (Number(currentPage) === totalPages || totalPages === 0) {
         return updatedResults
       } else {
-        return recursivelyFetchJGPages(campaign, page + 1, updatedResults)
+        page++
+        return recursivelyFetchJGPages({
+          campaign,
+          q,
+          limit,
+          updatedResults,
+          page
+        })
       }
     })
+}
 
 export const fetchPages = (params = required()) => {
   const {
@@ -177,7 +199,7 @@ export const fetchPages = (params = required()) => {
   }
 
   if (campaign && !event) {
-    return recursivelyFetchJGPages(campaign)
+    return recursivelyFetchJGPages({ campaign: getUID(campaign), ...args })
   }
 
   return get('/v1/onesearch', {
