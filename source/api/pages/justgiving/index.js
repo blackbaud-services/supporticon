@@ -138,7 +138,11 @@ const recursivelyFetchJGPages = ({
       const { currentPage, totalPages } = data.meta
       const updatedResults = [...results, ...data.results]
 
-      if (Number(currentPage) === totalPages || totalPages === 0) {
+      if (
+        Number(currentPage) === totalPages ||
+        updatedResults.length >= limit ||
+        totalPages === 0
+      ) {
         return updatedResults
       } else {
         page++
