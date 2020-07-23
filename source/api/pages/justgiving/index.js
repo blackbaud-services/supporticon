@@ -146,7 +146,7 @@ const recursivelyFetchJGPages = ({
           campaign,
           q,
           limit,
-          updatedResults,
+          results: updatedResults,
           page
         })
       }
