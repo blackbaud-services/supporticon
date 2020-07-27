@@ -44,12 +44,23 @@ export const fetchDonations = ({ event, charity, campaign, page }) =>
     .then(response => response.data)
 
 const fetchDonationFeedByRef = ref =>
-  get(`v1/donation/ref/${ref}`).then(data => data.donations)
+  get(`v1/donation/ref/${ref}`, { pageSize: 500 }).then(data => data.donations)
 
-const fetchDonationsByShortName = pageShortName =>
-  get(`v1/fundraising/pages/${pageShortName}/donations`).then(
-    data => data.donations
-  )
+const fetchDonationsByShortName = (
+  pageShortName,
+  donations = [],
+  pageNum = 1
+) =>
+  get(`v1/fundraising/pages/${pageShortName}/donations`, {
+    pageSize: 150,
+    pageNum
+  }).then(data => {
+    const updatedResults = [...donations, ...data.donations]
+
+    return pageNum >= Math.min(data.pagination.totalPages, 10)
+      ? updatedResults
+      : fetchDonationsByShortName(pageShortName, updatedResults, pageNum + 1)
+  })
 
 export const deserializeDonation = donation => {
   const isFromDonationsAPI = !!donation.donationId
