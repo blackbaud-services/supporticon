@@ -1,25 +1,24 @@
 import moment from 'moment'
 import lodashGet from 'lodash/get'
-import { get, post, servicesAPI } from '../../../utils/client'
+import { get, post, destroy, servicesAPI } from '../../../utils/client'
 import { paramsSerializer, required } from '../../../utils/params'
 import { convertToMeters, convertToSeconds } from '../../../utils/units'
 import jsonDate from '../../../utils/jsonDate'
 import { encodeBase64String } from '../../../utils/base64'
 
-const getFitnessId = activity => {
-  switch (activity.ActivityType) {
-    case 'Strava':
-      return encodeBase64String(
-        [
-          'Timeline:FUNDRAISING',
-          activity.PageGuid,
-          'FITNESS:STRAVA',
-          activity.ExternalId
-        ].join(':')
-      )
-    default:
-      return activity.id || activity.Id || activity.FitnessGuid
+const getTimelineId = activity => {
+  if (activity.ActivityType === 'Strava') {
+    return encodeBase64String(
+      [
+        'Timeline:FUNDRAISING',
+        activity.PageGuid,
+        'FITNESS:STRAVA',
+        activity.ExternalId
+      ].join(':')
+    )
   }
+
+  return undefined
 }
 
 export const deserializeFitnessActivity = (activity = required()) => ({
@@ -29,14 +28,21 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   distance: activity.Value,
   duration: activity.TimeTaken,
   elevation: activity.Elevation,
-  externalId: !activity.ExternalId ? null : activity.ExternalId,
   eventId: activity.EventId,
-  id: getFitnessId(activity),
+  externalId: !activity.ExternalId ? null : activity.ExternalId,
+  id: activity.id || activity.Id || activity.FitnessGuid,
   manual: activity.ActivityType === 'Manual',
+  message: activity.Title,
   page: activity.PageGuid,
   slug: activity.PageShortName,
+  source: activity.ActivityType
+    ? activity.ActivityType.toLowerCase()
+    : 'manual',
+  sourceUrl: activity.ExternalId
+    ? `https://www.strava.com/activities/${activity.ExternalId}`
+    : null,
   teamId: activity.TeamGuid,
-  message: activity.Title,
+  timelineId: getTimelineId(activity),
   type: activity.Type || activity.ActivityType
 })
 
@@ -106,7 +112,10 @@ export const createFitnessActivity = ({
 export const updateFitnessActivity = (id = required(), params = required()) =>
   Promise.reject(new Error('This method is not supported by JustGiving'))
 
-export const deleteFitnessActivity = (id = required(), token = required()) => {
+export const deleteTimelineFitnessActivity = ({
+  id = required(),
+  token = required()
+}) => {
   const query = `
     mutation {
       deleteTimelineEntry (
@@ -124,3 +133,12 @@ export const deleteFitnessActivity = (id = required(), token = required()) => {
     .then(response => response.data)
     .then(result => lodashGet(result, 'data.deleteTimelineEntry'))
 }
+
+export const deleteFitnessActivity = ({
+  id = required(),
+  page = required(),
+  token = required()
+}) =>
+  destroy(`/v1/fitness/fundraising/${page}/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })

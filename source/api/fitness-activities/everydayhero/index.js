@@ -132,5 +132,16 @@ export const updateFitnessActivity = (
     virtual
   })
 
-export const deleteFitnessActivity = (id = required(), token = required()) =>
-  destroy(`/api/v2/fitness_activities/${id}?access_token=${token}`)
+export function deleteFitnessActivity (params) {
+  let id, token
+
+  if (arguments.length === 1 && typeof arguments[0] === 'object') {
+    id = params.id
+    token = params.token
+  } else {
+    id = arguments[0]
+    token = arguments[1]
+  }
+
+  return destroy(`/api/v2/fitness_activities/${id}?access_token=${token}`)
+}
