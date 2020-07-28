@@ -36,7 +36,7 @@ export const updateFitnessActivity = (activityId, params) =>
     ? updateJGFitnessActivity(activityId, params)
     : updateEDHFitnessActivity(activityId, params)
 
-export const deleteFitnessActivity = (activityId, token) =>
+export const deleteFitnessActivity = (...args) =>
   isJustGiving()
-    ? deleteJGFitnessActivity(activityId, token)
-    : deleteEDHFitnessActivity(activityId, token)
+    ? deleteJGFitnessActivity(...args)
+    : deleteEDHFitnessActivity(...args)
