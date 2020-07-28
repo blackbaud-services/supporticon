@@ -35,7 +35,7 @@ describe('Fetch Fitness Totals', () => {
       })
     })
 
-    it('Only return a total of valid fitnessType(s) if requested', done => {
+    it('Only returns a total of valid fitnessType(s) if requested', done => {
       fetchFitnessTotals('au-123', ['walk', 'run', 'jog']).then(response => {
         totalsEqual(response, 115)
         done()
@@ -45,11 +45,23 @@ describe('Fetch Fitness Totals', () => {
       })
     })
 
-    it('Return default total if all supplied fitnessType(s) are invalid', done => {
+    it('Returns default total if all supplied fitnessType(s) are invalid', done => {
       fetchFitnessTotals('au-123', ['dance', 'skip']).then(response => {
         totalsEqual(response, 240)
         done()
       })
+      moxios.wait(() => {
+        moxios.requests.mostRecent().respondWith(singleCampaign)
+      })
+    })
+
+    it('Allows params to be passed as an object', done => {
+      fetchFitnessTotals({ campaign: 'au-123', types: ['dance', 'skip'] }).then(
+        response => {
+          totalsEqual(response, 240)
+          done()
+        }
+      )
       moxios.wait(() => {
         moxios.requests.mostRecent().respondWith(singleCampaign)
       })
@@ -96,6 +108,17 @@ describe('Fetch Fitness Totals', () => {
 
     it('returns the distance for the campaign', done => {
       fetchFitnessTotals('12345').then(response => {
+        expect(response.distance).to.equal(100)
+        expect(response.elevation).to.equal(50)
+        done()
+      })
+      moxios.wait(() => {
+        moxios.requests.mostRecent().respondWith(singleJGCampaign)
+      })
+    })
+
+    it('allows params to be passed as an object', done => {
+      fetchFitnessTotals({ campaign: '12345' }).then(response => {
         expect(response.distance).to.equal(100)
         expect(response.elevation).to.equal(50)
         done()

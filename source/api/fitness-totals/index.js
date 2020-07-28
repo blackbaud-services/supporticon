@@ -15,7 +15,7 @@ export const fetchFitnessSummary = (campaign, types) =>
     ? fetchJGFitnessSummary(campaign, types)
     : fetchEDHFitnessSummary(campaign, types)
 
-export const fetchFitnessTotals = (campaign, types) =>
+export const fetchFitnessTotals = (...args) =>
   isJustGiving()
-    ? fetchJGFitnessTotals(campaign, types)
-    : fetchEDHFitnessTotals(campaign, types)
+    ? fetchJGFitnessTotals(...args)
+    : fetchEDHFitnessTotals(...args)
