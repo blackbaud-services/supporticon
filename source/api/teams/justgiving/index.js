@@ -140,7 +140,10 @@ export const createTeam = params => {
     campaignGuid: campaignId,
     captainPageShortName: captainSlug,
     coverPhotoId,
-    name: name.replace(teamNameRegex, '').substring(0, 255),
+    name: name
+      .replace(/’/g, "'")
+      .replace(teamNameRegex, '')
+      .substring(0, 255),
     story,
     targetCurrency,
     targetType,
