@@ -9,6 +9,8 @@ import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import { getUID, isEqual, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
+export const pageNameRegex = /[^\w\s',-]/gi
+
 export const deserializePage = page => {
   const shortName =
     page.shortName || page.pageShortName || (page.LinkPath || '').substring(1)
@@ -357,7 +359,9 @@ export const createPage = ({
   theme,
   videos
 }) => {
-  return getPageShortName(title, slug).then(pageShortName => {
+  const pageTitle = title.replace(/’/g, "'")
+
+  return getPageShortName(pageTitle, slug).then(pageShortName => {
     return put(
       '/v1/fundraising/pages',
       {
@@ -368,7 +372,7 @@ export const createPage = ({
           : {
             activityType,
             eventDate,
-            eventName: eventName || title
+            eventName: eventName || pageTitle
           }),
         attribution,
         campaignGuid: campaignGuid || campaignId,
@@ -391,7 +395,7 @@ export const createPage = ({
         pageStory: story,
         pageSummaryWhat: summaryWhat,
         pageSummaryWhy: truncate(summaryWhy),
-        pageTitle: title,
+        pageTitle,
         reference,
         rememberedPersonReference,
         tags,
@@ -453,7 +457,7 @@ export const updatePage = (
       name &&
         put(
           `/v1/fundraising/pages/${slug}/pagetitle`,
-          { pageTitle: name },
+          { pageTitle: name.replace(/’/g, "'").replace(pageNameRegex, '') },
           config
         ),
       offline &&
