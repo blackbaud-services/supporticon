@@ -72,7 +72,7 @@ class ProviderOauthButton extends Component {
             const isValid =
               event.origin === validSourceOrigin || data === 'strava connected'
 
-            if (isValid) {
+            if (isValid && !this.state.success) {
               return this.handleSuccess(data)
             }
           },
@@ -94,7 +94,7 @@ class ProviderOauthButton extends Component {
         .then(() => this.setState({ status: 'fetching' }))
         .then(() => toPromise(onSuccess)(data))
         .then(() => this.setState({ status: 'fetched' }))
-        .catch(() => this.setState({ status: 'empty' }))
+        .catch(() => this.setState({ status: 'empty', success: false }))
     }
 
     if (provider === 'justgiving') {
