@@ -22,11 +22,21 @@ const fetchActivePages = pages => {
     )
 }
 
-export const fetchFitnessLeaderboard = (params = required()) => {
-  const { campaign = required(), activeOnly, type } = params
-
+export const fetchFitnessLeaderboard = ({
+  campaign = required(),
+  activeOnly,
+  type,
+  limit,
+  offset,
+  startDate,
+  endDate
+}) => {
   const query = {
-    campaignGuid: campaign
+    campaignGuid: campaign,
+    limit: limit || 100,
+    offset: offset || 0,
+    start: startDate,
+    end: endDate
   }
 
   return client

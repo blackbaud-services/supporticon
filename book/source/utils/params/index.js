@@ -80,3 +80,9 @@ export const parseUrlParams = () => {
     return params
   }, {})
 }
+
+export const isParamsObject = args => {
+  return (
+    args.length === 1 && typeof args[0] === 'object' && !Array.isArray(args[0])
+  )
+}

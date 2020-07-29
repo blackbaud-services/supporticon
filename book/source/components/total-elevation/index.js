@@ -56,9 +56,11 @@ class TotalElevation extends Component {
   }
 
   fetchJGElevation () {
-    const { campaign } = this.props
+    const { campaign, startDate, endDate } = this.props
 
-    return fetchFitnessTotals(campaign).then(totals => totals.elevation)
+    return fetchFitnessTotals({ campaign, startDate, endDate }).then(
+      totals => totals.elevation
+    )
   }
 
   calculateTotal (data) {
@@ -142,6 +144,16 @@ TotalElevation.propTypes = {
    * Include elevation units?
    */
   units: PropTypes.bool,
+
+  /**
+   * Start date filter (ISO Format)
+   */
+  startDate: PropTypes.string,
+
+  /**
+   * End date filter (ISO Format)
+   */
+  endDate: PropTypes.string,
 
   /**
    * The icon to use

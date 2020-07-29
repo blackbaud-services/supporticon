@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { instance, servicesAPI, updateClient } from '../../../utils/client'
+import { instance, updateClient } from '../../../utils/client'
 import { deleteFitnessActivity } from '..'
 
 describe('Delete Fitness Activity', () => {
@@ -49,12 +49,10 @@ describe('Delete Fitness Activity', () => {
         baseURL: 'https://api.justgiving.com',
         headers: { 'x-api-key': 'abcd1234' }
       })
-      moxios.install(servicesAPI)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
-      moxios.uninstall(servicesAPI)
     })
 
     it('throws if no token is passed', () => {
@@ -63,15 +61,22 @@ describe('Delete Fitness Activity', () => {
     })
 
     it('hits the api with the correct url and data', done => {
-      deleteFitnessActivity('3210-1234-43210', 'test-token')
+      deleteFitnessActivity({
+        id: '12345678',
+        page: 'test-page',
+        token: 'test-token'
+      })
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         const headers = request.config.headers
 
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/graphql'
+          'https://api.justgiving.com/v1/fitness/fundraising'
         )
+
+        expect(request.url).to.contain('test-page')
+        expect(request.url).to.contain('12345678')
         expect(headers.Authorization).to.equal('Bearer test-token')
         done()
       })

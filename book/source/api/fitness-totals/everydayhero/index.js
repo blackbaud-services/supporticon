@@ -1,4 +1,4 @@
-import { required } from '../../../utils/params'
+import { isParamsObject, required } from '../../../utils/params'
 import pick from 'lodash/pick'
 import isEmpty from 'lodash/isEmpty'
 import fitnessTypes from '../consts/fitness-types'
@@ -17,8 +17,22 @@ export const fetchFitnessSummary = (campaign = required(), types) =>
       .then(results => (types ? filterTypes(results, types) : results))
       .catch(err => console.log(err))
 
-export const fetchFitnessTotals = (campaign = required(), types) =>
-  fetchFitnessSummary(campaign, types)
+export function fetchFitnessTotals (params) {
+  let campaign, types
+
+  if (isParamsObject(arguments)) {
+    campaign = params.campaign
+    types = params.types
+  } else {
+    campaign = arguments[0]
+    types = arguments[1]
+  }
+
+  if (!campaign) {
+    return required()
+  }
+
+  return fetchFitnessSummary(campaign, types)
     .then(summary =>
       Object.keys(summary).reduce(
         (result, item, i) => ({
@@ -30,6 +44,7 @@ export const fetchFitnessTotals = (campaign = required(), types) =>
       )
     )
     .catch(err => console.log(err))
+}
 
 const deserializeOverview = ({ fitness_activity_overview: overview }) =>
   fitnessTypes.reduce((result, fitnessType, i) => {

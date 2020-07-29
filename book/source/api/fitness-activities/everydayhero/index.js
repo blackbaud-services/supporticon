@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { v4 as uuid } from 'uuid'
 import { destroy, get, post, put } from '../../../utils/client'
-import { required } from '../../../utils/params'
+import { isParamsObject, required } from '../../../utils/params'
 import { convertToMeters, convertToSeconds } from '../../../utils/units'
 
 export const deserializeFitnessActivity = (activity = required()) => ({
@@ -132,5 +132,16 @@ export const updateFitnessActivity = (
     virtual
   })
 
-export const deleteFitnessActivity = (id = required(), token = required()) =>
-  destroy(`/api/v2/fitness_activities/${id}?access_token=${token}`)
+export function deleteFitnessActivity (params) {
+  let id, token
+
+  if (isParamsObject(arguments)) {
+    id = params.id
+    token = params.token
+  } else {
+    id = arguments[0]
+    token = arguments[1]
+  }
+
+  return destroy(`/api/v2/fitness_activities/${id}?access_token=${token}`)
+}

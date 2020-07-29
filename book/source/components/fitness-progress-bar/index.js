@@ -31,8 +31,14 @@ class FitnessProgressBar extends Component {
   }
 
   fetchData () {
-    const { campaign, fitnessTypes } = this.props
-    fetchFitnessTotals(campaign, fitnessTypes)
+    const { campaign, fitnessTypes, startDate, endDate } = this.props
+
+    fetchFitnessTotals({
+      campaign,
+      startDate,
+      endDate,
+      types: fitnessTypes
+    })
       .then(({ distance }) => this.setState({ status: 'fetched', distance }))
       .catch(() => this.setState({ status: 'failed' }))
   }
@@ -185,6 +191,16 @@ FitnessProgressBar.propTypes = {
    * Props to be passed to the Constructicon ProgressBar component
    */
   progressBar: PropTypes.object,
+
+  /**
+   * Start date filter (ISO Format)
+   */
+  startDate: PropTypes.string,
+
+  /**
+   * End date filter (ISO Format)
+   */
+  endDate: PropTypes.string,
 
   /**
    * Interval (in milliseconds) to refresh data from API

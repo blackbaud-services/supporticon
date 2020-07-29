@@ -226,7 +226,7 @@ export const fetchPage = (page = required(), slug, options = {}) => {
 
   const fetchers = [
     get(`/v1/fundraising/${endpoint}/${page}`),
-    options.includeFitness && fetchPageFitness(page),
+    options.includeFitness && fetchPageFitness(page, options.fitnessParams),
     options.includeTags && fetchPageTags(page)
   ]
 
@@ -269,8 +269,15 @@ export const fetchPageTags = page => {
   return get(`v1/tags/${page}`)
 }
 
-const fetchPageFitness = page => {
-  return get(`/v1/fitness/fundraising/${page}`)
+const fetchPageFitness = (page, params = {}) => {
+  const query = {
+    limit: params.limit || 100,
+    offset: params.offset || 0,
+    start: params.startDate,
+    end: params.endDate
+  }
+
+  return get(`/v1/fitness/fundraising/${page}`, query)
 }
 
 export const fetchPageDonationCount = (page = required()) => {

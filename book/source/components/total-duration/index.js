@@ -27,9 +27,14 @@ class TotalDuration extends Component {
   }
 
   fetchData () {
-    const { activity, campaign } = this.props
+    const { activity, campaign, startDate, endDate } = this.props
 
-    fetchFitnessTotals(campaign, activity)
+    fetchFitnessTotals({
+      campaign,
+      startDate,
+      endDate,
+      types: activity
+    })
       .then(totals =>
         this.setState({ status: 'fetched', data: totals.duration })
       )
@@ -121,6 +126,16 @@ TotalDuration.propTypes = {
    * Include time units?
    */
   units: PropTypes.bool,
+
+  /**
+   * Start date filter (ISO Format)
+   */
+  startDate: PropTypes.string,
+
+  /**
+   * End date filter (ISO Format)
+   */
+  endDate: PropTypes.string,
 
   /**
    * Interval (in milliseconds) to refresh data from API
