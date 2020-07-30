@@ -216,7 +216,7 @@ export const updateTeam = (
     currency,
     name: name.replace(teamNameRegex, '').substring(0, 255),
     story,
-    target
+    targetAmount: target
   }
 
   return client.put(`/v1/teamsv2/${id}`, payload, { headers })
