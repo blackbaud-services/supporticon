@@ -1,6 +1,5 @@
-import chunk from 'lodash/chunk'
-import flattenDeep from 'lodash/flattenDeep'
 import get from 'lodash/get'
+import { fetchPages } from '../../pages'
 import * as client from '../../../utils/client'
 import { paramsSerializer, required } from '../../../utils/params'
 import { baseUrl, imageUrl } from '../../../utils/justgiving'
@@ -12,17 +11,7 @@ const fetchActivePages = pages => {
     return pages
   }
 
-  return Promise.all(
-    chunk(pageGuids, 20).map(guids =>
-      client.servicesAPI
-        .get('/v1/justgiving/proxy/fundraising/v2/pages/bulk', {
-          params: { pageGuids: guids.join(',') }
-        })
-        .then(response => response.data.results)
-    )
-  )
-    .then(results => flattenDeep(results))
-    .then(results => results.filter(page => page.status === 'Active'))
+  return fetchPages({ ids: pageGuids, allPages: true })
     .then(results => results.map(page => page.pageGuid))
     .then(activePageIds =>
       pages.filter(page => activePageIds.indexOf(page.ID) > -1)

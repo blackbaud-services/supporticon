@@ -70,7 +70,7 @@ class Leaderboard extends Component {
 
     return fetchPages({
       allPages: true,
-      ids: data.map(page => page.pageShortName)
+      ids: data.map(page => page.pageGuid)
     })
       .then(pages => pages.map(deserializePage))
       .then(pages =>
