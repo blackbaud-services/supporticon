@@ -12,6 +12,7 @@ import LeaderboardWrapper from 'constructicon/leaderboard'
 import Pagination from 'constructicon/pagination'
 import PaginationLink from 'constructicon/pagination-link'
 import RichText from 'constructicon/rich-text'
+import Section from 'constructicon/section'
 
 import { fetchLeaderboard, deserializeLeaderboard } from '../../api/leaderboard'
 import { fetchPages, deserializePage } from '../../api/pages'
@@ -187,26 +188,30 @@ class Leaderboard extends Component {
     return (
       <div>
         {filter && <Filter onChange={this.setFilter} {...filter} />}
-        <LeaderboardWrapper
-          loading={status === 'fetching'}
-          error={status === 'failed'}
-          {...leaderboard}
-        >
-          {data.length && (
-            <Pagination max={pageSize} toPaginate={data}>
-              {({
-                currentPage,
-                isPaginated,
-                prev,
-                next,
-                canPrev,
-                canNext,
-                pageOf
-              }) => (
-                <div>
+        {status === 'fetching' || status === 'failed' ? (
+          <LeaderboardWrapper
+            {...leaderboard}
+            loading={status === 'fetching'}
+            error={status === 'failed'}
+          />
+        ) : data.length ? (
+          <Pagination max={pageSize} toPaginate={data}>
+            {({
+              currentPage,
+              isPaginated,
+              prev,
+              next,
+              canPrev,
+              canNext,
+              pageOf
+            }) => (
+              <React.Fragment>
+                <LeaderboardWrapper {...leaderboard}>
                   {currentPage.map(this.renderLeader)}
-                  {pageSize &&
-                    isPaginated && (
+                </LeaderboardWrapper>
+                {pageSize &&
+                  isPaginated && (
+                  <Section spacing={{ t: 0.5 }}>
                     <Grid align='center' justify='center'>
                       <PaginationLink
                         onClick={prev}
@@ -220,12 +225,14 @@ class Leaderboard extends Component {
                         disabled={!canNext}
                       />
                     </Grid>
-                  )}
-                </div>
-              )}
-            </Pagination>
-          )}
-        </LeaderboardWrapper>
+                  </Section>
+                )}
+              </React.Fragment>
+            )}
+          </Pagination>
+        ) : (
+          <LeaderboardWrapper {...leaderboard} error />
+        )}
       </div>
     )
   }
