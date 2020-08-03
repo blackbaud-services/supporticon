@@ -1,12 +1,14 @@
 import moment from 'moment'
+import chunk from 'lodash/chunk'
 import first from 'lodash/first'
+import flattenDeep from 'lodash/flattenDeep'
 import lodashGet from 'lodash/get'
 import lodashFilter from 'lodash/filter'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
 import { get, post, put, servicesAPI } from '../../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
-import { getUID, isEqual, required } from '../../../utils/params'
+import { getUID, isEqual, isUuid, required } from '../../../utils/params'
 import jsonDate from '../../../utils/jsonDate'
 
 export const pageNameRegex = /[^\w\s',-]/gi
@@ -187,6 +189,20 @@ export const fetchPages = (params = required()) => {
 
   if (allPages && ids) {
     const pageIds = Array.isArray(ids) ? ids : ids.split(',')
+
+    if (pageIds.filter(isUuid).length === pageIds.length) {
+      return Promise.all(
+        chunk(pageIds, 20).map(guids =>
+          servicesAPI
+            .get('/v1/justgiving/proxy/fundraising/v2/pages/bulk', {
+              params: { pageGuids: guids.join(',') }
+            })
+            .then(response => response.data.results)
+        )
+      )
+        .then(results => flattenDeep(results))
+        .then(results => results.filter(page => page.status === 'Active'))
+    }
 
     return Promise.all(pageIds.map(fetchPage))
   }

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import find from 'lodash/find'
 import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
@@ -15,7 +14,6 @@ import RichText from 'constructicon/rich-text'
 import Section from 'constructicon/section'
 
 import { fetchLeaderboard, deserializeLeaderboard } from '../../api/leaderboard'
-import { fetchPages, deserializePage } from '../../api/pages'
 
 class Leaderboard extends Component {
   constructor () {
@@ -63,29 +61,6 @@ class Leaderboard extends Component {
       const excluded = Array.isArray(values) ? values : values.split(',')
       return excluded.indexOf(item.group.value.toString()) === -1
     })
-  }
-
-  fetchOfflinePages (data) {
-    if (!isJustGiving()) return data
-
-    return fetchPages({
-      allPages: true,
-      ids: data.map(page => page.pageShortName)
-    })
-      .then(pages => pages.map(deserializePage))
-      .then(pages =>
-        data.map(page => {
-          const pageData =
-            find(pages, ({ slug }) => slug === page.pageShortName) || {}
-
-          return {
-            ...page,
-            amount: page.amount || pageData.raised,
-            defaultImage: pageData.image,
-            name: pageData.name
-          }
-        })
-      )
   }
 
   handleData (data, excludeOffline, deserializeMethod, limit) {
@@ -154,12 +129,6 @@ class Leaderboard extends Component {
         data =>
           type === 'group'
             ? this.removeExcludedGroups(data, excludePageIds)
-            : data
-      )
-      .then(
-        data =>
-          isJustGiving() && !excludeOffline && allPages
-            ? this.fetchOfflinePages(data)
             : data
       )
       .then(data => {

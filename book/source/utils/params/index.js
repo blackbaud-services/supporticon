@@ -61,6 +61,11 @@ export const isURL = str => {
   return urlRegex.test(str)
 }
 
+export const isUuid = string => {
+  const uuidRegex = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-5][0-9a-f]{3}-?[089ab][0-9a-f]{3}-?[0-9a-f]{12}$/i
+  return uuidRegex.test(string)
+}
+
 export const isEqual = (a, b) => String(a) === String(b)
 
 export const parseUrlParams = () => {

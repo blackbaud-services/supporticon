@@ -52,11 +52,12 @@ export const fetchLeaderboard = (params = required()) => {
       )
     default:
       const isTeam = params.type === 'team'
+      const { results = [], ...otherParams } = params
 
       return get(
         'donationsleaderboards/v1/leaderboard',
         {
-          ...params,
+          ...otherParams,
           currencyCode: currencyCode(params.country)
         },
         {
@@ -65,15 +66,32 @@ export const fetchLeaderboard = (params = required()) => {
             campaign: 'campaignGuids',
             excludePageIds: 'excludePageGuids',
             limit: 'take',
+            page: 'offset',
             type: 'groupBy'
           },
           transforms: {
+            limit: val => Math.min(20, val || 10),
+            page: val =>
+              String(val ? Math.min(20, params.limit || 10) * (val - 1) : 0),
             type: val => (isTeam ? 'TeamGuid' : 'PageGuid')
           }
         },
         { paramsSerializer }
       )
-        .then(response => response.results)
+        .then(response => {
+          const { currentPage, lastRowOnPage, pageCount } = response.meta
+          const updatedResults = [...results, ...response.results]
+
+          if (currentPage >= pageCount || lastRowOnPage >= params.limit) {
+            return updatedResults
+          }
+
+          return fetchLeaderboard({
+            ...params,
+            results: updatedResults,
+            page: currentPage + 1
+          })
+        })
         .then(results => filterLeaderboardResults(results, isTeam))
         .then(results => mapLeaderboardResults(results, isTeam))
   }
@@ -134,7 +152,7 @@ const recursivelyFetchJGLeaderboard = (
   }
 
   return servicesAPI
-    .get(`/v1/justgiving/campaigns/${campaign}/leaderboard`, options)
+    .get(`/v1/justgiving/campaigns/${campaign}/pages`, options)
     .then(response => response.data)
     .then(data => {
       const { currentPage, totalPages } = data.meta
@@ -159,20 +177,25 @@ const recursivelyFetchJGLeaderboard = (
  */
 export const deserializeLeaderboard = (supporter, index) => {
   const isTeam = supporter.type === 'team'
+  const slug = supporter.pageShortName || supporter.shortName
+  const owner =
+    lodashGet(supporter, 'pageOwner.fullName') ||
+    lodashGet(supporter, 'owner.firstName')
+      ? [supporter.owner.firstName, supporter.owner.lastName].join(' ')
+      : null
 
   return {
     currency: supporter.currencyCode,
     currencySymbol: supporter.currencySymbol,
-    donationUrl: isTeam
-      ? null
-      : `${baseUrl()}/fundraising/${supporter.pageShortName}/donate`,
+    donationUrl: isTeam ? null : `${baseUrl()}/fundraising/${slug}/donate`,
     id: supporter.pageId,
     image:
       supporter.defaultImage ||
       imageUrl(lodashGet(supporter, 'pageImages[0]'), 'Size186x186Crop') ||
+      imageUrl(supporter.photo, 'Size186x186Crop') ||
       (isTeam
         ? 'https://assets.blackbaud-sites.com/images/supporticon/user.svg'
-        : apiImageUrl(supporter.pageShortName, 'Size186x186Crop')),
+        : apiImageUrl(slug, 'Size186x186Crop')),
     name:
       supporter.pageTitle ||
       supporter.name ||
@@ -180,7 +203,7 @@ export const deserializeLeaderboard = (supporter, index) => {
     offline: parseFloat(
       supporter.totalRaisedOffline || supporter.raisedOfflineAmount || 0
     ),
-    owner: lodashGet(supporter, 'pageOwner.fullName') || supporter.owner,
+    owner: owner || supporter.owner,
     position: index + 1,
     raised: parseFloat(
       supporter.amount ||
@@ -189,14 +212,10 @@ export const deserializeLeaderboard = (supporter, index) => {
         supporter.donationAmount ||
         0
     ),
-    slug: supporter.pageShortName,
-    subtitle: lodashGet(supporter, 'pageOwner.fullName') || supporter.eventName,
+    slug,
+    subtitle: owner || supporter.eventName,
     target: supporter.targetAmount || supporter.target,
     totalDonations: supporter.numberOfSupporters || supporter.donationCount,
-    url: [
-      baseUrl(),
-      isTeam ? 'team' : 'fundraising',
-      supporter.pageShortName
-    ].join('/')
+    url: [baseUrl(), isTeam ? 'team' : 'fundraising', slug].join('/')
   }
 }
