@@ -12,6 +12,7 @@
 ```
 <Leaderboard
   campaign='au-23374'
+  leaderboard={{ columns: { sm: 2 } }}
   limit={50}
   pageSize={10}
   showPage
