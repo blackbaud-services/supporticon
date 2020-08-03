@@ -224,6 +224,7 @@ class CreatePageForm extends Component {
   renderAddress () {
     const { manualAddress } = this.state
     const { form, inputField, country } = this.props
+    const selectedCountry = form.values.country || country
 
     if (!manualAddress) {
       return (
@@ -251,14 +252,15 @@ class CreatePageForm extends Component {
           <InputField
             {...form.fields.locality}
             {...inputField}
-            label={addressHelpers.localityLabel(form.values.country || country)}
+            required={selectedCountry !== 'nz'}
+            label={addressHelpers.localityLabel(selectedCountry)}
           />
         </GridColumn>
         <GridColumn md={country ? 6 : 4}>
           <InputField
             {...form.fields.region}
             {...inputField}
-            label={addressHelpers.regionLabel(form.values.country || country)}
+            label={addressHelpers.regionLabel(selectedCountry)}
           />
         </GridColumn>
         {!country && (
@@ -270,7 +272,7 @@ class CreatePageForm extends Component {
           <InputField
             {...form.fields.postCode}
             {...inputField}
-            label={addressHelpers.postCodeLabel(form.values.country || country)}
+            label={addressHelpers.postCodeLabel(selectedCountry)}
           />
         </GridColumn>
       </Grid>
@@ -444,6 +446,7 @@ const form = props => {
         required: true,
         validators: [
           (val, { country }) =>
+            country !== 'nz' &&
             validators.required(
               `Please enter a ${addressHelpers
                 .localityLabel(country)
