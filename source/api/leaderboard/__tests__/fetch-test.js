@@ -161,7 +161,7 @@ describe('Fetch Leaderboards', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign/leaderboard'
+          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign/pages'
         )
         done()
       })
