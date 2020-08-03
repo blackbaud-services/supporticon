@@ -134,7 +134,7 @@ const recursivelyFetchJGLeaderboard = (
   }
 
   return servicesAPI
-    .get(`/v1/justgiving/campaigns/${campaign}/leaderboard`, options)
+    .get(`/v1/justgiving/campaigns/${campaign}/pages`, options)
     .then(response => response.data)
     .then(data => {
       const { currentPage, totalPages } = data.meta
@@ -159,20 +159,25 @@ const recursivelyFetchJGLeaderboard = (
  */
 export const deserializeLeaderboard = (supporter, index) => {
   const isTeam = supporter.type === 'team'
+  const slug = supporter.pageShortName || supporter.shortName
+  const owner =
+    lodashGet(supporter, 'pageOwner.fullName') ||
+    lodashGet(supporter, 'owner.firstName')
+      ? [supporter.owner.firstName, supporter.owner.lastName].join(' ')
+      : null
 
   return {
     currency: supporter.currencyCode,
     currencySymbol: supporter.currencySymbol,
-    donationUrl: isTeam
-      ? null
-      : `${baseUrl()}/fundraising/${supporter.pageShortName}/donate`,
+    donationUrl: isTeam ? null : `${baseUrl()}/fundraising/${slug}/donate`,
     id: supporter.pageId,
     image:
       supporter.defaultImage ||
       imageUrl(lodashGet(supporter, 'pageImages[0]'), 'Size186x186Crop') ||
+      imageUrl(supporter.photo, 'Size186x186Crop') ||
       (isTeam
         ? 'https://assets.blackbaud-sites.com/images/supporticon/user.svg'
-        : apiImageUrl(supporter.pageShortName, 'Size186x186Crop')),
+        : apiImageUrl(slug, 'Size186x186Crop')),
     name:
       supporter.pageTitle ||
       supporter.name ||
@@ -180,7 +185,7 @@ export const deserializeLeaderboard = (supporter, index) => {
     offline: parseFloat(
       supporter.totalRaisedOffline || supporter.raisedOfflineAmount || 0
     ),
-    owner: lodashGet(supporter, 'pageOwner.fullName') || supporter.owner,
+    owner: owner || supporter.owner,
     position: index + 1,
     raised: parseFloat(
       supporter.amount ||
@@ -189,14 +194,10 @@ export const deserializeLeaderboard = (supporter, index) => {
         supporter.donationAmount ||
         0
     ),
-    slug: supporter.pageShortName,
-    subtitle: lodashGet(supporter, 'pageOwner.fullName') || supporter.eventName,
+    slug,
+    subtitle: owner || supporter.eventName,
     target: supporter.targetAmount || supporter.target,
     totalDonations: supporter.numberOfSupporters || supporter.donationCount,
-    url: [
-      baseUrl(),
-      isTeam ? 'team' : 'fundraising',
-      supporter.pageShortName
-    ].join('/')
+    url: [baseUrl(), isTeam ? 'team' : 'fundraising', slug].join('/')
   }
 }
