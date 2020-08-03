@@ -52,11 +52,12 @@ export const fetchLeaderboard = (params = required()) => {
       )
     default:
       const isTeam = params.type === 'team'
+      const { results = [], ...otherParams } = params
 
       return get(
         'donationsleaderboards/v1/leaderboard',
         {
-          ...params,
+          ...otherParams,
           currencyCode: currencyCode(params.country)
         },
         {
@@ -65,15 +66,32 @@ export const fetchLeaderboard = (params = required()) => {
             campaign: 'campaignGuids',
             excludePageIds: 'excludePageGuids',
             limit: 'take',
+            page: 'offset',
             type: 'groupBy'
           },
           transforms: {
+            limit: val => Math.min(20, val || 10),
+            page: val =>
+              String(val ? Math.min(20, params.limit || 10) * (val - 1) : 0),
             type: val => (isTeam ? 'TeamGuid' : 'PageGuid')
           }
         },
         { paramsSerializer }
       )
-        .then(response => response.results)
+        .then(response => {
+          const { currentPage, lastRowOnPage, pageCount } = response.meta
+          const updatedResults = [...results, ...response.results]
+
+          if (currentPage >= pageCount || lastRowOnPage >= params.limit) {
+            return updatedResults
+          }
+
+          return fetchLeaderboard({
+            ...params,
+            results: updatedResults,
+            page: currentPage + 1
+          })
+        })
         .then(results => filterLeaderboardResults(results, isTeam))
         .then(results => mapLeaderboardResults(results, isTeam))
   }
