@@ -206,10 +206,10 @@ export const deserializeLeaderboard = (supporter, index) => {
     owner: owner || supporter.owner,
     position: index + 1,
     raised: parseFloat(
-      supporter.amount ||
+      supporter.donationAmount ||
+        supporter.amount ||
         supporter.raisedAmount ||
         supporter.amountRaised ||
-        supporter.donationAmount ||
         0
     ),
     slug,
