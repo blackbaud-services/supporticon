@@ -53,6 +53,8 @@ export const deserializePage = page => {
     charity: page.charity || page.CharityId,
     coordinates: null,
     createdAt: jsonDate(page.createdDate) || page.CreatedDate,
+    currencyCode: page.currencyCode,
+    currencySymbol: page.currencySymbol,
     donationUrl: [
       baseUrl('link'),
       'v1/fundraisingpage/donate/pageId',
