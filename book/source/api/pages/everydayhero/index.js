@@ -62,6 +62,8 @@ export const deserializePage = page => {
 }
 
 const deserializeSegmentation = (groups = []) => {
+  if (!Array.isArray(groups)) return {}
+
   return groups.reduce(
     (segments, group) => ({
       ...segments,
