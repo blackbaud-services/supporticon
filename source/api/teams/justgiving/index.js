@@ -111,10 +111,26 @@ export const fetchTeamBySlug = (slug = required(), options = {}) => {
     })
 }
 
-export const checkTeamSlugAvailable = (slug = required()) =>
-  fetchTeamBySlug(slug)
-    .then(() => Promise.resolve([slug, uuid()].join('-')))
-    .catch(() => Promise.resolve(slug))
+export const checkTeamSlugAvailable = (
+  slug = required(),
+  { authType = 'Bearer', token = required() }
+) => {
+  const options = {
+    headers: {
+      Authorization: `${authType} ${token}`,
+      'x-api-key': client.instance.defaults.headers['x-api-key']
+    }
+  }
+
+  return client.servicesAPI
+    .get(
+      `/v1/justgiving/proxy/campaigns/v1/teams/shortNames/${slug}/isAvailable`,
+      options
+    )
+    .then(response => response.data.isAvailable)
+    .then(isAvailable => (isAvailable ? slug : [slug, uuid()].join('-')))
+    .catch(() => [slug, uuid()].join('-'))
+}
 
 export const createTeam = params => {
   const {
@@ -158,7 +174,7 @@ export const createTeam = params => {
     }
   }
 
-  return checkTeamSlugAvailable(payload.teamShortName)
+  return checkTeamSlugAvailable(payload.teamShortName, { authType, token })
     .then(teamShortName =>
       client.put('/v2/teams', { ...payload, teamShortName }, options)
     )

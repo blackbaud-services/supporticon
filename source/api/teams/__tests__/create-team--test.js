@@ -69,10 +69,13 @@ describe('Create a Team', () => {
       moxios.wait(() => {
         const shortNameRequest = moxios.requests.mostRecent()
 
-        shortNameRequest.respondWith({ status: 404 })
+        shortNameRequest.respondWith({
+          status: 200,
+          response: { isAvailable: true }
+        })
 
         expect(shortNameRequest.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/proxy/campaigns/v1/teams/by-short-name/my-team/full'
+          'https://api.blackbaud.services/v1/justgiving/proxy/campaigns/v1/teams/shortNames/my-team/isAvailable'
         )
 
         moxios.wait(() => {
