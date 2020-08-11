@@ -60,20 +60,57 @@ export const deserializeTeam = team => {
   }
 }
 
-export const fetchTeams = (options = required()) => {
-  const { campaign = required(), limit = 100 } = options
-
+const recursivelyFetchTeams = ({
+  CampaignGuid,
+  Take,
+  offset = 0,
+  results = []
+}) => {
   const params = {
-    CampaignGuid: campaign,
-    Take: limit
+    CampaignGuid,
+    Take,
+    offset
   }
-
   return client.servicesAPI
     .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
       params,
       paramsSerializer
     })
-    .then(response => response.data.results)
+    .then(response => response.data)
+    .then(data => {
+      const { next } = data
+      const offset = next && next.split('offset=')[1]
+      const updatedResults = [...results, ...data.results]
+      if (offset) {
+        return recursivelyFetchTeams({
+          CampaignGuid,
+          Take,
+          offset,
+          results: updatedResults
+        })
+      } else {
+        return updatedResults
+      }
+    })
+}
+
+export const fetchTeams = (options = required()) => {
+  const { allTeams, campaign = required(), limit = 100 } = options
+
+  const params = {
+    CampaignGuid: campaign,
+    Take: limit
+  }
+  if (allTeams) {
+    return recursivelyFetchTeams(params)
+  } else {
+    return client.servicesAPI
+      .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
+        params,
+        paramsSerializer
+      })
+      .then(response => response.data.results)
+  }
 }
 
 export const fetchTeam = (id = required()) => {
