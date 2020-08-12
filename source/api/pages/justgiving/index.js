@@ -50,7 +50,7 @@ export const deserializePage = page => {
     active: status ? ['Inactive', 'Cancelled'].indexOf(status) === -1 : true,
     campaign: page.campaignGuid || page.Subtext || page.eventId || page.EventId,
     campaignDate: jsonDate(page.eventDate) || page.EventDate,
-    charity: page.charity || page.CharityId,
+    charity: page.charity || page.CharityId || page.charityId,
     coordinates: null,
     createdAt: jsonDate(page.createdDate) || page.CreatedDate,
     currencyCode: page.currencyCode,
@@ -89,6 +89,7 @@ export const deserializePage = page => {
           lodashGet(page, 'owner.lastName')
       : page.OwnerFullName ||
         page.PageOwner ||
+        page.pageOwner ||
         lodashGet(page, 'pageOwner.fullName'),
     qrCodes: getQrCodes(page),
     raised: onlineAmount + offlineAmount,
