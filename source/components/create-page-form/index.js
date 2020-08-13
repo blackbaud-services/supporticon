@@ -40,7 +40,7 @@ class CreatePageForm extends Component {
   }
 
   componentDidMount () {
-    if (isJustGiving && this.props.country !== 'uk') {
+    if (isJustGiving() && this.props.country !== 'uk') {
       this.setState({ manualAddress: true })
     }
   }
