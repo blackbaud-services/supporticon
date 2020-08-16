@@ -39,6 +39,7 @@ export const deserializePage = page => {
     fitnessGoal: page.fitness_goal,
     fitnessDistanceTotal: getDistanceTotal(page),
     fitnessDurationTotal: getDurationTotal(page),
+    fitnessElevationTotal: page.elevation,
     groups: page.page_groups,
     hasSelfDonated: page.meta && page.meta.self_donated,
     hasUpdatedImage: page.meta && page.meta.has_set_image,
@@ -91,7 +92,7 @@ export const fetchPages = (params = required()) => {
   return promise.then(response => response.pages)
 }
 
-export const fetchPage = (id = required()) => {
+export const fetchPage = (id = required(), options = {}) => {
   if (typeof id === 'object') {
     const {
       campaignSlug = required(),
@@ -104,7 +105,21 @@ export const fetchPage = (id = required()) => {
     ).then(response => response.page)
   }
 
-  return get(`api/v2/pages/${id}`).then(response => response.page)
+  return get(`api/v2/pages/${id}`)
+    .then(response => response.page)
+    .then(page =>
+      Promise.resolve(options.includeFitness ? fetchElevation(page) : 0).then(
+        elevation => ({ ...page, elevation })
+      )
+    )
+}
+
+export const fetchElevation = page => {
+  const url = lodashGet(page, 'fitness_activities_totals.href')
+
+  return url
+    ? get(url).then(data => lodashGet(data, 'results.0.elevation_in_meters', 0))
+    : 0
 }
 
 export const fetchUserPages = (params = required()) => {

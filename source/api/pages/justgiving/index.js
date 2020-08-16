@@ -66,6 +66,7 @@ export const deserializePage = page => {
     fitnessGoal: parseInt(page.pageSummaryWhat) || 0,
     fitnessDistanceTotal: lodashGet(page, 'fitness.totalAmount', 0),
     fitnessDurationTotal: lodashGet(page, 'fitness.totalAmountTaken', 0),
+    fitnessElevationTotal: lodashGet(page, 'fitness.totalAmountElevation', 0),
     groups: null,
     hasUpdatedImage:
       page.imageCount &&
