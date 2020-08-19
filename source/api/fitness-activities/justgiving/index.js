@@ -32,7 +32,7 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   externalId: !activity.ExternalId ? null : activity.ExternalId,
   id: activity.id || activity.Id || activity.FitnessGuid,
   manual: activity.ActivityType === 'Manual',
-  message: activity.Title,
+  message: activity.Description || activity.Title,
   page: activity.PageGuid,
   slug: activity.PageShortName,
   source: activity.ActivityType
