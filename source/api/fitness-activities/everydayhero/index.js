@@ -11,6 +11,7 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   coordinate: activity.coordinate,
   createdAt: activity.created_at,
   deleted: activity.deleted,
+  description: activity.description,
   distance: activity.distance_in_meters,
   duration: activity.duration_in_seconds,
   elevation: activity.elevation_in_meters,
