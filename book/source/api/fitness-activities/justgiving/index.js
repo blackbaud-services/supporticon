@@ -25,6 +25,7 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   campaign: activity.CampaignGuid,
   charity: activity.CharityId,
   createdAt: jsonDate(activity.DateCreated),
+  description: activity.Description,
   distance: activity.Value,
   duration: activity.TimeTaken,
   elevation: activity.Elevation,
@@ -32,7 +33,7 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   externalId: !activity.ExternalId ? null : activity.ExternalId,
   id: activity.id || activity.Id || activity.FitnessGuid,
   manual: activity.ActivityType === 'Manual',
-  message: activity.Description || activity.Title,
+  message: activity.Title,
   page: activity.PageGuid,
   slug: activity.PageShortName,
   source: activity.ActivityType
