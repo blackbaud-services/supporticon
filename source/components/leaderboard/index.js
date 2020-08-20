@@ -143,6 +143,7 @@ class Leaderboard extends Component {
         })
       })
       .catch(error => {
+        console.log(error)
         this.setState({
           status: 'failed'
         })
@@ -153,6 +154,8 @@ class Leaderboard extends Component {
   render () {
     const { status, data = [] } = this.state
     const { leaderboard, filter, pageSize, showPage } = this.props
+
+    console.log(leaderboard, status)
 
     return (
       <div>
@@ -200,7 +203,7 @@ class Leaderboard extends Component {
             )}
           </Pagination>
         ) : (
-          <LeaderboardWrapper {...leaderboard} error />
+          <LeaderboardWrapper {...leaderboard} empty />
         )}
       </div>
     )
