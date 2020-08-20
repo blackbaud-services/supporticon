@@ -9,8 +9,9 @@ export default () => ({
     },
     ...(isJustGiving() && {
       target: {
+        type: 'number',
         label: 'Fundraising target',
-        placeholder: '1,000',
+        placeholder: '100',
         validators: [validators.required('Enter your team fundraising target')]
       },
       story: {
