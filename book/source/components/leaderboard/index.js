@@ -200,7 +200,7 @@ class Leaderboard extends Component {
             )}
           </Pagination>
         ) : (
-          <LeaderboardWrapper {...leaderboard} error />
+          <LeaderboardWrapper {...leaderboard} empty />
         )}
       </div>
     )

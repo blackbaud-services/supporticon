@@ -188,7 +188,7 @@ class FitnessLeaderboard extends Component {
             )}
           </Pagination>
         ) : (
-          <LeaderboardWrapper {...leaderboard} error />
+          <LeaderboardWrapper {...leaderboard} empty />
         )}
       </div>
     )
