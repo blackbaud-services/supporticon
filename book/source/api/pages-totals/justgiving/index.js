@@ -15,6 +15,14 @@ const fetchCampaign = id =>
     .get(`/v1/justgiving/campaigns/${id}/leaderboard`)
     .then(({ data }) => data.meta.totalResults)
 
+const fetchCampaignTeams = id =>
+  servicesAPI
+    .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
+      params: { CampaignGuid: id },
+      paramsSerializer
+    })
+    .then(response => response.data.totalResults)
+
 export const fetchPagesTotals = (params = required()) => {
   switch (dataSource(params)) {
     case 'event':
@@ -26,13 +34,23 @@ export const fetchPagesTotals = (params = required()) => {
         events.reduce((acc, total) => acc + total, 0)
       )
     case 'campaign':
-      const campaignIds = Array.isArray(params.campaign)
-        ? params.campaign
-        : [params.campaign]
+      if (params.type === 'team') {
+        const campaignIds = Array.isArray(params.campaign)
+          ? params.campaign
+          : [params.campaign]
 
-      return Promise.all(campaignIds.map(getUID).map(fetchCampaign)).then(
-        campaigns => campaigns.reduce((acc, total) => acc + total, 0)
-      )
+        return Promise.all(
+          campaignIds.map(getUID).map(fetchCampaignTeams)
+        ).then(campaigns => campaigns.reduce((acc, total) => acc + total, 0))
+      } else {
+        const campaignIds = Array.isArray(params.campaign)
+          ? params.campaign
+          : [params.campaign]
+
+        return Promise.all(campaignIds.map(getUID).map(fetchCampaign)).then(
+          campaigns => campaigns.reduce((acc, total) => acc + total, 0)
+        )
+      }
     default:
       return get(
         'donationsleaderboards/v1/leaderboard',
