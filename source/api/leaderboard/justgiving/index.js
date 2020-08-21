@@ -52,6 +52,7 @@ export const fetchLeaderboard = (params = required()) => {
       )
     default:
       const isTeam = params.type === 'team'
+      const maxPerRequest = isTeam ? 5 : 20
       const { results = [], ...otherParams } = params
 
       return get(
@@ -70,9 +71,13 @@ export const fetchLeaderboard = (params = required()) => {
             type: 'groupBy'
           },
           transforms: {
-            limit: val => Math.min(20, val || 10),
+            limit: val => Math.min(maxPerRequest, val || 10),
             page: val =>
-              String(val ? Math.min(20, params.limit || 10) * (val - 1) : 0),
+              String(
+                val
+                  ? Math.min(maxPerRequest, params.limit || 10) * (val - 1)
+                  : 0
+              ),
             type: val => (isTeam ? 'TeamGuid' : 'PageGuid')
           }
         },
