@@ -1,5 +1,5 @@
 import lodashGet from 'lodash/get'
-import { get, post } from '../../../utils/client'
+import { get, post, destroy } from '../../../utils/client'
 import { required } from '../../../utils/params'
 import { videoRegex } from 'constructicon/lib/oembed'
 
@@ -50,5 +50,7 @@ export const createPost = ({
   return post('api/v2/posts', data, { headers }).then(data => data.post)
 }
 
-export const deletePost = (params = required()) =>
-  Promise.reject(new Error('This method is not supported by Everydayhero'))
+export const deletePost = ({ id = required(), token = required() }) =>
+  destroy(`api/v2/posts/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
