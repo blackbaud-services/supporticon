@@ -12,9 +12,24 @@ describe('Delete Post', () => {
       moxios.uninstall(instance)
     })
 
-    it('is not supported', () => {
-      const test = () => deletePost({ id: 123, token: 'token' })
+    it('throws if no token is passed', () => {
+      const test = () => deletePost({ bogus: 'data' })
       expect(test).to.throw
+    })
+
+    it('hits the api with the correct url and data', done => {
+      deletePost({ id: 123, token: 'token' })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        const headers = request.config.headers
+
+        expect(request.url).to.equal(
+          'https://everydayhero.com/api/v2/posts/123'
+        )
+        expect(headers.Authorization).to.equal('Bearer token')
+        done()
+      })
     })
   })
 
