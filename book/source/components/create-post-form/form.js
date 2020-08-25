@@ -5,8 +5,15 @@ export default ({ post }) => ({
     message: {
       label: 'Post an update',
       type: 'contenteditable',
-      placeholder: 'Give everybody an update',
-      validators: [validators.required('Please include a message to submit')]
+      validators: [
+        (val, { image, video }) => {
+          if (!image && !video) {
+            return validators.required(
+              'Please include a message or an image or video.'
+            )(val)
+          }
+        }
+      ]
     },
     image: {
       label: 'Attach an image'
