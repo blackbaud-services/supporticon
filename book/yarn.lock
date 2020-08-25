@@ -2266,10 +2266,10 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constructicon@^2.7.2:
-  version "2.7.2"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-2.7.2.tgz#87dfbe24c65331f135ad32dd2aa500f0f4acb6e8"
-  integrity sha512-Ziqd65tfQE/l7v5NTiIKygSkTb7hz9DyIbu8YtGAgg/WwegLaaNJgGNNtfRORz1ZqVpgvuLs8V+HViEoRsiGXA==
+constructicon@^2.8.7:
+  version "2.8.7"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-2.8.7.tgz#51ba3bc347c80215471bdc0e38c280dbaef927e7"
+  integrity sha512-hsvkHPbxqO+o2h11N1u9EIKQ6v3HMgpswiayiQ9eWmUDjd++yvPmd2vtgf9iKE6aaaLo27KFZjDr1tssS+UmGg==
   dependencies:
     axios "^0.19.2"
     emotion "^9.2.7"
@@ -2286,6 +2286,7 @@ constructicon@^2.7.2:
     react-onclickoutside "^6.9.0"
     react-slick "^0.26.1"
     react-slider "^1.0.7"
+    react-ticker "^1.2.2"
     sanitize-html "^1.24.0"
 
 content-disposition@0.5.2:
@@ -8505,6 +8506,11 @@ react-test-renderer@^16.0.0-0:
     fbjs "^0.8.16"
     object-assign "^4.1.1"
     prop-types "^15.6.0"
+
+react-ticker@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/react-ticker/-/react-ticker-1.2.2.tgz#12cda5ff8266c6fe90ffcd8c58e12ba1596ddf24"
+  integrity sha512-PXUujoPJvajxwOfosuuujlrBUrjgGp4FB4haWFOI25ujhMppW4SuLkiOdQ9AylrWN3yTHWdk2kbQWe3n9SjFGA==
 
 react@^16.13.1:
   version "16.13.1"
