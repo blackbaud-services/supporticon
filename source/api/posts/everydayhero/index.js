@@ -31,11 +31,11 @@ export const fetchPosts = (params = required()) => {
 }
 
 export const createPost = ({
-  message = required(),
   pageId = required(),
   token = required(),
   createdAt,
   image,
+  message,
   video
 }) => {
   const headers = { Authorization: `Bearer ${token}` }
