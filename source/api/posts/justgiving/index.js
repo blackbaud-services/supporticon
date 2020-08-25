@@ -31,7 +31,7 @@ export const fetchPosts = ({
   const query = `
     {
       page(type: ${type}, slug: "${slug}") {
-        timeline${after ? `(after: "${after}") ` : ' '} {
+        timeline(first: 20${after ? `, after: "${after}"` : ''}) {
           pageInfo {
             hasNextPage
             endCursor
