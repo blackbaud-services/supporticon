@@ -16,14 +16,16 @@ import InputVideo from 'constructicon/input-video'
 import Section from 'constructicon/section'
 
 class CreatePostForm extends React.Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.state = {
       errors: [],
+      height: props.height,
       image: null,
       status: null,
-      video: null
+      video: null,
+      width: props.width
     }
   }
 
@@ -53,10 +55,10 @@ class CreatePostForm extends React.Component {
   }
 
   handleChangeAttachment (val, field = 'image') {
-    const { form } = this.props
+    const { form, height, resizeOnUpload, width } = this.props
 
     if (!val) {
-      this.setState({ [field]: null })
+      this.setState({ [field]: null, width, height })
       return form.fields[field].onChange('')
     }
 
@@ -64,13 +66,29 @@ class CreatePostForm extends React.Component {
       case 'object':
         return this.setState({ [field]: val })
       default:
+        if (resizeOnUpload && field === 'image') {
+          const image = new window.Image()
+          image.src = val
+          image.onload = () => {
+            this.setState({ width: image.width, height: image.height })
+          }
+        }
+
         return form.fields[field].onChange(val)
     }
   }
 
   render () {
-    const { errors, image, status, video } = this.state
-    const { buttonProps, form, formProps, inputProps, submit } = this.props
+    const { errors, height, image, status, video, width } = this.state
+    const {
+      buttonProps,
+      form,
+      formProps,
+      inputProps,
+      orientationChange,
+      resizeOnUpload,
+      submit
+    } = this.props
 
     return (
       <Form
@@ -94,8 +112,10 @@ class CreatePostForm extends React.Component {
                 <InputImage
                   {...inputProps}
                   {...form.fields.image}
-                  width={1200}
-                  height={900}
+                  orientationChange={orientationChange}
+                  resizeOnUpload={resizeOnUpload}
+                  width={width}
+                  height={height}
                   onChange={val => this.handleChangeAttachment(val, 'image')}
                   onFileChange={val =>
                     this.handleChangeAttachment(val, 'image')
@@ -128,8 +148,12 @@ class CreatePostForm extends React.Component {
 }
 
 CreatePostForm.defaultProps = {
+  height: 900,
   onSuccess: () => {},
-  submit: 'Post Update'
+  orientationChange: true,
+  resizeOnUpload: true,
+  submit: 'Post Update',
+  width: 1200
 }
 
 CreatePostForm.propTypes = {
@@ -147,6 +171,11 @@ CreatePostForm.propTypes = {
    * Props to be passed to the Form component
    */
   formProps: PropTypes.object,
+
+  /**
+   * Image height in pixels
+   */
+  height: PropTypes.number,
 
   /**
    * Props to be passed to the Input components
@@ -176,7 +205,12 @@ CreatePostForm.propTypes = {
   /**
    * The page owner id (required for JG)
    */
-  userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+  /**
+   * Image width in pixels
+   */
+  width: PropTypes.number
 }
 
 export default withForm(form)(CreatePostForm)
