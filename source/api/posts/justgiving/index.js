@@ -78,9 +78,9 @@ export const fetchPosts = ({
 export const createPost = ({
   pageId = required(),
   userId = required(),
-  message = required(),
   token = required(),
   image,
+  message,
   video
 }) => {
   const headers = {
