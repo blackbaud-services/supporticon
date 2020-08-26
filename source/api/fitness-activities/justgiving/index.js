@@ -21,11 +21,15 @@ const getFitnessId = activity => {
       )
     case 'Manual':
     case 'manual':
-      return encodeBase64String(
-        ['Timeline:FUNDRAISING', activity.PageGuid, activity.ExternalId].join(
-          ':'
+      if (activity.ExternalId) {
+        return encodeBase64String(
+          ['Timeline:FUNDRAISING', activity.PageGuid, activity.ExternalId].join(
+            ':'
+          )
         )
-      )
+      } else {
+        return activity.Id
+      }
     default:
       return activity.id || activity.Id || activity.FitnessGuid
   }
