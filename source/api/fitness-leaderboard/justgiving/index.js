@@ -29,7 +29,7 @@ export const fetchFitnessLeaderboard = ({
 }) => {
   const query = {
     campaignGuid: campaign,
-    limit: limit || 100,
+    limit: 100,
     offset: offset || 0,
     start: startDate,
     end: endDate
@@ -38,6 +38,7 @@ export const fetchFitnessLeaderboard = ({
   return client
     .get('/v1/fitness/campaign', query, {}, { paramsSerializer })
     .then(result => (type === 'team' ? result.teams : result.pages))
+    .then(items => items.slice(0, limit || 100))
     .then(
       items => (activeOnly && type !== 'team' ? fetchActivePages(items) : items)
     )
