@@ -4,8 +4,9 @@ import lodashGet from 'lodash/get'
 import { get, post, destroy, servicesAPI } from '../../../utils/client'
 import { paramsSerializer, required } from '../../../utils/params'
 import { convertToMeters, convertToSeconds } from '../../../utils/units'
-import jsonDate from '../../../utils/jsonDate'
+import { extractData } from '../../../utils/graphql'
 import { encodeBase64String } from '../../../utils/base64'
+import jsonDate from '../../../utils/jsonDate'
 
 const getFitnessId = activity => {
   switch (activity.ActivityType) {
@@ -17,6 +18,13 @@ const getFitnessId = activity => {
           'FITNESS:STRAVA',
           activity.ExternalId
         ].join(':')
+      )
+    case 'Manual':
+    case 'manual':
+      return encodeBase64String(
+        ['Timeline:FUNDRAISING', activity.PageGuid, activity.ExternalId].join(
+          ':'
+        )
       )
     default:
       return activity.id || activity.Id || activity.FitnessGuid
@@ -229,11 +237,7 @@ export const createFitnessActivity = ({
 
     return servicesAPI
       .post('/v1/justgiving/graphql', { query }, { headers })
-      .then(response => response.data)
-      .then(data => {
-        const errorMessage = lodashGet(data, 'errors.0.message')
-        return errorMessage ? Promise.reject(new Error(errorMessage)) : data
-      })
+      .then(response => extractData(response))
       .then(result => ({
         ...lodashGet(result, 'data.createTimelineEntry', {}),
         ...lodashGet(result, 'data.createTimelineEntry.fitnessActivity', {})
@@ -287,7 +291,7 @@ export const deleteFitnessActivity = ({
 
   return servicesAPI
     .post('/v1/justgiving/graphql', { query }, { headers })
-    .then(response => response.data)
+    .then(response => extractData(response))
     .then(result => lodashGet(result, 'data.deleteTimelineEntry'))
 }
 
