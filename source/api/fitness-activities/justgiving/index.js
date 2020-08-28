@@ -217,11 +217,9 @@ export const createFitnessActivity = ({
             fitness: {
               title: "${caption || capitalize(activityType(type))}",
               activityType: ${activityType(type)}
-              distance: ${Math.round(convertToMeters(distance, unit))}
-              duration: ${Math.round(convertToSeconds(duration, durationUnit))}
-              elevation: ${Math.round(
-    convertToMeters(elevation, elevationUnit || unit)
-  )}
+              distance: ${convertToMeters(distance, unit)}
+              duration: ${convertToSeconds(duration, durationUnit)}
+              elevation: ${convertToMeters(elevation, elevationUnit || unit)}
             }
           }
         ) {
