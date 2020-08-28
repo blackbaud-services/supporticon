@@ -91,7 +91,7 @@ export const fetchFitnessActivities = (params = required()) => {
     const query = `
       {
         page(type: FUNDRAISING, slug: "${page}") {
-          timeline${after ? `(after: "${after}") ` : ' '} {
+          timeline(first: 20${after ? `, after: "${after}"` : ' '}) {
             pageInfo {
               hasNextPage
               endCursor
