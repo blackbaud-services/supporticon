@@ -51,7 +51,7 @@ export const deserializeFitnessActivity = (activity = required()) => {
   return {
     campaign: activity.CampaignGuid,
     charity: activity.CharityId,
-    createdAt: jsonDate(activity.DateCreated),
+    createdAt: activity.createdAt || jsonDate(activity.DateCreated),
     description: activity.Description || activity.message,
     distance: getMetricValue(activity.distance || activity.Value),
     duration: getMetricValue(activity.duration || activity.TimeTaken),
