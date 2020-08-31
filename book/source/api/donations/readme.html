@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.2" data-chapter-title="Donations" data-filepath="source/api/donations/readme.md" data-basepath="../../.." data-revision="Wed Aug 26 2020 21:01:52 GMT+0000 (UTC)">
+    <div class="book" data-level="1.2" data-chapter-title="Donations" data-filepath="source/api/donations/readme.md" data-basepath="../../.." data-revision="Mon Aug 31 2020 20:40:10 GMT+0000 (UTC)">
     
 
 <div class="book-summary">
@@ -356,6 +356,29 @@
 
 fetchDonation(<span class="hljs-string">&apos;12345&apos;</span>)
 </code></pre>
+<h2 id="builddonationurl"><code>buildDonationUrl</code></h2>
+<p><strong>Purpose</strong></p>
+<p>Create donation URL link for fundraiser. Can set with either page slug or page id. (JG only)</p>
+<p><strong>Params</strong></p>
+<ul>
+<li><code>amount</code> - pre-selected donation amount when donation form loaded (number)</li>
+<li><code>slug</code> - Page slug (string)</li>
+<li><code>id</code> - Page Id (string)</li>
+<li><code>reference</code> - donation reference to be applied to succesful donations (string)</li>
+<li><code>exitUrl</code> - a redirect link for successful transactions, can pass back donation transaction in formation by using <em>JUST_GIVING_DONATION_ID</em> (string)</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>Formatted JustGiving donation url for fundraiser</p>
+<p><strong>Example</strong></p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { buildDonationUrl } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;supporticon/api/donations/justgiving&apos;</span>
+
+buildDonationUrl({
+  amount: 50,
+  slug: <span class="hljs-string">&apos;test-page&apos;</span> ,
+  reference: <span class="hljs-string">&apos;self-donate&apos;</span>,
+  exitUrl: `${process.env.APPLICATION_URL}/thank-you/JUSTGIVING-DONATION-ID<span class="hljs-string">`
+})
+</span></code></pre>
 <h2 id="replytodonation"><code>replyToDonation</code></h2>
 <p>Replies to a donation</p>
 <p><strong>Params</strong></p>
