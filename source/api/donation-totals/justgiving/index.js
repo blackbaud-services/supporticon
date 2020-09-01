@@ -1,4 +1,4 @@
-import client from '../../../utils/client'
+import client, { servicesAPI } from '../../../utils/client'
 import get from 'lodash/get'
 import {
   getUID,
@@ -6,9 +6,32 @@ import {
   dataSource,
   paramsSerializer
 } from '../../../utils/params'
-import { fetchCampaign } from '../../campaigns'
 import { fetchDonations } from '../../feeds/justgiving'
 import { currencyCode } from '../../../utils/currencies'
+
+const fetchCampaignTotals = id =>
+  Promise.all([
+    servicesAPI
+      .get(`/v1/justgiving/campaigns/${id}`)
+      .then(response => response.data.donationSummary),
+    servicesAPI
+      .get(`/v1/justgiving/campaigns/${id}/pages`)
+      .then(response => response.data.meta.totalAmount)
+  ]).then(([{ offlineAmount, totalNumberOfDonations }, totalAmount]) => ({
+    totalRaised: totalAmount + offlineAmount,
+    totalResults: totalNumberOfDonations
+  }))
+
+const fetchAllCampaignTotals = campaignIds =>
+  Promise.all(campaignIds.map(fetchCampaignTotals)).then(campaigns =>
+    campaigns.reduce(
+      (acc, { totalRaised, totalResults }) => ({
+        totalRaised: acc.totalRaised + totalRaised,
+        totalResults: acc.totalResults + totalResults
+      }),
+      { totalRaised: 0, totalResults: 0 }
+    )
+  )
 
 export const fetchDonationTotals = (params = required()) => {
   switch (dataSource(params)) {
@@ -43,39 +66,21 @@ export const fetchDonationTotals = (params = required()) => {
         { paramsSerializer }
       )
     default:
-      const mapTotals = data => ({
-        ...data,
-        totalRaised:
-          data.donationSummary.totalAmount - data.donationSummary.totalGiftAid,
-        totalResults: data.donationSummary.totalNumberOfDonations
-      })
+      const campaignGuids = Array.isArray(params.campaign)
+        ? params.campaign.map(getUID)
+        : [getUID(params.campaign)]
 
-      const fetchAllCampaignTotals = campaignIds =>
-        Promise.all(campaignIds.map(fetchCampaign))
-          .then(campaigns => campaigns.map(mapTotals))
-          .then(campaigns =>
-            campaigns.reduce(
-              (acc, { totalRaised, totalResults }) => ({
-                totalRaised: acc.totalRaised + totalRaised,
-                totalResults: acc.totalResults + totalResults
-              }),
-              { totalRaised: 0, totalResults: 0 }
-            )
-          )
-
-      return Array.isArray(params.campaign)
-        ? params.includeOffline
-          ? fetchAllCampaignTotals(params.campaign.map(getUID))
-          : client.get(
-            'donationsleaderboards/v1/totals',
-            {
-              campaignGuids: params.campaign.map(getUID),
-              currencyCode: currencyCode(params.country)
-            },
-            {},
-            { paramsSerializer }
-          )
-        : fetchCampaign(getUID(params.campaign)).then(mapTotals)
+      return params.includeOffline
+        ? fetchAllCampaignTotals(campaignGuids)
+        : client.get(
+          'donationsleaderboards/v1/totals',
+          {
+            campaignGuids,
+            currencyCode: currencyCode(params.country)
+          },
+          {},
+          { paramsSerializer }
+        )
   }
 }
 
