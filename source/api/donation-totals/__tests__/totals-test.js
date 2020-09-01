@@ -96,12 +96,17 @@ describe('Fetch Donation Totals', () => {
       })
     })
 
-    it('uses the correct url to fetch totals for a campaign', done => {
-      fetchJGDonationTotals({ campaign: 'my-campaign' })
+    it('uses the correct urls to fetch totals for a campaign (with offline amounts)', done => {
+      fetchJGDonationTotals({ campaign: 'my-campaign', includeOffline: true })
       moxios.wait(() => {
-        const request = moxios.requests.mostRecent()
-        expect(request.url).to.equal(
+        const firstRequest = moxios.requests.at(0)
+        const secondRequest = moxios.requests.at(1)
+
+        expect(firstRequest.url).to.equal(
           'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign'
+        )
+        expect(secondRequest.url).to.equal(
+          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign/pages'
         )
         done()
       })
