@@ -1,6 +1,8 @@
 import moment from 'moment'
 import capitalize from 'lodash/capitalize'
 import lodashGet from 'lodash/get'
+import last from 'lodash/last'
+import split from 'lodash/split'
 import { get, post, destroy, servicesAPI } from '../../../utils/client'
 import { paramsSerializer, required } from '../../../utils/params'
 import { convertToMeters, convertToSeconds } from '../../../utils/units'
@@ -35,6 +37,13 @@ const getFitnessId = activity => {
   }
 }
 
+const getExternalId = activity => {
+  if (activity.ExternalId) return activity.ExternalId
+  if (activity.legacyId) return last(split(activity.legacyId, ':'))
+
+  return null
+}
+
 const getMetricValue = metric => {
   switch (typeof metric) {
     case 'object':
@@ -56,7 +65,7 @@ export const deserializeFitnessActivity = (activity = required()) => {
     distance: getMetricValue(activity.distance || activity.Value),
     duration: getMetricValue(activity.duration || activity.TimeTaken),
     elevation: getMetricValue(activity.elevation || activity.Elevation),
-    externalId: !activity.ExternalId ? null : activity.ExternalId,
+    externalId: getExternalId(activity),
     eventId: activity.EventId,
     id: getFitnessId(activity),
     manual:
