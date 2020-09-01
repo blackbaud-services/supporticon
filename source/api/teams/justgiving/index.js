@@ -165,8 +165,11 @@ export const checkTeamSlugAvailable = (
       options
     )
     .then(response => response.data.isAvailable)
-    .then(isAvailable => (isAvailable ? slug : [slug, uuid()].join('-')))
-    .catch(() => [slug, uuid()].join('-'))
+    .then(
+      isAvailable =>
+        isAvailable ? slug : [uuid(), slug].join('-').substr(0, 50)
+    )
+    .catch(() => [uuid(), slug].join('-').substr(0, 50))
 }
 
 export const createTeam = params => {
