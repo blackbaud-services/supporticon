@@ -211,7 +211,9 @@ export const deserializeLeaderboard = (supporter, index) => {
     owner: owner || supporter.owner,
     position: index + 1,
     raised: parseFloat(
-      supporter.donationAmount ||
+      lodashGet(supporter, 'team.donationSummary.totalAmount') ||
+        lodashGet(supporter, 'page.totalAmount') ||
+        supporter.donationAmount ||
         supporter.amount ||
         supporter.raisedAmount ||
         supporter.amountRaised ||
