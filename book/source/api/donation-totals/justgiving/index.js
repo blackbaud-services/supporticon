@@ -17,10 +17,23 @@ const fetchCampaignTotals = id =>
     servicesAPI
       .get(`/v1/justgiving/campaigns/${id}/pages`)
       .then(response => response.data.meta.totalAmount)
-  ]).then(([{ offlineAmount, totalNumberOfDonations }, totalAmount]) => ({
-    totalRaised: totalAmount + offlineAmount,
-    totalResults: totalNumberOfDonations
-  }))
+  ]).then(
+    ([
+      {
+        directDonationAmount,
+        fundraiserRaisedAmount,
+        offlineAmount,
+        totalNumberOfDonations
+      },
+      totalAmount
+    ]) => ({
+      totalRaised:
+        (totalAmount || fundraiserRaisedAmount) +
+        directDonationAmount +
+        offlineAmount,
+      totalResults: totalNumberOfDonations
+    })
+  )
 
 const fetchAllCampaignTotals = campaignIds =>
   Promise.all(campaignIds.map(fetchCampaignTotals)).then(campaigns =>
