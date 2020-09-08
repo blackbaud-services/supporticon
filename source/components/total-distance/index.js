@@ -52,6 +52,7 @@ class TotalDistance extends Component {
         icon={icon}
         label={label}
         amount={this.renderAmount()}
+        amountLabel={this.renderAmountLabel()}
         {...metric}
       />
     )
@@ -70,6 +71,23 @@ class TotalDistance extends Component {
       default:
         return units
           ? formatDistance(amount, miles)
+          : numbro(amount).format(format)
+    }
+  }
+
+  renderAmountLabel () {
+    const { status, data } = this.state
+    const { format, miles, multiplier, offset, units } = this.props
+    const amount = (offset + data) * multiplier
+
+    switch (status) {
+      case 'fetching':
+        return 'Loading'
+      case 'failed':
+        return 'Error'
+      default:
+        return units
+          ? formatDistance(amount, miles, 'full')
           : numbro(amount).format(format)
     }
   }

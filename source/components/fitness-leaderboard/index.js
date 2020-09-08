@@ -204,6 +204,7 @@ class FitnessLeaderboard extends Component {
         subtitle={subtitleMethod(leader)}
         image={leader.image}
         amount={this.getMetric(leader)}
+        amountLabel={this.getMetricLabel(leader)}
         href={leader.url}
         rank={leader.position}
         {...leaderboardItem}
@@ -227,6 +228,30 @@ class FitnessLeaderboard extends Component {
         const distance = (offset + leader.distance) * multiplier
         return units
           ? formatDistance(distance, miles)
+          : numbro(distance).format('0,0')
+    }
+  }
+
+  getMetricLabel (leader) {
+    const { miles, multiplier, offset, sortBy, units } = this.props
+
+    switch (sortBy) {
+      case 'calories':
+        return `${numbro((offset + leader.calories) * multiplier).format(
+          '0,0'
+        )} calories`
+      case 'duration':
+        return formatDuration((offset + leader.duration) * multiplier, 'full')
+      case 'elevation':
+        return formatElevation(
+          (offset + leader.elevation) * multiplier,
+          miles,
+          'full'
+        )
+      default:
+        const distance = (offset + leader.distance) * multiplier
+        return units
+          ? formatDistance(distance, miles, 'full')
           : numbro(distance).format('0,0')
     }
   }

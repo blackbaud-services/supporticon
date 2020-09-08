@@ -3,37 +3,55 @@ import moment from 'moment'
 import get from 'lodash/get'
 import * as units from '../units'
 
-export const formatDistance = (distance, miles) => {
+const labels = {
+  kilometers: { abbreviation: 'km', full: 'kilometers' },
+  miles: { abbreviation: 'mi', full: 'miles' },
+  feet: { abbreviation: 'ft', full: 'feet' },
+  days: { abbreviation: 'd', full: 'days' },
+  hours: { abbreviation: 'h', full: 'hours' },
+  minutes: { abbreviation: 'm', full: 'minutes' },
+  seconds: { abbreviation: 's', full: 'seconds' },
+  meters: { abbreviation: 'm', full: 'meters' }
+}
+
+export const formatDistance = (distance, miles, label = 'abbreviation') => {
   if (miles) {
     return (
-      numbro(units.convertMetersToMiles(distance)).format('0,0[.]0') + ' mi'
+      numbro(units.convertMetersToMiles(distance)).format('0,0[.]0') +
+      ` ${labels.miles[label]}`
     )
   } else {
-    return numbro(units.convertMetersToKm(distance)).format('0,0[.]0') + ' km'
+    return (
+      numbro(units.convertMetersToKm(distance)).format('0,0[.]0') +
+      ` ${labels.kilometers[label]}`
+    )
   }
 }
 
-export const formatDuration = duration => {
+export const formatDuration = (duration, label = 'abbreviation') => {
   if (duration >= 86400) {
-    return `${Math.floor(
-      moment.duration(duration, 'seconds').asDays()
-    )}d ${moment.duration(duration, 'seconds').hours()}h`
+    return `${Math.floor(moment.duration(duration, 'seconds').asDays())}${
+      labels.days[label]
+    } ${moment.duration(duration, 'seconds').hours()}${labels.hours[label]}`
   } else if (duration >= 3600) {
-    return `${moment.duration(duration, 'seconds').hours()}h ${moment
-      .duration(duration, 'seconds')
-      .minutes()}m`
+    return `${moment.duration(duration, 'seconds').hours()}${
+      labels.hours[label]
+    } ${moment.duration(duration, 'seconds').minutes()}${labels.minutes[label]}`
   } else {
-    return `${moment
-      .duration(duration, 'seconds')
-      .minutes()}m ${moment.duration(duration, 'seconds').seconds()}s`
+    return `${moment.duration(duration, 'seconds').minutes()}${
+      labels.minutes[label]
+    } ${moment.duration(duration, 'seconds').seconds()}${labels.seconds[label]}`
   }
 }
 
-export const formatElevation = (elevation, miles) => {
+export const formatElevation = (elevation, miles, label = 'abbreviation') => {
   if (miles) {
-    return numbro(units.convertMetersToFeet(elevation)).format('0,0') + ' ft'
+    return (
+      numbro(units.convertMetersToFeet(elevation)).format('0,0') +
+      ` ${labels.feet[label]}`
+    )
   } else {
-    return numbro(elevation).format('0,0') + ' m'
+    return numbro(elevation).format('0,0') + ` ${labels.meters[label]}`
   }
 }
 
