@@ -52,6 +52,7 @@ class TotalDuration extends Component {
         icon={icon}
         label={label}
         amount={this.renderAmount()}
+        amountLabel={this.renderAmountLabel()}
         {...metric}
       />
     )
@@ -69,6 +70,23 @@ class TotalDuration extends Component {
         return <Icon name='warning' />
       default:
         return units ? formatDuration(amount) : numbro(amount).format(format)
+    }
+  }
+
+  renderAmountLabel () {
+    const { status, data } = this.state
+    const { format, multiplier, offset, units } = this.props
+    const amount = (offset + data) * multiplier
+
+    switch (status) {
+      case 'fetching':
+        return 'Loading'
+      case 'failed':
+        return 'Error'
+      default:
+        return units
+          ? formatDuration(amount, 'full')
+          : numbro(amount).format(format)
     }
   }
 }
