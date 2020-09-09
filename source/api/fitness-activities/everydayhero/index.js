@@ -28,7 +28,7 @@ export const deserializeFitnessActivity = (activity = required()) => ({
   sourceUrl: activity.source_url,
   startedAt: activity.started_at,
   team: activity.team_id,
-  message: activity.caption,
+  title: activity.caption,
   trainer: activity.trainer,
   type: activity.type,
   uid: activity.uid,
@@ -67,6 +67,7 @@ export const createFitnessActivity = ({
   pageId,
   startedAt = moment().toISOString(),
   trainer,
+  title,
   uid = uuid(),
   unit,
   virtual,
@@ -74,7 +75,7 @@ export const createFitnessActivity = ({
 }) =>
   post(`/api/v2/fitness_activities?access_token=${token}`, {
     calories,
-    caption,
+    caption: title || caption,
     coordinates,
     description,
     distance_in_meters: convertToMeters(distance, unit),

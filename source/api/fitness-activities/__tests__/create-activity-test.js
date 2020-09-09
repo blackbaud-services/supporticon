@@ -84,7 +84,8 @@ describe('Create Fitness Activity', () => {
           pageSlug: 'my-page',
           caption: 'A walk in the park',
           type: 'run',
-          distance: 60
+          distance: 60,
+          useLegacy: true
         })
 
         moxios.wait(() => {
@@ -103,8 +104,7 @@ describe('Create Fitness Activity', () => {
           caption: 'A walk in the park',
           type: 'walk',
           duration: 60,
-          userId: '123456-00000-1234',
-          useTimeline: true
+          userId: '123456-00000-1234'
         })
 
         moxios.wait(() => {
