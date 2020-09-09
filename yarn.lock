@@ -2266,10 +2266,10 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constructicon@^2.8.7:
-  version "2.8.7"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-2.8.7.tgz#51ba3bc347c80215471bdc0e38c280dbaef927e7"
-  integrity sha512-hsvkHPbxqO+o2h11N1u9EIKQ6v3HMgpswiayiQ9eWmUDjd++yvPmd2vtgf9iKE6aaaLo27KFZjDr1tssS+UmGg==
+constructicon@^2.9.1:
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-2.9.1.tgz#e61bccd08fc73c53bd3aad9617e3c0dec09638cb"
+  integrity sha512-Q3yhx3KVqpkYQZIohYPYUP21Svs4i+JeQWOMkq+Ltu8BnqQI55mxCISGXePH/werRMtvqz4NPNI9vrBJY/Hv6w==
   dependencies:
     axios "^0.19.2"
     emotion "^9.2.7"
