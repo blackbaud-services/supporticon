@@ -20,7 +20,7 @@ export default ({ post }) => ({
     },
     video: {
       type: 'search',
-      label: 'Enter a video URL (Youtube, Vimeo, Facebook)',
+      label: 'Enter a video URL (e.g. Youtube, Facebook, Vimeo)',
       placeholder: 'e.g. https://www.youtube.com/watch?v=yPw4GHqFV6U',
       autoFocus: true
     }
