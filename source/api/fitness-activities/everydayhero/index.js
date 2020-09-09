@@ -75,9 +75,8 @@ export const createFitnessActivity = ({
 }) =>
   post(`/api/v2/fitness_activities?access_token=${token}`, {
     calories,
-    caption: title || caption,
+    caption: title || caption || description,
     coordinates,
-    description,
     distance_in_meters: convertToMeters(distance, unit),
     duration_in_seconds: convertToSeconds(duration, durationUnit),
     elevation: convertToMeters(elevation, elevationUnit || unit),
