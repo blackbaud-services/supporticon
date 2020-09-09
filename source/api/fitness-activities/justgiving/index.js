@@ -1,8 +1,5 @@
 import moment from 'moment'
-import capitalize from 'lodash/capitalize'
 import lodashGet from 'lodash/get'
-import last from 'lodash/last'
-import split from 'lodash/split'
 import { get, post, destroy, servicesAPI } from '../../../utils/client'
 import { paramsSerializer, required } from '../../../utils/params'
 import { convertToMeters, convertToSeconds } from '../../../utils/units'
@@ -10,9 +7,11 @@ import { extractData } from '../../../utils/graphql'
 import { encodeBase64String } from '../../../utils/base64'
 import jsonDate from '../../../utils/jsonDate'
 
-const getFitnessId = activity => {
-  switch (activity.ActivityType) {
-    case 'Strava':
+const getFitnessId = (source, activity) => {
+  if (activity.id) return activity.id
+
+  switch (source) {
+    case 'fitness':
       return encodeBase64String(
         [
           'Timeline:FUNDRAISING',
@@ -21,27 +20,27 @@ const getFitnessId = activity => {
           activity.ExternalId
         ].join(':')
       )
-    case 'Manual':
     case 'manual':
-      if (activity.ExternalId) {
-        return encodeBase64String(
-          ['Timeline:FUNDRAISING', activity.PageGuid, activity.ExternalId].join(
-            ':'
-          )
+      // legacy activity created via Consumer API
+      if (!activity.ExternalId) return null
+
+      return encodeBase64String(
+        ['Timeline:FUNDRAISING', activity.PageGuid, activity.ExternalId].join(
+          ':'
         )
-      } else {
-        return activity.Id
-      }
+      )
     default:
-      return activity.id || activity.Id || activity.FitnessGuid
+      return null
   }
 }
 
-const getExternalId = activity => {
-  if (activity.ExternalId) return activity.ExternalId
-  if (activity.legacyId) return last(split(activity.legacyId, ':'))
-
-  return null
+const getExternalId = (source, activity) => {
+  switch (source) {
+    case 'fitness':
+      return activity.ExternalId || activity.activityId
+    default:
+      return null
+  }
 }
 
 const getMetricValue = metric => {
@@ -54,8 +53,12 @@ const getMetricValue = metric => {
 }
 
 export const deserializeFitnessActivity = (activity = required()) => {
-  const activityType =
-    activity.activityType || activity.Type || activity.ActivityType
+  const activityType = (
+    activity.activityType ||
+    activity.Type ||
+    ''
+  ).toLowerCase()
+  const source = (activity.type || activity.ActivityType || '').toLowerCase()
 
   return {
     campaign: activity.CampaignGuid,
@@ -65,18 +68,26 @@ export const deserializeFitnessActivity = (activity = required()) => {
     distance: getMetricValue(activity.distance || activity.Value),
     duration: getMetricValue(activity.duration || activity.TimeTaken),
     elevation: getMetricValue(activity.elevation || activity.Elevation),
-    externalId: getExternalId(activity),
+    externalId: getExternalId(source, activity),
     eventId: activity.EventId,
-    id: getFitnessId(activity),
+    id: getFitnessId(source, activity),
+    legacyId: activity.Id,
     manual:
       activity.ActivityType === 'Manual' ||
       activity.ActivityType === 'manual' ||
       activity.type === 'MANUAL',
     page: activity.PageGuid,
+    polyline: activity.mapPolyline,
     slug: activity.PageShortName,
+    source,
+    sourceUrl:
+      source === 'fitness'
+        ? `https://www.strava.com/activities/${activity.ExternalId ||
+            activity.activityId}`
+        : null,
     teamId: activity.TeamGuid,
-    message: activity.Title || activity.title,
-    type: activityType ? activityType.toLowerCase() : undefined
+    title: activity.Title || activity.title,
+    type: activityType
   }
 }
 
@@ -90,7 +101,7 @@ export const fetchFitnessActivities = (params = required()) => {
 
   if (params.page) {
     if (params.useLegacy) {
-      return get(`/v1/fitness/fundraising/${(params.page, query)}`).then(
+      return get(`/v1/fitness/fundraising/${params.page}`, query).then(
         response => response.activities
       )
     }
@@ -113,7 +124,9 @@ export const fetchFitnessActivities = (params = required()) => {
               createdAt
               fitnessActivity {
                 title
+                activityId
                 activityType
+                mapPolyline
                 distance { value unit }
                 elevation { value unit }
                 duration { value unit }
@@ -195,6 +208,7 @@ export const createFitnessActivity = ({
   pageId,
   pageSlug,
   startedAt,
+  title,
   type = 'walk',
   token = required(),
   unit,
@@ -224,7 +238,7 @@ export const createFitnessActivity = ({
             ${createdDate}
             ${message}
             fitness: {
-              title: "${caption || capitalize(activityType(type))}",
+              title: "${title || caption || ''}",
               activityType: ${activityType(type)}
               distance: ${convertToMeters(distance, unit)}
               duration: ${convertToSeconds(duration, durationUnit)}
@@ -268,7 +282,7 @@ export const createFitnessActivity = ({
     duration: convertToSeconds(duration, durationUnit),
     elevation: convertToMeters(elevation, elevationUnit || unit),
     shortName: pageSlug,
-    title: caption,
+    title: title || caption,
     type
   }
 
