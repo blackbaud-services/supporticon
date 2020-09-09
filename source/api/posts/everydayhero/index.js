@@ -7,12 +7,14 @@ export const deserializePost = post => ({
   id: post.id,
   createdAt: post.created_at,
   message: post.caption
-    .split('\n\n')
-    .filter(item => !videoRegex.test(item.trim()))
-    .join('\n\n'),
+    ? post.caption
+      .split('\n\n')
+      .filter(item => !videoRegex.test(item.trim()))
+      .join('\n\n')
+    : null,
   page: post.page_id,
   image: post.image_url,
-  video: lodashGet(post.caption.match(videoRegex), '[0]')
+  video: post.caption ? lodashGet(post.caption.match(videoRegex), '[0]') : null
 })
 
 export const fetchPosts = (params = required()) => {
