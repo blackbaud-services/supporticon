@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 import { createFitnessActivity } from '..'
 
 describe('Create Fitness Activity', () => {
@@ -62,12 +62,14 @@ describe('Create Fitness Activity', () => {
         baseURL: 'https://api.justgiving.com',
         headers: { 'x-api-key': 'abcd1234' }
       })
-      return moxios.install(instance)
+      moxios.install(instance)
+      moxios.install(servicesAPI)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
-      return moxios.uninstall(instance)
+      moxios.uninstall(instance)
+      moxios.uninstall(servicesAPI)
     })
 
     it('throws with missing required params', () => {
@@ -75,18 +77,43 @@ describe('Create Fitness Activity', () => {
       expect(test).to.throw
     })
 
-    it('hits the JG api with the correct url and data', done => {
-      createFitnessActivity({
-        token: '012345abcdef',
-        pageSlug: 'my-page',
-        type: 'walk',
-        duration: 60
+    describe('hits the JG api with the correct url and data', () => {
+      it('using the consumer API', done => {
+        createFitnessActivity({
+          token: '012345abcdef',
+          pageSlug: 'my-page',
+          caption: 'A walk in the park',
+          type: 'run',
+          distance: 60,
+          useLegacy: true
+        })
+
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.contain(
+            'https://api.justgiving.com/v1/fitness'
+          )
+          done()
+        })
       })
 
-      moxios.wait(() => {
-        const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://api.justgiving.com/v1/fitness')
-        done()
+      it('using the GraphQL API', done => {
+        createFitnessActivity({
+          token: '012345abcdef',
+          pageId: '00000-123456-1234',
+          caption: 'A walk in the park',
+          type: 'walk',
+          duration: 60,
+          userId: '123456-00000-1234'
+        })
+
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          expect(request.url).to.contain(
+            'https://api.blackbaud.services/v1/justgiving/graphql'
+          )
+          done()
+        })
       })
     })
   })

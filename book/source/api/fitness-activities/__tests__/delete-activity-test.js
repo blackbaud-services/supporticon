@@ -1,14 +1,16 @@
 import moxios from 'moxios'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 import { deleteFitnessActivity } from '..'
 
 describe('Delete Fitness Activity', () => {
   beforeEach(() => {
     moxios.install(instance)
+    moxios.install(servicesAPI)
   })
 
   afterEach(() => {
     moxios.uninstall(instance)
+    moxios.uninstall(servicesAPI)
   })
 
   describe('Delete EDH fitness activity', () => {
@@ -72,11 +74,9 @@ describe('Delete Fitness Activity', () => {
         const headers = request.config.headers
 
         expect(request.url).to.contain(
-          'https://api.justgiving.com/v1/fitness/fundraising'
+          'https://api.blackbaud.services/v1/justgiving/graphql'
         )
 
-        expect(request.url).to.contain('test-page')
-        expect(request.url).to.contain('12345678')
         expect(headers.Authorization).to.equal('Bearer test-token')
         done()
       })

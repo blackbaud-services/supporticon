@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
+import moment from 'moment'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { createFitnessActivity } from '../../api/fitness-activities'
@@ -27,7 +28,7 @@ class CreateFitnessForm extends Component {
   handleSubmit (e) {
     e.preventDefault()
 
-    const { pageSlug, pageId, form, onSuccess, token } = this.props
+    const { pageSlug, pageId, form, onSuccess, token, userId } = this.props
 
     return form.submit().then(data => {
       this.setState({ errors: [], status: 'fetching' })
@@ -36,6 +37,7 @@ class CreateFitnessForm extends Component {
         pageId,
         pageSlug,
         token,
+        userId,
         type: isJustGiving()
           ? data.type
           : data.type === 'ride'
@@ -56,10 +58,12 @@ class CreateFitnessForm extends Component {
             get(error, 'message') ||
             'There was an unexpected error'
 
-          return this.setState({
+          this.setState({
             status: 'failed',
             errors: message ? [{ message }] : []
           })
+
+          return Promise.reject(error)
         })
     })
   }
@@ -69,10 +73,11 @@ class CreateFitnessForm extends Component {
       disableInvalidForm,
       form,
       formComponent,
-      includeCaption,
+      includeDescription,
       includeDate,
       includeDuration,
       includeElevation,
+      includeTitle,
       includeType,
       includeUnit,
       inputField,
@@ -148,9 +153,15 @@ class CreateFitnessForm extends Component {
             </GridColumn>
           )}
 
-          {includeCaption && (
+          {includeTitle && (
             <GridColumn>
-              <InputField {...form.fields.caption} {...inputField} />
+              <InputField {...form.fields.title} {...inputField} />
+            </GridColumn>
+          )}
+
+          {includeDescription && (
+            <GridColumn>
+              <InputField {...form.fields.description} {...inputField} />
             </GridColumn>
           )}
         </Grid>
@@ -161,14 +172,19 @@ class CreateFitnessForm extends Component {
 
 CreateFitnessForm.propTypes = {
   /**
-   * The ID for a valid page (required - EDH)
+   * The ID for a valid page (pageGuid for JG)
    */
   pageId: isJustGiving() ? PropTypes.string : PropTypes.string.isRequired,
 
   /**
-   * The shortName for a valid page (required - JG)
+   * The shortName for a valid page (required - JG legacy)
    */
   pageSlug: isJustGiving() ? PropTypes.string.isRequired : PropTypes.string,
+
+  /**
+   * The user guid (required - JG)
+   */
+  userId: PropTypes.string.isRequired,
 
   /**
    * Units of measurement (Metric or Imperial)
@@ -244,9 +260,14 @@ CreateFitnessForm.propTypes = {
   includeDate: PropTypes.bool,
 
   /**
-   * Include caption in fitness activity
+   * Include title
    */
-  includeCaption: PropTypes.bool,
+  includeTitle: PropTypes.bool,
+
+  /**
+   * Include description/message
+   */
+  includeDescription: PropTypes.bool,
 
   /**
    * Include distance type
@@ -256,21 +277,33 @@ CreateFitnessForm.propTypes = {
   /**
    * Include distance units
    */
-  includeUnit: PropTypes.bool
+  includeUnit: PropTypes.bool,
+
+  /**
+   * Only allow fitness on or after this date
+   */
+  startDate: PropTypes.string,
+
+  /**
+   * Only allow fitness on or before this date
+   */
+  endDate: PropTypes.string
 }
 
 CreateFitnessForm.defaultProps = {
   disableInvalidForm: false,
   distanceLabel: 'Distance',
-  includeCaption: true,
+  includeDescription: true,
   includeDate: true,
   includeElevation: true,
   includeDuration: true,
+  includeTitle: false,
   includeType: true,
   includeUnit: true,
   submit: 'Log fitness activity',
   type: 'walk',
-  types: ['walk', 'run', 'ride', 'swim']
+  types: ['walk', 'run', 'ride', 'swim'],
+  uom: 'km'
 }
 
 const form = props => {
@@ -300,16 +333,42 @@ const form = props => {
         }
       },
       {
-        ...(props.includeCaption && {
-          caption: {
-            label: 'Caption',
-            type: 'textarea'
+        ...(props.includeTitle && {
+          description: {
+            label: 'Title',
+            placeholder: 'Morning Exercise'
+          }
+        }),
+        ...(props.includeDescription && {
+          description: {
+            label: 'Description',
+            type: 'textarea',
+            placeholder: 'Describe your activity...'
           }
         }),
         ...(props.includeDate && {
           startedAt: {
             label: 'Date',
-            type: 'date'
+            initial: moment().format('YYYY-MM-DD'),
+            type: 'date',
+            validators: [
+              val =>
+                val && moment(val).isAfter() && "Date can't be in the future",
+              val =>
+                val &&
+                props.startDate &&
+                moment(val).isBefore(moment(props.startDate)) &&
+                `Date can't be before ${moment(props.startDate).format(
+                  'MMMM Do'
+                )}`,
+              val =>
+                val &&
+                props.endDate &&
+                moment(val).isAfter(moment(props.endDate)) &&
+                `Date can't be after ${moment(props.startDate).format(
+                  'MMMM Do'
+                )}`
+            ]
           }
         }),
         ...(props.includeUnit && {
@@ -333,8 +392,7 @@ const form = props => {
             initial: 'minutes',
             options: [
               { value: 'minutes', label: 'mins' },
-              { value: 'hours', label: 'hrs' },
-              { value: 'days', label: 'days' }
+              { value: 'hours', label: 'hrs' }
             ]
           }
         }),
