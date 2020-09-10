@@ -62,7 +62,7 @@ export const deserializePage = page => {
     ].join('/'),
     event: page.Subtext || page.eventId || page.EventId || page.eventName,
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
-    fitness: {},
+    fitness: page.fitness || {},
     fitnessGoal: parseInt(page.pageSummaryWhat) || 0,
     fitnessDistanceTotal: lodashGet(page, 'fitness.totalAmount', 0),
     fitnessDurationTotal: lodashGet(page, 'fitness.totalAmountTaken', 0),
