@@ -20,6 +20,22 @@ describe('Utils | HTML', () => {
       expect(test()).to.eql('Article Title Article body with a link.')
     })
 
+    it('preserves newlines from tags', () => {
+      const test = () =>
+        stripTags('<p>Hello</p><p><a href="#">World</a></p>', true)
+      expect(test()).to.eql('Hello\n\nWorld')
+    })
+
+    it('preserves newlines from input', () => {
+      const test = () =>
+        stripTags(
+          `Lorem
+ipsum`,
+          true
+        )
+      expect(test()).to.eql('Lorem\nipsum')
+    })
+
     it('does not throw is no arg is passed', () => {
       const test = () => stripTags()
       expect(test()).to.eql('')
