@@ -108,7 +108,7 @@ export const fetchFitnessActivities = (params = required()) => {
 
     const { page, after, allActivities, results = [] } = params
 
-    const query = `
+    const graphQLQuery = `
       {
         page(type: FUNDRAISING, slug: "${page}") {
           timeline(first: 20${after ? `, after: "${after}"` : ' '}) {
@@ -138,7 +138,7 @@ export const fetchFitnessActivities = (params = required()) => {
     `
 
     return servicesAPI
-      .post('/v1/justgiving/graphql', { query })
+      .post('/v1/justgiving/graphql', { query: graphQLQuery })
       .then(response => response.data)
       .then(result => {
         const data = lodashGet(result, 'data.page.timeline', {})
