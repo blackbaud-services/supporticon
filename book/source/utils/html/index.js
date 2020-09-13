@@ -1,8 +1,8 @@
 const removeTags = string =>
   string
     .replace(/(<([^>]+)>)/gi, ' ')
-    .replace(/ *\n\n */g, '\n\n')
-    .replace(/ \./g, '.')
+    .replace(/ *(\n+) */g, '$1')
+    .replace(/ ([,.;:!])/g, '$1')
     .trim()
 
 const removeConsecutiveWhitespace = string =>
