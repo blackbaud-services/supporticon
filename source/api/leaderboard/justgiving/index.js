@@ -52,7 +52,7 @@ export const fetchLeaderboard = (params = required()) => {
       )
     default:
       const isTeam = params.type === 'team'
-      const maxPerRequest = isTeam ? 5 : 20
+      const maxPerRequest = 20
       const { results = [], ...otherParams } = params
 
       return get(
