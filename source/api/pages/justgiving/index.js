@@ -9,6 +9,7 @@ import { v4 as uuid } from 'uuid'
 import { get, post, put, servicesAPI } from '../../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import { getUID, isEqual, isUuid, required } from '../../../utils/params'
+import { deserializeFitnessActivity } from '../../fitness-activities/justgiving'
 import jsonDate from '../../../utils/jsonDate'
 
 export const pageNameRegex = /[^\w\s',-]/gi
@@ -63,10 +64,14 @@ export const deserializePage = page => {
     event: page.Subtext || page.eventId || page.EventId || page.eventName,
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
     fitness: page.fitness || {},
+    fitnessActivities: lodashGet(page, 'fitness.activities', []).map(
+      deserializeFitnessActivity
+    ),
     fitnessGoal: parseInt(page.pageSummaryWhat) || 0,
     fitnessDistanceTotal: lodashGet(page, 'fitness.totalAmount', 0),
     fitnessDurationTotal: lodashGet(page, 'fitness.totalAmountTaken', 0),
     fitnessElevationTotal: lodashGet(page, 'fitness.totalAmountElevation', 0),
+    fitnessSettings: lodashGet(page, 'fitness.pageFitnessSettings'),
     groups: null,
     hasUpdatedImage:
       page.imageCount &&
