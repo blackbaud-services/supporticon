@@ -222,7 +222,7 @@ export const createFitnessActivity = ({
       return required()
     }
 
-    const createdDate = moment(startedAt).isBefore(moment(), 'day')
+    const createdDate = startedAt
       ? `createdDate: "${moment(startedAt).toISOString()}"`
       : ''
 
