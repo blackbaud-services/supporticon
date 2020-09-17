@@ -1,9 +1,15 @@
-import { get, put, post } from '../../../utils/client'
+import { get, put, post, jgIdentityClient } from '../../../utils/client'
 import { required } from '../../../utils/params'
 import { encodeBase64String } from '../../../utils/base64'
 
 export const resetPassword = ({ email = required() }) =>
   get(`v1/account/${email}/requestpasswordreminder`)
+
+export const validateToken = (token = required()) =>
+  jgIdentityClient
+    .get(`/connect/accesstokenvalidation?token=${token}`)
+    .then(response => ({ ...response.data, valid: true }))
+    .catch(({ response }) => ({ ...response.data, valid: false }))
 
 export const signIn = ({ email = required(), password = required() }) => {
   const token = encodeBase64String(`${email}:${password}`)
