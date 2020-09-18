@@ -220,6 +220,7 @@ export const deserializeLeaderboard = (supporter, index) => {
         0
     ),
     slug,
+    status: lodashGet(supporter, 'page.status'),
     subtitle: owner || supporter.eventName,
     target: supporter.targetAmount || supporter.target,
     totalDonations: supporter.numberOfSupporters || supporter.donationCount,
