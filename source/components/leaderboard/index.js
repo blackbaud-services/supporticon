@@ -65,6 +65,7 @@ class Leaderboard extends Component {
 
   handleData (data, excludeOffline, deserializeMethod, limit) {
     const leaderboardData = data
+      .filter(item => item.status !== 'Cancelled')
       .map(deserializeMethod)
       .map(
         item =>
