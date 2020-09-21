@@ -1,4 +1,5 @@
 import lodashGet from 'lodash/get'
+import orderBy from 'lodash/orderBy'
 import { get, servicesAPI } from '../../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import {
@@ -99,7 +100,12 @@ export const fetchLeaderboard = (params = required()) => {
         })
         .then(results => filterLeaderboardResults(results, isTeam))
         .then(results => mapLeaderboardResults(results, isTeam))
+        .then(results => rankLeaderboardResults(results, isTeam))
   }
+}
+
+const rankLeaderboardResults = (results = [], isTeam) => {
+  return orderBy(results, ['donationAmount'], ['desc'])
 }
 
 const filterLeaderboardResults = (results = [], isTeam) => {
@@ -116,6 +122,9 @@ const mapLeaderboardResults = (results = [], isTeam) => {
           result.team,
           'fundraisingConfiguration.currencyCode'
         ),
+        donationAmount:
+            lodashGet(result, 'team.donationSummary.totalAmount') ||
+            result.donationAmount,
         eventName: [
           result.team.captain.firstName,
           result.team.captain.lastName
@@ -133,6 +142,8 @@ const mapLeaderboardResults = (results = [], isTeam) => {
       : {
         ...result,
         ...result.page,
+        donationAmount:
+            lodashGet(result, 'page.raisedAmount') || result.donationAmount,
         eventName: [
           result.page.owner.firstName,
           result.page.owner.lastName
