@@ -32,13 +32,23 @@ class CreatePostForm extends React.Component {
   handleSubmit (e) {
     e.preventDefault()
 
+    const { video = {} } = this.state
     const { form, onSuccess, pageId, token, userId } = this.props
 
     form.submit().then(data =>
       Promise.resolve()
         .then(() => this.setState({ status: 'fetching' }))
         .then(() => data.image && uploadImage(data.image))
-        .then(image => createPost({ ...data, image, pageId, token, userId }))
+        .then(image =>
+          createPost({
+            ...data,
+            image,
+            pageId,
+            token,
+            userId,
+            video: video.url || data.video
+          })
+        )
         .then(data => {
           this.setState({ status: 'fetched' })
           onSuccess(data)
