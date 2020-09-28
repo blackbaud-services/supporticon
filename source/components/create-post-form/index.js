@@ -32,7 +32,7 @@ class CreatePostForm extends React.Component {
   handleSubmit (e) {
     e.preventDefault()
 
-    const { video = {} } = this.state
+    const { video } = this.state
     const { form, onSuccess, pageId, token, userId } = this.props
 
     form.submit().then(data =>
@@ -46,7 +46,7 @@ class CreatePostForm extends React.Component {
             pageId,
             token,
             userId,
-            video: video.url || data.video
+            video: video ? video.url : data.video
           })
         )
         .then(data => {
