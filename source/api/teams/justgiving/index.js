@@ -1,7 +1,6 @@
 import get from 'lodash/get'
 import find from 'lodash/find'
 import slugify from 'slugify'
-import { v4 as uuid } from 'uuid'
 import * as client from '../../../utils/client'
 import { fetchPage, deserializePage } from '../../pages'
 import { paramsSerializer, required } from '../../../utils/params'
@@ -165,11 +164,20 @@ export const checkTeamSlugAvailable = (
       options
     )
     .then(response => response.data.isAvailable)
-    .then(
-      isAvailable =>
-        isAvailable ? slug : [uuid(), slug].join('-').substr(0, 50)
-    )
-    .catch(() => [uuid(), slug].join('-').substr(0, 50))
+    .then(isAvailable => (isAvailable ? slug : appendIdToSlug(slug)))
+    .catch(() => appendIdToSlug(slug))
+}
+
+// Take an existing slug
+// Trim it down it size so it does not exceed to limit of 50
+// Append a small generated unique id
+const appendIdToSlug = slug => {
+  const trimmedSlug = slug.slice(0, 43)
+  const randomId = Math.random()
+    .toString(36)
+    .slice(-6)
+
+  return `${trimmedSlug}-${randomId}`
 }
 
 export const createTeam = params => {
