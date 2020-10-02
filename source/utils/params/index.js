@@ -91,3 +91,6 @@ export const isParamsObject = args => {
     args.length === 1 && typeof args[0] === 'object' && !Array.isArray(args[0])
   )
 }
+
+export const splitOnDelimiter = (param, delimeter = ',') =>
+  typeof param === 'string' ? param.split(delimeter) : param

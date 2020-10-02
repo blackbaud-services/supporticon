@@ -3,7 +3,8 @@ import {
   getUID,
   required,
   dataSource,
-  paramsSerializer
+  paramsSerializer,
+  splitOnDelimiter
 } from '../../../utils/params'
 import { currencyCode } from '../../../utils/currencies'
 
@@ -60,11 +61,16 @@ export const fetchPagesTotals = (params = required()) => {
         },
         {
           mappings: {
-            charity: 'charityIds',
             campaign: 'campaignGuids',
+            charity: 'charityIds',
             page: 'pageGuids',
             excludePageIds: 'excludePageGuids',
             limit: 'take'
+          },
+          transforms: {
+            campaign: splitOnDelimiter,
+            charity: splitOnDelimiter,
+            excludePageIds: splitOnDelimiter
           }
         },
         { paramsSerializer }
