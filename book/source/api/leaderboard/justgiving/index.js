@@ -7,7 +7,8 @@ import {
   required,
   dataSource,
   isEmpty,
-  paramsSerializer
+  paramsSerializer,
+  splitOnDelimiter
 } from '../../../utils/params'
 import { currencySymbol, currencyCode } from '../../../utils/currencies'
 
@@ -64,14 +65,17 @@ export const fetchLeaderboard = (params = required()) => {
         },
         {
           mappings: {
-            charity: 'charityIds',
             campaign: 'campaignGuids',
+            charity: 'charityIds',
             excludePageIds: 'excludePageGuids',
             limit: 'take',
             page: 'offset',
             type: 'groupBy'
           },
           transforms: {
+            campaign: splitOnDelimiter,
+            charity: splitOnDelimiter,
+            excludePageIds: splitOnDelimiter,
             limit: val => Math.min(maxPerRequest, val || 10),
             page: val =>
               String(
