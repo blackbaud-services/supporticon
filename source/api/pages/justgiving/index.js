@@ -52,6 +52,7 @@ export const deserializePage = page => {
     campaign: page.campaignGuid || page.Subtext || page.eventId || page.EventId,
     campaignDate: jsonDate(page.eventDate) || page.EventDate,
     charity: page.charity || page.CharityId || page.charityId,
+    charityId: lodashGet(page, 'charity.id') || page.CharityId,
     coordinates: null,
     createdAt: jsonDate(page.createdDate) || page.CreatedDate,
     currencyCode: page.currencyCode,
@@ -349,6 +350,71 @@ export const createPageTag = ({
   return request().catch(() => request()) // Retry if request fails
 }
 
+export const createPageTags = page =>
+  Promise.all(
+    [
+      {
+        id: 'page:totals',
+        label: 'Page Totals'
+      },
+      {
+        id: 'page:charity',
+        label: 'Charity Link',
+        value: `page:charity:${page.charityId}`,
+        segment: `page:charity:${page.charityId}`
+      },
+      {
+        id: `page:charity:${page.charityId}`,
+        label: 'Page Charity Link'
+      },
+      {
+        id: 'page:event',
+        label: 'Event Link',
+        value: `page:event:${page.event}`,
+        segment: `page:event:${page.event}`
+      },
+      {
+        label: 'Page Event Link',
+        id: `page:event:${page.event}`
+      },
+      page.campaign && {
+        id: 'page:campaign',
+        label: 'Campaign Link',
+        value: `page:campaign:${page.campaign}`,
+        segment: `page:campaign:${page.campaign}`
+      },
+      page.campaign && {
+        id: 'page:campaign:charity',
+        label: 'Charity Campaign Link',
+        value: `page:campaign:${page.campaign}:charity:${page.charityId}`,
+        segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
+      },
+      page.campaign && {
+        label: 'Page Campaign Link',
+        id: `page:campaign:${page.campaign}`
+      },
+      page.campaign && {
+        label: 'Page Charity Campaign Link',
+        id: `page:campaign:${page.campaign}:charity:${page.charityId}`
+      }
+    ]
+      .filter(Boolean)
+      .map(({ label, id, value, segment }) =>
+        createPageTag({
+          slug: page.slug,
+          label,
+          id,
+          value: value || `page:fundraising:${page.uuid}`,
+          aggregation: [
+            {
+              segment: segment || id,
+              measurementDomains: ['all']
+            }
+          ]
+        })
+      )
+  )
+
 export const createPage = ({
   charityId = required(),
   title = required(),
@@ -379,6 +445,7 @@ export const createPage = ({
   summaryWhat,
   summaryWhy,
   tags,
+  tagsCallback,
   target,
   teamId,
   theme,
@@ -435,6 +502,16 @@ export const createPage = ({
         }
       }
     )
+      .then(result => fetchPage(result.pageId))
+      .then(page => {
+        createPageTags(deserializePage(page)).then(tags => {
+          if (typeof tagsCallback === 'function') {
+            tagsCallback(tags, page)
+          }
+        })
+
+        return page
+      })
   })
 }
 
