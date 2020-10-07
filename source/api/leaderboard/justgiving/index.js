@@ -19,7 +19,11 @@ import { getMonetaryValue } from '../../../utils/totals'
  */
 export const fetchLeaderboard = (params = required()) => {
   if (params.tagId || params.tagValue) {
-    return getGraphQLeaderboard(params)
+    return getGraphQLeaderboard({
+      ...params,
+      campaign: getUID(params.campaign),
+      type: 'campaign'
+    })
   }
 
   if (!isEmpty(params.campaign) && params.allPages) {
@@ -229,6 +233,7 @@ export const deserializeLeaderboard = (supporter, index) => {
       supporter.pageTitle ||
       supporter.name ||
       supporter.title ||
+      supporter.tagValue ||
       lodashGet(supporter, 'pageOwner.fullName'),
     offline: parseFloat(
       supporter.totalRaisedOffline ||
@@ -244,6 +249,7 @@ export const deserializeLeaderboard = (supporter, index) => {
         supporter.raisedAmount ||
         supporter.amountRaised ||
         getMonetaryValue(lodashGet(supporter, 'donationSummary.totalAmount')) ||
+        lodashGet(supporter, 'amounts[8].value', 0) ||
         0
     ),
     slug,

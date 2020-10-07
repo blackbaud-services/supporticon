@@ -1,7 +1,7 @@
 import get from 'lodash/get'
 import { fetchPages } from '../../pages'
 import * as client from '../../../utils/client'
-import { paramsSerializer, required } from '../../../utils/params'
+import { getUID, paramsSerializer, required } from '../../../utils/params'
 import { baseUrl, imageUrl } from '../../../utils/justgiving'
 import { fetchLeaderboard } from '../../../utils/leaderboards'
 import { getMonetaryValue } from '../../../utils/totals'
@@ -34,6 +34,17 @@ export const fetchFitnessLeaderboard = ({
   type,
   useLegacy = true
 }) => {
+  if (tagId || tagValue) {
+    return fetchLeaderboard({
+      activityType,
+      campaign: getUID(campaign),
+      sortBy,
+      tagId,
+      tagValue,
+      type: 'campaign'
+    })
+  }
+
   if (useLegacy || type === 'teams') {
     const params = {
       campaignGuid: campaign,
@@ -59,10 +70,8 @@ export const fetchFitnessLeaderboard = ({
 
   return fetchLeaderboard({
     activityType,
-    campaign,
+    campaign: getUID(campaign),
     sortBy,
-    tagId,
-    tagValue,
     type: 'campaign'
   })
 }
@@ -79,7 +88,7 @@ export const deserializeFitnessLeaderboard = (item, index) => {
       : null ||
         imageUrl(get(item, 'Details.ImageId'), 'Size186x186Crop') ||
         'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
-    name: get(item, 'Details.Name') || item.title,
+    name: get(item, 'Details.Name') || item.title || item.tagValue,
     position: index + 1,
     raised: getMonetaryValue(get(item, 'donationSummary.totalAmount')),
     slug,

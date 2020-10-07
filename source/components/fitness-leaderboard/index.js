@@ -77,7 +77,9 @@ class FitnessLeaderboard extends Component {
       limit,
       page,
       groupID,
-      sortBy
+      sortBy,
+      tagId,
+      tagValue
     } = this.props
 
     !refresh &&
@@ -102,7 +104,9 @@ class FitnessLeaderboard extends Component {
       page,
       groupID,
       sortBy,
-      q
+      q,
+      tagId,
+      tagValue
     })
       .then(data => this.removeExcludedPages(excludePageIds, data, type))
       .then(data =>
@@ -332,6 +336,16 @@ FitnessLeaderboard.propTypes = {
    * The group ID to group the leaderboard by (only relevant if type is group)
    */
   groupID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+  /**
+   * The tag ID to group the leaderboard by
+   */
+  tagId: PropTypes.string,
+
+  /**
+   * The tag value to filter by
+   */
+  tagValue: PropTypes.string,
 
   /**
    * Override the deserializeLeaderboard method
