@@ -1,6 +1,35 @@
 import find from 'lodash/find'
 import get from 'lodash/get'
+import { servicesAPI } from '../client'
+import { required } from '../params'
 import { getPrimaryUnit, measurementDomains } from '../tags'
+
+export const fetchTotals = ({
+  segment = required(),
+  tagId = required(),
+  tagValue = required()
+}) => {
+  const query = `
+    {
+      totals(
+        segment: "${segment}",
+        tagDefinitionId: "${tagId}",
+        tagValue: "${tagValue}"
+      ) {
+        measurementDomain
+        amounts {
+          value
+          unit
+        }
+      }
+    }
+  `
+
+  return servicesAPI
+    .post('/v1/justgiving/graphql', { query })
+    .then(response => response.data)
+    .then(result => get(result, 'data.totals', []))
+}
 
 export const deserializeTotals = (totals, currency = 'GBP') =>
   measurementDomains
