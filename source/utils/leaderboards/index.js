@@ -1,3 +1,4 @@
+import get from 'lodash/get'
 import snakeCase from 'lodash/snakeCase'
 import * as client from '../client'
 import { required } from '../params'
@@ -88,3 +89,79 @@ export const deleteLeaderboardDefinitions = params =>
       deleteLeaderboardDefinition({ ...params, measurementDomain })
     )
   )
+
+export const fetchLeaderboard = ({
+  campaign = required(),
+  activityType = 'fundraising',
+  limit = 10,
+  sortBy = 'donations_received',
+  tagId,
+  tagValue,
+  type = 'campaign'
+}) => {
+  const leaderboardId = [
+    type,
+    activityType,
+    sortBy,
+    campaign,
+    snakeCase(tagId),
+    snakeCase(tagValue)
+  ]
+    .filter(Boolean)
+    .join('_')
+
+  const query = `
+    {
+      leaderboard(
+        id: "${leaderboardId}"
+      ) {
+        totals(limit: ${limit}) {
+          tagValue
+          tagValueAsNode {
+            ... on Page {
+              slug
+              title
+              summary
+              status
+              legacyId
+              url
+              owner {
+                name
+              }
+              donationSummary {
+                donationCount
+                offlineAmount {
+                  value
+                  currencyCode
+                }
+                totalAmount {
+                  value
+                  currencyCode
+                }
+              }
+              targetWithCurrency {
+                value
+                currencyCode
+              }
+              heroMedia {
+                ... on ImageMedia {
+                  url
+                }
+              }
+            }
+          }
+          amounts {
+            value
+            unit
+          }
+        }
+      }
+    }
+  `
+
+  return client.servicesAPI
+    .post('/v1/justgiving/graphql', { query })
+    .then(response => response.data)
+    .then(result => get(result, 'data.leaderboard.totals', []))
+    .then(results => results.map(item => ({ ...item, ...item.tagValueAsNode })))
+}

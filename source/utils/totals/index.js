@@ -31,6 +31,8 @@ export const fetchTotals = ({
     .then(result => get(result, 'data.totals', []))
 }
 
+export const getMonetaryValue = val => get(val, 'value', 0) / 100
+
 export const deserializeTotals = (totals, currency = 'GBP') =>
   measurementDomains
     .map(
