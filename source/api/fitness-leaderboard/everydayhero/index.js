@@ -68,6 +68,7 @@ const deserializePage = (item, result, index) => ({
   position: index + 1,
   raised: item.amount.cents,
   slug: item.url && last(item.url.split('/')),
+  subtitle: item.charity_name,
   url: item.url
 })
 
