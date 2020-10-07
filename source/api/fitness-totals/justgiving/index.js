@@ -1,37 +1,56 @@
+import get from 'lodash/get'
 import * as client from '../../../utils/client'
-import {
-  isParamsObject,
-  paramsSerializer,
-  required
-} from '../../../utils/params'
+import { paramsSerializer, required } from '../../../utils/params'
+import { deserializeTotals } from '../../../utils/totals'
 
 export const fetchFitnessSummary = (campaign = required(), types) =>
   Promise.reject(new Error('This method is not supported for JustGiving'))
 
-export function fetchFitnessTotals (params) {
-  let query = {}
-
-  if (isParamsObject(arguments)) {
-    query = {
-      campaignGuid: params.campaign,
-      limit: params.limit || 100,
-      offset: params.offset || 0,
-      start: params.startDate,
-      end: params.endDate
+export function fetchFitnessTotals ({
+  campaign = required(),
+  limit = 100,
+  offset = 0,
+  useLegacy = true,
+  startDate,
+  endDate
+}) {
+  if (useLegacy) {
+    const params = {
+      campaignGuid: campaign,
+      limit,
+      offset,
+      start: startDate,
+      end: endDate
     }
-  } else {
-    query = { campaignGuid: arguments[0] }
+
+    return client
+      .get('/v1/fitness/campaign', params, {}, { paramsSerializer })
+      .then(result => ({
+        distance: result.totalAmount,
+        duration: result.totalAmountTaken,
+        elevation: result.totalAmountElevation
+      }))
   }
 
-  if (!query.campaignGuid) {
-    return required()
-  }
+  const query = `
+    {
+      totals(
+        segment: "page:campaign:${campaign}",
+        tagDefinitionId: "page:campaign",
+        tagValue: "page:campaign:${campaign}"
+      ) {
+        measurementDomain
+        amounts {
+          value
+          unit
+        }
+      }
+    }
+  `
 
-  return client
-    .get('/v1/fitness/campaign', query, {}, { paramsSerializer })
-    .then(result => ({
-      distance: result.totalAmount,
-      duration: result.totalAmountTaken,
-      elevation: result.totalAmountElevation
-    }))
+  return client.servicesAPI
+    .post('/v1/justgiving/graphql', { query })
+    .then(response => response.data)
+    .then(result => get(result, 'data.totals', []))
+    .then(deserializeTotals)
 }
