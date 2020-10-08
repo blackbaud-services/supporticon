@@ -311,13 +311,10 @@ export const fetchPageTags = page => {
   return get(`v1/tags/${page}`)
 }
 
-const fetchPageFitness = (page, {
-  limit = 100,
-  offset = 0,
-  startDate,
-  endDate,
-  useLegacy = true
-}) => {
+const fetchPageFitness = (
+  page,
+  { limit = 100, offset = 0, startDate, endDate, useLegacy = true } = {}
+) => {
   const slug = typeof page === 'object' ? page.pageShortName : page
 
   if (useLegacy) {
@@ -329,8 +326,7 @@ const fetchPageFitness = (page, {
     segment: 'page:totals',
     tagId: 'page:totals',
     tagValue: `page:fundraising:${page.pageGuid}`
-  })
-    .then(deserializeTotals)
+  }).then(deserializeTotals)
 }
 
 export const fetchPageDonationCount = (page = required()) => {
