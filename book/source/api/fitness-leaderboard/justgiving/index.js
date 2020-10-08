@@ -1,8 +1,10 @@
 import get from 'lodash/get'
 import { fetchPages } from '../../pages'
 import * as client from '../../../utils/client'
-import { paramsSerializer, required } from '../../../utils/params'
+import { getUID, paramsSerializer, required } from '../../../utils/params'
 import { baseUrl, imageUrl } from '../../../utils/justgiving'
+import { fetchLeaderboard } from '../../../utils/leaderboards'
+import { getMonetaryValue } from '../../../utils/totals'
 
 const fetchActivePages = pages => {
   const pageGuids = pages.map(page => page.ID).filter(Boolean)
@@ -21,43 +23,79 @@ const fetchActivePages = pages => {
 export const fetchFitnessLeaderboard = ({
   campaign = required(),
   activeOnly,
-  type,
-  limit,
+  activityType = 'any',
+  endDate,
+  limit = 10,
   offset,
+  sortBy = 'distance',
   startDate,
-  endDate
+  tagId,
+  tagValue,
+  type,
+  useLegacy = true
 }) => {
-  const query = {
-    campaignGuid: campaign,
-    limit: 100,
-    offset: offset || 0,
-    start: startDate,
-    end: endDate
+  if (tagId || tagValue) {
+    return fetchLeaderboard({
+      activityType,
+      campaign: getUID(campaign),
+      sortBy,
+      tagId,
+      tagValue,
+      type: 'campaign'
+    })
   }
 
-  return client
-    .get('/v1/fitness/campaign', query, {}, { paramsSerializer })
-    .then(result => (type === 'team' ? result.teams : result.pages))
-    .then(items => items.slice(0, limit || 100))
-    .then(
-      items => (activeOnly && type !== 'team' ? fetchActivePages(items) : items)
-    )
-    .then(items => items.filter(item => item.Details))
-    .then(items => items.map(item => ({ ...item, type: type || 'individual' })))
+  if (useLegacy || type === 'teams') {
+    const params = {
+      campaignGuid: campaign,
+      limit: 100,
+      offset: offset || 0,
+      start: startDate,
+      end: endDate
+    }
+
+    return client
+      .get('/v1/fitness/campaign', params, {}, { paramsSerializer })
+      .then(result => (type === 'team' ? result.teams : result.pages))
+      .then(items => items.slice(0, limit || 100))
+      .then(
+        items =>
+          activeOnly && type !== 'team' ? fetchActivePages(items) : items
+      )
+      .then(items => items.filter(item => item.Details))
+      .then(items =>
+        items.map(item => ({ ...item, type: type || 'individual' }))
+      )
+  }
+
+  return fetchLeaderboard({
+    activityType,
+    campaign: getUID(campaign),
+    sortBy,
+    type: 'campaign'
+  })
 }
 
-export const deserializeFitnessLeaderboard = (item, index) => ({
-  position: index + 1,
-  id: item.ID,
-  name: get(item, 'Details.Name'),
-  slug: get(item, 'Details.Url'),
-  url: [
-    baseUrl(),
-    item.type === 'team' ? 'team' : 'fundraising',
-    get(item, 'Details.Url')
-  ].join('/'),
-  image:
-    imageUrl(get(item, 'Details.ImageId'), 'Size186x186Crop') ||
-    'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
-  distance: item.TotalValue
-})
+export const deserializeFitnessLeaderboard = (item, index) => {
+  const slug = get(item, 'Details.Url') || item.slug
+
+  return {
+    charity: item.charity_name,
+    distance: item.TotalValue || get(item, 'amounts[1].value', 0),
+    id: item.ID || item.legacyId,
+    image: get(item, 'heroMedia.url')
+      ? `${get(item, 'heroMedia.url')}?template=Size186x186Crop`
+      : null ||
+        imageUrl(get(item, 'Details.ImageId'), 'Size186x186Crop') ||
+        'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
+    name: get(item, 'Details.Name') || item.title || item.tagValue,
+    position: index + 1,
+    raised: getMonetaryValue(get(item, 'donationSummary.totalAmount')),
+    slug,
+    status: item.status,
+    subtitle: get(item, 'owner.name'),
+    url:
+      item.url ||
+      [baseUrl(), item.type === 'team' ? 'team' : 'fundraising', slug].join('/')
+  }
+}

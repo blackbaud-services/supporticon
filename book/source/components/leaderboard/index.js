@@ -98,6 +98,8 @@ class Leaderboard extends Component {
       page,
       pageIds,
       startDate,
+      tagId,
+      tagValue,
       type
     } = this.props
 
@@ -124,6 +126,8 @@ class Leaderboard extends Component {
       pageIds,
       q,
       startDate,
+      tagId,
+      tagValue,
       type
     })
       .then(
@@ -318,6 +322,16 @@ Leaderboard.propTypes = {
    * The group ID to group the leaderboard by (only relevant if type is group)
    */
   groupID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+  /**
+   * The tag ID to group the leaderboard by
+   */
+  tagId: PropTypes.string,
+
+  /**
+   * The tag value to filter by
+   */
+  tagValue: PropTypes.string,
 
   /**
    * Override the deserializeLeaderboard method

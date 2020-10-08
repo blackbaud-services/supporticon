@@ -10,6 +10,7 @@ import { get, post, put, servicesAPI } from '../../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import { getUID, isEqual, isUuid, required } from '../../../utils/params'
 import { deserializeFitnessActivity } from '../../fitness-activities/justgiving'
+import { fetchTotals, deserializeTotals } from '../../../utils/totals'
 import jsonDate from '../../../utils/jsonDate'
 
 export const pageNameRegex = /[^\w\s',-]/gi
@@ -52,6 +53,7 @@ export const deserializePage = page => {
     campaign: page.campaignGuid || page.Subtext || page.eventId || page.EventId,
     campaignDate: jsonDate(page.eventDate) || page.EventDate,
     charity: page.charity || page.CharityId || page.charityId,
+    charityId: lodashGet(page, 'charity.id') || page.CharityId,
     coordinates: null,
     createdAt: jsonDate(page.createdDate) || page.CreatedDate,
     currencyCode: page.currencyCode,
@@ -68,9 +70,15 @@ export const deserializePage = page => {
       deserializeFitnessActivity
     ),
     fitnessGoal: parseInt(page.pageSummaryWhat) || 0,
-    fitnessDistanceTotal: lodashGet(page, 'fitness.totalAmount', 0),
-    fitnessDurationTotal: lodashGet(page, 'fitness.totalAmountTaken', 0),
-    fitnessElevationTotal: lodashGet(page, 'fitness.totalAmountElevation', 0),
+    fitnessDistanceTotal:
+      lodashGet(page, 'fitness.totalAmount', 0) ||
+      lodashGet(page, 'fitness.distance', 0),
+    fitnessDurationTotal:
+      lodashGet(page, 'fitness.totalAmountTaken', 0) ||
+      lodashGet(page, 'fitness.duration', 0),
+    fitnessElevationTotal:
+      lodashGet(page, 'fitness.totalAmountElevation', 0) ||
+      lodashGet(page, 'fitness.elevation', 0),
     fitnessSettings: lodashGet(page, 'fitness.pageFitnessSettings'),
     groups: null,
     hasUpdatedImage:
@@ -252,14 +260,21 @@ export const fetchPage = (page = required(), slug, options = {}) => {
   const endpoint = slug ? 'pages' : isNaN(page) ? 'pages' : 'pagebyid'
 
   const fetchers = [
-    get(`/v1/fundraising/${endpoint}/${page}`),
-    options.includeFitness && fetchPageFitness(page, options.fitnessParams),
+    new Promise(resolve =>
+      get(`/v1/fundraising/${endpoint}/${page}`).then(
+        page =>
+          options.includeFitness
+            ? fetchPageFitness(page, options.fitnessParams).then(fitness =>
+              resolve({ ...page, fitness })
+            )
+            : resolve(page)
+      )
+    ),
     options.includeTags && fetchPageTags(page)
   ]
 
-  return Promise.all(fetchers).then(([page, fitness, tags]) => ({
+  return Promise.all(fetchers).then(([page, tags]) => ({
     ...page,
-    fitness,
     ...tags
   }))
 }
@@ -296,15 +311,26 @@ export const fetchPageTags = page => {
   return get(`v1/tags/${page}`)
 }
 
-const fetchPageFitness = (page, params = {}) => {
-  const query = {
-    limit: params.limit || 100,
-    offset: params.offset || 0,
-    start: params.startDate,
-    end: params.endDate
+const fetchPageFitness = (page, {
+  limit = 100,
+  offset = 0,
+  startDate,
+  endDate,
+  useLegacy = true
+}) => {
+  const slug = typeof page === 'object' ? page.pageShortName : page
+
+  if (useLegacy) {
+    const params = { limit, offset, start: startDate, end: endDate }
+    return get(`/v1/fitness/fundraising/${slug}`, params)
   }
 
-  return get(`/v1/fitness/fundraising/${page}`, query)
+  return fetchTotals({
+    segment: 'page:totals',
+    tagId: 'page:totals',
+    tagValue: `page:fundraising:${page.pageGuid}`
+  })
+    .then(deserializeTotals)
 }
 
 export const fetchPageDonationCount = (page = required()) => {
@@ -349,6 +375,71 @@ export const createPageTag = ({
   return request().catch(() => request()) // Retry if request fails
 }
 
+export const createPageTags = page =>
+  Promise.all(
+    [
+      {
+        id: 'page:totals',
+        label: 'Page Totals'
+      },
+      {
+        id: 'page:charity',
+        label: 'Charity Link',
+        value: `page:charity:${page.charityId}`,
+        segment: `page:charity:${page.charityId}`
+      },
+      {
+        id: `page:charity:${page.charityId}`,
+        label: 'Page Charity Link'
+      },
+      {
+        id: 'page:event',
+        label: 'Event Link',
+        value: `page:event:${page.event}`,
+        segment: `page:event:${page.event}`
+      },
+      {
+        label: 'Page Event Link',
+        id: `page:event:${page.event}`
+      },
+      page.campaign && {
+        id: 'page:campaign',
+        label: 'Campaign Link',
+        value: `page:campaign:${page.campaign}`,
+        segment: `page:campaign:${page.campaign}`
+      },
+      page.campaign && {
+        id: 'page:campaign:charity',
+        label: 'Charity Campaign Link',
+        value: `page:campaign:${page.campaign}:charity:${page.charityId}`,
+        segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
+      },
+      page.campaign && {
+        label: 'Page Campaign Link',
+        id: `page:campaign:${page.campaign}`
+      },
+      page.campaign && {
+        label: 'Page Charity Campaign Link',
+        id: `page:campaign:${page.campaign}:charity:${page.charityId}`
+      }
+    ]
+      .filter(Boolean)
+      .map(({ label, id, value, segment }) =>
+        createPageTag({
+          slug: page.slug,
+          label,
+          id,
+          value: value || `page:fundraising:${page.uuid}`,
+          aggregation: [
+            {
+              segment: segment || id,
+              measurementDomains: ['all']
+            }
+          ]
+        })
+      )
+  )
+
 export const createPage = ({
   charityId = required(),
   title = required(),
@@ -379,6 +470,7 @@ export const createPage = ({
   summaryWhat,
   summaryWhy,
   tags,
+  tagsCallback,
   target,
   teamId,
   theme,
@@ -435,6 +527,16 @@ export const createPage = ({
         }
       }
     )
+      .then(result => fetchPage(result.pageId))
+      .then(page => {
+        createPageTags(deserializePage(page)).then(tags => {
+          if (typeof tagsCallback === 'function') {
+            tagsCallback(tags, page)
+          }
+        })
+
+        return page
+      })
   })
 }
 

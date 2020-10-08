@@ -11,11 +11,21 @@ import {
   splitOnDelimiter
 } from '../../../utils/params'
 import { currencySymbol, currencyCode } from '../../../utils/currencies'
+import { fetchLeaderboard as getGraphQLeaderboard } from '../../../utils/leaderboards'
+import { getMonetaryValue } from '../../../utils/totals'
 
 /**
  * @function fetches fundraising pages ranked by funds raised
  */
 export const fetchLeaderboard = (params = required()) => {
+  if (params.tagId || params.tagValue) {
+    return getGraphQLeaderboard({
+      ...params,
+      campaign: getUID(params.campaign),
+      type: 'campaign'
+    })
+  }
+
   if (!isEmpty(params.campaign) && params.allPages) {
     return recursivelyFetchJGLeaderboard(
       getUID(params.campaign),
@@ -197,7 +207,7 @@ const recursivelyFetchJGLeaderboard = (
  */
 export const deserializeLeaderboard = (supporter, index) => {
   const isTeam = supporter.type === 'team'
-  const slug = supporter.pageShortName || supporter.shortName
+  const slug = supporter.pageShortName || supporter.shortName || supporter.slug
   const owner =
     lodashGet(supporter, 'pageOwner.fullName') ||
     lodashGet(supporter, 'owner.firstName')
@@ -205,40 +215,57 @@ export const deserializeLeaderboard = (supporter, index) => {
       : null
 
   return {
-    currency: supporter.currencyCode,
+    currency:
+      supporter.currencyCode ||
+      lodashGet(supporter, 'donationSummary.totalAmount.currencyCode'),
     currencySymbol: supporter.currencySymbol,
     donationUrl: isTeam ? null : `${baseUrl()}/fundraising/${slug}/donate`,
-    id: supporter.pageId,
-    image:
-      supporter.defaultImage ||
-      imageUrl(lodashGet(supporter, 'pageImages[0]'), 'Size186x186Crop') ||
-      imageUrl(supporter.photo, 'Size186x186Crop') ||
-      (isTeam
-        ? 'https://assets.blackbaud-sites.com/images/supporticon/user.svg'
-        : apiImageUrl(slug, 'Size186x186Crop')),
+    id: supporter.pageId || supporter.legacyId,
+    image: lodashGet(supporter, 'heroMedia.url')
+      ? `${lodashGet(supporter, 'heroMedia.url')}?template=Size186x186Crop`
+      : supporter.defaultImage ||
+        imageUrl(lodashGet(supporter, 'pageImages[0]'), 'Size186x186Crop') ||
+        imageUrl(supporter.photo, 'Size186x186Crop') ||
+        (isTeam
+          ? 'https://assets.blackbaud-sites.com/images/supporticon/user.svg'
+          : apiImageUrl(slug, 'Size186x186Crop')),
     name:
       supporter.pageTitle ||
       supporter.name ||
+      supporter.title ||
+      supporter.tagValue ||
       lodashGet(supporter, 'pageOwner.fullName'),
     offline: parseFloat(
-      supporter.totalRaisedOffline || supporter.raisedOfflineAmount || 0
+      supporter.totalRaisedOffline ||
+        supporter.raisedOfflineAmount ||
+        getMonetaryValue(lodashGet(supporter, 'donationSummary.offlineAmount'))
     ),
-    owner: owner || supporter.owner,
+    owner,
     position: index + 1,
     raised: parseFloat(
       lodashGet(supporter, 'team.donationSummary.totalAmount') ||
-        lodashGet(supporter, 'page.totalAmount') ||
         supporter.donationAmount ||
         supporter.amount ||
         supporter.raisedAmount ||
         supporter.amountRaised ||
+        getMonetaryValue(lodashGet(supporter, 'donationSummary.totalAmount')) ||
+        lodashGet(supporter, 'amounts[8].value', 0) ||
         0
     ),
     slug,
-    status: lodashGet(supporter, 'page.status'),
-    subtitle: owner || supporter.eventName,
-    target: supporter.targetAmount || supporter.target,
-    totalDonations: supporter.numberOfSupporters || supporter.donationCount,
-    url: [baseUrl(), isTeam ? 'team' : 'fundraising', slug].join('/')
+    status: lodashGet(supporter, 'page.status') || supporter.status,
+    subtitle:
+      owner || supporter.eventName || lodashGet(supporter, 'owner.name'),
+    target:
+      supporter.targetAmount ||
+      supporter.target ||
+      getMonetaryValue(lodashGet(supporter, 'targetWithCurrency')),
+    totalDonations:
+      supporter.numberOfSupporters ||
+      supporter.donationCount ||
+      lodashGet(supporter, 'donationSummary.donationCount'),
+    url:
+      supporter.url ||
+      [baseUrl(), isTeam ? 'team' : 'fundraising', slug].join('/')
   }
 }
