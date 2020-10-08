@@ -33,6 +33,9 @@ export const fetchTotals = ({
 
 export const getMonetaryValue = val => get(val, 'value', 0) / 100
 
+export const getAmountByCurrency = (amounts = [], currency = 'GBP') =>
+  get(find(amounts, { unit: currency.toLowerCase() }), 'value', 0)
+
 export const deserializeTotals = (totals, currency = 'GBP') =>
   measurementDomains
     .map(
@@ -48,11 +51,7 @@ export const deserializeTotals = (totals, currency = 'GBP') =>
         case 'fundraising:donations_received':
           return {
             ...acc,
-            raised: get(
-              find(amounts, { unit: currency.toLowerCase() }),
-              'value',
-              0
-            )
+            raised: getAmountByCurrency(amounts, currency)
           }
 
         case 'fundraising:donations_made':
