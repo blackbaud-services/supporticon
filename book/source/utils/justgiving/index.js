@@ -1,4 +1,5 @@
 import { isStaging, servicesAPI } from '../client'
+import get from 'lodash/get'
 
 export const isValidJSON = json => {
   try {
@@ -13,10 +14,23 @@ export const parseText = (text = '') => {
   const content = text.replace(/\n/g, ' ')
 
   if (isValidJSON(content)) {
-    return JSON.parse(content)[0].nodes[0].ranges[0].text
+    return JSON.parse(content)
+      .map(parseTextSection)
+      .join(' ')
   }
 
   return text
+}
+
+const parseTextSection = (section = {}) => {
+  switch (section.type) {
+    case 'paragraph':
+      return get(section, 'nodes.0.ranges.0.text', '')
+    case 'header':
+      return get(section, 'text', '')
+    default:
+      return ''
+  }
 }
 
 export const baseUrl = (subdomain = 'www') => {
