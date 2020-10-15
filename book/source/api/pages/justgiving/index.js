@@ -37,13 +37,10 @@ export const deserializePage = page => {
     return lodashFilter(images, image => image.caption === 'qrcode')
   }
 
-  const onlineAmount = parseFloat(
-    page.totalRaisedOnline ||
-      page.Amount ||
-      page.raisedAmount ||
-      page.amountRaised ||
-      0
-  )
+  const isOnlinePresent = typeof page.totalRaisedOnline !== 'undefined'
+  const onlineAmount = isOnlinePresent
+    ? parseFloat(page.totalRaisedOnline)
+    : parseFloat(page.Amount || page.raisedAmount || page.amountRaised || 0)
 
   const offlineAmount = parseFloat(page.totalRaisedOffline || 0)
   const status = page.status || page.pageStatus
