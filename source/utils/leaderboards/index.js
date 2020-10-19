@@ -1,15 +1,53 @@
 import get from 'lodash/get'
-import snakeCase from 'lodash/snakeCase'
+import kebabCase from 'lodash/kebabCase'
 import * as client from '../client'
 import { required } from '../params'
 import { getPrimaryUnit, measurementDomains } from '../tags'
+import { hash } from 'spark-md5'
+
+export const getShortMeasurementDomain = (domain = 'any:distance') => {
+  switch (domain) {
+    case 'fundraising:donations_made':
+      return 'fc'
+    case 'any:elapsed_time':
+    case 'hike:elapsed_time':
+    case 'ride:elapsed_time':
+    case 'swim:elapsed_time':
+    case 'walk:elapsed_time':
+      return [domain.charAt(0), 't'].join('')
+    default:
+      return domain
+        .split(':')
+        .map(substring => substring.charAt(0))
+        .join('')
+  }
+}
+
+const genId = ({
+  id = required(),
+  measurementDomain = 'any:distance',
+  name,
+  tagId,
+  type = 'campaign'
+}) => {
+  return hash(
+    [type, getShortMeasurementDomain(measurementDomain), id, tagId, name]
+      .filter(Boolean)
+      .map(kebabCase)
+      .join('-')
+  )
+}
+
+export const generateLeaderboardId = genId
 
 export const fetchLeaderboardDefinition = ({
   id = required(),
   measurementDomain = 'any:distance',
+  name,
+  tagId,
   type = 'campaign'
 }) => {
-  const definitionId = [type, snakeCase(measurementDomain), id].join('_')
+  const definitionId = genId({ id, measurementDomain, name, tagId, type })
 
   return client
     .get(`/v1/tags/leaderboard/definition/${definitionId}`)
@@ -34,9 +72,7 @@ export const createLeaderboardDefinition = ({
 }) => {
   const segment = ['page', type, id].join(':')
   const primaryUnit = getPrimaryUnit(measurementDomain)
-  const definitionId = [type, snakeCase(measurementDomain), id, tagId, name]
-    .filter(Boolean)
-    .join('_')
+  const definitionId = genId({ id, measurementDomain, name, tagId, type })
 
   const payload = {
     conditions,
@@ -77,9 +113,12 @@ export const createLeaderboardDefinitions = params =>
 export const deleteLeaderboardDefinition = ({
   id = required(),
   measurementDomain = 'any:distance',
+  name,
+  tagId,
   type = 'campaign'
 }) => {
-  const definitionId = [type, snakeCase(measurementDomain), id].join('_')
+  const definitionId = genId({ id, measurementDomain, name, tagId, type })
+
   return client.destroy(`/v1/tags/leaderboard/definition/${definitionId}`)
 }
 
@@ -91,7 +130,7 @@ export const deleteLeaderboardDefinitions = params =>
   )
 
 export const fetchLeaderboard = ({
-  campaign = required(),
+  id = required(),
   activityType = 'fundraising',
   limit = 10,
   sortBy = 'donations_received',
@@ -99,16 +138,13 @@ export const fetchLeaderboard = ({
   tagValue,
   type = 'campaign'
 }) => {
-  const leaderboardId = [
-    type,
-    activityType,
-    sortBy,
-    campaign,
-    snakeCase(tagId),
-    snakeCase(tagValue)
-  ]
-    .filter(Boolean)
-    .join('_')
+  const leaderboardId = genId({
+    id,
+    measurementDomain: [activityType, sortBy].join(':'),
+    name: tagValue,
+    tagId,
+    type
+  })
 
   const query = `
     {

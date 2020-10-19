@@ -37,7 +37,7 @@ export const fetchFitnessLeaderboard = ({
   if (tagId || tagValue) {
     return fetchLeaderboard({
       activityType,
-      campaign: getUID(campaign),
+      id: getUID(campaign),
       sortBy,
       tagId,
       tagValue,
@@ -70,7 +70,7 @@ export const fetchFitnessLeaderboard = ({
 
   return fetchLeaderboard({
     activityType,
-    campaign: getUID(campaign),
+    id: getUID(campaign),
     sortBy,
     type: 'campaign'
   })

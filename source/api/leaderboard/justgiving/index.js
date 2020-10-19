@@ -21,7 +21,7 @@ export const fetchLeaderboard = (params = required()) => {
   if (params.tagId || params.tagValue) {
     return getGraphQLeaderboard({
       ...params,
-      campaign: getUID(params.campaign),
+      id: getUID(params.campaign),
       type: 'campaign'
     })
   }
