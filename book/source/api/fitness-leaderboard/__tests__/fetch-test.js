@@ -1,6 +1,7 @@
 import moxios from 'moxios'
 import { fetchFitnessLeaderboard } from '..'
 import { instance, servicesAPI, updateClient } from '../../../utils/client'
+import { hash } from 'spark-md5'
 
 describe('Fetch Fitness Leaderboards', () => {
   beforeEach(() => {
@@ -150,7 +151,7 @@ describe('Fetch Fitness Leaderboards', () => {
         expect(request.url).to.contain(
           'https://api.blackbaud.services/v1/justgiving/graphql'
         )
-        expect(data.query).to.contain('campaign_any_distance_12345')
+        expect(data.query).to.contain(hash('campaign-ad-12345'))
         done()
       })
     })
