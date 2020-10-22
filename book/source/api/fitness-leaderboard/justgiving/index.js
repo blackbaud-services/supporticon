@@ -48,7 +48,7 @@ export const fetchFitnessLeaderboard = ({
   if (useLegacy || type === 'teams') {
     const params = {
       campaignGuid: campaign,
-      limit: 100,
+      limit: 200,
       offset: offset || 0,
       start: startDate,
       end: endDate
