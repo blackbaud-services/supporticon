@@ -128,10 +128,30 @@ class CreatePageForm extends Component {
                 }))
               })
             default:
-              const message =
-                get(error, 'data.error.message') ||
-                get(error, 'data.errorMessage') ||
-                'There was an unexpected error'
+              const getErrorMessage = () => {
+                const errorId = get(error, 'data.error.id')
+
+                switch (errorId) {
+                  case 'CampaignNotFound':
+                    return 'Campaign not found'
+                  case 'CampaignExpired':
+                    return 'Campaign has expired'
+                  case 'CampaignFundraisingDisabled':
+                    return 'Campaign has not enabled fundraising'
+                  case 'CampaignInvalidCharityId':
+                    return 'Charity is not part of the campaign'
+                  case 'CampaignMismatchEventId':
+                    return 'Event and Campaign do not match'
+                  default:
+                    return (
+                      get(error, 'data.error.message') ||
+                      get(error, 'data.errorMessage') ||
+                      'There was an unexpected error'
+                    )
+                }
+              }
+
+              const message = getErrorMessage()
 
               return this.setState({
                 status: 'failed',
