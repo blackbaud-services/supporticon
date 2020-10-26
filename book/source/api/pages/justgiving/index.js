@@ -376,6 +376,29 @@ export const createPageTags = page =>
         label: 'Page Totals'
       },
       {
+        id: 'CommsFitness',
+        label: 'CommsFitnes',
+        segment: 'AllCommsFitness',
+        measurementDomains: [
+          'any:activities',
+          'any:distance',
+          'any:elapsed_time',
+          'any:elevation_gain',
+          'ride:activities',
+          'ride:distance',
+          'ride:elapsed_time',
+          'ride:elevation_gain',
+          'swim:activities',
+          'swim:distance',
+          'swim:elapsed_time',
+          'swim:elevation_gain',
+          'walk:activities',
+          'walk:distance',
+          'walk:elapsed_time',
+          'walk:elevation_gain'
+        ]
+      },
+      {
         id: 'page:charity',
         label: 'Charity Link',
         value: `page:charity:${page.charityId}`,
@@ -417,7 +440,7 @@ export const createPageTags = page =>
       }
     ]
       .filter(Boolean)
-      .map(({ label, id, value, segment }) =>
+      .map(({ label, id, value, segment, measurementDomains }) =>
         createPageTag({
           slug: page.slug,
           label,
@@ -426,7 +449,7 @@ export const createPageTags = page =>
           aggregation: [
             {
               segment: segment || id,
-              measurementDomains: ['all']
+              measurementDomains: measurementDomains || ['all']
             }
           ]
         })
