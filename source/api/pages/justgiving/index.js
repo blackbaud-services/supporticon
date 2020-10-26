@@ -377,7 +377,7 @@ export const createPageTags = page =>
       },
       {
         id: 'CommsFitness',
-        label: 'CommsFitnes',
+        label: 'CommsFitness',
         segment: 'AllCommsFitness',
         measurementDomains: [
           'any:activities',
