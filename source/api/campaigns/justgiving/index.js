@@ -1,5 +1,6 @@
+import get from 'lodash/get'
 import { servicesAPI } from '../../../utils/client'
-import { baseUrl } from '../../../utils/justgiving'
+import { baseUrl, imageUrl, parseText } from '../../../utils/justgiving'
 import { required } from '../../../utils/params'
 
 export const fetchCampaigns = ({ ids }) => {
@@ -35,9 +36,11 @@ export const deserializeCampaign = campaign => ({
   }`,
   id: campaign.campaignGuid,
   name: campaign.title,
+  image: imageUrl(get(campaign, 'heroImage.imageName')),
   raised: campaign.donationSummary.totalAmount,
   raisedOffline: campaign.donationSummary.offlineAmount,
   slug: campaign.shortName,
+  story: parseText(campaign.story),
   summary: campaign.summary,
   target: campaign.targetAmount,
   totalDonations: campaign.donationSummary.totalNumberOfDonations,
