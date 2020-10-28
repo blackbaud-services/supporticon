@@ -94,3 +94,19 @@ export const isParamsObject = args => {
 
 export const splitOnDelimiter = (param, delimeter = ',') =>
   typeof param === 'string' ? param.split(delimeter) : param
+
+export const formatUrlParams = (params, encode) =>
+  Object.keys(params)
+    .filter(key => !!params[key])
+    .map(
+      key => `${key}=${encode ? encodeURIComponent(params[key]) : params[key]}`
+    )
+    .join('&')
+
+export const base64EncodeParams = params => {
+  const result = Object.keys(params)
+    .filter(key => !!params[key])
+    .reduce((result, key) => ({ ...result, [key]: params[key] }), {})
+
+  return window.btoa(JSON.stringify(result))
+}

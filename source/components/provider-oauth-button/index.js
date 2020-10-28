@@ -326,7 +326,7 @@ ProviderOauthButton.propTypes = {
 ProviderOauthButton.defaultProps = {
   label: 'Login with Facebook',
   popup: true,
-  popupWindowFeatures: 'width=800,height=600,status=1',
+  popupWindowFeatures: 'width=600,height=900,status=1',
   provider: 'facebook'
 }
 
