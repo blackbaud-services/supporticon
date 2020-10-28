@@ -1,4 +1,10 @@
-import { get, put, post, jgIdentityClient } from '../../../utils/client'
+import {
+  get,
+  put,
+  post,
+  jgIdentityClient,
+  servicesAPI
+} from '../../../utils/client'
 import { required } from '../../../utils/params'
 import { encodeBase64String } from '../../../utils/base64'
 
@@ -67,4 +73,20 @@ export const signUp = ({
     name: [firstName, lastName].join(' '),
     token: encodeBase64String(`${email}:${password}`)
   }))
+}
+
+export const checkAccountAvailability = email => {
+  return get(`/v1/account/${email}`)
+    .then(() => true)
+    .catch(() => false)
+}
+
+export const connectToken = data => {
+  return servicesAPI
+    .post('/v1/justgiving/oauth/connect', data)
+    .then(response => response.data)
+    .then(data => ({
+      token: data.access_token,
+      refreshToken: data.refresh_token
+    }))
 }
