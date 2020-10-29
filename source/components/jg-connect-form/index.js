@@ -57,15 +57,18 @@ class JGConnectForm extends React.Component {
 
   handleSuccess (data) {
     const { onSuccess } = this.props
+    const { confirming } = this.state
 
-    Promise.resolve()
-      .then(() => this.setState({ confirming: true }))
-      .then(() => connectToken(data))
-      .then(data => onSuccess(data))
-      .catch(error => {
-        const errors = [{ message: getErrorMessage(error) }]
-        this.setState({ errors, status: 'failed', confirming: false })
-      })
+    if (!confirming) {
+      Promise.resolve()
+        .then(() => this.setState({ confirming: true }))
+        .then(() => connectToken(data))
+        .then(data => onSuccess(data))
+        .catch(error => {
+          const errors = [{ message: getErrorMessage(error) }]
+          this.setState({ errors, status: 'failed', confirming: false })
+        })
+    }
   }
 
   showOAuth (forceSignUp, email) {

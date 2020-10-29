@@ -62,7 +62,6 @@ export const listenForPostMessage = ({ onSuccess = () => {}, redirectUri }) => {
     const isValid = e.origin === validSourceOrigin
 
     if (isValid) {
-      window.removeEventListener('message', listener)
       onSuccess(data)
     }
   }
