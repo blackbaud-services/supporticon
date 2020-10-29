@@ -250,7 +250,7 @@ JGConnectForm.propTypes = {
   /**
    * The function to call when user is successfully authenticated
    */
-  onSuccess: PropTypes.function,
+  onSuccess: PropTypes.func,
 
   /**
    * Use a popup window for OAuth
