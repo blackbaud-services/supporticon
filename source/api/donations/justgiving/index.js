@@ -1,8 +1,9 @@
+import numbro from 'numbro'
+import jsonDate from '../../../utils/jsonDate'
+import { stringify } from 'querystringify'
 import { get } from '../../../utils/client'
 import { required } from '../../../utils/params'
-import jsonDate from '../../../utils/jsonDate'
-import numbro from 'numbro'
-import { stringify } from 'querystringify'
+import { baseUrl } from '../../../utils/justgiving'
 
 export const fetchDonation = (id = required()) => get(`/v1/donation/${id}`)
 
@@ -33,7 +34,6 @@ export const buildDonationUrl = ({
   currency = 'GBP',
   ...args
 }) => {
-  const baseUrl = process.env.SUPPORTICON_BASE_URL.replace('api', 'link')
   const params = stringify({
     amount: numbro(amount).format('0.00'),
     currency,
@@ -41,7 +41,7 @@ export const buildDonationUrl = ({
   })
   if (slug || id) {
     return id
-      ? `${baseUrl}/v1/fundraisingpage/donate/pageId/${id}?${params}`
-      : `${baseUrl}/v1/fundraising/${slug}/donate?${params}`
+      ? `${baseUrl('link')}/v1/fundraisingpage/donate/pageId/${id}?${params}`
+      : `${baseUrl('www')}/fundraising/${slug}/donate?${params}`
   }
 }
