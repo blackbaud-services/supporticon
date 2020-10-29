@@ -21,16 +21,23 @@ import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
 import Icon from 'constructicon/icon'
 import InputField from 'constructicon/input-field'
+import JGLogo from './jg-logo'
 import Section from 'constructicon/section'
 
 class JGConnectForm extends React.Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.handleClose = this.handleClose.bind(this)
     this.handleSuccess = this.handleSuccess.bind(this)
     this.showOAuth = this.showOAuth.bind(this)
 
-    this.state = { errors: [], status: 'empty', confirming: false }
+    this.state = {
+      errors: [],
+      status: 'empty',
+      confirming: false,
+      method: 'signup',
+      showButtons: props.showButtons
+    }
   }
 
   componentDidMount () {
@@ -65,7 +72,13 @@ class JGConnectForm extends React.Component {
     const { clientId, homeUrl, oauthParams, popup, redirectUri } = this.props
 
     return Promise.resolve()
-      .then(() => this.setState({ status: 'fetching', errors: [] }))
+      .then(() =>
+        this.setState({
+          errors: [],
+          method: forceSignUp ? 'signup' : 'login',
+          status: 'fetching'
+        })
+      )
       .then(() =>
         getConnectUrl({
           clientId,
@@ -89,42 +102,48 @@ class JGConnectForm extends React.Component {
   }
 
   render () {
-    const { form, label, showButtons } = this.props
-    const { confirming, errors, status } = this.state
+    const { buttonProps, formComponent, inputField, form, label } = this.props
+    const { confirming, errors, method, showButtons, status } = this.state
     const isLoading = confirming || status === 'fetching'
+    const shouldAutofocus = showButtons !== this.props.showButtons
 
     if (showButtons) {
       return (
         <div>
-          <Section spacing={{ b: 0.5 }}>
-            {label || 'Do you have an existing JustGiving account?'}
+          <Section tag='h3' spacing={{ b: 0.5 }}>
+            {label || (
+              <span>
+                Do you have an existing <JGLogo /> account?
+              </span>
+            )}
           </Section>
           <ButtonGroup>
             <Button
+              disabled={isLoading}
               background='justgiving'
               foreground='light'
               onClick={() => this.showOAuth(false)}
+              {...buttonProps}
             >
-              {isLoading ? (
-                <Icon name='loading' spin />
-              ) : (
-                <Icon name='justgiving' />
-              )}
               <span>Yes, I do</span>
+              {isLoading && method === 'login' && <Icon name='loading' spin />}
             </Button>
             <Button
+              disabled={isLoading}
               background='justgiving'
               foreground='light'
               onClick={() => this.showOAuth(true)}
+              {...buttonProps}
             >
-              {isLoading ? (
-                <Icon name='loading' spin />
-              ) : (
-                <Icon name='justgiving' />
-              )}
               <span>No, I don't</span>
+              {isLoading && method === 'signup' && <Icon name='loading' spin />}
             </Button>
           </ButtonGroup>
+          <Section tag='p' spacing={{ t: 0.5 }}>
+            <button onClick={() => this.setState({ showButtons: false })}>
+              I'm not sure
+            </button>
+          </Section>
         </div>
       )
     }
@@ -146,31 +165,41 @@ class JGConnectForm extends React.Component {
         }}
         submit=''
         autoComplete='off'
+        {...formComponent}
       >
-        <Section spacing={{ b: 0.5 }}>
+        <Section tag='h3' spacing={{ b: 0.5 }}>
           <label htmlFor='email'>
-            {label ||
-              'Enter your email below to check if you have an existing JustGiving account'}
+            {label || (
+              <span>
+                Enter your email below to check if you have an existing{' '}
+                <JGLogo /> account
+              </span>
+            )}
           </label>
         </Section>
         <Grid spacing={{ x: 0.25, y: 0 }}>
           <GridColumn md={9}>
-            <InputField {...form.fields.email} />
+            <InputField
+              autoFocus={shouldAutofocus}
+              {...form.fields.email}
+              {...inputField}
+            />
           </GridColumn>
           <GridColumn md={3}>
             <Button
               block
               background='justgiving'
+              disabled={isLoading}
               foreground='light'
-              spacing={{ y: 0.3, x: 1 }}
               type='submit'
+              {...buttonProps}
             >
+              <span>Next</span>
               {isLoading ? (
                 <Icon name='loading' spin />
               ) : (
-                <Icon name='justgiving' />
+                <Icon name='chevron' />
               )}
-              <span>Next</span>
             </Button>
           </GridColumn>
         </Grid>
@@ -181,14 +210,29 @@ class JGConnectForm extends React.Component {
 
 JGConnectForm.propTypes = {
   /**
+   * Props to be passed to the Button component
+   */
+  buttonProps: PropTypes.object,
+
+  /**
    * The JG application key
    */
   clientId: PropTypes.string.isRequired,
 
   /**
+   * Props to be passed to the Form component
+   */
+  formComponent: PropTypes.object,
+
+  /**
    * Home URL that our oauth handler (oauth.blackbaud-sites.com) will redirect to
    */
   homeUrl: PropTypes.string,
+
+  /**
+   * Props to be passed to the InputField components
+   */
+  inputField: PropTypes.object,
 
   /**
    * The label at the top of the form
