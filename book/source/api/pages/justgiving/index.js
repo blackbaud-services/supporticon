@@ -44,6 +44,7 @@ export const deserializePage = page => {
 
   const offlineAmount = parseFloat(page.totalRaisedOffline || 0)
   const status = page.status || page.pageStatus
+  const id = page.pageId || page.Id
 
   return {
     active: status ? ['Inactive', 'Cancelled'].indexOf(status) === -1 : true,
@@ -55,11 +56,9 @@ export const deserializePage = page => {
     createdAt: jsonDate(page.createdDate) || page.CreatedDate,
     currencyCode: page.currencyCode,
     currencySymbol: page.currencySymbol,
-    donationUrl: [
-      baseUrl('link'),
-      'v1/fundraisingpage/donate/pageId',
-      page.pageId || page.Id
-    ].join('/'),
+    donationUrl: id
+      ? `${baseUrl('link')}/v1/fundraisingpage/donate/pageId/${id}`
+      : `${baseUrl('www')}/fundraising/${shortName}/donate`,
     event: page.Subtext || page.eventId || page.EventId || page.eventName,
     expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
     fitness: page.fitness || {},
@@ -81,7 +80,7 @@ export const deserializePage = page => {
     hasUpdatedImage:
       page.imageCount &&
       parseInt(page.imageCount - getQrCodes(page).length) > 1,
-    id: page.pageId || page.Id,
+    id,
     image:
       getImage() &&
       getImage().split('?')[0] + '?template=CrowdfundingOwnerAvatar',
