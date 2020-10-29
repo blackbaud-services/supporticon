@@ -103,7 +103,12 @@ module.exports = {
           __dirname,
           'source/components/single-sign-on-link',
           'index.js'
-        )
+        ),
+        path.resolve(
+          __dirname,
+          'source/components/jg-connect-form',
+          'index.js'
+        ),
       ]
     },
     {
