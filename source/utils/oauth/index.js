@@ -1,3 +1,4 @@
+import omit from 'lodash/omit'
 import URL from 'url-parse'
 import { getBaseURL } from '../client'
 import { base64EncodeParams, formatUrlParams } from '../params'
@@ -10,6 +11,8 @@ export const getConnectUrl = ({
   redirectUri,
   oauthParams
 }) => {
+  const hasParams = email || oauthParams
+  const optionsKey = forceSignUp ? 'encodedOptionsignup' : 'encodedOptions'
   const encodedParams = {
     client_id: clientId,
     redirect_uri: redirectUri,
@@ -17,16 +20,12 @@ export const getConnectUrl = ({
   }
 
   const params = {
-    acr_values: [
-      (email || oauthParams) &&
-        `encodedOptions:${base64EncodeParams({
-          EmailValue: email,
-          ...oauthParams
-        })}`,
-      forceSignUp && 'signup:true'
-    ]
-      .filter(Boolean)
-      .join(' '),
+    acr_values: hasParams
+      ? `${optionsKey}:${base64EncodeParams({
+        EmailValue: email,
+        ...omit(oauthParams, forceSignUp ? 'SignInTitle' : 'SignUpTitle')
+      })}`
+      : forceSignUp && 'signup:true',
     response_type: 'code',
     scope: 'openid+profile+email+account+fundraise+offline_access'
   }
