@@ -556,8 +556,10 @@ export const createPage = ({
 }
 
 export const getPageShortName = (title, slug) => {
+  const preferredName = slug || slugify(title, { lower: true, strict: true })
+
   const params = {
-    preferredName: slug || slugify(title, { lower: true, strict: true })
+    preferredName: preferredName.substring(0, 45)
   }
 
   return get('/v1/fundraising/pages/suggest', params).then(
