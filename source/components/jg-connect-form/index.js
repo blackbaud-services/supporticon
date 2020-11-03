@@ -108,7 +108,7 @@ class JGConnectForm extends React.Component {
     const { buttonProps, formComponent, inputField, form, label } = this.props
     const { confirming, errors, method, showButtons, status } = this.state
     const isLoading = confirming || status === 'fetching'
-    const shouldAutofocus = showButtons !== this.props.showButtons
+    const isTouched = showButtons !== this.props.showButtons
 
     if (showButtons) {
       return (
@@ -183,7 +183,7 @@ class JGConnectForm extends React.Component {
         <Grid spacing={{ x: 0.25, y: 0 }}>
           <GridColumn md={9}>
             <InputField
-              autoFocus={shouldAutofocus}
+              autoFocus={isTouched}
               {...form.fields.email}
               {...inputField}
             />
@@ -205,6 +205,13 @@ class JGConnectForm extends React.Component {
               )}
             </Button>
           </GridColumn>
+          {isTouched && (
+            <GridColumn>
+              <button onClick={() => this.setState({ showButtons: true })}>
+                Go back
+              </button>
+            </GridColumn>
+          )}
         </Grid>
       </Form>
     )
