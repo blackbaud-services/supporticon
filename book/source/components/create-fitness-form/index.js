@@ -38,6 +38,9 @@ class CreateFitnessForm extends Component {
         pageSlug,
         token,
         userId,
+        startedAt: moment(data.startedAt).isSame(moment(), 'day')
+          ? moment().toISOString()
+          : data.startedAt,
         type: isJustGiving()
           ? data.type
           : data.type === 'ride'
