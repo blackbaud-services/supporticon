@@ -105,6 +105,7 @@ export const deserializeDonationTotals = totals => ({
     get(totals, 'donationSummary.totalAmount') ||
     get(totals, 'totals.donationTotalAmount') ||
     0,
+  target: totals.targetAmount,
   offline: totals.offlineAmount || totals.raisedAmountOfflineInGBP || 0,
   donations:
     totals.totalResults ||
