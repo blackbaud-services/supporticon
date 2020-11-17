@@ -56,110 +56,114 @@ class CreatePageForm extends Component {
       country,
       eventId,
       form,
+      onSubmitError,
       onSuccess,
       token
     } = this.props
 
-    return form.submit().then(data => {
-      this.setState({
-        errors: [],
-        status: 'fetching'
-      })
-
-      const groupFields = pickBy(data, (value, key) =>
-        /^group_values_/.test(key)
-      )
-      const addressFields = pick(data, [
-        'streetAddress',
-        'extendedAddress',
-        'locality',
-        'region',
-        'postCode',
-        'country',
-        'charityId'
-      ])
-
-      const dataPayload = merge(
-        {
-          authType,
-          campaignId,
-          charityFunded,
-          charityId,
-          charityOptIn: true,
-          eventId,
-          token,
-          currency: currencyCode(country),
-          groupValues: mapKeys(groupFields, (value, key) =>
-            key.replace('group_values_', '')
-          )
-        },
-        data
-      )
-
-      return Promise.resolve()
-        .then(() => this.handleSubmitAddress(token, addressFields))
-        .then(() => this.handleSubmitPhone(token, data.phone))
-        .then(() => createPage(dataPayload))
-        .then(result => {
-          this.setState({ status: 'fetched' })
-          return onSuccess(result, dataPayload)
+    return form
+      .submit()
+      .then(data => {
+        this.setState({
+          errors: [],
+          status: 'fetching'
         })
-        .catch(error => {
-          switch (error.status) {
-            case 422:
-              const errors = get(error, 'data.error.errors') || []
 
-              return this.setState({
-                status: 'failed',
-                errors: errors.map(({ field, message }) => ({
-                  message: [
-                    capitalize(field.split('_').join(' ')),
-                    message
-                  ].join(' ')
-                }))
-              })
-            case 400:
-              const errorMessages = error.data || []
+        const groupFields = pickBy(data, (value, key) =>
+          /^group_values_/.test(key)
+        )
+        const addressFields = pick(data, [
+          'streetAddress',
+          'extendedAddress',
+          'locality',
+          'region',
+          'postCode',
+          'country',
+          'charityId'
+        ])
 
-              return this.setState({
-                status: 'failed',
-                errors: errorMessages.map(({ desc }) => ({
-                  message: capitalize(desc)
-                }))
-              })
-            default:
-              const getErrorMessage = () => {
-                const errorId = get(error, 'data.error.id')
+        const dataPayload = merge(
+          {
+            authType,
+            campaignId,
+            charityFunded,
+            charityId,
+            charityOptIn: true,
+            eventId,
+            token,
+            currency: currencyCode(country),
+            groupValues: mapKeys(groupFields, (value, key) =>
+              key.replace('group_values_', '')
+            )
+          },
+          data
+        )
 
-                switch (errorId) {
-                  case 'CampaignNotFound':
-                    return 'Campaign not found'
-                  case 'CampaignExpired':
-                    return 'Campaign has expired'
-                  case 'CampaignFundraisingDisabled':
-                    return 'Campaign has not enabled fundraising'
-                  case 'CampaignInvalidCharityId':
-                    return 'Charity is not part of the campaign'
-                  case 'CampaignMismatchEventId':
-                    return 'Event and Campaign do not match'
-                  default:
-                    return (
-                      get(error, 'data.error.message') ||
-                      get(error, 'data.errorMessage') ||
-                      'There was an unexpected error'
-                    )
+        return Promise.resolve()
+          .then(() => this.handleSubmitAddress(token, addressFields))
+          .then(() => this.handleSubmitPhone(token, data.phone))
+          .then(() => createPage(dataPayload))
+          .then(result => {
+            this.setState({ status: 'fetched' })
+            return onSuccess(result, dataPayload)
+          })
+          .catch(error => {
+            switch (error.status) {
+              case 422:
+                const errors = get(error, 'data.error.errors') || []
+
+                return this.setState({
+                  status: 'failed',
+                  errors: errors.map(({ field, message }) => ({
+                    message: [
+                      capitalize(field.split('_').join(' ')),
+                      message
+                    ].join(' ')
+                  }))
+                })
+              case 400:
+                const errorMessages = error.data || []
+
+                return this.setState({
+                  status: 'failed',
+                  errors: errorMessages.map(({ desc }) => ({
+                    message: capitalize(desc)
+                  }))
+                })
+              default:
+                const getErrorMessage = () => {
+                  const errorId = get(error, 'data.error.id')
+
+                  switch (errorId) {
+                    case 'CampaignNotFound':
+                      return 'Campaign not found'
+                    case 'CampaignExpired':
+                      return 'Campaign has expired'
+                    case 'CampaignFundraisingDisabled':
+                      return 'Campaign has not enabled fundraising'
+                    case 'CampaignInvalidCharityId':
+                      return 'Charity is not part of the campaign'
+                    case 'CampaignMismatchEventId':
+                      return 'Event and Campaign do not match'
+                    default:
+                      return (
+                        get(error, 'data.error.message') ||
+                        get(error, 'data.errorMessage') ||
+                        'There was an unexpected error'
+                      )
+                  }
                 }
-              }
 
-              const message = getErrorMessage()
+                const message = getErrorMessage()
 
-              return this.setState({
-                status: 'failed',
-                errors: message ? [{ message }] : []
-              })
-          }
-        })
-    })
+                return this.setState({
+                  status: 'failed',
+                  errors: message ? [{ message }] : []
+                })
+            }
+          })
+      })
+      .catch(error => onSubmitError(error))
   }
 
   handleSubmitAddress (token, address) {
@@ -353,6 +357,11 @@ CreatePageForm.propTypes = {
   inputField: PropTypes.object,
 
   /**
+   * Callback for when form validation fails
+   */
+  onSubmitError: PropTypes.func,
+
+  /**
    * The onSuccess event handler
    */
   onSuccess: PropTypes.func.isRequired,
@@ -399,6 +408,7 @@ CreatePageForm.defaultProps = {
   disableInvalidForm: false,
   fields: {},
   initialValues: {},
+  onSubmitError: () => {},
   submit: 'Create Page',
   user: {}
 }
