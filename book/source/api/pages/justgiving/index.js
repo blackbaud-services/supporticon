@@ -8,7 +8,13 @@ import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
 import { get, post, put, servicesAPI } from '../../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
-import { getUID, isEqual, isUuid, required } from '../../../utils/params'
+import {
+  getUID,
+  isEqual,
+  isEmpty,
+  isUuid,
+  required
+} from '../../../utils/params'
 import { deserializeFitnessActivity } from '../../fitness-activities/justgiving'
 import { fetchTotals, deserializeTotals } from '../../../utils/totals'
 import jsonDate from '../../../utils/jsonDate'
@@ -233,7 +239,7 @@ export const fetchPages = (params = required()) => {
       )
   }
 
-  if (campaign && !event) {
+  if (!isEmpty(campaign) && !event) {
     return recursivelyFetchJGPages({ campaign: getUID(campaign), ...args })
   }
 
