@@ -1,13 +1,13 @@
-# Supporticon [![NPM Version](https://img.shields.io/npm/v/supporticon.svg?style=flat-square&amp;colorB=1bab6b)](https://www.npmjs.com/package/supporticon)
+# Supporticon [![Build Status](https://travis-ci.com/blackbaud-services/supporticon.svg?branch=master)](https://travis-ci.com/blackbaud-services/supporticon) [![NPM Version](https://img.shields.io/npm/v/supporticon.svg?style=flat-square&amp;colorB=1bab6b)](https://www.npmjs.com/package/supporticon)
 
-Consistently and easily fetch data from the Supporter API for Professional Services projects.
+Consistently and easily fetch data from the [JustGiving](https://developer.justgiving.com/) and [Everydayhero](http://developer.everydayhero.com/) (deprecated) APIs for Blackbaud Professional Services projects.
 
-Provides some common Supporter data-driven components, using the [Constructicon](https://github.com/everydayhero/constructicon) UI library.
+Also provides some common data-driven components, using the [Constructicon](https://github.com/blackbaud-services/constructicon) UI library.
 
 ## Important Links
 
-- [Documentation](https://everydayhero.github.io/supporticon/book)
-- [Components](https://everydayhero.github.io/supporticon/components)
+- [Documentation](https://blackbaud-services.github.io/supporticon/book)
+- [Components](https://blackbaud-services.github.io/supporticon/components)
 
 ## Development
 
