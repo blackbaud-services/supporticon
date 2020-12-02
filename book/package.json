@@ -1,6 +1,6 @@
 {
   "name": "supporticon",
-  "version": "5.2.8",
+  "version": "5.2.9",
   "description": "A libary to handle fetching data from Supporter",
   "main": "index.js",
   "scripts": {
@@ -16,15 +16,14 @@
     "book:build": "npm run book:prepare && rm -rf styleguide/book && gitbook build . styleguide/book",
     "styleguide:build": "styleguidist build",
     "docs:build": "npm run styleguide:build && npm run book:build",
-    "docs:deploy": "npm run docs:build && gh-pages -d styleguide",
-    "deploy:prepare": "gulp npm-prepare"
+    "deploy:prepare": "npm run build && gulp npm-prepare"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/everydayhero/supporticon.git"
+    "url": "git+https://github.com/blackbaud-services/supporticon.git"
   },
   "bugs": {
-    "url": "https://github.com/everydayhero/supporticon/issues"
+    "url": "https://github.com/blackbaud-services/supporticon/issues"
   },
   "author": "Dan Henderson <danhenderson.web@gmail.com>",
   "license": "ISC",
@@ -73,6 +72,9 @@
     "constructicon": "^1.8.0",
     "react": "^15.0.0 || ^16.0.0",
     "react-dom": "^15.0.0 || ^16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "standard": {
     "ignore": [
