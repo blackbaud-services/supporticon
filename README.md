@@ -1,6 +1,6 @@
 # Supporticon [![Build Status](https://travis-ci.com/blackbaud-services/supporticon.svg?branch=master)](https://travis-ci.com/blackbaud-services/supporticon) [![NPM Version](https://img.shields.io/npm/v/supporticon.svg?style=flat-square&amp;colorB=1bab6b)](https://www.npmjs.com/package/supporticon)
 
-Consistently and easily fetch data from the [JustGiving](https://developer.justgiving.com/) and [Everydayhero](http://developer.everydayhero.com/) (deprecated) APIs for Blackbaud Professional Services projects.
+Consistently and easily fetch data from the [JustGiving](https://developer.justgiving.com/) and [Everydayhero](http://developer.everydayhero.com/) _(deprecated)_ APIs for Blackbaud Professional Services projects.
 
 Also provides some common data-driven components, using the [Constructicon](https://github.com/blackbaud-services/constructicon) UI library.
 
