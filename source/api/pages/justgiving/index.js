@@ -374,12 +374,15 @@ export const createPageTag = ({
   return request().catch(() => request()) // Retry if request fails
 }
 
-export const createPageTags = page => {
+export const createPageTags = ({
+  slug = required(),
+  tagValues = required()
+}) => {
   const request = () =>
     post(
-      `/v1/tags/${page.slug}/multiple`,
+      `/v1/tags/${slug}/multiple`,
       {
-        tagValues: defaultPageTags(page)
+        tagValues
       },
       {
         timeout: 5000
@@ -388,6 +391,9 @@ export const createPageTags = page => {
 
   return request().catch(() => request()) // Retry if request fails
 }
+
+const createDefaultPageTags = page =>
+  createPageTags({ slug: page.slug, tagValues: defaultPageTags(page) })
 
 export const createPage = ({
   charityId = required(),
@@ -478,7 +484,7 @@ export const createPage = ({
     )
       .then(result => fetchPage(result.pageId))
       .then(page => {
-        createPageTags(deserializePage(page)).then(tags => {
+        createDefaultPageTags(deserializePage(page)).then(tags => {
           if (typeof tagsCallback === 'function') {
             tagsCallback(tags, page)
           }
