@@ -15,6 +15,7 @@ import {
   isUuid,
   required
 } from '../../../utils/params'
+import { defaultPageTags } from '../../../utils/tags'
 import { deserializeFitnessActivity } from '../../fitness-activities/justgiving'
 import { fetchTotals, deserializeTotals } from '../../../utils/totals'
 import jsonDate from '../../../utils/jsonDate'
@@ -373,93 +374,20 @@ export const createPageTag = ({
   return request().catch(() => request()) // Retry if request fails
 }
 
-export const createPageTags = page =>
-  Promise.all(
-    [
+export const createPageTags = page => {
+  const request = () =>
+    post(
+      `/v1/tags/${page.slug}/multiple`,
       {
-        id: 'page:totals',
-        label: 'Page Totals'
-      },
-      {
-        id: 'CommsFitness',
-        label: 'CommsFitness',
-        segment: 'AllCommsFitness',
-        measurementDomains: [
-          'any:activities',
-          'any:distance',
-          'any:elapsed_time',
-          'any:elevation_gain',
-          'ride:activities',
-          'ride:distance',
-          'ride:elapsed_time',
-          'ride:elevation_gain',
-          'swim:activities',
-          'swim:distance',
-          'swim:elapsed_time',
-          'swim:elevation_gain',
-          'walk:activities',
-          'walk:distance',
-          'walk:elapsed_time',
-          'walk:elevation_gain'
-        ]
+        tagValues: defaultPageTags(page)
       },
       {
-        id: 'page:charity',
-        label: 'Charity Link',
-        value: `page:charity:${page.charityId}`,
-        segment: `page:charity:${page.charityId}`
-      },
-      {
-        id: `page:charity:${page.charityId}`,
-        label: 'Page Charity Link'
-      },
-      {
-        id: 'page:event',
-        label: 'Event Link',
-        value: `page:event:${page.event}`,
-        segment: `page:event:${page.event}`
-      },
-      {
-        label: 'Page Event Link',
-        id: `page:event:${page.event}`
-      },
-      page.campaign && {
-        id: 'page:campaign',
-        label: 'Campaign Link',
-        value: `page:campaign:${page.campaign}`,
-        segment: `page:campaign:${page.campaign}`
-      },
-      page.campaign && {
-        id: 'page:campaign:charity',
-        label: 'Charity Campaign Link',
-        value: `page:campaign:${page.campaign}:charity:${page.charityId}`,
-        segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
-      },
-      page.campaign && {
-        label: 'Page Campaign Link',
-        id: `page:campaign:${page.campaign}`
-      },
-      page.campaign && {
-        label: 'Page Charity Campaign Link',
-        id: `page:campaign:${page.campaign}:charity:${page.charityId}`
+        timeout: 5000
       }
-    ]
-      .filter(Boolean)
-      .map(({ label, id, value, segment, measurementDomains }) =>
-        createPageTag({
-          slug: page.slug,
-          label,
-          id,
-          value: value || `page:fundraising:${page.uuid}`,
-          aggregation: [
-            {
-              segment: segment || id,
-              measurementDomains: measurementDomains || ['all']
-            }
-          ]
-        })
-      )
-  )
+    )
+
+  return request().catch(() => request()) // Retry if request fails
+}
 
 export const createPage = ({
   charityId = required(),
