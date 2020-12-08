@@ -29,14 +29,16 @@ class AddressSearch extends Component {
   }
 
   handleQuery (q) {
-    Promise.resolve()
-      .then(() => this.setState({ status: 'fetching' }))
-      .then(() => searchAddress(q, this.state.country))
-      .then(results => this.setState({ results, status: 'fetched' }))
-      .catch(error => {
-        this.setState({ status: 'failed' })
-        return Promise.reject(error)
-      })
+    if (q.length > 0) {
+      Promise.resolve()
+        .then(() => this.setState({ status: 'fetching' }))
+        .then(() => searchAddress(q, this.state.country))
+        .then(results => this.setState({ results, status: 'fetched' }))
+        .catch(error => {
+          this.setState({ status: 'failed' })
+          return Promise.reject(error)
+        })
+    }
   }
 
   handleSelect (selected) {
