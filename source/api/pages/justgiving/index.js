@@ -310,6 +310,16 @@ export const fetchUserPages = ({
     .then(pages => filterByEvent(pages, event))
 }
 
+export const fetchPagesByTag = ({
+  tagId = required(),
+  tagValue = required(),
+  limit = 100,
+  offset = 0
+}) =>
+  get(
+    `v1/tags/search?tagsQuery=tags.${tagId}=${tagValue}&maxValue=${limit}&offset=${offset}`
+  )
+
 export const fetchPageTags = page => {
   return get(`v1/tags/${page}`)
 }

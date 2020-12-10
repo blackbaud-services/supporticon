@@ -51,10 +51,12 @@ export const defaultPageTags = page => {
         label: 'Page Totals'
       },
       value: `page:fundraising:${page.uuid}`,
-      aggregation: [{
-        measurementDomains: ['all'],
-        segment: 'page:totals'
-      }]
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: 'page:totals'
+        }
+      ]
     },
     {
       tagDefinition: {
@@ -62,27 +64,29 @@ export const defaultPageTags = page => {
         label: 'CommsFitness'
       },
       value: `page:fundraising:${page.uuid}`,
-      aggregation: [{
-        measurementDomains: [
-          'any:activities',
-          'any:distance',
-          'any:elapsed_time',
-          'any:elevation_gain',
-          'ride:activities',
-          'ride:distance',
-          'ride:elapsed_time',
-          'ride:elevation_gain',
-          'swim:activities',
-          'swim:distance',
-          'swim:elapsed_time',
-          'swim:elevation_gain',
-          'walk:activities',
-          'walk:distance',
-          'walk:elapsed_time',
-          'walk:elevation_gain'
-        ],
-        segment: 'AllCommsFitness'
-      }]
+      aggregation: [
+        {
+          measurementDomains: [
+            'any:activities',
+            'any:distance',
+            'any:elapsed_time',
+            'any:elevation_gain',
+            'ride:activities',
+            'ride:distance',
+            'ride:elapsed_time',
+            'ride:elevation_gain',
+            'swim:activities',
+            'swim:distance',
+            'swim:elapsed_time',
+            'swim:elevation_gain',
+            'walk:activities',
+            'walk:distance',
+            'walk:elapsed_time',
+            'walk:elevation_gain'
+          ],
+          segment: 'AllCommsFitness'
+        }
+      ]
     },
     {
       tagDefinition: {
@@ -90,10 +94,12 @@ export const defaultPageTags = page => {
         label: 'Charity Link'
       },
       value: `page:charity:${page.charityId}`,
-      aggregation: [{
-        measurementDomains: ['all'],
-        segment: `page:charity:${page.charityId}`
-      }]
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:charity:${page.charityId}`
+        }
+      ]
     },
     {
       tagDefinition: {
@@ -101,10 +107,12 @@ export const defaultPageTags = page => {
         label: 'Page Charity Link'
       },
       value: `page:fundraising:${page.uuid}`,
-      aggregation: [{
-        measurementDomains: ['all'],
-        segment: `page:charity:${page.charityId}`
-      }]
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:charity:${page.charityId}`
+        }
+      ]
     },
     {
       tagDefinition: {
@@ -112,10 +120,12 @@ export const defaultPageTags = page => {
         label: 'Event Link'
       },
       value: `page:event:${page.event}`,
-      aggregation: [{
-        measurementDomains: ['all'],
-        segment: `page:event:${page.event}`
-      }]
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:event:${page.event}`
+        }
+      ]
     },
     {
       tagDefinition: {
@@ -123,24 +133,67 @@ export const defaultPageTags = page => {
         label: 'Page Event Link'
       },
       value: `page:fundraising:${page.uuid}`,
-      aggregation: [{
-        measurementDomains: ['all'],
-        segment: `page:event:${page.event}`
-      }]
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:event:${page.event}`
+        }
+      ]
+    },
+    {
+      tagDefinition: {
+        id: 'eventId',
+        label: 'Event Id'
+      },
+      value: page.event,
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:event:${page.event}`
+        }
+      ]
+    },
+    {
+      tagDefinition: {
+        id: 'charityId',
+        label: 'Charity Id'
+      },
+      value: page.charityId,
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:charity:${page.charityId}`
+        }
+      ]
     }
   ]
 
   const campaignTags = [
     {
       tagDefinition: {
+        id: 'campaignGuid',
+        label: 'Campaign Guid'
+      },
+      value: page.campaign,
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:campaign:${page.campaign}`
+        }
+      ]
+    },
+    {
+      tagDefinition: {
         id: 'page:campaign',
         label: 'Campaign Link'
       },
       value: `page:campaign:${page.campaign}`,
-      aggregation: [{
-        measurementDomains: ['all'],
-        segment: `page:campaign:${page.campaign}`
-      }]
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:campaign:${page.campaign}`
+        }
+      ]
     },
     {
       tagDefinition: {
@@ -148,10 +201,12 @@ export const defaultPageTags = page => {
         label: 'Charity Campaign Link'
       },
       value: `page:campaign:${page.campaign}:charity:${page.charityId}`,
-      aggregation: [{
-        measurementDomains: ['all'],
-        segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
-      }]
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
+        }
+      ]
     },
     {
       tagDefinition: {
@@ -159,10 +214,12 @@ export const defaultPageTags = page => {
         id: `page:campaign:${page.campaign}`
       },
       value: `page:fundraising:${page.uuid}`,
-      aggregation: [{
-        measurementDomains: ['all'],
-        segment: `page:campaign:${page.campaign}`
-      }]
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:campaign:${page.campaign}`
+        }
+      ]
     },
     {
       tagDefinition: {
@@ -170,10 +227,12 @@ export const defaultPageTags = page => {
         id: `page:campaign:${page.campaign}:charity:${page.charityId}`
       },
       value: `page:fundraising:${page.uuid}`,
-      aggregation: [{
-        measurementDomains: ['all'],
-        segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
-      }]
+      aggregation: [
+        {
+          measurementDomains: ['all'],
+          segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
+        }
+      ]
     }
   ]
 
