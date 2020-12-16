@@ -24,7 +24,10 @@ export const pageNameRegex = /[^\w\s',-]/gi
 
 export const deserializePage = page => {
   const shortName =
-    page.shortName || page.pageShortName || (page.LinkPath || '').substring(1)
+    page.shortName ||
+    page.pageShortName ||
+    (page.LinkPath || '').substring(1) ||
+    page.PageUrl
 
   const getImage = () => {
     return (
