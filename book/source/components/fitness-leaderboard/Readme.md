@@ -16,7 +16,11 @@
   limit={100}
   pageSize={10}
   showPage
-  leaderboard={{ columns: { sm: 2 } }}
+  leaderboard={{
+    columns: {
+      sm: 2
+    }
+  }}
 />
 ```
 

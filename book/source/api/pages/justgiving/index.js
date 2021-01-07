@@ -24,7 +24,10 @@ export const pageNameRegex = /[^\w\s',-]/gi
 
 export const deserializePage = page => {
   const shortName =
-    page.shortName || page.pageShortName || (page.LinkPath || '').substring(1)
+    page.shortName ||
+    page.pageShortName ||
+    (page.LinkPath || '').substring(1) ||
+    page.PageUrl
 
   const getImage = () => {
     return (
@@ -309,6 +312,16 @@ export const fetchUserPages = ({
     .then(pages => filterByCharity(pages, charity))
     .then(pages => filterByEvent(pages, event))
 }
+
+export const fetchPagesByTag = ({
+  tagId = required(),
+  tagValue = required(),
+  limit = 100,
+  offset = 0
+}) =>
+  get(
+    `v1/tags/search?tagsQuery=tags.${tagId}=${tagValue}&maxValue=${limit}&offset=${offset}`
+  )
 
 export const fetchPageTags = page => {
   return get(`v1/tags/${page}`)
