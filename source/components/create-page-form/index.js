@@ -253,7 +253,7 @@ class CreatePageForm extends Component {
 
   renderAddress () {
     const { manualAddress } = this.state
-    const { form, inputField, country } = this.props
+    const { addressSearchLabel, form, inputField, country } = this.props
     const selectedCountry = form.values.country || country
 
     if (!manualAddress) {
@@ -264,6 +264,7 @@ class CreatePageForm extends Component {
           onCancel={() => this.setState({ manualAddress: true })}
           onChange={this.handleAddressLookup}
           inputProps={inputField}
+          label={addressSearchLabel}
           required
           validations={form.fields.streetAddress.validations}
         />
@@ -311,6 +312,11 @@ class CreatePageForm extends Component {
 }
 
 CreatePageForm.propTypes = {
+  /**
+   * Label for address search field
+   */
+  addressSearchLabel: PropTypes.string,
+
   /**
    * The campaignId for a valid campaign (EDH only - required)
    */
