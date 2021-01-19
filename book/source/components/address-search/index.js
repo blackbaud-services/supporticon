@@ -102,12 +102,12 @@ class AddressSearch extends Component {
   }
 
   renderLabel () {
-    const { onCancel, onCancelLabel, required } = this.props
+    const { onCancel, onCancelLabel, label, required } = this.props
 
     return (
       <Grid spacing={{ x: 0.5 }}>
         <GridColumn xs={5}>
-          <span>Address</span>
+          <span>{label}</span>
           {required && (
             <Section foreground='danger' spacing={0} tag='span'>
               *
@@ -145,6 +145,11 @@ AddressSearch.propTypes = {
   inputProps: PropTypes.object,
 
   /**
+   * The field label
+   */
+  label: PropTypes.string,
+
+  /**
    * The onCancel function to call when the user wants to enter address manually
    */
   onCancel: PropTypes.func,
@@ -161,6 +166,7 @@ AddressSearch.propTypes = {
 }
 
 AddressSearch.defaultProps = {
+  label: 'Address',
   onCancelLabel: 'Enter manually'
 }
 
