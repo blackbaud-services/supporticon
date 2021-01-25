@@ -164,7 +164,11 @@ class CreateFitnessForm extends Component {
 
           {includeDescription && (
             <GridColumn>
-              <InputField {...form.fields.description} {...inputField} />
+              <InputField
+                {...form.fields.description}
+                {...inputField}
+                maxLength={600}
+              />
             </GridColumn>
           )}
         </Grid>
