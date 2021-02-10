@@ -149,7 +149,7 @@ class ProviderOauthButton extends Component {
       homeUrl,
       provider,
       redirectUri,
-      slug,
+      state,
       token,
       authParams = {}
     } = this.props
@@ -178,6 +178,9 @@ class ProviderOauthButton extends Component {
         client_id: clientId,
         redirect_uri: redirectUri,
         response_type: 'code',
+        scope:
+          'activity heartrate location nutrition profile settings sleep social weight',
+        state,
         ...authParams
       }
 
@@ -291,6 +294,11 @@ ProviderOauthButton.propTypes = {
    * The slug of the existing user's page (used when connecting JG account to Fitbit)
    */
   slug: PropTypes.string,
+
+  /**
+   * The state includes semi-colon seperated string containing token, page slug, and measurement metric (required when connecting JG account to Fitbit)
+   */
+  state: PropTypes.string,
 
   /**
    * Home URl that our oauth handler (oauth.blackbaud-sites.com) will redirect to

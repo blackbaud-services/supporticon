@@ -27,9 +27,10 @@ You can disable the default popup functionality by setting `popup` to false.
 <ProviderOauthButton
   clientId='26de0618f8469b55bee0e134c56e938da64566234dd935855daec36c294a5a65'
   redirectUri='https://oauth.blackbaud-sites.com'
-  popup={false}
-  provider='mapmyfitness'
-  label='Connect with Map My Fitness'
+  provider='fitbit'
+  label='Connect with Fitbit'
+  authParams={{ expires_in: 604800 }},
+  state=`${user.token};${page.slug};METRIC;WALK`
 />
 ```
 
