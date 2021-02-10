@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import URL from 'url-parse'
 import omit from 'lodash/omit'
-import snakeCase from 'lodash/snakeCase'
 import { parseUrlParams } from '../../utils/params'
 import { toPromise } from '../../utils/promise'
-import { getBaseURL, isJustGiving, servicesAPI } from '../../utils/client'
+import { servicesAPI } from '../../utils/client'
 import {
   getLocalStorageItem,
   setLocalStorageItem
@@ -146,7 +145,6 @@ class ProviderOauthButton extends Component {
   providerUrl () {
     const {
       clientId,
-      homeUrl,
       provider,
       redirectUri,
       state,
