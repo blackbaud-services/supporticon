@@ -1,0 +1,73 @@
+version: 2.1
+
+parameters:
+  PRISMIC_DOCUMENT_REF:
+    type: string
+    default: ""
+
+orbs:
+  aws-cli: circleci/aws-cli@1.3.1
+
+workflows:
+  version: 2
+  master:
+    jobs:
+      - publish:
+          filters:
+            branches:
+              only: master
+
+commands:
+  install:
+    steps:
+      - checkout
+      - aws-cli/install
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies 📦
+          command: yarn install --ignore-engines
+      - save_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ./node_modules
+  lint:
+    steps:
+      - run:
+          name: Lint 🛠
+          command: yarn test
+
+  prepare:
+    steps:
+      - run:
+          name: Prepare for NPM Publish
+          command: yarn deploy:prepare
+      - run:
+          name: Build Styleguide
+          command: yarn build:docs
+
+  deploy:
+    steps:
+      name: Deploy Styleguide
+      command: yarn docs:deploy
+    steps:
+      name: Publish to NPM
+      command: |
+            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+            npm publish
+
+  announce:
+    steps:
+      name: Announce Release
+      command: yarn announce
+
+jobs:
+  publish:
+    docker:
+      - image: circleci/node:6
+    steps:
+      - install
+      - lint
+      - prepare
+      - deploy
+      - announce

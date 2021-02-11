@@ -16,7 +16,9 @@
     "book:build": "npm run book:prepare && rm -rf styleguide/book && gitbook build . styleguide/book",
     "styleguide:build": "styleguidist build",
     "docs:build": "npm run styleguide:build && npm run book:build",
-    "deploy:prepare": "npm run build && gulp npm-prepare"
+    "deploy:prepare": "npm run build && gulp npm-prepare",
+    "docs:deploy": "gh-pages -d styleguide",
+    "announce": "./bin/announce"
   },
   "repository": {
     "type": "git",
