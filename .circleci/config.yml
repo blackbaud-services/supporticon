@@ -10,7 +10,10 @@ orbs:
 
 workflows:
   version: 2
-  master:
+  build:
+    jobs:
+      - build
+  publish:
     jobs:
       - publish:
           filters:
@@ -48,26 +51,29 @@ commands:
 
   deploy:
     steps:
-      name: Deploy Styleguide
-      command: yarn docs:deploy
-    steps:
-      name: Publish to NPM
-      command: |
-            npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
-            npm publish
-
-  announce:
-    steps:
-      name: Announce Release
-      command: yarn announce
+      - run:
+          name: Deploy Styleguide
+          command: yarn docs:deploy
+      - run:
+          name: Publish to NPM
+          command: |
+              npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+              npm publish
+      - run:
+          name: Announce Release
+          command: yarn announce
 
 jobs:
-  publish:
+  build:
     docker:
       - image: circleci/node:6
     steps:
       - install
       - lint
       - prepare
+
+  publish:
+    docker:
+      - image: circleci/node:6
+    steps:
       - deploy
-      - announce
