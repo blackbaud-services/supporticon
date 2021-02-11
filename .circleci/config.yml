@@ -1,0 +1,75 @@
+version: 2.1
+
+parameters:
+  PRISMIC_DOCUMENT_REF:
+    type: string
+    default: ""
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
+  publish:
+    jobs:
+      - publish:
+          filters:
+            branches:
+              only: master
+
+commands:
+  install:
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies 📦
+          command: yarn install --ignore-engines
+      - save_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ./node_modules
+  lint:
+    steps:
+      - run:
+          name: Lint 🛠
+          command: yarn test
+
+  prepare:
+    steps:
+      - run:
+          name: Prepare for NPM Publish
+          command: yarn deploy:prepare
+      - run:
+          name: Build Styleguide
+          command: yarn docs:build
+
+  deploy:
+    steps:
+      - run:
+          name: Deploy Styleguide
+          command: yarn docs:deploy
+      - run:
+          name: Publish to NPM
+          command: |
+              npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+              npm publish
+      - run:
+          name: Announce Release
+          command: yarn announce
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:6
+    steps:
+      - install
+      - lint
+      - prepare
+
+  publish:
+    docker:
+      - image: circleci/node:6
+    steps:
+      - deploy

@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import URL from 'url-parse'
 import omit from 'lodash/omit'
-import snakeCase from 'lodash/snakeCase'
 import { parseUrlParams } from '../../utils/params'
 import { toPromise } from '../../utils/promise'
-import { getBaseURL, isJustGiving, servicesAPI } from '../../utils/client'
+import { servicesAPI } from '../../utils/client'
 import {
   getLocalStorageItem,
   setLocalStorageItem
@@ -70,7 +69,9 @@ class ProviderOauthButton extends Component {
           event => {
             const data = event.data
             const isValid =
-              event.origin === validSourceOrigin || data === 'strava connected'
+              event.origin === validSourceOrigin ||
+              data === 'strava connected' ||
+              data === 'fitbit connected'
 
             if (isValid && !this.state.success) {
               return this.handleSuccess(data)
@@ -144,14 +145,14 @@ class ProviderOauthButton extends Component {
   providerUrl () {
     const {
       clientId,
-      homeUrl,
       provider,
       redirectUri,
+      state,
       token,
       authParams = {}
     } = this.props
 
-    if (isJustGiving() && provider === 'strava') {
+    if (provider === 'strava') {
       const baseURL = 'https://www.strava.com/oauth/authorize'
 
       const params = {
@@ -168,18 +169,16 @@ class ProviderOauthButton extends Component {
         .join('&')
 
       return `${baseURL}?${urlParams}`
-    } else if (isJustGiving()) {
-      if (provider !== 'justgiving') {
-        throw new Error(
-          `JustGiving does not support ${provider} authentication`
-        )
-      }
+    } else if (provider === 'fitbit') {
+      const baseURL = 'https://www.fitbit.com/oauth2/authorize'
 
       const params = {
         client_id: clientId,
         redirect_uri: redirectUri,
         response_type: 'code',
-        state: homeUrl && encodeURIComponent(`home=${homeUrl}`),
+        scope:
+          'activity heartrate location nutrition profile settings sleep social weight',
+        state,
         ...authParams
       }
 
@@ -187,27 +186,9 @@ class ProviderOauthButton extends Component {
         .map(key => `${key}=${encodeURIComponent(params[key])}`)
         .join('&')
 
-      const baseURL = getBaseURL().replace('api', 'identity')
-
-      return `${baseURL}/connect/authorize?${urlParams}&scope=openid+profile+email+account+fundraise+offline_access`
+      return `${baseURL}?${urlParams}`
     } else {
-      const edhRedirectUri = homeUrl
-        ? `${redirectUri}?state=${encodeURIComponent(`home=${homeUrl}`)}`
-        : redirectUri
-
-      const params = {
-        clientId,
-        forceProvider: provider,
-        redirectUri: edhRedirectUri,
-        responseType: 'token',
-        ...authParams
-      }
-
-      const urlParams = Object.keys(params)
-        .map(key => `${snakeCase(key)}=${encodeURIComponent(params[key])}`)
-        .join('&')
-
-      return `${getBaseURL()}/oauth/authorize?${urlParams}`
+      throw new Error(`JustGiving does not support ${provider} authentication`)
     }
   }
 
@@ -237,6 +218,7 @@ class ProviderOauthButton extends Component {
         disabled={isLoading}
         {...actionProps}
         {...omit(props, [
+          'authParams',
           'clientId',
           'homeUrl',
           'onClose',
@@ -262,7 +244,7 @@ class ProviderOauthButton extends Component {
 
 ProviderOauthButton.propTypes = {
   /**
-   * The EDH OAuthApplication client ID
+   * The OAuthApplication client ID
    */
   clientId: PropTypes.string.isRequired,
 
@@ -294,13 +276,7 @@ ProviderOauthButton.propTypes = {
   /**
    * The third-party provider to connect with
    */
-  provider: PropTypes.oneOf([
-    'facebook',
-    'mapmyfitness',
-    'strava',
-    'fitbit',
-    'justgiving'
-  ]),
+  provider: PropTypes.oneOf(['strava', 'fitbit', 'justgiving']),
 
   /**
    * A valid return_to url for the specified OAuthApplication
@@ -311,6 +287,16 @@ ProviderOauthButton.propTypes = {
    * The token of the existing user (used when connecting JG account to Strava)
    */
   token: PropTypes.string,
+
+  /**
+   * The slug of the existing user's page (used when connecting JG account to Fitbit)
+   */
+  slug: PropTypes.string,
+
+  /**
+   * The state includes semi-colon seperated string containing token, page slug, and measurement metric (required when connecting JG account to Fitbit)
+   */
+  state: PropTypes.string,
 
   /**
    * Home URl that our oauth handler (oauth.blackbaud-sites.com) will redirect to
@@ -324,10 +310,10 @@ ProviderOauthButton.propTypes = {
 }
 
 ProviderOauthButton.defaultProps = {
-  label: 'Login with Facebook',
+  label: 'Login with JustGiving',
   popup: true,
   popupWindowFeatures: 'width=600,height=900,status=1',
-  provider: 'facebook'
+  provider: 'justgiving'
 }
 
 export default ProviderOauthButton
