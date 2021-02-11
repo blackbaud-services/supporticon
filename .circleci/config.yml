@@ -7,9 +7,9 @@ parameters:
 
 workflows:
   version: 2
-  test:
+  staging:
     jobs:
-      - test:
+      - staging:
         filters:
           branches:
             ignore: master
@@ -40,20 +40,28 @@ commands:
           name: Lint 🛠
           command: yarn test
 
-  prepare:
+  styleguide:
+    steps:
+      - run:
+          name: Build Styleguide
+          command: yarn docs:build
+      - run:
+          name: Configure Git
+          command: |
+              git config user.email $GITHUB_EMAIL
+              git config user.name $GITHUB_NAME
+      - add_ssh_keys:
+          fingerprints:
+              - $GITHUB_SSH
+      - run:
+          name: Deploy Styleguide
+          command: yarn docs:deploy
+
+  publish:
     steps:
       - run:
           name: Prepare for NPM Publish
           command: yarn deploy:prepare
-      - run:
-          name: Build Styleguide
-          command: yarn docs:build
-
-  deploy:
-    steps:
-      - run:
-          name: Deploy Styleguide
-          command: yarn docs:deploy
       - run:
           name: Publish to NPM
           command: |
@@ -64,7 +72,7 @@ commands:
           command: yarn announce
 
 jobs:
-  test:
+  staging:
     docker:
       - image: circleci/node:6
     steps:
@@ -77,5 +85,4 @@ jobs:
     steps:
       - install
       - lint
-      - prepare
-      - deploy
+      - publish
