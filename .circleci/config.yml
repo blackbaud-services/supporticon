@@ -64,7 +64,7 @@ commands:
           command: yarn deploy:prepare
       - run:
           name: Publish to NPM
-          working_directory: ~/npm-supporticon
+          working_directory: /npm-supporticon
           command: |
               npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
               npm publish
