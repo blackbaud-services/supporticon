@@ -47,7 +47,7 @@ commands:
           command: yarn deploy:prepare
       - run:
           name: Build Styleguide
-          command: yarn build:docs
+          command: yarn docs:build
 
   deploy:
     steps:
