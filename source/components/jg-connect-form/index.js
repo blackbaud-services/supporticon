@@ -9,7 +9,7 @@ import {
   showPopup
 } from '../../utils/oauth'
 import { parseUrlParams } from '../../utils/params'
-import { getIsMobile } from '../../utils/window'
+import { getCurrentUrl, getIsMobile } from '../../utils/window'
 import {
   checkAccountAvailability,
   connectToken
@@ -229,7 +229,7 @@ JGConnectForm.propTypes = {
   /**
    * The JG application key
    */
-  clientId: PropTypes.string.isRequired,
+  clientId: PropTypes.string,
 
   /**
    * Props to be passed to the Form component
@@ -269,7 +269,7 @@ JGConnectForm.propTypes = {
   /**
    * The url to redirect to on successful authentication
    */
-  redirectUri: PropTypes.string.isRequired,
+  redirectUri: PropTypes.string,
 
   /**
    * Show Yes/No buttons instead of an email check form
@@ -278,7 +278,10 @@ JGConnectForm.propTypes = {
 }
 
 JGConnectForm.defaultProps = {
-  popup: true
+  clientId: '44f34c65',
+  popup: true,
+  homeUrl: getCurrentUrl(),
+  redirectUri: 'https://oauth.blackbaud-sites.com/'
 }
 
 export default withForm(form)(JGConnectForm)
