@@ -9,6 +9,7 @@ import {
   showPopup
 } from '../../utils/oauth'
 import { parseUrlParams } from '../../utils/params'
+import { getIsMobile } from '../../utils/window'
 import {
   checkAccountAvailability,
   connectToken
@@ -73,6 +74,7 @@ class JGConnectForm extends React.Component {
 
   showOAuth (forceSignUp, email) {
     const { clientId, homeUrl, oauthParams, popup, redirectUri } = this.props
+    const isMobile = getIsMobile()
 
     return Promise.resolve()
       .then(() =>
@@ -94,7 +96,7 @@ class JGConnectForm extends React.Component {
       )
       .then(
         url =>
-          popup
+          popup && !isMobile
             ? showPopup({ url, onClose: this.handleClose })
             : (window.location.href = url)
       )
