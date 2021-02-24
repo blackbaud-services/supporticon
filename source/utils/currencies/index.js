@@ -6,6 +6,8 @@ export const currencyCode = (country = 'UK') => {
       return 'USD'
     case 'ie':
       return 'EUR'
+    case 'nz':
+      return 'NZD'
     case 'sg':
       return 'SGD'
     case 'hk':
