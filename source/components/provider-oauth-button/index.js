@@ -4,7 +4,7 @@ import URL from 'url-parse'
 import omit from 'lodash/omit'
 import { parseUrlParams } from '../../utils/params'
 import { toPromise } from '../../utils/promise'
-import { servicesAPI } from '../../utils/client'
+import { getBaseURL, servicesAPI } from '../../utils/client'
 import {
   getLocalStorageItem,
   setLocalStorageItem
@@ -145,6 +145,7 @@ class ProviderOauthButton extends Component {
   providerUrl () {
     const {
       clientId,
+      homeUrl,
       provider,
       redirectUri,
       state,
@@ -152,7 +153,23 @@ class ProviderOauthButton extends Component {
       authParams = {}
     } = this.props
 
-    if (provider === 'strava') {
+    if (provider === 'justgiving') {
+      const params = {
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: 'code',
+        state: homeUrl && encodeURIComponent(`home=${homeUrl}`),
+        ...authParams
+      }
+
+      const urlParams = Object.keys(params)
+        .map(key => `${key}=${encodeURIComponent(params[key])}`)
+        .join('&')
+
+      const baseURL = getBaseURL().replace('api', 'identity')
+
+      return `${baseURL}/connect/authorize?${urlParams}&scope=openid+profile+email+account+fundraise+offline_access`
+    } else if (provider === 'strava') {
       const baseURL = 'https://www.strava.com/oauth/authorize'
 
       const params = {
