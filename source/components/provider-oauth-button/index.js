@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import URL from 'url-parse'
 import omit from 'lodash/omit'
-import { parseUrlParams } from '../../utils/params'
+import { base64EncodeParams, parseUrlParams } from '../../utils/params'
 import { toPromise } from '../../utils/promise'
 import { getBaseURL, servicesAPI } from '../../utils/client'
 import {
@@ -98,7 +98,7 @@ class ProviderOauthButton extends Component {
         .catch(() => this.setState({ status: 'empty', success: false }))
     }
 
-    if (provider === 'justgiving') {
+    if (['justgiving', 'facebook'].indexOf(provider) > -1) {
       Promise.resolve()
         .then(() => this.setState({ success: true }))
         .then(() => servicesAPI.post('/v1/justgiving/oauth/connect', data))
@@ -153,12 +153,16 @@ class ProviderOauthButton extends Component {
       authParams = {}
     } = this.props
 
-    if (provider === 'justgiving') {
+    if (['justgiving', 'facebook'].indexOf(provider) > -1) {
       const params = {
         client_id: clientId,
         redirect_uri: redirectUri,
         response_type: 'code',
         state: homeUrl && encodeURIComponent(`home=${homeUrl}`),
+        acr_values:
+          provider === 'facebook'
+            ? `encodedOptions:${base64EncodeParams({ forceFacebook: true })}`
+            : undefined,
         ...authParams
       }
 
@@ -293,7 +297,7 @@ ProviderOauthButton.propTypes = {
   /**
    * The third-party provider to connect with
    */
-  provider: PropTypes.oneOf(['strava', 'fitbit', 'justgiving']),
+  provider: PropTypes.oneOf(['strava', 'facebook', 'fitbit', 'justgiving']),
 
   /**
    * A valid return_to url for the specified OAuthApplication
