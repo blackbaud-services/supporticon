@@ -58,7 +58,9 @@ export const deserializeFitnessActivity = (activity = required()) => {
     activity.Type ||
     ''
   ).toLowerCase()
-  const source = (activity.type || activity.ActivityType || '').toLowerCase()
+
+  const sourceId = activity.ExternalId || activity.legacyId || ''
+  const source = sourceId.indexOf('JG:MANUAL') === 0 ? 'manual' : 'fitness'
 
   return {
     campaign: activity.CampaignGuid,
@@ -72,10 +74,7 @@ export const deserializeFitnessActivity = (activity = required()) => {
     eventId: activity.EventId,
     id: getFitnessId(source, activity),
     legacyId: activity.Id,
-    manual:
-      activity.ActivityType === 'Manual' ||
-      activity.ActivityType === 'manual' ||
-      activity.type === 'MANUAL',
+    manual: source === 'manual',
     page: activity.PageGuid,
     polyline: activity.mapPolyline,
     slug: activity.PageShortName,
