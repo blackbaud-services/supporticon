@@ -22,7 +22,7 @@ class PageSearch extends Component {
   componentDidMount () {
     const { campaign, type } = this.props
 
-    if (isJustGiving() && type !== 'individual') {
+    if (isJustGiving() && !!campaign && type !== 'individual') {
       fetchTeams({ campaign, limit: 1000 })
         .then(teams => teams.map(deserializeTeam))
         .then(teams =>
