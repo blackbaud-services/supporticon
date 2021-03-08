@@ -59,7 +59,7 @@ class Leaderboard extends Component {
 
     return groups.filter(item => {
       const excluded = Array.isArray(values) ? values : values.split(',')
-      return excluded.indexOf(item.group.value.toString()) === -1
+      return excluded.indexOf(item.tagValue.toString()) === -1
     })
   }
 
