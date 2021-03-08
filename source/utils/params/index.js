@@ -1,4 +1,5 @@
 import keys from 'lodash/keys'
+import { Base64 } from 'js-base64'
 
 export const required = () => {
   throw new Error('Required parameter not supplied')
@@ -107,6 +108,5 @@ export const base64EncodeParams = params => {
   const result = Object.keys(params)
     .filter(key => !!params[key])
     .reduce((result, key) => ({ ...result, [key]: params[key] }), {})
-
-  return window.btoa(JSON.stringify(result))
+  return Base64.encode(JSON.stringify(result))
 }
