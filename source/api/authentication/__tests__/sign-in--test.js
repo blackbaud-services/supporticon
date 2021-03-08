@@ -1,5 +1,5 @@
 import moxios from 'moxios'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 import { signIn } from '..'
 
 describe('Authentication | Sign In', () => {
@@ -91,15 +91,17 @@ describe('Authentication | Sign In', () => {
         baseURL: 'https://api.justgiving.com',
         headers: { 'x-api-key': 'abcd1234' }
       })
+      moxios.install(servicesAPI)
       moxios.install(instance)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
+      moxios.uninstall(servicesAPI)
       moxios.uninstall(instance)
     })
 
-    it('should hit the supporter api with the correct url and data', done => {
+    it('should hit the JG api with the correct url and data', done => {
       signIn({
         email: 'test@gmail.com',
         password: 'password'
@@ -108,6 +110,22 @@ describe('Authentication | Sign In', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.eql('https://api.justgiving.com/v1/account')
+        done()
+      })
+    })
+
+    it('should hit the IAM api with the correct url and data', done => {
+      signIn({
+        email: 'test@gmail.com',
+        password: 'password',
+        authType: 'Bearer'
+      })
+
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.eql(
+          'https://api.blackbaud.services/v1/justgiving/iam/login'
+        )
         done()
       })
     })

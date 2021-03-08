@@ -22,7 +22,7 @@ class LoginForm extends Component {
   handleSubmit (e) {
     e.preventDefault()
 
-    const { clientId, country, form, onSuccess } = this.props
+    const { authType, clientId, country, form, onSuccess } = this.props
 
     return form.submit().then(data => {
       this.setState({
@@ -31,19 +31,18 @@ class LoginForm extends Component {
       })
 
       return signIn({
+        authType,
         clientId,
         country,
         ...data
       })
-        .then(result => {
-          this.setState({ status: 'fetched' })
-
-          return onSuccess(result)
-        })
+        .then(onSuccess)
+        .then(() => this.setState({ status: 'fetched' }))
         .catch(error => {
           const message = get(error, 'data.error.message')
 
           switch (error.status) {
+            case 400:
             case 401:
             case 404:
               return this.setState({
@@ -78,6 +77,11 @@ class LoginForm extends Component {
         isLoading={status === 'fetching'}
         noValidate
         onSubmit={this.handleSubmit}
+        icon={
+          status === 'fetching'
+            ? { name: 'loading', spin: true }
+            : { name: 'lock' }
+        }
         submit={submit}
         {...formComponent}
       >
@@ -133,6 +137,7 @@ LoginForm.propTypes = {
 }
 
 LoginForm.defaultProps = {
+  authType: 'Bearer',
   disableInvalidForm: false,
   fields: {},
   submit: 'Log in'

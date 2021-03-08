@@ -4,6 +4,7 @@ import { required } from '../../utils/params'
 import {
   checkAccountAvailability as checkJGAccountAvailability,
   connectToken as connectJGToken,
+  refreshToken as refreshJGToken,
   resetPassword as resetJGPassword,
   signIn as loginJGAccount,
   signUp as registerJGAccount
@@ -38,6 +39,14 @@ export const checkAccountAvailability = (params = required()) => {
 export const connectToken = (params = required()) => {
   return isJustGiving()
     ? connectJGToken(params)
+    : () => {
+      throw new Error('Method not supported')
+    }
+}
+
+export const refreshToken = (params = required()) => {
+  return isJustGiving()
+    ? refreshJGToken(params)
     : () => {
       throw new Error('Method not supported')
     }

@@ -30,6 +30,7 @@ class SignupForm extends Component {
     e.preventDefault()
 
     const {
+      authType,
       clientId,
       country = 'au',
       form,
@@ -55,6 +56,7 @@ class SignupForm extends Component {
       const dataPayload = isJustGiving()
         ? merge(
           {
+            authType,
             title: data.title || 'Other',
             ...data
           },
@@ -77,15 +79,46 @@ class SignupForm extends Component {
         }
 
       return signUp(dataPayload)
-        .then(result => {
-          this.setState({ status: 'fetched' })
-
-          return onSuccess(result)
-        })
+        .then(onSuccess)
+        .then(() => this.setState({ status: 'fetched' }))
         .catch(error => {
+          let errors = []
+
           switch (error.status) {
+            case 400:
+            case 409:
+              errors = get(error, 'data.Errors') || []
+
+              return this.setState({
+                status: 'failed',
+                errors: errors.map((error, key) => {
+                  switch (error.ErrorMessage) {
+                    case 'EmailAddress is in use.':
+                      return {
+                        message: (
+                          <div key={key}>
+                            <p>Your password is incorrect.</p>
+                            <p>
+                              Please try again, or you can{' '}
+                              <a
+                                href={
+                                  resetPasswordUrl || defaultResetPasswordUrl
+                                }
+                                target={resetPasswordTarget || '_blank'}
+                              >
+                                reset your {platform} password here.
+                              </a>
+                            </p>
+                          </div>
+                        )
+                      }
+                    default:
+                      return { message: error.ErrorMessage }
+                  }
+                })
+              })
             case 422:
-              const errors = get(error, 'data.error.errors') || []
+              errors = get(error, 'data.error.errors') || []
 
               return this.setState({
                 status: 'failed',
@@ -166,6 +199,11 @@ class SignupForm extends Component {
     return (
       <Form
         errors={errors}
+        icon={
+          status === 'fetching'
+            ? { name: 'loading', spin: true }
+            : { name: 'lock' }
+        }
         isDisabled={disableInvalidForm && form.invalid}
         isLoading={status === 'fetching'}
         noValidate
@@ -319,6 +357,7 @@ SignupForm.propTypes = {
 }
 
 SignupForm.defaultProps = {
+  authType: 'Bearer',
   disableInvalidForm: false,
   fields: {},
   submit: 'Sign Up',
@@ -372,7 +411,7 @@ const form = props => {
         autoComplete: 'off',
         validators: [
           validators.required('Password is a required field'),
-          validators.greaterThan(7, 'Must be at least 8 characters')
+          validators.greaterThan(11, 'Must be at least 12 characters')
         ]
       }
     },

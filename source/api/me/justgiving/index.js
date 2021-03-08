@@ -65,7 +65,7 @@ export const fetchCurrentUser = ({
   token = required(),
   authType = 'Basic'
 }) => {
-  if (authType === 'Basic') {
+  if (authType === 'Basic' || token.length > 32) {
     return get(
       'v1/account',
       {},

@@ -4,7 +4,8 @@ import URL from 'url-parse'
 import omit from 'lodash/omit'
 import { base64EncodeParams, parseUrlParams } from '../../utils/params'
 import { toPromise } from '../../utils/promise'
-import { getBaseURL, servicesAPI } from '../../utils/client'
+import { getBaseURL } from '../../utils/client'
+import { connectToken } from '../../api/authentication'
 import {
   getLocalStorageItem,
   setLocalStorageItem
@@ -101,12 +102,7 @@ class ProviderOauthButton extends Component {
     if (['justgiving', 'facebook'].indexOf(provider) > -1) {
       Promise.resolve()
         .then(() => this.setState({ success: true }))
-        .then(() => servicesAPI.post('/v1/justgiving/oauth/connect', data))
-        .then(response => response.data)
-        .then(data => ({
-          token: data.access_token,
-          refreshToken: data.refresh_token
-        }))
+        .then(() => connectToken(data))
         .then(handleAuthSuccess)
         .catch(error => {
           this.setState({ status: 'empty' })
