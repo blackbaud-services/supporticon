@@ -1,6 +1,6 @@
 import moxios from 'moxios'
 import { resetPassword } from '..'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 
 describe('Authentication | Reset Password', () => {
   describe('Reset EDH User Password', () => {
@@ -52,11 +52,13 @@ describe('Authentication | Reset Password', () => {
         baseURL: 'https://api.justgiving.com',
         headers: { 'x-api-key': 'abcd1234' }
       })
+      moxios.install(servicesAPI)
       moxios.install(instance)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
+      moxios.uninstall(servicesAPI)
       moxios.uninstall(instance)
     })
 
@@ -65,14 +67,12 @@ describe('Authentication | Reset Password', () => {
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://api.justgiving.com/v1/account')
-        expect(request.url).to.contain('test@example.com')
-        expect(request.url).to.contain('requestpasswordreminder')
 
-        request.respondWith({ status: 200 }).then(response => {
-          expect(response.status).to.eql(200)
-          done()
-        })
+        expect(request.url).to.contain(
+          'https://api.blackbaud.services/v1/justgiving/iam/reset-password'
+        )
+        expect(JSON.parse(request.config.data).email).to.eql('test@example.com')
+        done()
       })
     })
 

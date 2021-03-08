@@ -1,6 +1,6 @@
 import moxios from 'moxios'
 import omit from 'lodash/omit'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 import { signUp } from '..'
 
 describe('Authentication | Sign Up', () => {
@@ -92,11 +92,13 @@ describe('Authentication | Sign Up', () => {
         baseURL: 'https://api.justgiving.com',
         headers: { 'x-api-key': 'abcd1234' }
       })
+      moxios.install(servicesAPI)
       moxios.install(instance)
     })
 
     afterEach(() => {
       updateClient({ baseURL: 'https://everydayhero.com' })
+      moxios.uninstall(servicesAPI)
       moxios.uninstall(instance)
     })
 
@@ -122,6 +124,47 @@ describe('Authentication | Sign Up', () => {
           const request = moxios.requests.mostRecent()
           const data = JSON.parse(request.config.data)
           expect(request.url).to.eql('https://api.justgiving.com/v1/account')
+          expect(data.email).to.eql('test@gmail.com')
+          done()
+        })
+      })
+
+      it('without address supplied', done => {
+        signUp({
+          firstName: 'Just',
+          lastName: 'Giving',
+          email: 'test@gmail.com',
+          password: 'password'
+        })
+
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          const data = JSON.parse(request.config.data)
+          expect(request.url).to.eql(
+            'https://api.justgiving.com/v1/account/lite'
+          )
+          expect(data.email).to.eql('test@gmail.com')
+          done()
+        })
+      })
+    })
+
+    describe('should hit the IAM api with the correct url and data', () => {
+      it('with address supplied', done => {
+        signUp({
+          authType: 'Bearer',
+          firstName: 'Just',
+          lastName: 'Giving',
+          email: 'test@gmail.com',
+          password: 'password'
+        })
+
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+          const data = JSON.parse(request.config.data)
+          expect(request.url).to.eql(
+            'https://api.blackbaud.services/v1/justgiving/iam/register'
+          )
           expect(data.email).to.eql('test@gmail.com')
           done()
         })
