@@ -64,7 +64,9 @@ class JoinTeamForm extends React.Component {
       const params = {
         id: data.team.owner || data.team.id,
         page: pageId,
+        pageId,
         pageSlug: pageSlug,
+        teamId: data.team.id,
         teamSlug: data.team.slug,
         token
       }

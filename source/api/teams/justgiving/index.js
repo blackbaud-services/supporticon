@@ -235,7 +235,9 @@ export const createTeam = params => {
 
 export const joinTeam = ({
   authType = 'Bearer',
+  pageId = required(),
   pageSlug = required(),
+  teamId = required(),
   teamSlug = required(),
   token = required()
 }) => {
@@ -244,7 +246,10 @@ export const joinTeam = ({
   }
 
   const payload = {
-    pageShortName: pageSlug
+    pageId,
+    pageSlug,
+    teamId,
+    teamSlug
   }
 
   const options = {
@@ -253,12 +258,9 @@ export const joinTeam = ({
     }
   }
 
-  return client
-    .put(`/v2/teams/join/${teamSlug}`, payload, options)
-    .then(
-      res =>
-        res.errorMessage ? Promise.reject(new Error(res.errorMessage)) : res
-    )
+  return client.servicesAPI
+    .post('/v1/justgiving/teams/join', payload, options)
+    .then(response => response.data)
 }
 
 export const updateTeam = (
