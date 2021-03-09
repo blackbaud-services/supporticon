@@ -1,6 +1,6 @@
 import moxios from 'moxios'
 import { joinTeam } from '..'
-import { instance, updateClient } from '../../../utils/client'
+import { instance, servicesAPI, updateClient } from '../../../utils/client'
 
 describe('Join a Team', () => {
   beforeEach(() => {
@@ -40,11 +40,13 @@ describe('Join a Team', () => {
   describe('Join JG Team', () => {
     beforeEach(() => {
       moxios.install(instance)
+      moxios.install(servicesAPI)
       updateClient({ baseURL: 'https://api.justgiving.com' })
     })
 
     afterEach(() => {
       moxios.uninstall(instance)
+      moxios.uninstall(servicesAPI)
       updateClient({ baseURL: 'https://everydayhero.com' })
     })
 
@@ -55,22 +57,21 @@ describe('Join a Team', () => {
 
     it('hits the JG api with the correct url and data', done => {
       joinTeam({
-        teamSlug: 'my-team',
+        pageId: '4321-9876-xyz4567-1234',
         pageSlug: 'my-page',
+        teamId: '1234-5436-abc1234-9876',
+        teamSlug: 'my-team',
         token: '012345abcdef'
       })
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        const data = JSON.parse(request.config.data)
-
-        expect(request.url).to.contain(
-          'https://api.justgiving.com/v2/teams/join/my-team'
+        expect(request.url).to.eql(
+          'https://api.blackbaud.services/v1/justgiving/teams/join'
         )
         expect(request.config.headers['Authorization']).to.eql(
           'Bearer 012345abcdef'
         )
-        expect(data.pageShortName).to.eql('my-page')
         done()
       })
     })
