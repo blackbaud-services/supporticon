@@ -275,6 +275,35 @@ export const updateTeam = (
   }
 ) => {
   const headers = { Authorization: `Bearer ${token}` }
+  const prepareStory = story =>
+    `[{"type":"paragraph","nodes":[{"type":"text","ranges":[{"text":"${story}"}]}]}]`
+  const update = (url, data) =>
+    client.servicesAPI.put(
+      `/v1/justgiving/proxy/campaigns/v1/teams/${id}/${url}`,
+      data,
+      { headers }
+    )
+
+  if (token.length > 32) {
+    return Promise.all(
+      [
+        update('details/name', {
+          name: name.replace(teamNameRegex, '').substring(0, 255),
+          teamGuid: id
+        }),
+        (story || image) &&
+          update('details', {
+            coverPhotoImageId: image,
+            story: prepareStory(story)
+          }),
+        target &&
+          update('fundraising', {
+            targetAmount: target,
+            currencyCode: currency
+          })
+      ].filter(Boolean)
+    )
+  }
 
   const payload = {
     teamGuid: id,
