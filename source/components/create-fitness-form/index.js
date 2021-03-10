@@ -349,7 +349,7 @@ const form = props => {
         ...(props.includeDescription && {
           description: {
             label: 'Description',
-            type: 'textarea',
+            type: 'contenteditable',
             placeholder: 'Describe your activity...'
           }
         }),
