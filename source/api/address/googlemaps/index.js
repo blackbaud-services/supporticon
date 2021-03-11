@@ -37,7 +37,8 @@ export const deserializePlace = address => {
     line2: line1.length > 0 ? streetAddress : '',
     townOrCity:
       setAddressProp('locality', 'short_name') ||
-      setAddressProp('administrative_area_level_2', 'short_name'),
+      setAddressProp('administrative_area_level_2', 'short_name') ||
+      setAddressProp('postal_town', 'short_name'),
     countyOrState: setAddressProp('administrative_area_level_1'),
     country: setAddressProp('country'),
     postcodeOrZipcode: setAddressProp('postal_code')
