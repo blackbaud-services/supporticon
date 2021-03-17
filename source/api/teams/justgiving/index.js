@@ -254,7 +254,8 @@ export const joinTeam = ({
 
   const options = {
     headers: {
-      Authorization: `${authType} ${token}`
+      Authorization: `${authType} ${token}`,
+      'x-api-key': client.instance.defaults.headers['x-api-key']
     }
   }
 
