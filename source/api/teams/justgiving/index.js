@@ -2,7 +2,7 @@ import get from 'lodash/get'
 import find from 'lodash/find'
 import slugify from 'slugify'
 import * as client from '../../../utils/client'
-import { fetchPage, deserializePage } from '../../pages'
+import { fetchPages, deserializePage } from '../../pages'
 import { paramsSerializer, required } from '../../../utils/params'
 import { baseUrl, imageUrl, parseText } from '../../../utils/justgiving'
 
@@ -28,18 +28,7 @@ export const deserializeTeam = team => {
       get(team, 'captain.lastName')
     ].join(' '),
     members: members.map(member => {
-      const page = member.pageId
-        ? deserializePage(member)
-        : {
-          id: member.fundraisingPageGuid,
-          name: member.fundraisingPageName,
-          slug: member.fundraisingPageShortName,
-          status: member.fundraisingPageStatus,
-          url: `${baseUrl()}/fundraising/${team.fundraisingPageShortName}`,
-          userId: member.userGuid,
-          uuid: member.fundraisingPageGuid
-        }
-
+      const page = deserializePage(member)
       const pageFitness = find(membersFitness, p => p.ID === page.uuid) || {}
 
       return {
@@ -133,11 +122,9 @@ export const fetchTeamBySlug = (slug = required(), options = {}) => {
     })
     .then(team => {
       if (options.includePages) {
-        return Promise.all(
-          team.membership.members.map(page =>
-            fetchPage(page.fundraisingPageShortName)
-          )
-        ).then(members => ({
+        const ids = team.membership.members.map(p => p.fundraisingPageGuid)
+
+        return fetchPages({ allPages: true, ids }).then(members => ({
           ...team,
           membership: { ...team.membership, members }
         }))
