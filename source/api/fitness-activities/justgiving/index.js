@@ -43,6 +43,25 @@ const getExternalId = (source, activity) => {
   }
 }
 
+const getFitnessApp = (sourceId, externalId) => {
+  if (sourceId.indexOf('STRAVA') !== -1) {
+    return {
+      product: 'strava',
+      sourceUrl: `https://www.strava.com/activities/${externalId}`
+    }
+  } else if (sourceId.indexOf('FITBIT') !== -1) {
+    return {
+      product: 'fitbit',
+      sourceUrl: `https://www.fitbit.com/activities/exercise/${externalId}`
+    }
+  } else {
+    return {
+      product: null,
+      sourceUrl: null
+    }
+  }
+}
+
 const getMetricValue = metric => {
   switch (typeof metric) {
     case 'object':
@@ -61,6 +80,7 @@ export const deserializeFitnessActivity = (activity = required()) => {
 
   const sourceId = activity.ExternalId || activity.legacyId || ''
   const source = sourceId.indexOf('JG:MANUAL') === 0 ? 'manual' : 'fitness'
+  const fitnessApp = getFitnessApp(sourceId, getExternalId(source, activity))
 
   return {
     campaign: activity.CampaignGuid,
@@ -72,6 +92,7 @@ export const deserializeFitnessActivity = (activity = required()) => {
     elevation: getMetricValue(activity.elevation || activity.Elevation),
     externalId: getExternalId(source, activity),
     eventId: activity.EventId,
+    fitnessApp: fitnessApp.product,
     id: getFitnessId(source, activity),
     legacyId: activity.Id,
     manual: source === 'manual',
@@ -79,11 +100,7 @@ export const deserializeFitnessActivity = (activity = required()) => {
     polyline: activity.mapPolyline,
     slug: activity.PageShortName,
     source,
-    sourceUrl:
-      source === 'fitness'
-        ? `https://www.strava.com/activities/${activity.ExternalId ||
-            activity.activityId}`
-        : null,
+    sourceUrl: fitnessApp.sourceUrl,
     teamId: activity.TeamGuid,
     title: activity.Title || activity.title,
     type: activityType
