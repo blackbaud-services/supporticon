@@ -103,7 +103,7 @@ describe('Fetch Donation Totals', () => {
         const secondRequest = moxios.requests.at(1)
 
         expect(firstRequest.url).to.equal(
-          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign'
+          'https://api.justgiving.com/campaigns/v2/campaign/my-campaign'
         )
         expect(secondRequest.url).to.equal(
           'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign/pages'
