@@ -1,5 +1,5 @@
 import get from 'lodash/get'
-import client, { servicesAPI } from '../../../utils/client'
+import client from '../../../utils/client'
 import { baseUrl, imageUrl, parseText } from '../../../utils/justgiving'
 import { required } from '../../../utils/params'
 
