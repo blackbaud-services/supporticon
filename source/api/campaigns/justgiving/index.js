@@ -1,5 +1,5 @@
 import get from 'lodash/get'
-import { servicesAPI } from '../../../utils/client'
+import client, { servicesAPI } from '../../../utils/client'
 import { baseUrl, imageUrl, parseText } from '../../../utils/justgiving'
 import { required } from '../../../utils/params'
 
@@ -16,9 +16,7 @@ export const fetchCampaigns = ({ ids }) => {
 }
 
 export const fetchCampaign = (id = required()) =>
-  servicesAPI
-    .get(`/v1/justgiving/campaigns/${id}`)
-    .then(response => response.data)
+  client.get(`/campaigns/v2/campaign/${id}`).then(response => response)
 
 export const fetchCampaignGroups = (id = required()) =>
   Promise.reject(new Error('This method is not supported for JustGiving'))

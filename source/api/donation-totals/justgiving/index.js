@@ -11,9 +11,9 @@ import { currencyCode } from '../../../utils/currencies'
 
 const fetchCampaignTotals = id =>
   Promise.all([
-    servicesAPI
-      .get(`/v1/justgiving/campaigns/${id}`)
-      .then(response => response.data.donationSummary),
+    client
+      .get(`/campaigns/v2/campaign/${id}`)
+      .then(response => response.donationSummary),
     servicesAPI
       .get(`/v1/justgiving/campaigns/${id}/pages`)
       .then(response => response.data.meta.totalAmount)
