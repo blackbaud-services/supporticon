@@ -38,6 +38,7 @@ export const fetchFitnessLeaderboard = ({
     return fetchLeaderboard({
       activityType,
       id: getUID(campaign),
+      limit,
       sortBy,
       tagId,
       tagValue,
