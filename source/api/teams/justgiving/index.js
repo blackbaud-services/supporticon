@@ -222,9 +222,9 @@ export const createTeam = params => {
 
 export const joinTeam = ({
   authType = 'Bearer',
-  pageId = required(),
+  pageId,
   pageSlug = required(),
-  teamId = required(),
+  teamId,
   teamSlug = required(),
   token = required()
 }) => {
