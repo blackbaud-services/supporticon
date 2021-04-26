@@ -40,10 +40,10 @@ export const deserializeTeam = team => {
     owner: get(team, 'captain.userGuid'),
     pages: members.map(page => page.fundraisingPageGuid || page.pageGuid),
     raised: get(team, 'donationSummary.totalAmount'),
-    slug: team.shortName,
-    story: parseText(team.story),
+    slug: team.shortName && team.shortName,
+    story: team.story && parseText(team.story),
     target: get(team, 'fundraisingConfiguration.targetAmount'),
-    url: `${baseUrl()}/team/${team.shortName}`,
+    url: team.shortName && `${baseUrl()}/team/${team.shortName}`,
     uuid: team.teamGuid
   }
 }
