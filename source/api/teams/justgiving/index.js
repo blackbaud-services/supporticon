@@ -252,6 +252,29 @@ export const joinTeam = ({
     .then(response => response.data)
 }
 
+export const leaveTeam = ({
+  authType = 'Bearer',
+  pageSlug = required(),
+  teamSlug = required(),
+  token = required()
+}) => {
+  if (authType === 'Basic') {
+    throw new Error('Teams does not support basic authentication')
+  }
+
+  const options = {
+    headers: {
+      Authorization: `${authType} ${token}`,
+      'x-api-key': client.instance.defaults.headers['x-api-key'],
+      'x-application-key': client.instance.defaults.headers['x-application-key']
+    }
+  }
+
+  return client.servicesAPI
+    .post('/v1/justgiving/teams/leave', { pageSlug, teamSlug }, options)
+    .then(response => response.data)
+}
+
 export const updateTeam = (
   id = required(),
   {

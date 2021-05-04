@@ -4,3 +4,4 @@ node_modules
 npm-supporticon
 styleguide
 npm-debug.log
+/.vscode/
