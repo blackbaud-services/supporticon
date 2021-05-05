@@ -113,9 +113,9 @@ export const fetchTeamBySlug = (slug = required(), options = {}) => {
     .then(response => response.data)
     .then(team => {
       if (options.includeFitness) {
-        return client
-          .get(`v1/fitness/teams/${team.teamGuid}`)
-          .then(fitness => ({ ...team, fitness }))
+        return fetchTeamFitness(team.teamGuid, options.fitnessParams).then(
+          fitness => ({ ...team, fitness })
+        )
       }
 
       return team
@@ -132,6 +132,16 @@ export const fetchTeamBySlug = (slug = required(), options = {}) => {
 
       return Promise.resolve(team)
     })
+}
+
+export const fetchTeamFitness = (slug, options = {}) => {
+  const params = {
+    limit: options.fitnesslimit,
+    start: options.startDate,
+    end: options.endDate
+  }
+
+  return client.get(`v1/fitness/teams/${slug}`, params)
 }
 
 export const checkTeamSlugAvailable = (
