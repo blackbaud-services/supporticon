@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import chunk from 'lodash/chunk'
 import first from 'lodash/first'
 import flattenDeep from 'lodash/flattenDeep'
@@ -70,7 +70,7 @@ export const deserializePage = page => {
       ? `${baseUrl('link')}/v1/fundraisingpage/donate/pageId/${id}`
       : `${baseUrl('www')}/fundraising/${shortName}/donate`,
     event: page.Subtext || page.eventId || page.EventId || page.eventName,
-    expired: jsonDate(page.expiryDate) && moment(page.expiryDate).isBefore(),
+    expired: jsonDate(page.expiryDate) && dayjs(page.expiryDate).isBefore(),
     fitness: page.fitness || {},
     fitnessActivities: lodashGet(page, 'fitness.activities', []).map(
       deserializeFitnessActivity

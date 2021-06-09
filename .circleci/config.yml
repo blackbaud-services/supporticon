@@ -60,14 +60,14 @@ commands:
 jobs:
   staging:
     docker:
-      - image: circleci/node:6
+      - image: circleci/node:8
     steps:
       - install
       - lint
 
   production:
     docker:
-      - image: circleci/node:6
+      - image: circleci/node:8
     steps:
       - install
       - lint

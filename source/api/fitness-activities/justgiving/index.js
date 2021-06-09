@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import lodashGet from 'lodash/get'
 import { get, post, destroy, servicesAPI } from '../../../utils/client'
 import { paramsSerializer, required } from '../../../utils/params'
@@ -6,6 +6,9 @@ import { convertToMeters, convertToSeconds } from '../../../utils/units'
 import { extractData } from '../../../utils/graphql'
 import { encodeBase64String } from '../../../utils/base64'
 import jsonDate from '../../../utils/jsonDate'
+
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+dayjs.extend(customParseFormat)
 
 const getFitnessId = (source, activity) => {
   if (activity.id) return activity.id
@@ -239,7 +242,7 @@ export const createFitnessActivity = ({
     }
 
     const createdDate = startedAt
-      ? `createdDate: "${moment(startedAt).toISOString()}"`
+      ? `createdDate: "${dayjs(startedAt).toISOString()}"`
       : ''
 
     const message = description ? `message: "${description}"` : ''
@@ -290,8 +293,8 @@ export const createFitnessActivity = ({
   }
 
   const params = {
-    dateCreated: moment(startedAt).isBefore(moment(), 'day')
-      ? moment(startedAt).format('DD/MM/YYYY')
+    dateCreated: dayjs(startedAt).isBefore(dayjs(), 'day')
+      ? dayjs(startedAt).format('DD/MM/YYYY')
       : null,
     description: description,
     distance: convertToMeters(distance, unit),

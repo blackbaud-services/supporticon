@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { v4 as uuid } from 'uuid'
 import { destroy, get, post, put } from '../../../utils/client'
 import { isParamsObject, required } from '../../../utils/params'
@@ -65,7 +65,7 @@ export const createFitnessActivity = ({
   elevationUnit,
   manual = true,
   pageId,
-  startedAt = moment().toISOString(),
+  startedAt = dayjs().toISOString(),
   trainer,
   title,
   uid = uuid(),
