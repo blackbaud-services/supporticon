@@ -1,5 +1,5 @@
 import numbro from 'numbro'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import get from 'lodash/get'
 import * as units from '../units'
 
@@ -30,17 +30,17 @@ export const formatDistance = (distance, miles, label = 'abbreviation') => {
 
 export const formatDuration = (duration, label = 'abbreviation') => {
   if (duration >= 86400) {
-    return `${Math.floor(moment.duration(duration, 'seconds').asDays())}${
+    return `${Math.floor(dayjs.duration(duration, 'seconds').asDays())}${
       labels.days[label]
-    } ${moment.duration(duration, 'seconds').hours()}${labels.hours[label]}`
+    } ${dayjs.duration(duration, 'seconds').hour()}${labels.hours[label]}`
   } else if (duration >= 3600) {
-    return `${moment.duration(duration, 'seconds').hours()}${
+    return `${dayjs.duration(duration, 'seconds').hour()}${
       labels.hours[label]
-    } ${moment.duration(duration, 'seconds').minutes()}${labels.minutes[label]}`
+    } ${dayjs.duration(duration, 'seconds').minutes()}${labels.minutes[label]}`
   } else {
-    return `${moment.duration(duration, 'seconds').minutes()}${
+    return `${dayjs.duration(duration, 'seconds').minutes()}${
       labels.minutes[label]
-    } ${moment.duration(duration, 'seconds').seconds()}${labels.seconds[label]}`
+    } ${dayjs.duration(duration, 'seconds').second()}${labels.seconds[label]}`
   }
 }
 

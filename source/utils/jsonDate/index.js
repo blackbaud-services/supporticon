@@ -1,4 +1,3 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 
-export default date =>
-  moment.isMoment(moment(date)) && moment(date).toISOString()
+export default date => dayjs.isDayjs(dayjs(date)) && dayjs(date).toISOString()
