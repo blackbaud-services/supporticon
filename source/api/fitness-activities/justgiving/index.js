@@ -242,7 +242,7 @@ export const createFitnessActivity = ({
     }
 
     const createdDate = startedAt
-      ? `createdDate: "${dayjs(startedAt).toISOString()}"`
+      ? `createdDate: "${dayjs(startedAt).format()}"`
       : ''
 
     const message = description ? `message: "${description}"` : ''

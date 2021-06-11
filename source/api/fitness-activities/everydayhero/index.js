@@ -65,7 +65,7 @@ export const createFitnessActivity = ({
   elevationUnit,
   manual = true,
   pageId,
-  startedAt = dayjs().toISOString(),
+  startedAt = dayjs().format(),
   trainer,
   title,
   uid = uuid(),
