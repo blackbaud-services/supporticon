@@ -4,6 +4,7 @@ import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
 import moment from 'moment'
+import dayjs from 'dayjs'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { createFitnessActivity } from '../../api/fitness-activities'
@@ -38,8 +39,8 @@ class CreateFitnessForm extends Component {
         pageSlug,
         token,
         userId,
-        startedAt: moment(data.startedAt).isSame(moment(), 'day')
-          ? moment().toISOString()
+        startedAt: dayjs(data.startedAt).isSame(dayjs(), 'day')
+          ? dayjs().format()
           : data.startedAt,
         type: isJustGiving()
           ? data.type

@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 export default date => {
   const isValid = dayjs(date).isValid()
   if (isValid) {
-    return dayjs(date).toISOString()
+    return dayjs(date).format()
   } else if (date.indexOf('/Date(') !== -1) {
     // Day.js does not now how to deal with JG formatted UNIX time, so strip out extra parts of string and just serve up digits of UNIX timestamp to convert to ISO
     const prepareStr = Number(
@@ -12,7 +12,7 @@ export default date => {
         .replace(')/', '')
         .split('+')[0]
     )
-    const formatUnix = dayjs(prepareStr).toISOString()
+    const formatUnix = dayjs(prepareStr).format()
     return formatUnix
   }
 }
