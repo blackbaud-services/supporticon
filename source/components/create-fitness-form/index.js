@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
-import moment from 'moment'
 import dayjs from 'dayjs'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
@@ -357,23 +356,23 @@ const form = props => {
         ...(props.includeDate && {
           startedAt: {
             label: 'Date',
-            initial: moment().format('YYYY-MM-DD'),
+            initial: dayjs().format('YYYY-MM-DD'),
             type: 'date',
             validators: [
               val =>
-                val && moment(val).isAfter() && "Date can't be in the future",
+                val && dayjs(val).isAfter() && "Date can't be in the future",
               val =>
                 val &&
                 props.startDate &&
-                moment(val).isBefore(moment(props.startDate)) &&
-                `Date can't be before ${moment(props.startDate).format(
+                dayjs(val).isBefore(dayjs(props.startDate)) &&
+                `Date can't be before ${dayjs(props.startDate).format(
                   'MMMM Do'
                 )}`,
               val =>
                 val &&
                 props.endDate &&
-                moment(val).isAfter(moment(props.endDate)) &&
-                `Date can't be after ${moment(props.startDate).format(
+                dayjs(val).isAfter(dayjs(props.endDate)) &&
+                `Date can't be after ${dayjs(props.startDate).format(
                   'MMMM Do'
                 )}`
             ]
