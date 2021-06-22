@@ -35,6 +35,8 @@ const InputModal = ({
     }
   }
 
+  const label = `Add ${type === 'image' ? 'an' : 'a'} ${type}`
+
   return (
     <Fragment>
       {data ? (
@@ -44,6 +46,7 @@ const InputModal = ({
       ) : (
         <Button
           {...buttonProps}
+          aria-label={label}
           block
           spacing={0.5}
           onClick={onToggle}
@@ -53,7 +56,7 @@ const InputModal = ({
           foreground='primary'
         >
           <Icon name={type} />
-          <span>{`Add ${type === 'image' ? 'an' : 'a'} ${type}`}</span>
+          <span>{label}</span>
         </Button>
       )}
       <Modal
