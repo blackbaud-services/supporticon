@@ -10,8 +10,8 @@ import { get, post, put, servicesAPI } from '../../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../../utils/justgiving'
 import {
   getUID,
-  isEqual,
   isEmpty,
+  isInArray,
   isUuid,
   required
 } from '../../../utils/params'
@@ -296,16 +296,26 @@ export const fetchUserPages = ({
     Authorization: [authType, token].join(' ')
   }
 
+  const campaignGuids = Array.isArray(campaign)
+    ? campaign.map(getUID)
+    : [getUID(campaign)]
+  const charityIds = Array.isArray(charity)
+    ? charity.map(getUID)
+    : [getUID(charity)]
+  const eventIds = Array.isArray(event) ? event.map(getUID) : [getUID(event)]
+
   const filterByCampaign = (pages, campaign) =>
     campaign
-      ? pages.filter(page => isEqual(page.campaignGuid, campaign))
+      ? pages.filter(page => isInArray(campaignGuids, page.campaignGuid))
       : pages
 
   const filterByCharity = (pages, charity) =>
-    charity ? pages.filter(page => isEqual(page.charityId, charity)) : pages
+    charity
+      ? pages.filter(page => isInArray(charityIds, page.charityId))
+      : pages
 
   const filterByEvent = (pages, event) =>
-    event ? pages.filter(page => isEqual(page.eventId, event)) : pages
+    event ? pages.filter(page => isInArray(eventIds, page.eventId)) : pages
 
   return get('/v1/fundraising/pages', {}, {}, { headers })
     .then(pages => filterByCampaign(pages, campaign))
