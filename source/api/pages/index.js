@@ -8,7 +8,7 @@ import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
 import { get, post, put, servicesAPI } from '../../utils/client'
 import { apiUrl, apiImageUrl, baseUrl, imageUrl } from '../../utils/justgiving'
-import { getUID, isEqual, isEmpty, isUuid, required } from '../../utils/params'
+import { getUID, isEmpty, isInArray, isUuid, required } from '../../utils/params'
 import { defaultPageTags } from '../../utils/tags'
 import { deserializeFitnessActivity } from '../fitness-activities'
 import { fetchTotals, deserializeTotals } from '../../utils/totals'
@@ -298,21 +298,35 @@ export const fetchUserPages = ({
     Authorization: [authType, token].join(' ')
   }
 
-  const filterByCampaign = (pages, campaign) =>
-    campaign
-      ? pages.filter(page => isEqual(page.campaignGuid, campaign))
-      : pages
+  const campaignGuids = Array.isArray(campaign)
+    ? campaign.map(getUID)
+    : [getUID(campaign)]
 
-  const filterByCharity = (pages, charity) =>
-    charity ? pages.filter(page => isEqual(page.charityId, charity)) : pages
+  const charityIds = Array.isArray(charity)
+    ? charity.map(getUID)
+    : [getUID(charity)]
 
-  const filterByEvent = (pages, event) =>
-    event ? pages.filter(page => isEqual(page.eventId, event)) : pages
+  const eventIds = Array.isArray(event) ? event.map(getUID) : [getUID(event)]
+
+  const filterByCampaign = pages =>
+    isEmpty(campaign)
+      ? pages
+      : pages.filter(page => isInArray(campaignGuids, page.campaignGuid))
+
+  const filterByCharity = pages =>
+    isEmpty(charity)
+      ? pages
+      : pages.filter(page => isInArray(charityIds, page.charityId))
+
+  const filterByEvent = pages =>
+    isEmpty(event)
+      ? pages
+      : pages.filter(page => isInArray(eventIds, page.eventId))
 
   return get('/v1/fundraising/pages', {}, {}, { headers })
-    .then(pages => filterByCampaign(pages, campaign))
-    .then(pages => filterByCharity(pages, charity))
-    .then(pages => filterByEvent(pages, event))
+    .then(filterByCampaign)
+    .then(filterByCharity)
+    .then(filterByEvent)
 }
 
 export const fetchPagesByTag = ({

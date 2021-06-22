@@ -71,6 +71,9 @@ export const isUuid = string => {
 
 export const isEqual = (a, b) => String(a) === String(b)
 
+export const isInArray = (array, id) =>
+  array.filter(idx => isEqual(idx, id)).length > 0
+
 export const parseUrlParams = () => {
   if (typeof window === 'undefined') {
     return {}
