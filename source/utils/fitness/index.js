@@ -32,15 +32,15 @@ export const formatDuration = (duration, label = 'abbreviation') => {
   if (duration >= 86400) {
     return `${Math.floor(dayjs.duration(duration, 'seconds').asDays())}${
       labels.days[label]
-    } ${dayjs.duration(duration, 'seconds').hour()}${labels.hours[label]}`
+    } ${dayjs.duration(duration, 'seconds').hours()}${labels.hours[label]}`
   } else if (duration >= 3600) {
-    return `${dayjs.duration(duration, 'seconds').hour()}${
+    return `${dayjs.duration(duration, 'seconds').hours()}${
       labels.hours[label]
     } ${dayjs.duration(duration, 'seconds').minutes()}${labels.minutes[label]}`
   } else {
     return `${dayjs.duration(duration, 'seconds').minutes()}${
       labels.minutes[label]
-    } ${dayjs.duration(duration, 'seconds').second()}${labels.seconds[label]}`
+    } ${dayjs.duration(duration, 'seconds').seconds()}${labels.seconds[label]}`
   }
 }
 
