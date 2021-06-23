@@ -1,6 +1,6 @@
 {
   "name": "supporticon",
-  "version": "6.0.4",
+  "version": "6.0.5",
   "description": "A libary to handle fetching data from Supporter",
   "main": "index.js",
   "scripts": {
