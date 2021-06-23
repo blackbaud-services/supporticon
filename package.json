@@ -52,6 +52,7 @@
     "minimal.css": "^1.0.1",
     "mocha": "^3.2.0",
     "moxios": "^0.4.0",
+    "numbro": "^2.3.2",
     "prettier": "^1.14.3",
     "prettier-standard": "^8.0.1",
     "react": "^16.13.1",
@@ -65,7 +66,6 @@
     "axios": "^0.19.0",
     "dayjs": "^1.10.5",
     "js-base64": "^3.6.0",
-    "numbro": "^2.3.2",
     "prop-types": "^15.5.8",
     "slugify": "^1.4.0",
     "spark-md5": "^3.0.0",
@@ -73,6 +73,7 @@
   },
   "peerDependencies": {
     "constructicon": "^1.8.0",
+    "numbro": "^1.0.0 || ^2.0.0",
     "react": "^15.0.0 || ^16.0.0",
     "react-dom": "^15.0.0 || ^16.0.0"
   },
