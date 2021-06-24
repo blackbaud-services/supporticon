@@ -17,6 +17,7 @@ import Icon from 'constructicon/icon'
 import InputField from 'constructicon/input-field'
 import InputSelect from 'constructicon/input-select'
 import Modal from 'constructicon/modal'
+import PasswordValidations from './PasswordValidations'
 import RichText from 'constructicon/rich-text'
 import Section from 'constructicon/section'
 
@@ -212,6 +213,7 @@ class SignupForm extends Component {
       includeTerms,
       inputField,
       legend,
+      showPasswordValidations,
       submit
     } = this.props
 
@@ -243,7 +245,14 @@ class SignupForm extends Component {
         </Grid>
 
         <InputField {...form.fields.email} {...inputField} />
-        <InputField {...form.fields.password} {...inputField} />
+        <InputField
+          {...form.fields.password}
+          validations={
+            showPasswordValidations ? [] : form.fields.password.validations
+          }
+          {...inputField}
+        />
+        {showPasswordValidations && <PasswordValidations form={form} />}
 
         {!isJustGiving() ? (
           country ? (
@@ -397,6 +406,11 @@ SignupForm.propTypes = {
   resetPasswordTarget: PropTypes.oneOf(['_self', '_blank', '_parent', '_top']),
 
   /**
+   * Include JG password validations helper
+   */
+  showPasswordValidations: PropTypes.bool,
+
+  /**
    * The label for the form submit button
    */
   submit: PropTypes.string
@@ -406,6 +420,7 @@ SignupForm.defaultProps = {
   authType: 'Bearer',
   disableInvalidForm: false,
   fields: {},
+  showPasswordValidations: true,
   submit: 'Sign Up',
   legend: {
     size: 0.5,
