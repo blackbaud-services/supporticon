@@ -16,7 +16,7 @@ describe('Components | SignupForm', () => {
       )
       const inputs = wrapper.find('input')
       const select = wrapper.find('select')
-      const button = wrapper.find('button')
+      const button = wrapper.find('button[type="submit"]')
 
       expect(inputs.length).to.eql(5)
       expect(select.length).to.eql(0)
@@ -43,7 +43,7 @@ describe('Components | SignupForm', () => {
           onSuccess={res => console.log(res)}
         />
       )
-      const button = wrapper.find('button')
+      const button = wrapper.find('button[type="submit"]')
 
       expect(button.length).to.eql(1)
       expect(button.text()).to.eql('Sign Up to EDH')
@@ -67,7 +67,7 @@ describe('Components | SignupForm', () => {
     it('renders a simple sign up form with custom submit prop', () => {
       const wrapper = mount(<SignupForm onSuccess={res => console.log(res)} />)
       const inputs = wrapper.find('input')
-      const button = wrapper.find('button')
+      const button = wrapper.find('button[type="submit"]')
 
       expect(inputs.length).to.eql(4)
       expect(button.length).to.eql(1)
@@ -81,7 +81,7 @@ describe('Components | SignupForm', () => {
           onSuccess={res => console.log(res)}
         />
       )
-      const button = wrapper.find('button')
+      const button = wrapper.find('button[type="submit"]')
 
       expect(button.length).to.eql(1)
       expect(button.text()).to.eql('Sign Up to JustGiving')

@@ -22,4 +22,4 @@ global.mount = enzyme.mount
 
 global.utils = require('./utils')
 
-require('./testdom')('<html><body></body></html>')
+require('./testdom')('<html><body><div id="mount"><div></body></html>')

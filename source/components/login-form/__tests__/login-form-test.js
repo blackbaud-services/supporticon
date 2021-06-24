@@ -11,7 +11,7 @@ describe('Components | LoginForm', () => {
         <LoginForm clientId='1234abcd' onSuccess={res => console.log(res)} />
       )
       const inputs = wrapper.find('input')
-      const button = wrapper.find('button')
+      const button = wrapper.find('button[type="submit"]')
 
       expect(inputs.length).to.eql(2)
       expect(button.length).to.eql(1)
@@ -41,7 +41,7 @@ describe('Components | LoginForm', () => {
         />
       )
       const inputs = wrapper.find('input')
-      const button = wrapper.find('button')
+      const button = wrapper.find('button[type="submit"]')
 
       expect(inputs.length).to.eql(2)
       expect(button.length).to.eql(1)
