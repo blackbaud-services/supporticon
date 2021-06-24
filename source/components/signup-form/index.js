@@ -457,7 +457,20 @@ const form = props => {
         autoComplete: 'off',
         validators: [
           validators.required('Password is a required field'),
-          validators.greaterThan(11, 'Must be at least 12 characters')
+          validators.greaterThan(11, 'Must be at least 12 characters'),
+          validators.passwordComplexity(),
+          validators.doesNotContainField(
+            'firstName',
+            'Your password must not include your first name'
+          ),
+          validators.doesNotContainField(
+            'lastName',
+            'Your password must not include your last name'
+          ),
+          validators.doesNotContainField(
+            'email',
+            'Your password must not include your email address'
+          )
         ]
       }
     },
