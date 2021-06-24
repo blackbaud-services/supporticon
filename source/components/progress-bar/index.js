@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import numbro from 'numbro'
 import {
   fetchDonationTotals,
@@ -61,9 +61,9 @@ class ProgressBar extends Component {
   }
 
   calculateDaysRemaining (eventDate) {
-    const today = moment()
-    const eventMoment = moment(eventDate)
-    const daysDiff = Math.ceil(eventMoment.diff(today, 'days', true)) // we want to round up
+    const today = dayjs()
+    const eventDateObj = dayjs(eventDate)
+    const daysDiff = Math.ceil(eventDateObj.diff(today, 'days', true)) // we want to round up
     return Math.max(0, daysDiff)
   }
 
