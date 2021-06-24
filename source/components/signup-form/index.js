@@ -13,8 +13,12 @@ import Form from 'constructicon/form'
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
 import Heading from 'constructicon/heading'
+import Icon from 'constructicon/icon'
 import InputField from 'constructicon/input-field'
 import InputSelect from 'constructicon/input-select'
+import Modal from 'constructicon/modal'
+import RichText from 'constructicon/rich-text'
+import Section from 'constructicon/section'
 
 class SignupForm extends Component {
   constructor () {
@@ -22,6 +26,7 @@ class SignupForm extends Component {
     this.handleSubmit = this.handleSubmit.bind(this)
     this.state = {
       status: 'empty',
+      showModal: false,
       errors: []
     }
   }
@@ -36,16 +41,15 @@ class SignupForm extends Component {
       form,
       includeAddress,
       onSuccess,
+      loginUrl,
+      loginTarget,
       resetPasswordUrl,
       resetPasswordTarget
     } = this.props
 
-    const platform = isJustGiving() ? 'JustGiving' : 'everydayhero'
-    const jgSubdomain = isStaging() ? 'www.staging' : 'www'
-    const edhDomain = isStaging() ? 'everydayhero-staging' : 'everydayhero'
-    const defaultResetPasswordUrl = isJustGiving()
-      ? `https://${jgSubdomain}.justgiving.com/sso/resetpassword?ReturnUrl=https%3A%2F%2F${jgSubdomain}.justgiving.com%2F&Context=consumer&ActionType=set_profile`
-      : `https://${edhDomain}.com/${country}/passwords/new`
+    const subdomain = isStaging() ? 'www.staging' : 'www'
+    const defaultLoginUrl = `https://${subdomain}.justgiving.com/sso`
+    const defaultResetPasswordUrl = `https://${subdomain}.justgiving.com/sso/resetpassword?ReturnUrl=https%3A%2F%2F${subdomain}.justgiving.com%2F&Context=consumer&ActionType=set_profile`
 
     return form.submit().then(data => {
       this.setState({
@@ -93,20 +97,37 @@ class SignupForm extends Component {
                 status: 'failed',
                 errors: errors.map((error, key) => {
                   switch (error.ErrorMessage) {
-                    case 'EmailAddress is in use.':
+                    case 'Password must not include email, name, or a commonly used word':
                       return {
+                        message:
+                          'Your password must not include your name or email address'
+                      }
+                    case 'EmailAddress is in use.':
+                      this.setState({ showModal: true })
+
+                      return {
+                        field: 'email',
                         message: (
                           <div key={key}>
-                            <p>Your password is incorrect.</p>
                             <p>
-                              Please try again, or you can{' '}
+                              An account already exists for{' '}
+                              <strong>{data.email}</strong>.
+                            </p>
+                            <p>
+                              <a
+                                href={loginUrl || defaultLoginUrl}
+                                target={loginTarget || '_blank'}
+                              >
+                                Log in here
+                              </a>
+                              {' or '}
                               <a
                                 href={
                                   resetPasswordUrl || defaultResetPasswordUrl
                                 }
                                 target={resetPasswordTarget || '_blank'}
                               >
-                                reset your {platform} password here.
+                                reset your JustGiving password here.
                               </a>
                             </p>
                           </div>
@@ -137,7 +158,7 @@ class SignupForm extends Component {
                               href={resetPasswordUrl || defaultResetPasswordUrl}
                               target={resetPasswordTarget || '_blank'}
                             >
-                              reset your {platform} password here.
+                              reset your JustGiving password here.
                             </a>
                           </p>
                         </div>
@@ -198,7 +219,7 @@ class SignupForm extends Component {
 
     return (
       <Form
-        errors={errors}
+        errors={this.state.showModal ? [] : errors}
         icon={
           status === 'fetching'
             ? { name: 'loading', spin: true }
@@ -274,6 +295,21 @@ class SignupForm extends Component {
           const Tag = renderInput(field.type)
           return <Tag key={field.name} {...field} {...inputField} />
         })}
+
+        <Modal
+          isOpen={this.state.showModal}
+          contentLabel='Errors'
+          onRequestClose={() => this.setState({ errors: [], showModal: false })}
+          width={20}
+          styles={{ container: { textAlign: 'center' } }}
+        >
+          <Section>
+            <Icon name='warning' size={3} color='danger' />
+          </Section>
+          {errors.filter(error => error.field === 'email').map((error, i) => (
+            <RichText key={i}>{error.message}</RichText>
+          ))}
+        </Modal>
       </Form>
     )
   }
@@ -339,6 +375,16 @@ SignupForm.propTypes = {
    * The onSuccess event handler
    */
   onSuccess: PropTypes.func.isRequired,
+
+  /**
+   * Login URL to display on error
+   */
+  loginUrl: PropTypes.string,
+
+  /**
+   * Login Link target (displayed on error)
+   */
+  loginUrlTarget: PropTypes.oneOf(['_self', '_blank', '_parent', '_top']),
 
   /**
    * Reset password URL to display on error
