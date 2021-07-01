@@ -34,7 +34,7 @@ export const fetchFitnessLeaderboard = ({
   type,
   useLegacy = true
 }) => {
-  if (tagId || tagValue) {
+  if (tagId || tagValue || sortBy !== 'distance') {
     return fetchLeaderboard({
       activityType,
       id: getUID(campaign),
@@ -95,6 +95,13 @@ export const deserializeFitnessLeaderboard = (item, index) => {
     slug,
     status: item.status,
     subtitle: get(item, 'owner.name'),
+    totals: get(item, 'amounts', []).reduce(
+      (totals, amount) => ({
+        ...totals,
+        [amount.unit]: amount.value
+      }),
+      {}
+    ),
     url:
       item.url ||
       [baseUrl(), item.type === 'team' ? 'team' : 'fundraising', slug].join('/')
