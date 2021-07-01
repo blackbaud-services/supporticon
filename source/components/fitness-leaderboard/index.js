@@ -2,9 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
 import {
+  formatActivities,
   formatDistance,
   formatDuration,
-  formatElevation
+  formatElevation,
+  formatMeasurementDomain
 } from '../../utils/fitness'
 
 import Filter from 'constructicon/filter'
@@ -103,7 +105,7 @@ class FitnessLeaderboard extends Component {
       limit: limit + 10,
       page,
       groupID,
-      sortBy,
+      sortBy: formatMeasurementDomain(sortBy),
       q,
       tagId,
       tagValue
@@ -218,16 +220,15 @@ class FitnessLeaderboard extends Component {
 
   getMetric (leader) {
     const { miles, multiplier, offset, sortBy, units } = this.props
+    const { totals = {} } = leader
 
     switch (sortBy) {
-      case 'calories':
-        return `${numbro((offset + leader.calories) * multiplier).format(
-          '0,0'
-        )} cals`
+      case 'activities':
+        return formatActivities((offset + totals.count) * multiplier)
       case 'duration':
-        return formatDuration((offset + leader.duration) * multiplier)
+        return formatDuration((offset + totals.seconds) * multiplier)
       case 'elevation':
-        return formatElevation((offset + leader.elevation) * multiplier, miles)
+        return formatElevation((offset + totals.meters) * multiplier, miles)
       default:
         const distance = (offset + leader.distance) * multiplier
         return units
@@ -238,17 +239,16 @@ class FitnessLeaderboard extends Component {
 
   getMetricLabel (leader) {
     const { miles, multiplier, offset, sortBy, units } = this.props
+    const { totals = {} } = leader
 
     switch (sortBy) {
-      case 'calories':
-        return `${numbro((offset + leader.calories) * multiplier).format(
-          '0,0'
-        )} calories`
+      case 'activities':
+        return formatActivities((offset + totals.count) * multiplier)
       case 'duration':
-        return formatDuration((offset + leader.duration) * multiplier, 'full')
+        return formatDuration((offset + totals.seconds) * multiplier, 'full')
       case 'elevation':
         return formatElevation(
-          (offset + leader.elevation) * multiplier,
+          (offset + totals.meters) * multiplier,
           miles,
           'full'
         )
@@ -355,7 +355,7 @@ FitnessLeaderboard.propTypes = {
   /**
    * The type of measurement to sort by
    */
-  sortBy: PropTypes.oneOf(['distance', 'duration', 'calories', 'elevation']),
+  sortBy: PropTypes.oneOf(['distance', 'duration', 'elevation']),
 
   /**
    * Props to be passed to the Constructicon Leaderboard component

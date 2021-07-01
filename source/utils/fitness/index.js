@@ -14,6 +14,17 @@ const labels = {
   meters: { abbreviation: 'm', full: 'meters' }
 }
 
+export const formatMeasurementDomain = sortBy => {
+  switch (sortBy) {
+    case 'duration':
+      return 'elapsed_time'
+    case 'elevation':
+      return 'elevation_gain'
+    default:
+      return sortBy
+  }
+}
+
 export const formatDistance = (distance, miles, label = 'abbreviation') => {
   if (miles) {
     return (
@@ -53,6 +64,10 @@ export const formatElevation = (elevation, miles, label = 'abbreviation') => {
   } else {
     return numbro(elevation).format('0,0') + ` ${labels.meters[label]}`
   }
+}
+
+export const formatActivities = activities => {
+  return numbro(activities).format('0,0')
 }
 
 export const getDistanceTotal = (page = {}) => {
