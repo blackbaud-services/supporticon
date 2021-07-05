@@ -177,7 +177,7 @@ class ProviderOauthButton extends Component {
         redirect_uri: redirectUri,
         response_type: 'code',
         scope: 'read,activity:read',
-        state: token,
+        state: state || token,
         ...authParams
       }
 
