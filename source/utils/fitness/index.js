@@ -1,7 +1,10 @@
 import numbro from 'numbro'
 import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 import get from 'lodash/get'
 import * as units from '../units'
+
+dayjs.extend(duration)
 
 const labels = {
   kilometers: { abbreviation: 'km', full: 'kilometers' },
