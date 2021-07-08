@@ -54,13 +54,20 @@ export const fetchLeaderboard = (params = required()) => {
         {},
         { paramsSerializer }
       ).then(response =>
-        response.pages.map(page => ({
-          ...page,
-          raisedAmount: page.amount,
-          eventName: response.eventName,
-          currencyCode: response.currency,
-          currencySymbol: currencySymbol(response.currency)
-        }))
+        response.pages
+          .filter(
+            page =>
+              splitOnDelimiter(params.excludePageIds).indexOf(
+                page.pageShortName
+              ) < 0
+          )
+          .map(page => ({
+            ...page,
+            raisedAmount: page.amount,
+            eventName: response.eventName,
+            currencyCode: response.currency,
+            currencySymbol: currencySymbol(response.currency)
+          }))
       )
     default:
       const isTeam = params.type === 'team'
