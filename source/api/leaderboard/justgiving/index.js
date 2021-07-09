@@ -23,7 +23,7 @@ export const fetchLeaderboard = (params = required()) => {
       ...params,
       id: getUID(params.campaign),
       type: 'campaign'
-    })
+    }).then(results => removeExcludedPages(results, params.excludePageIds))
   }
 
   if (!isEmpty(params.campaign) && params.allPages) {
@@ -31,7 +31,7 @@ export const fetchLeaderboard = (params = required()) => {
       getUID(params.campaign),
       params.q,
       params.limit
-    )
+    ).then(results => removeExcludedPages(results, params.excludePageIds))
   }
 
   switch (dataSource(params)) {
@@ -53,22 +53,18 @@ export const fetchLeaderboard = (params = required()) => {
         },
         {},
         { paramsSerializer }
-      ).then(response =>
-        response.pages
-          .filter(
-            page =>
-              splitOnDelimiter(params.excludePageIds).indexOf(
-                page.pageShortName
-              ) < 0
-          )
-          .map(page => ({
+      )
+        .then(response =>
+          response.pages.map(page => ({
             ...page,
             raisedAmount: page.amount,
             eventName: response.eventName,
             currencyCode: response.currency,
             currencySymbol: currencySymbol(response.currency)
           }))
-      )
+        )
+        .then(results => removeExcludedPages(results, params.excludePageIds))
+
     default:
       const isTeam = params.type === 'team'
       const maxPerRequest = 20
@@ -121,6 +117,7 @@ export const fetchLeaderboard = (params = required()) => {
         })
         .then(results => filterLeaderboardResults(results, isTeam))
         .then(results => mapLeaderboardResults(results, isTeam))
+        .then(results => removeExcludedPages(results, params.excludePageIds))
         .then(results => rankLeaderboardResults(results, isTeam))
   }
 }
@@ -131,6 +128,27 @@ const rankLeaderboardResults = (results = [], isTeam) => {
 
 const filterLeaderboardResults = (results = [], isTeam) => {
   return results.filter(result => (isTeam ? result.team : result.page))
+}
+
+const removeExcludedPages = (results = [], pageIds) => {
+  if (!pageIds) return results
+
+  const identifierKeys = [
+    'eventGivingGroupId',
+    'legacyId',
+    'pageGuid',
+    'pageShortName',
+    'shortName',
+    'slug',
+    'tagValue'
+  ]
+
+  return results.filter(page =>
+    identifierKeys.reduce((current, key) => {
+      if (!page[key]) return current
+      return current ? pageIds.indexOf(page[key].toString()) < 0 : false
+    }, true)
+  )
 }
 
 const mapLeaderboardResults = (results = [], isTeam) => {
