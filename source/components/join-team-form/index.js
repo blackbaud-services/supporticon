@@ -26,7 +26,7 @@ class JoinTeamForm extends React.Component {
   }
 
   componentDidMount () {
-    const { campaign } = this.props
+    const { campaign, excludeTeamIds } = this.props
 
     const params = {
       campaign,
@@ -43,6 +43,18 @@ class JoinTeamForm extends React.Component {
           label: team.name
         }))
       )
+      .then(teams => {
+        if (!excludeTeamIds) return teams
+
+        return teams.filter(team =>
+          ['id', 'slug'].reduce((current, key) => {
+            if (!team[key]) return current
+            return current
+              ? excludeTeamIds.indexOf(team[key].toString()) < 0
+              : false
+          }, true)
+        )
+      })
       .then(teams => this.setState({ status: 'fetched', teams }))
   }
 
@@ -118,6 +130,11 @@ JoinTeamForm.propTypes = {
    * The campaignId you want to join teams in
    */
   campaign: PropTypes.string,
+
+  /**
+   * Team ids you want to exclude from the list
+   */
+  excludeTeamIds: PropTypes.string,
 
   /**
    * Props to be passed to the Form component
