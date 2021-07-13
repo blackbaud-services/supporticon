@@ -1,10 +1,14 @@
-import get from 'lodash/get'
 import find from 'lodash/find'
+import flatten from 'lodash/flatten'
+import get from 'lodash/get'
+import times from 'lodash/times'
 import slugify from 'slugify'
 import * as client from '../../../utils/client'
 import { fetchPages, deserializePage } from '../../pages'
 import { paramsSerializer, required } from '../../../utils/params'
 import { baseUrl, imageUrl, parseText } from '../../../utils/justgiving'
+import { deserializeTotals, getMonetaryValue } from '../../../utils/totals'
+import { encodeBase64String } from '../../../utils/base64'
 
 export const teamNameRegex = /[^\w\s'"!?£$€¥.,-]/gi
 
@@ -45,6 +49,37 @@ export const deserializeTeam = team => {
     target: get(team, 'fundraisingConfiguration.targetAmount'),
     url: team.shortName && `${baseUrl()}/team/${team.shortName}`,
     uuid: team.teamGuid
+  }
+}
+
+export const deserializeTeamPage = page => {
+  const currencyCode = get(page, 'targetWithCurrency.currencyCode')
+  const totals = deserializeTotals(
+    get(page, 'totals.timeline', []),
+    currencyCode
+  )
+
+  return {
+    ...totals,
+    active: page.status === 'ACTIVE',
+    createdAt: page.createDate,
+    currencyCode,
+    donationUrl: `${baseUrl('www')}/fundraising/${page.slug}/donate`,
+    id: page.eventGivingGroupId,
+    image: get(page, 'cover.url')
+      ? `${get(page, 'cover.url')}?template=Size186x186Crop`
+      : 'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
+    name: page.title,
+    owner: get(page, 'owner.name'),
+    raised: getMonetaryValue(get(page, 'donationSummary.totalAmount')),
+    slug: page.slug,
+    status: page.status.toLowerCase(),
+    subtitle: get(page, 'owner.name'),
+    story: page.story,
+    target: getMonetaryValue(page.targetWithCurrency),
+    url: page.url,
+    type: 'individual',
+    uuid: page.legacyId
   }
 }
 
@@ -142,6 +177,102 @@ export const fetchTeamFitness = (slug, options = {}) => {
   }
 
   return client.get(`v1/fitness/teams/${slug}`, params)
+}
+
+export const fetchTeamPages = (slug, options = {}) => {
+  const limit = options.limit || 250
+
+  const query = `
+    query fetchTeamPages ($slug: Slug, $after: String) {
+      page(type: TEAM, slug: $slug) {
+        title
+        id
+        legacyId
+        type
+        membershipPolicy
+        relationships {
+          members (first: 10, after: $after) {
+            totalCount
+            nodes {
+              createDate
+              eventGivingGroupId
+              legacyId
+              slug
+              status
+              story
+              title
+              url
+              owner {
+                name
+                legacyId
+              }
+              donationSummary {
+                donationCount
+                offlineAmount {
+                  value
+                  currencyCode
+                }
+                totalAmount {
+                  value
+                  currencyCode
+                }
+              }
+              targetWithCurrency {
+                value
+                currencyCode
+              }
+              totals {
+                timeline {
+                  measurementDomain
+                  amounts {
+                    value
+                    unit
+                  }
+                }
+              }
+              cover {
+                ... on ImageMedia {
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `
+
+  return client.servicesAPI
+    .post('/v1/justgiving/graphql', { query, variables: { slug } })
+    .then(response => get(response.data, 'data.page.relationships.members'))
+    .then(data => {
+      if (data.totalCount > 10) {
+        // The maximum page size supported by this query is 10, so we're
+        // generating a base64 encoded integer for page cursors up to the
+        // total number of pages within the team (or a hard upper limit).
+        // N.B. The cursor is zero-based, hence for 10-20 the cursor is 9.
+        const pageCursors = times(
+          Math.ceil(Math.min(data.totalCount, limit) / 10) - 1,
+          integer => encodeBase64String(integer * 10 + 9)
+        )
+
+        return Promise.all(
+          pageCursors.map(after =>
+            client.servicesAPI
+              .post('/v1/justgiving/graphql', {
+                query,
+                variables: { slug, after }
+              })
+              .then(response =>
+                get(response.data, 'data.page.relationships.members')
+              )
+              .then(data => data.nodes)
+          )
+        ).then(pages => flatten([data.nodes, ...pages]))
+      }
+
+      return data.nodes
+    })
 }
 
 export const checkTeamSlugAvailable = (
