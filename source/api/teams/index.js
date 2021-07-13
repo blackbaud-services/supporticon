@@ -40,3 +40,5 @@ export const joinTeam = params =>
 
 export const updateTeam = (...args) =>
   isJustGiving() ? updateJGTeam(...args) : updateEDHTeam(...args)
+
+export { deserializeTeamPage, fetchTeamPages } from './justgiving'
