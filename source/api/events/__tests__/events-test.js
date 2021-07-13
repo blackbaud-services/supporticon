@@ -12,7 +12,10 @@ describe('Fetch Event', () => {
       return moxios.install(instance)
     })
 
-    afterEach(() => moxios.uninstall(instance))
+    afterEach(() => {
+      updateClient({ baseURL: 'https://everydayhero.com' })
+      moxios.uninstall(instance)
+    })
 
     it('throws if event is requested', () => {
       const test = () => fetchEvent({ id: '12345' })
