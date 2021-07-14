@@ -1,21 +1,13 @@
-import dayjs from 'dayjs'
 import { get } from '../../utils/client'
 import { required } from '../../utils/params'
-
-const formatUnixString = time =>
-  Number(
-    time
-      .replace('/Date(', '')
-      .replace('+0000', '')
-      .replace(')/', '')
-  )
+import jsonDate from '../../utils/jsonDate'
 
 export const deserializeEvent = event => {
   return {
     ...event,
-    completionDate: dayjs(formatUnixString(event.completionDate)).format(),
-    expiryDate: dayjs(formatUnixString(event.expiryDate)).format(),
-    startDate: dayjs(formatUnixString(event.startDate)).format()
+    completionDate: jsonDate(event.completionDate),
+    expiryDate: jsonDate(event.expiryDate),
+    startDate: jsonDate(event.startDate)
   }
 }
 
