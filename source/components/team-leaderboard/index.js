@@ -38,52 +38,46 @@ const TeamLeaderboard = ({
   const [pages, setPages] = useState([])
   const [status, setStatus] = useState('fetching')
 
-  const renderAmount = (page, format) => {
-    switch (sortBy) {
-      case 'activities':
-        return formatActivities((offset + page.fitnessCount) * multiplier)
-      case 'distance':
-        const distanceAmount = (offset + page.fitnessDistanceTotal) * multiplier
-        return units
-          ? formatDistance(distanceAmount, miles, format)
-          : numbro(distanceAmount).format('0,0')
-      case 'duration':
-        return formatDuration(
-          (offset + page.fitnessDurationTotal) * multiplier,
-          format
-        )
-      case 'elevation':
-        return formatElevation(
-          (offset + page.fitnessElevationTotal) * multiplier,
-          miles,
-          format
-        )
-      default:
-        return numbro((offset + page.raised) * multiplier).formatCurrency('0,0')
-    }
-  }
-
-  const sortKey = {
+  const sortKeys = {
     activities: 'fitnessCount',
     distance: 'fitnessDistanceTotal',
     duration: 'fitnessDurationTotal',
-    elevation: 'fitnessElevationTotal',
-    raised: 'raised'
+    elevation: 'fitnessElevationTotal'
+  }
+
+  const sortKey = sortKeys[sortBy] || 'raised'
+
+  const sortedPages = orderBy(pages, [sortKey], ['desc'])
+    .map((page, index) => ({ ...page, position: index + 1 }))
+    .slice(0, limit)
+
+  const renderAmount = (page, format) => {
+    const amount = (offset + page[sortKey]) * multiplier
+
+    if (units) {
+      switch (sortBy) {
+        case 'activities':
+          return formatActivities(amount)
+        case 'distance':
+          return formatDistance(amount, miles, format)
+        case 'duration':
+          return formatDuration(amount, format)
+        case 'elevation':
+          return formatElevation(amount, miles, format)
+        default:
+          return numbro(amount).formatCurrency('0,0')
+      }
+    }
+
+    return numbro(amount).format('0,0')
   }
 
   const fetchData = () =>
-    fetchTeamPages(team, { limit })
+    fetchTeamPages(team)
       .then(data => data.map(deserializeMethod || deserializeTeamPage))
       .then(pages => (activeOnly ? pages.filter(page => page.active) : pages))
-      .then(pages => orderBy(pages, [sortKey[sortBy] || 'raised'], ['desc']))
-      .then(pages =>
-        pages.map((page, index) => ({ ...page, position: index + 1 }))
-      )
-      .then(pages => pages.slice(0, limit))
-      .then(pages => {
-        setPages(pages)
-        setStatus('fetched')
-      })
+      .then(setPages)
+      .then(() => setStatus('fetched'))
       .catch(error => {
         setStatus('failed')
         return Promise.reject(error)
@@ -110,7 +104,7 @@ const TeamLeaderboard = ({
   if (!pages.length) return <Leaderboard {...leaderboard} empty />
 
   return (
-    <Pagination max={pageSize} toPaginate={pages}>
+    <Pagination max={pageSize} toPaginate={sortedPages}>
       {({ currentPage, isPaginated, prev, next, canPrev, canNext, pageOf }) => (
         <React.Fragment>
           <Leaderboard {...leaderboard}>
@@ -164,7 +158,7 @@ TeamLeaderboard.propTypes = {
   miles: PropTypes.bool,
 
   /**
-   * The max number of records to fetch
+   * The max number of records to show
    */
   limit: PropTypes.number,
 
@@ -225,7 +219,7 @@ TeamLeaderboard.propTypes = {
   refreshInterval: PropTypes.number,
 
   /**
-   * A function to
+   * A function to determine which subtitle to show
    */
   subtitleMethod: PropTypes.func
 }
