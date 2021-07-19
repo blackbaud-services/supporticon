@@ -43,7 +43,7 @@ export const measurementDomains = [
   'walk:elevation_gain'
 ]
 
-export const defaultPageTags = page => {
+export const defaultPageTags = (page, timeBox) => {
   const tags = [
     {
       tagDefinition: {
@@ -54,7 +54,8 @@ export const defaultPageTags = page => {
       aggregation: [
         {
           measurementDomains: ['all'],
-          segment: 'page:totals'
+          segment: 'page:totals',
+          timeBox
         }
       ]
     },
@@ -66,26 +67,32 @@ export const defaultPageTags = page => {
       value: `page:fundraising:${page.uuid}`,
       aggregation: [
         {
-          measurementDomains: [
-            'any:activities',
-            'any:distance',
-            'any:elapsed_time',
-            'any:elevation_gain',
-            'ride:activities',
-            'ride:distance',
-            'ride:elapsed_time',
-            'ride:elevation_gain',
-            'swim:activities',
-            'swim:distance',
-            'swim:elapsed_time',
-            'swim:elevation_gain',
-            'walk:activities',
-            'walk:distance',
-            'walk:elapsed_time',
-            'walk:elevation_gain'
-          ],
+          measurementDomains,
           segment: 'AllCommsFitness'
-        }
+        },
+        ...(timeBox
+          ? [
+            {
+              measurementDomains,
+              segment: 'BeforeEventCommsFitness',
+              timeBox: {
+                notAfter: timeBox.notBefore
+              }
+            },
+            {
+              measurementDomains,
+              segment: 'DuringEventCommsFitness',
+              timeBox
+            },
+            {
+              measurementDomains,
+              segment: 'AfterEventCommsFitness',
+              timeBox: {
+                notBefore: timeBox.notAfter
+              }
+            }
+          ]
+          : [])
       ]
     },
     {
@@ -110,7 +117,8 @@ export const defaultPageTags = page => {
       aggregation: [
         {
           measurementDomains: ['all'],
-          segment: `page:charity:${page.charityId}`
+          segment: `page:charity:${page.charityId}`,
+          timeBox
         }
       ]
     },
@@ -136,7 +144,8 @@ export const defaultPageTags = page => {
       aggregation: [
         {
           measurementDomains: ['all'],
-          segment: `page:event:${page.event}`
+          segment: `page:event:${page.event}`,
+          timeBox
         }
       ]
     },
@@ -217,7 +226,8 @@ export const defaultPageTags = page => {
       aggregation: [
         {
           measurementDomains: ['all'],
-          segment: `page:campaign:${page.campaign}`
+          segment: `page:campaign:${page.campaign}`,
+          timeBox
         }
       ]
     },
@@ -230,7 +240,8 @@ export const defaultPageTags = page => {
       aggregation: [
         {
           measurementDomains: ['all'],
-          segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
+          segment: `page:campaign:${page.campaign}:charity:${page.charityId}`,
+          timeBox
         }
       ]
     }

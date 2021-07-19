@@ -58,6 +58,7 @@ class CreatePageForm extends Component {
       form,
       onSubmitError,
       onSuccess,
+      timeBox,
       token
     } = this.props
 
@@ -91,6 +92,7 @@ class CreatePageForm extends Component {
             charityOptIn: true,
             eventId,
             token,
+            timeBox,
             currency: currencyCode(country),
             groupValues: mapKeys(groupFields, (value, key) =>
               key.replace('group_values_', '')
@@ -388,6 +390,11 @@ CreatePageForm.propTypes = {
    * The label for the form submit button
    */
   submit: PropTypes.string,
+
+  /**
+   * Timebox to be applied to page tags
+   */
+  timeBox: PropTypes.object,
 
   /**
    * The logged in users' auth token
