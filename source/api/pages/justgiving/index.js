@@ -407,8 +407,8 @@ export const createPageTags = ({
   return request().catch(() => request()) // Retry if request fails
 }
 
-const createDefaultPageTags = page =>
-  createPageTags({ slug: page.slug, tagValues: defaultPageTags(page) })
+const createDefaultPageTags = (page, timeBox) =>
+  createPageTags({ slug: page.slug, tagValues: defaultPageTags(page, timeBox) })
 
 export const createPage = ({
   charityId = required(),
@@ -444,6 +444,7 @@ export const createPage = ({
   target,
   teamId,
   theme,
+  timeBox,
   videos
 }) => {
   const pageTitle = title.replace(/’/g, "'")
@@ -499,7 +500,7 @@ export const createPage = ({
     )
       .then(result => fetchPage(result.pageId))
       .then(page => {
-        createDefaultPageTags(deserializePage(page)).then(tags => {
+        createDefaultPageTags(deserializePage(page), timeBox).then(tags => {
           if (typeof tagsCallback === 'function') {
             tagsCallback(tags, page)
           }
