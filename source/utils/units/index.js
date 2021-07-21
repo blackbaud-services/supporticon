@@ -1,6 +1,7 @@
 export const convertKmToMeters = data => data * 1000
 export const convertMilesToMeters = data => data * 1609.344
 export const convertFeetToMeters = data => data * 0.3048
+export const convertYardsToMeters = data => data * 0.9144
 
 export const convertMetersToKm = data => data / 1000
 export const convertMetersToMiles = data => data * 0.000621371
@@ -43,6 +44,9 @@ export const convertToMeters = (amount, unit = 'm') => {
     case 'ft':
     case 'feet':
       return convertFeetToMeters(amount)
+    case 'yards':
+    case 'yd':
+      return convertYardsToMeters(amount)
     default:
       return Number(amount)
   }
