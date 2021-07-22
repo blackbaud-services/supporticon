@@ -10,9 +10,12 @@ Create a post
 
 **Params**
 
-- `pageId` (string or integer)
-- `caption` (string)
-- `image` (string)
+- `token` (String) User Token _required_
+- `pageId` (String) Page GUID _required_
+- `userId` (String) User GUID _required_
+- `message` (String)
+- `image` (String)
+- `video` (String)
 
 **Returns**
 
@@ -27,8 +30,9 @@ A pending promise that will either resolve to:
 import { createPost } from 'supporticon/api/posts'
 
 createPost({
-  page: 12345,
-  caption: 'I am making great progress',
-  image: 'https://placehold.it/400x400'
+  token: 'xxxxx',
+  pageId: 'f440df6c-1101-4331-ac78-4fc5bc276f4e',
+  userId: '95c0c89f-468c-4a6e-84dd-08a75cbc96ca',
+  message: 'This is a post!'
 })
 ```
