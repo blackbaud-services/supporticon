@@ -1,13 +1,9 @@
 # Goal
 
-Helpers related to fetching and updating an authenticated user with a provided OAuth token.
-
-See [the developer docs](http://developer.everydayhero.com/users/) for more information
+Helpers related to fetching and updating an authenticated user with a provided Auth token.
 
 - [signIn](#signin)
 - [signUp](#signup)
-- [resetPassword](#resetpassword)
-
 
 ## `fetchCurrentUser`
 
@@ -19,7 +15,7 @@ Fetch current user details
 
 - `params` (Object)
 
-- `token` (String) OAuth User Token
+- `token` (String) User Token _required_
 
 **Example**
 
@@ -34,16 +30,18 @@ fetchCurrentUser({ token: 'abcdef123456' })
 
 **Purpose**
 
-Update current user birthday, phone number, and/or address
+Update current user name, email, and/or address
 
 **Params**
 
 - `params` (Object)
 
-- `token` (String) OAuth User Token
+- `token` (String) User Token _required_
+- `uuid` (String) User GUID _required_
+- `email` (String) Email address
+- `firstName` (String) First Name
+- `lastName` (String) Last Name
 - `address` (String) Formatted address
-- `birthday` (String) Date in the format: `YYYY-MM-DD`
-- `phone` (String) Phone number
 
 **Example**
 
@@ -52,6 +50,8 @@ import { updateCurrentUser } from 'supporticon/api/me'
 
 updateCurrentUser({
   token: 'abcdef123456',
-  birthday: '1970-01-01'
+  uuid: 'f440df6c-1101-4331-ac78-4fc5bc276f4e'
+  email: 'test@test.co',
+  firstName: 'Test'
 })
 ```
