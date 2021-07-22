@@ -14,12 +14,12 @@ Helpers related to fetching fundraising pages
 
 **Purpose**
 
-Fetch pages from Supporter.
+Fetch pages from JustGiving.
 
 **Params**
 
 - `params` (Object) see [parameter list](../readme.md#availableparameters)
-- `allPages` (Boolean) Use `api/v2/pages` endpoint (EDH only)
+- `allPages` (Boolean)
 
 **Returns**
 
@@ -34,7 +34,7 @@ A pending promise that will either resolve to:
 import { fetchPages } from 'supporticon/api/pages'
 
 fetchPages({
-  campaign: 'au-123'
+  campaign: 'f440df6c-1101-4331-ac78-4fc5bc276f4e'
 })
 ```
 
@@ -46,38 +46,13 @@ Fetch a single page.
 
 **Params**
 
-- `id` - the page id
+- `id` - the page id or slug
 
 **Returns**
 
 A pending promise that will either resolve to:
 
 - Success: the page data
-- Failure: the error encountered
-
-**Example**
-
-```javascript
-import { fetchPage } from 'supporticon/api/pages'
-
-fetchPage('12345')
-```
-
-## `fetchPageDonationCount`
-
-**Purpose**
-
-Fetch a single page's donation count.
-
-**Params**
-
-- `id` - the page id
-
-**Returns**
-
-A pending promise that will either resolve to:
-
-- Success: the number of donations received by that page
 - Failure: the error encountered
 
 **Example**
@@ -115,18 +90,17 @@ return {
 
 ## `createPage`
 
-Create a Supporter page for an authenticated User.
+Create a JustGiving page for an authenticated User.
 
-See [the API documentation](http://developer.everydayhero.com/pages/#create-an-individual-page) for more information.
+See [the API documentation](https://api.justgiving.com/docs/resources/v1/Fundraising/RegisterFundraisingPage) for more information.
 
 **Params**
 
 - `token` (String) OAuth User Token _required_
-- `campaignId` (String) Campaign UID _required_
-- `birthday` (String) User Date of Birth _required_
-- `charityId` (String) Charity UID
+- `charityId` (String) Charity UID _required_
+- `title` (String) Page Name _required_
+- `campaignId` (String) Campaign UID
 - `image` (String) Image URL for page avatar
-- `name` (String) Page Name
 - `story` (String) Page story
 - `nickname` (String) Page Nickname
 - `slug` (String) Page URL slug
@@ -174,30 +148,25 @@ import { createPage } from 'supporticon/api/pages'
 
 createPage({
   token: 'xxxxx',
-  campaignId: 'au-123',
-  birthday: '1970-01-01',
-  name: 'Test User',
+  charityId: '2050',
+  campaignId: 'f440df6c-1101-4331-ac78-4fc5bc276f4e',
+  title: 'Test User'
 })
 ```
 
 ## `updatePage`
 
-Update an existing Supporter page for an authenticated User.
+Update an existing JustGiving page for an authenticated User.
 
 **Params**
 
-- `pageId` (String/Integer) User page id
+- `slug` (String/Integer) User page slug
 - `params` (Object) Containing the following:
   - `token` (String) OAuth User Token _required_
   - `name` (String) Page Name
   - `target` (String) Page fundraising target/goal (in cents)
-  - `slug` (String) Page URL slug
   - `story` (String) Page story
   - `image` (String) Image URL for page avatar
-  - `expiresAt` (String)
-  - `fitnessGoal` (String) Page fitness goal (in metres)
-  - `campaignDate` (String) Optional page date
-  - `groupValues` (Hash/Array) Campaign group values for the page
 
 **Returns**
 
@@ -211,7 +180,7 @@ A pending promise that will either resolve to:
 ```javascript
 import { updatePage } from 'supporticon/api/pages'
 
-updatePage(123, {
+updatePage('my-page', {
   token: 'xxxxx',
   story: 'This is an updated story'
 })
