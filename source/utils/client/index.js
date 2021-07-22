@@ -3,7 +3,11 @@ import { required } from '../params'
 import map from '../map'
 
 const defaults = {
-  baseURL: process.env.SUPPORTICON_BASE_URL || 'https://everydayhero.com'
+  baseURL: process.env.SUPPORTICON_BASE_URL || 'https://api.justgiving.com',
+  headers: {
+    'x-api-key': process.env.SUPPORTICON_API_KEY || 'a6ba1005',
+    'x-application-key': process.env.SUPPORTICON_API_CLIENT_SECRET
+  }
 }
 
 export const instance = axios.create(defaults)
@@ -45,10 +49,8 @@ export const updateClient = (options = {}) => {
 
 export const getBaseURL = () => instance.defaults.baseURL
 
-export const getPlatform = () =>
-  /justgiving/.test(instance.defaults.baseURL) ? 'justgiving' : 'everydayhero'
+export const isJustGiving = () => true // TODO: Remove this!
 
-export const isJustGiving = () => /justgiving/.test(instance.defaults.baseURL)
 export const isStaging = () => /staging/.test(instance.defaults.baseURL)
 
 // Services API Client
@@ -68,13 +70,9 @@ export const metadataAPI = axios.create({
 })
 
 const updateMetadataAPIClient = () => {
-  metadataAPI.defaults.baseURL = isJustGiving()
-    ? isStaging()
-      ? 'https://metadata-staging.blackbaud.services'
-      : 'https://metadata.blackbaud.services'
-    : isStaging()
-      ? 'https://mds.everydayhero-staging.io'
-      : 'https://mds-engineering.everydayhero.com'
+  metadataAPI.defaults.baseURL = isStaging()
+    ? 'https://metadata-staging.blackbaud.services'
+    : 'https://metadata.blackbaud.services'
 }
 
 // JG Images Client
@@ -107,7 +105,6 @@ export default {
   destroy,
   updateClient,
   getBaseURL,
-  getPlatform,
   isJustGiving,
   isStaging,
   servicesAPI,
