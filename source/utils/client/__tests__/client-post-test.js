@@ -1,4 +1,3 @@
-import moxios from 'moxios'
 import { post, instance, updateClient } from '..'
 
 describe('Utils | post', () => {
