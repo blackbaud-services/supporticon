@@ -8,7 +8,6 @@ Helpers related to fetching teams
 - [createTeam](#createteam)
 - [joinTeam](#updateteam)
 
-
 ## `deserializeTeam`
 
 A default deserializer for deserializing teams
@@ -39,11 +38,11 @@ return {
 
 **Purpose**
 
-Fetch teams for an authenticated user.
+Fetch teams for a campaign
 
 **Params**
 
-- `token` (String) OAuth User Token _required_
+- `campaign` (String) Campaign GUID _required_
 
 **Returns**
 
@@ -58,21 +57,19 @@ A pending promise that will either resolve to:
 import { fetchTeams } from 'supporticon/api/teams'
 
 fetchTeams({
-  token: 'abcd-123456'
+  campaignGuid: 'f440df6c-1101-4331-ac78-4fc5bc276f4e'
 })
 ```
-
 
 ## `fetchTeam`
 
 **Purpose**
 
-Fetch a specific team by id.
+Fetch a specific team by GUID.
 
 **Params**
 
-- `id` (Integer) Team ID _required_
-- `token` (String) OAuth User Token _required EDH only_
+- `id` (Integer) Team GUID _required_
 
 **Returns**
 
@@ -87,8 +84,7 @@ A pending promise that will either resolve to:
 import { fetchTeam } from 'supporticon/api/teams'
 
 fetchTeam({
-  id: 1234,
-  token: 'abcd-123456'
+  id: '95c0c89f-468c-4a6e-84dd-08a75cbc96ca'
 })
 ```
 
@@ -99,9 +95,17 @@ Create a team for an authenticated user.
 
 **Params**
 
-- `token` (String) OAuth User Token _required_
-- `page` (Integer) Page ID _required_
-- `name` (String) Team Name
+- `token` (String) User Token _required_
+- `name` (String) Team Name _required_
+- `campaignId` (String) Campaign GUID _required_
+- `story` (String) Team story _required_
+- `captainSlug` (String) Team captain page slug _required_
+- `coverPhotoId` (String)
+- `slug` (String)
+- `target` (String)
+- `targetType` (String)
+- `targetCurrency` (String)
+- `teamType` (String)
 
 **Returns**
 
@@ -117,8 +121,8 @@ import { createTeam } from 'supporticon/api/teams'
 
 createTeam({
   token: 'xxxxx',
-  page: 1234,
-  name: 'My Team'
+  name: 'My Team',
+  campaignId: 'f440df6c-1101-4331-ac78-4fc5bc276f4e',
 })
 ```
 
@@ -129,9 +133,9 @@ Create a team for an authenticated user.
 
 **Params**
 
-- `token` (String) OAuth User Token _required_
-- `page` (Integer) Page ID _required_
-- `id` (Integer) Team ID _required_
+- `token` (String) User Token _required_
+- `pageSlug` (Integer) Page slug _required_
+- `teamSlug` (Integer) Team slug _required_
 
 **Returns**
 
@@ -147,7 +151,7 @@ import { joinTeam } from 'supporticon/api/teams'
 
 joinTeam({
   token: 'xxxxx',
-  page: 1234,
-  id: 4321
+  pageSlug: 'page',
+  teamSlug: 'team'
 })
 ```
