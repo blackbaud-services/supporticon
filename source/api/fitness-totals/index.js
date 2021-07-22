@@ -1,21 +1,39 @@
-import { isJustGiving } from '../../utils/client'
+import * as client from '../../utils/client'
+import { paramsSerializer, required } from '../../utils/params'
+import { fetchTotals, deserializeTotals } from '../../utils/totals'
 
-import {
-  fetchFitnessSummary as fetchEDHFitnessSummary,
-  fetchFitnessTotals as fetchEDHFitnessTotals
-} from './everydayhero'
+export const fetchFitnessSummary = (campaign = required(), types) =>
+  Promise.reject(new Error('This method is not supported for JustGiving'))
 
-import {
-  fetchFitnessSummary as fetchJGFitnessSummary,
-  fetchFitnessTotals as fetchJGFitnessTotals
-} from './justgiving'
+export function fetchFitnessTotals ({
+  campaign = required(),
+  limit = 100,
+  offset = 0,
+  useLegacy = true,
+  startDate,
+  endDate
+}) {
+  if (useLegacy) {
+    const params = {
+      campaignGuid: campaign,
+      limit,
+      offset,
+      start: startDate,
+      end: endDate
+    }
 
-export const fetchFitnessSummary = (campaign, types) =>
-  isJustGiving()
-    ? fetchJGFitnessSummary(campaign, types)
-    : fetchEDHFitnessSummary(campaign, types)
+    return client
+      .get('/v1/fitness/campaign', params, {}, { paramsSerializer })
+      .then(result => ({
+        distance: result.totalAmount,
+        duration: result.totalAmountTaken,
+        elevation: result.totalAmountElevation
+      }))
+  }
 
-export const fetchFitnessTotals = (...args) =>
-  isJustGiving()
-    ? fetchJGFitnessTotals(...args)
-    : fetchEDHFitnessTotals(...args)
+  return fetchTotals({
+    segment: `page:campaign:${campaign}`,
+    tagId: 'page:campaign',
+    tagValue: `page:campaign:${campaign}`
+  }).then(deserializeTotals)
+}
