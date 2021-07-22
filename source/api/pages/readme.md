@@ -1,6 +1,6 @@
 # Goal
 
-Helpers related to fetching supporter pages
+Helpers related to fetching fundraising pages
 
 - [fetchPages](#fetchpages)
 - [fetchPage](#fetchpage)
@@ -90,15 +90,15 @@ fetchPage('12345')
 
 ## `deserializePage`
 
-A default deserializer for deserializing supporter pages
+A default deserializer for deserializing fundraising pages
 
 **Params**
 
-- `data` {Object} a single supporter page to deserialize
+- `data` {Object} a single fundraising page to deserialize
 
 **Returns**
 
-The deserialized supporter page
+The deserialized fundraising page
 
 **Example**
 
