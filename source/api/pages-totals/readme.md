@@ -9,12 +9,11 @@ Helpers related to fetching the number of pages for campaigns, charities etc.
 
 **Purpose**
 
-Fetch number of pages from Supporter.
+Fetch number of pages from JustGiving.
 
 **Params**
 
 - `params` (Object) see [parameter list](../readme.md#availableparameters)
-- `search` (Boolean) Use `api/v2/search/pages` endpoint (EDH only)
 
 **Returns**
 
@@ -29,6 +28,6 @@ A pending promise that will either resolve to:
 import { fetchPagesTotals } from 'supporticon/api/pages-totals'
 
 fetchPagesTotals({
-  campaign: 'au-123'
+  campaign: 'f440df6c-1101-4331-ac78-4fc5bc276f4e'
 })
 ```
