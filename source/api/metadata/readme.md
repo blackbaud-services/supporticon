@@ -1,6 +1,6 @@
 # Goal
 
-Helpers related to both the [EDH](http://developer.everydayhero.com/metadata) and [Digital Solutions](https://metadata.blackbaud.services/docs) Metadata services
+Helpers related to the [Digital Solutions](https://metadata.blackbaud.services/docs) Metadata service
 
 - [fetchMetadata](#fetchmetadata)
 - [createMetadata](#createmetadata)
@@ -15,9 +15,8 @@ Fetch metadata for a given user/page
 **Params**
 
 - `token` (String) User Token _required_
-- `id` (String) User Page ID _required for JG_
-- `app` (String) Metadata app (JG only)
-- `type` (String) Metadata Type (EDH only)
+- `id` (String) User Page ID _required_
+- `app` (String) Metadata app
 
 **Returns**
 
@@ -49,8 +48,7 @@ Create metadata for a given user/page
 - `token` (String) User Token _required_
 - `id` (String) User Page ID _required_
 - `metadata` (Object) Metadata Key / Value pairs _required_
-- `app` (String) Metadata app (JG only)
-- `type` (String) Metadata Type (EDH only)
+- `app` (String) Metadata app
 
 **Returns**
 
@@ -87,8 +85,7 @@ Update metadata key/value pair
 - `id` (String) Metadata ID _required_
 - `key` (String) Metadata Key _required_
 - `value` (String) Metadata Value _required_
-- `app` (String) Metadata app (JG only)
-- `type` (String) Metadata Type (EDH only)
+- `app` (String) Metadata app
 
 **Returns**
 

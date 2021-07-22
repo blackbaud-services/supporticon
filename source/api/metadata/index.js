@@ -1,28 +1,56 @@
-import { isJustGiving } from '../../utils/client'
+import { metadataAPI } from '../../utils/client'
 import { required } from '../../utils/params'
+import keys from 'lodash/keys'
 
-import {
-  deserializeMetadata as deserializeJGMetadata,
-  fetchMetadata as fetchJGMetadata,
-  createMetadata as createJGMetadata,
-  updateMetadata as updateJGMetadata
-} from './justgiving'
+export const deserializeMetadata = (metadata = []) =>
+  metadata.reduce(
+    (keys, { key, value, id }) => ({
+      ...keys,
+      [key]: { id, value }
+    }),
+    {}
+  )
 
-import {
-  deserializeMetadata as deserializeEDHMetadata,
-  fetchMetadata as fetchEDHMetadata,
-  createMetadata as createEDHMetadata,
-  updateMetadata as updateEDHMetadata
-} from './everydayhero'
+export const fetchMetadata = ({
+  app = required(),
+  token = required(),
+  id,
+  authType = 'Basic'
+}) =>
+  metadataAPI
+    .get(`/v1/apps/${app}/metadata`, {
+      params: { page: id },
+      headers: { Authorization: [authType, token].join(' ') }
+    })
+    .then(response => response.data)
 
-export const deserializeMetadata = (data = required()) =>
-  isJustGiving() ? deserializeJGMetadata(data) : deserializeEDHMetadata(data)
+export const createMetadata = ({
+  app = required(),
+  token = required(),
+  id = required(),
+  metadata = required(),
+  authType = 'Basic'
+}) => {
+  const headers = { Authorization: [authType, token].join(' ') }
+  const values = keys(metadata).map(key => ({ key, value: metadata[key] }))
 
-export const fetchMetadata = (params = required()) =>
-  isJustGiving() ? fetchJGMetadata(params) : fetchEDHMetadata(params)
+  return metadataAPI
+    .post(`/v1/apps/${app}/metadata`, { page: id, values }, { headers })
+    .then(response => response.data)
+}
 
-export const createMetadata = (params = required()) =>
-  isJustGiving() ? createJGMetadata(params) : createEDHMetadata(params)
-
-export const updateMetadata = (params = required()) =>
-  isJustGiving() ? updateJGMetadata(params) : updateEDHMetadata(params)
+export const updateMetadata = ({
+  app = required(),
+  token = required(),
+  id = required(),
+  key = required(),
+  value = required(),
+  authType = 'Basic'
+}) =>
+  metadataAPI
+    .put(
+      `/v1/apps/${app}/metadata/${id}`,
+      { key, value },
+      { headers: { Authorization: [authType, token].join(' ') } }
+    )
+    .then(response => response.data)
