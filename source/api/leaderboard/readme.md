@@ -10,7 +10,7 @@ Helpers related to fetching pages sorted by funds raised.
 
 **Purpose**
 
-Fetch pages from Supporter sorted by funds raised.
+Fetch pages from JustGiving sorted by funds raised.
 
 **Params**
 
@@ -23,17 +23,6 @@ A pending promise that will either resolve to:
 - Success: the data returned from the request
 - Failure: the error encountered
 
-**EDH Example**
-
-```javascript
-import { fetchLeaderboard } from 'supporticon/api/leaderboard'
-
-fetchLeaderboard({
-  campaign: 'au-123'
-})
-```
-
-**JG Example**
 
 ```javascript
 import { fetchLeaderboard } from 'supporticon/api/leaderboard'
@@ -46,15 +35,15 @@ fetchLeaderboard({
 
 ## `deserializeLeaderboard`
 
-A default deserializer for deserializing supporter leaderboard pages
+A default deserializer for deserializing fundraising leaderboard pages
 
 **Params**
 
-- `data` {Object} a single supporter page to deserialize
+- `data` {Object} a single fundraising page to deserialize
 
 **Returns**
 
-The deserialized supporter page
+The deserialized fundraising page
 
 **Example**
 
