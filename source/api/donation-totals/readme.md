@@ -10,7 +10,7 @@ Helpers related to fetching donation totals for charities, campaigns etc.
 
 **Purpose**
 
-Fetch donation totals from Supporter.
+Fetch donation totals from JustGiving.
 
 **Params**
 
@@ -29,7 +29,7 @@ A pending promise that will either resolve to:
 import { fetchDonationTotals } from 'supporticon/api/donation-totals'
 
 fetchDonationTotals({
-  campaign: 'au-123'
+  campaign: 'f440df6c-1101-4331-ac78-4fc5bc276f4e'
 })
 ```
 
