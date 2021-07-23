@@ -10,7 +10,7 @@ Helpers related to fetching pages sorted by fitness activities.
 
 **Purpose**
 
-Fetch pages from Supporter sorted by fitness activities.
+Fetch pages from JustGiving sorted by fitness activities.
 
 **Params**
 
@@ -29,21 +29,21 @@ A pending promise that will either resolve to:
 import { fetchFitnessLeaderboard } from 'supporticon/api/fitness-leaderboard'
 
 fetchFitnessLeaderboard({
-  campaign: 'au-123'
+  campaign: 'f440df6c-1101-4331-ac78-4fc5bc276f4e'
 })
 ```
 
 ## `deserializeLeaderboard`
 
-A default deserializer for deserializing supporter leaderboard pages
+A default deserializer for deserializing fitness leaderboard pages
 
 **Params**
 
-- `data` {Object} a single supporter page to deserialize
+- `data` {Object} a single fundraising page to deserialize
 
 **Returns**
 
-The deserialized supporter page
+The deserialized fundraising page
 
 **Example**
 
