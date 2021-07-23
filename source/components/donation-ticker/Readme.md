@@ -4,7 +4,7 @@
 
 ```
 <DonationTicker
-  campaign='au-23374'
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   label='Donations'
 />
 ```
@@ -13,7 +13,7 @@
 
 ```
 <DonationTicker
-  campaign='au-23374'
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   format='0a'
   layout='amount-only'
   ticker={{
@@ -28,7 +28,7 @@
 
 ```
 <DonationTicker
-  campaign='au-23374'
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   label='Messages'
   layout='name-message'
 />

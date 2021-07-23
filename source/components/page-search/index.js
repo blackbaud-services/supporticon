@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { fetchPages, deserializePage } from '../../api/pages'
 import { fetchTeams, deserializeTeam } from '../../api/teams'
-import { isJustGiving } from '../../utils/client'
 
 import SearchForm from 'constructicon/search-form'
 import SearchResult from 'constructicon/search-result'
@@ -22,7 +21,7 @@ class PageSearch extends Component {
   componentDidMount () {
     const { campaign, type } = this.props
 
-    if (isJustGiving() && !!campaign && type !== 'individual') {
+    if (!!campaign && type !== 'individual') {
       fetchTeams({ campaign, limit: 1000 })
         .then(teams => teams.map(deserializeTeam))
         .then(teams =>
@@ -45,28 +44,23 @@ class PageSearch extends Component {
   }
 
   handleFetch (params) {
-    if (isJustGiving()) {
-      const handleFetchTeams = () =>
-        Promise.resolve(
-          this.state.teams.filter(
-            team =>
-              team.name.toLowerCase().indexOf(params.q.toLowerCase()) !== -1
-          )
+    const handleFetchTeams = () =>
+      Promise.resolve(
+        this.state.teams.filter(
+          team => team.name.toLowerCase().indexOf(params.q.toLowerCase()) !== -1
         )
+      )
 
-      switch (params.type) {
-        case 'team':
-          return handleFetchTeams()
-        case 'all':
-          return Promise.all([fetchPages(params), handleFetchTeams()]).then(
-            ([pages, teams]) => [...pages, ...teams]
-          )
-        default:
-          return fetchPages(params)
-      }
+    switch (params.type) {
+      case 'team':
+        return handleFetchTeams()
+      case 'all':
+        return Promise.all([fetchPages(params), handleFetchTeams()]).then(
+          ([pages, teams]) => [...pages, ...teams]
+        )
+      default:
+        return fetchPages(params)
     }
-
-    return fetchPages(params)
   }
 
   sendQuery (query) {
@@ -90,7 +84,6 @@ class PageSearch extends Component {
       event: this.props.event,
       country: this.props.country,
       type: this.props.type,
-      group: this.props.group,
       limit: this.props.limit,
       page: this.props.page
     })
@@ -198,11 +191,6 @@ PageSearch.propTypes = {
    * The type of page to include in the leaderboard
    */
   type: PropTypes.oneOf(['individual', 'team', 'all']),
-
-  /**
-   * The group value(s) to filter by
-   */
-  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
    * The number of records to fetch

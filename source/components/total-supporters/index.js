@@ -34,8 +34,7 @@ class TotalSupporters extends Component {
       country,
       type,
       startDate,
-      endDate,
-      search
+      endDate
     } = this.props
 
     fetchPagesTotals({
@@ -46,8 +45,7 @@ class TotalSupporters extends Component {
       country,
       type,
       startDate,
-      endDate,
-      search
+      endDate
     })
       .then(data => {
         this.setState({
@@ -187,12 +185,7 @@ TotalSupporters.propTypes = {
   /**
    * Interval (in milliseconds) to refresh data from API
    */
-  refreshInterval: PropTypes.number,
-
-  /**
-   * Use `v2/search/pages` endpoint (EDH only)
-   */
-  search: PropTypes.bool
+  refreshInterval: PropTypes.number
 }
 
 TotalSupporters.defaultProps = {
@@ -200,7 +193,6 @@ TotalSupporters.defaultProps = {
   offset: 0,
   multiplier: 1,
   format: '0,0',
-  search: true,
   type: 'individual'
 }
 

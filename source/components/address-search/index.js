@@ -5,7 +5,6 @@ import {
   getAddressDetails,
   searchAddress
 } from '../../api/address'
-import { isJustGiving } from '../../utils/client'
 import countries from '../../utils/countries'
 
 import Button from 'constructicon/button'
@@ -32,7 +31,7 @@ class AddressSearch extends Component {
     if (q.length > 0) {
       Promise.resolve()
         .then(() => this.setState({ status: 'fetching' }))
-        .then(() => searchAddress(q, this.state.country))
+        .then(() => searchAddress(q))
         .then(results => this.setState({ results, status: 'fetched' }))
         .catch(error => {
           this.setState({ status: 'failed' })
@@ -48,17 +47,10 @@ class AddressSearch extends Component {
       Promise.resolve()
         .then(
           () =>
-            selected.AddressLine1
-              ? selected
-              : getAddressDetails(selected.id, this.state.country)
+            selected.AddressLine1 ? selected : getAddressDetails(selected.id)
         )
         .then(address => deserializeAddress(address))
-        .then(address =>
-          this.props.onChange({
-            ...address,
-            country: this.state.country || address.country
-          })
-        )
+        .then(address => this.props.onChange(address))
     }
   }
 
@@ -91,7 +83,7 @@ class AddressSearch extends Component {
             results={results}
             showMore
             status={status}
-            placeholder={isJustGiving() ? 'Search postcode' : 'Search address'}
+            placeholder='Search postcode'
             validations={validations}
             value={value}
             {...inputProps}
