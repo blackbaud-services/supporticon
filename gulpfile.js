@@ -24,7 +24,7 @@ gulp.task('npm-prep-meta', function() {
 })
 
 
-gulp.task('npm-prepare', [
+gulp.task('npm-prepare', gulp.series(
   'npm-prep-files',
   'npm-prep-meta'
-])
+))

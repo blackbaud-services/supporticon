@@ -8,12 +8,12 @@ const theme = {
     error: colors.danger,
     light: colors.grey,
     lightest: colors.lightGrey,
-    name: colors.primary,
+    name: colors.justgiving,
     type: colors.secondary,
     base: colors.dark,
-    link: colors.primary,
+    link: colors.justgiving,
     linkHover: colors.tertiary,
-    sidebarBackground: colors.primary
+    sidebarBackground: colors.justgiving
   },
   fontFamily: {
     base: '"proxima-nova", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
@@ -54,7 +54,7 @@ const styles = {
         left: 0,
         width: rhythm(3),
         height: '4px',
-        backgroundColor: colors.primary,
+        backgroundColor: colors.justgiving,
         borderRadius: '4px'
       },
       '& > a': {
@@ -104,7 +104,7 @@ const styles = {
       paddingBottom: 0,
       '& .rsg-logo': {
         display: 'block',
-        color: colors.tertiary,
+        color: colors.light,
         margin: rhythm(-0.5),
         padding: rhythm(0.5),
         fontSize: theme.fontSize.h3,
