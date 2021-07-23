@@ -198,7 +198,7 @@ DonationTicker.propTypes = {
   label: PropTypes.string,
 
   /**
-   * Limit of API requests to make (EDH)
+   * Limit of API requests to make
    */
   limit: PropTypes.number,
 

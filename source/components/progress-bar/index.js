@@ -41,7 +41,6 @@ class ProgressBar extends Component {
       endDate,
       event,
       excludeOffline,
-      group,
       startDate
     } = this.props
 
@@ -51,7 +50,6 @@ class ProgressBar extends Component {
       country,
       endDate,
       event,
-      group,
       includeOffline: !excludeOffline,
       startDate
     })
@@ -200,11 +198,6 @@ ProgressBar.propTypes = {
    * Exclude offline donations?
    */
   excludeOffline: PropTypes.bool,
-
-  /**
-   * The group value(s) to filter by
-   */
-  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
    * Start date filter (ISO Format)
