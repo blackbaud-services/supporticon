@@ -49,8 +49,6 @@ export const updateClient = (options = {}) => {
 
 export const getBaseURL = () => instance.defaults.baseURL
 
-export const isJustGiving = () => true // TODO: Remove this!
-
 export const isStaging = () => /staging/.test(instance.defaults.baseURL)
 
 // Services API Client
@@ -105,7 +103,6 @@ export default {
   destroy,
   updateClient,
   getBaseURL,
-  isJustGiving,
   isStaging,
   servicesAPI,
   metadataAPI,
