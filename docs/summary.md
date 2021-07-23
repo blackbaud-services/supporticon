@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Supporter API](source/api/readme.md)
+* [JustGiving API](source/api/readme.md)
   * [Campaigns](source/api/campaigns/readme.md)
   * [Donations](source/api/donations/readme.md)
   * [Donation Totals](source/api/donation-totals/readme.md)

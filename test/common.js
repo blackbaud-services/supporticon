@@ -14,7 +14,7 @@ global.sinon = require('sinon')
 
 global.fetchStub = (endpoint, params = {}) => {
   const queryString = Object.keys(params).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&')
-  return Promise.resolve().then(() => `https://everydayhero-staging.com/${endpoint}?${queryString}`)
+  return Promise.resolve().then(() => `https://api.staging.justgiving.com/${endpoint}?${queryString}`)
 }
 
 global.enzyme = require('enzyme')

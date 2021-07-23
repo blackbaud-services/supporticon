@@ -5,7 +5,6 @@ const defaultMappings = {
   charity: 'charity_id',
   endDate: 'end_at',
   filter: 'q',
-  group: 'group_value',
   pageIds: 'page_ids',
   startDate: 'start_at',
   type: 'group_by'

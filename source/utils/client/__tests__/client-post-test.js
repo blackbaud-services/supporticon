@@ -13,7 +13,7 @@ describe('Utils | post', () => {
     post('api/v2/pages', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://everydayhero.com/api/v2/pages')
+      expect(request.url).to.contain('https://api.justgiving.com/api/v2/pages')
       expect(JSON.parse(request.config.data)).to.deep.equal({ foo: 'bar' })
       done()
     })
@@ -53,14 +53,14 @@ describe('Utils | post', () => {
   })
 
   it('allows us to update the base url', done => {
-    updateClient({ baseURL: 'https://everydayhero-staging.com' })
+    updateClient({ baseURL: 'https://api.staging.justgiving.com' })
     post('api/v2/campaigns', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://everydayhero-staging.com/api/v2/campaigns'
+        'https://api.staging.justgiving.com/api/v2/campaigns'
       )
-      updateClient({ baseURL: 'https://everydayhero.com' })
+      updateClient({ baseURL: 'https://api.justgiving.com' })
       done()
     })
   })
