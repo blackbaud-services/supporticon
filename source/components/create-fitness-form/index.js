@@ -7,7 +7,6 @@ import dayjs from 'dayjs'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { createFitnessActivity } from '../../api/fitness-activities'
-import { isJustGiving } from '../../utils/client'
 
 import Form from 'constructicon/form'
 import Grid from 'constructicon/grid'
@@ -41,11 +40,7 @@ class CreateFitnessForm extends Component {
         startedAt: dayjs(data.startedAt).isSame(dayjs(), 'day')
           ? dayjs().format()
           : data.startedAt,
-        type: isJustGiving()
-          ? data.type
-          : data.type === 'ride'
-            ? 'bike'
-            : data.type
+        type: data.type
       })
 
       return Promise.resolve()
@@ -181,15 +176,10 @@ CreateFitnessForm.propTypes = {
   /**
    * The ID for a valid page (pageGuid for JG)
    */
-  pageId: isJustGiving() ? PropTypes.string : PropTypes.string.isRequired,
+  pageId: PropTypes.string.isRequired,
 
   /**
-   * The shortName for a valid page (required - JG legacy)
-   */
-  pageSlug: isJustGiving() ? PropTypes.string.isRequired : PropTypes.string,
-
-  /**
-   * The user guid (required - JG)
+   * The user guid
    */
   userId: PropTypes.string.isRequired,
 
@@ -236,15 +226,7 @@ CreateFitnessForm.propTypes = {
   /**
    * The initial selected fitness activity type
    */
-  type: PropTypes.oneOf([
-    'walk',
-    'run',
-    'ride',
-    'swim',
-    'hike',
-    'climb',
-    'sport'
-  ]),
+  type: PropTypes.oneOf(['walk', 'run', 'ride', 'swim', 'hike', 'wheelchair']),
 
   /**
    * The available fitness activity types
@@ -309,7 +291,7 @@ CreateFitnessForm.defaultProps = {
   includeUnit: true,
   submit: 'Log fitness activity',
   type: 'walk',
-  types: ['walk', 'run', 'ride', 'swim'],
+  types: ['walk', 'run', 'ride', 'swim', 'wheelchair'],
   uom: 'km'
 }
 
