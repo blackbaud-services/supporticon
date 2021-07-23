@@ -2,7 +2,8 @@
 
 ```
 <CreatePageForm
-  campaignId='au-0'
+  campaignId='96e2266e-2fa2-4109-a2b6-c017b79011bd'
+  charityId='54'
   token='1234abcd'
   onSuccess={(result) => alert(JSON.stringify(result))}
 />
@@ -35,61 +36,44 @@ const fields = {
 };
 
 <CreatePageForm
-  campaignId='au-0'
+  campaignId='96e2266e-2fa2-4109-a2b6-c017b79011bd'
+  charityId='54'
   token='1234abcd'
   fields={fields}
   onSuccess={(result) => alert(JSON.stringify(result))}
 />
 ```
 
-### With groups (EDH only)
-
-```
-<CreatePageForm
-  campaignId='au-21937'
-  token='1234abcd'
-  onSuccess={(result) => alert(JSON.stringify(result))}
-/>
-```
 
 ### With charity search
 
 ```
 <CreatePageForm
-  campaignId='au-0'
+  campaignId='96e2266e-2fa2-4109-a2b6-c017b79011bd'
   token='1234abcd'
   includeCharitySearch
   onSuccess={(result) => alert(JSON.stringify(result))}
 />
 ```
 
-### With charity select
+### With address
 
 ```
 <CreatePageForm
-  campaignId='au-6839'
-  token='1234abcd'
-  includeCharitySearch='select'
-  onSuccess={(result) => alert(JSON.stringify(result))}
-/>
-```
-
-### With address (EDH only)
-
-```
-<CreatePageForm
-  campaignId='au-0'
+  campaignId='96e2266e-2fa2-4109-a2b6-c017b79011bd'
+  charityId='54'
   includeAddress
   token='1234abcd'
   onSuccess={(result) => alert(JSON.stringify(result))}
 />
 ```
 
-### With address and default country (EDH only)
+### With address and default country
 
 ```
 <CreatePageForm
-  campaignId='au-0'
+  campaignId='96e2266e-2fa2-4109-a2b6-c017b79011bd'
+  charityId='54'
   country='uk'
   includeAddress
   token='1234abcd'
@@ -101,8 +85,9 @@ const fields = {
 
 ```
 <CreatePageForm
-  campaignId='au-0'
-  initialValues={{ birthday: '2010-01-01' }}
+  campaignId='96e2266e-2fa2-4109-a2b6-c017b79011bd'
+  charityId='54'
+  initialValues={{ name: 'My Page' }}
   token='1234abcd'
   onSuccess={(result) => alert(JSON.stringify(result))}
 />

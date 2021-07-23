@@ -2,25 +2,19 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
-import mapKeys from 'lodash/mapKeys'
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
-import pickBy from 'lodash/pickBy'
-import compose from 'constructicon/lib/compose'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { createPage } from '../../api/pages'
 import { updateCurrentUser } from '../../api/me'
-import { isJustGiving } from '../../utils/client'
 import { currencyCode } from '../../utils/currencies'
 import { renderInput, renderFormFields } from '../../utils/form'
-import withGroups from './with-groups'
 import countries from '../../utils/countries'
 import * as addressHelpers from '../../utils/address'
 
 import AddressSearch from '../address-search'
 import CharitySearch from '../charity-search'
-import CharitySelect from '../charity-select'
 import Form from 'constructicon/form'
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
@@ -41,7 +35,7 @@ class CreatePageForm extends Component {
   }
 
   componentDidMount () {
-    if (isJustGiving() && this.props.country !== 'uk') {
+    if (this.props.country !== 'uk') {
       this.setState({ manualAddress: true })
     }
   }
@@ -72,9 +66,6 @@ class CreatePageForm extends Component {
           status: 'fetching'
         })
 
-        const groupFields = pickBy(data, (value, key) =>
-          /^group_values_/.test(key)
-        )
         const addressFields = pick(data, [
           'streetAddress',
           'extendedAddress',
@@ -95,17 +86,13 @@ class CreatePageForm extends Component {
             eventId,
             token,
             timeBox,
-            currency: currencyCode(country),
-            groupValues: mapKeys(groupFields, (value, key) =>
-              key.replace('group_values_', '')
-            )
+            currency: currencyCode(country)
           },
           data
         )
 
         return Promise.resolve()
           .then(() => this.handleSubmitAddress(token, addressFields))
-          .then(() => this.handleSubmitPhone(token, data.phone))
           .then(() => createPage(dataPayload))
           .then(result => {
             this.setState({ status: 'fetched' })
@@ -226,14 +213,6 @@ class CreatePageForm extends Component {
       : Promise.resolve()
   }
 
-  handleSubmitPhone (token, phone) {
-    const { authType, includePhone } = this.props
-
-    return !isJustGiving() && includePhone
-      ? updateCurrentUser({ authType, token, phone })
-      : Promise.resolve()
-  }
-
   handleAddressLookup (address) {
     this.props.form.updateValues(address)
     this.setState({ manualAddress: true })
@@ -277,17 +256,11 @@ class CreatePageForm extends Component {
         {this.getAutoRenderedFields(form.fields).map(field => {
           switch (field.name) {
             case 'charityId':
-              return field.type === 'search' ? (
+              return (
                 <CharitySearch
                   key={field.name}
                   campaign={campaignId}
                   onChange={charity => field.onChange(charity.id)}
-                  inputProps={{ ...field, ...inputField }}
-                />
-              ) : (
-                <CharitySelect
-                  key={field.name}
-                  campaign={campaignId}
                   inputProps={{ ...field, ...inputField }}
                 />
               )
@@ -381,12 +354,12 @@ CreatePageForm.propTypes = {
   addressSearchProps: PropTypes.object,
 
   /**
-   * The campaignId for a valid campaign (EDH only - required)
+   * The campaignId for a valid campaign
    */
   campaignId: PropTypes.string,
 
   /**
-   * The charityId for a valid charity (Required for JG)
+   * The charityId for a valid charity
    */
   charityId: PropTypes.string,
 
@@ -406,7 +379,7 @@ CreatePageForm.propTypes = {
   disableInvalidForm: PropTypes.bool,
 
   /**
-   * The eventId for a valid event (JG only - required)
+   * The eventId for a valid event
    */
   eventId: PropTypes.string,
 
@@ -456,14 +429,9 @@ CreatePageForm.propTypes = {
   token: PropTypes.string.isRequired,
 
   /**
-   * Include a charity search field - can be either "search" or "select" (defaults to search)
+   * Include a charity search field?
    */
-  includeCharitySearch: PropTypes.oneOf([PropTypes.bool, 'search', 'select']),
-
-  /**
-   * Include phone in page creation
-   */
-  includePhone: PropTypes.bool,
+  includeCharitySearch: PropTypes.bool,
 
   /**
    * Include address search in the page creation
@@ -493,50 +461,23 @@ CreatePageForm.defaultProps = {
 }
 
 const form = props => {
-  const includePhone = !isJustGiving() && props.includePhone
-
-  const defaultFields = isJustGiving()
-    ? {
-      title: {
-        label: 'Page title',
-        type: 'text',
-        order: 1,
-        required: true,
-        maxLength: 255,
-        placeholder: 'Title of your fundraising page',
-        validators: [validators.required('Please enter a page title')]
-      }
+  const defaultFields = {
+    title: {
+      label: 'Page title',
+      type: 'text',
+      order: 1,
+      required: true,
+      maxLength: 255,
+      placeholder: 'Title of your fundraising page',
+      validators: [validators.required('Please enter a page title')]
     }
-    : {
-      birthday: {
-        label: 'Date of birth',
-        type: 'date',
-        order: 1,
-        required: true,
-        placeholder: 'DD/MM/YYYY',
-        min: '1900-01-01',
-        pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}',
-        validators: [validators.required('Please enter your date of birth')]
-      }
-    }
+  }
 
   const optionalFields = {
-    ...(includePhone && {
-      phone: {
-        label: 'Phone Number',
-        type: 'tel',
-        order: 2,
-        required: true,
-        validators: [validators.required('Please enter your phone number')]
-      }
-    }),
     ...(props.includeCharitySearch && {
       charityId: {
         label: 'Charity',
-        type:
-          typeof props.includeCharitySearch === 'string'
-            ? props.includeCharitySearch
-            : 'search',
+        type: 'search',
         order: 2,
         required: true,
         validators: [validators.required('Please select your charity')]
@@ -616,7 +557,4 @@ const form = props => {
   }
 }
 
-export default compose(
-  withGroups,
-  withForm(form)
-)(CreatePageForm)
+export default withForm(form)(CreatePageForm)
