@@ -12,8 +12,7 @@ Search for an address
 
 **Params**
 
-- `query` (String) the address query to search
-- `region` (String) defaults to au
+- `postCode` (String) the UK postcode to search
 
 **Returns**
 
@@ -27,7 +26,7 @@ A pending promise that will either resolve to:
 ```javascript
 import { searchAddress } from 'supporticon/api/address'
 
-searchAddress('1 foo street')
+searchAddress('SW1A1AA')
 ```
 
 ## `getAddressDetails`
@@ -36,8 +35,7 @@ Given an address id, get the address details
 
 **Params**
 
-- `query` (String) the id of the found address (see searchAddress)
-- `region` (String) defaults to au
+- `id` (String) the id of the found address (see searchAddress)
 
 **Returns**
 
@@ -46,7 +44,7 @@ The address
 **Example**
 
 ```javascript
-import { getAddressDetails } from 'supporticon/api/feeds'
+import { getAddressDetails } from 'supporticon/api/address'
 
 getAddressDetails(123)
 ```
