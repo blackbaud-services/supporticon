@@ -1,19 +1,13 @@
-import moxios from 'moxios'
 import { connectFitness, disconnectFitness, updateFitnessSettings } from '..'
-import { instance, servicesAPI, updateClient } from '../../../utils/client'
+import { instance, servicesAPI } from '../../../utils/client'
 
 describe('Fitness', () => {
   beforeEach(() => {
-    updateClient({
-      baseURL: 'https://api.justgiving.com',
-      headers: { 'x-api-key': 'abcd1234' }
-    })
     moxios.install(instance)
     moxios.install(servicesAPI)
   })
 
   afterEach(() => {
-    updateClient({ baseURL: 'https://everydayhero.com' })
     moxios.uninstall(instance)
     moxios.uninstall(servicesAPI)
   })
