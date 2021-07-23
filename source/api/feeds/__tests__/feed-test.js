@@ -1,58 +1,12 @@
-import moxios from 'moxios'
 import { fetchDonationFeed } from '..'
-import { instance, servicesAPI, updateClient } from '../../../utils/client'
+import { servicesAPI } from '../../../utils/client'
 
-describe('Fetch EDH Donation Feed', () => {
+describe('Fetch Donation Feed', () => {
   beforeEach(() => {
-    moxios.install(instance)
-  })
-
-  afterEach(() => {
-    moxios.uninstall(instance)
-  })
-
-  it('uses the correct url', done => {
-    fetchDonationFeed({ campaign_id: 'au-6839' })
-
-    moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain(
-        'https://everydayhero.com/api/v2/search/feed'
-      )
-      expect(request.url).to.contain('campaign_id=au-6839')
-      expect(request.url).to.contain('type[]=OnlineDonation')
-      done()
-    })
-  })
-
-  it('fetches offline donations when includeOffline option is passed in', done => {
-    fetchDonationFeed({ campaign_id: 'au-6839', includeOffline: true })
-
-    moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain(
-        'https://everydayhero.com/api/v2/search/feed'
-      )
-      expect(request.url).to.contain('type[]=OnlineDonation')
-      expect(request.url).to.contain('type[]=OfflineDonation')
-      done()
-    })
-  })
-})
-
-describe('Fetch JG Donation Feed', () => {
-  beforeEach(() => {
-    updateClient({
-      baseURL: 'https://api.justgiving.com',
-      headers: { 'x-api-key': 'abcd1234' }
-    })
-    moxios.install(instance)
     moxios.install(servicesAPI)
   })
 
   afterEach(() => {
-    updateClient({ baseURL: 'https://everydayhero.com' })
-    moxios.uninstall(instance)
     moxios.uninstall(servicesAPI)
   })
 
