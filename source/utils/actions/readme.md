@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Fetch data from the supporter API and dispatch the relevant Redux actions.
+Fetch data from the JG API and dispatch the relevant Redux actions.
 
 ## Params
 
@@ -25,15 +25,15 @@ import { fetchLeaderboard } from 'supporticon/api/leaderboard'
 
 dispatch(createAction({
   namespace: 'app/leaderboard',
-  fetcher: fetchLeaderboard({ campaign: 'au-123' })
+  fetcher: fetchLeaderboard({ campaign: 'f440df6c-1101-4331-ac78-4fc5bc276f4e' })
 }))
 ```
 
 The above will call `fetchLeaderboard` with your supplied params to fetch your data, and will dispatch the following actions.
 
-- `app/leaderboard/FETCH` when the request to Supporter is made
+- `app/leaderboard/FETCH` when the request to JustGiving is made
   - `payload` - empty
 - `app/leaderboard/FETCH_SUCCESS` when the response is received, with the pay
-  - `payload.data` - the result(s) retrieved from Supporter
+  - `payload.data` - the result(s) retrieved from JustGiving
 - `app/leaderboard/FETCH_FAILURE` when an error is encountered
   - `payload.error` - the error encountered

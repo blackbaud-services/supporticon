@@ -14,7 +14,7 @@ describe('Utils | get', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://everydayhero.com/api/v2/campaigns'
+        'https://api.justgiving.com/api/v2/campaigns'
       )
       expect(request.url).to.contain('foo=bar')
       expect(request.config.method).to.eql('get')
@@ -23,8 +23,10 @@ describe('Utils | get', () => {
   })
 
   it('resolves to the fetched data', done => {
-    get('api/v2/campaigns/au-1', { foo: 'bar' }).then(data => {
-      expect(data.campaign.uid).to.eql('au-1')
+    get('api/v2/campaigns/f440df6c-1101-4331-ac78-4fc5bc276f4e', {
+      foo: 'bar'
+    }).then(data => {
+      expect(data.campaign.uid).to.eql('f440df6c-1101-4331-ac78-4fc5bc276f4e')
       expect(data.campaign.name).to.eql('Test Campaign')
       done()
     })
@@ -35,7 +37,7 @@ describe('Utils | get', () => {
         status: 200,
         response: {
           campaign: {
-            uid: 'au-1',
+            uid: 'f440df6c-1101-4331-ac78-4fc5bc276f4e',
             name: 'Test Campaign'
           }
         }
@@ -44,7 +46,9 @@ describe('Utils | get', () => {
   })
 
   it('rejects if the request returns a 404', done => {
-    get('api/v2/campaigns/au-1', { foo: 'bar' }).catch(error => {
+    get('api/v2/campaigns/f440df6c-1101-4331-ac78-4fc5bc276f4e', {
+      foo: 'bar'
+    }).catch(error => {
       expect(error.status).to.eql(404)
       done()
     })
@@ -58,7 +62,9 @@ describe('Utils | get', () => {
   })
 
   it('rejects if the request returns a 500', done => {
-    get('api/v2/campaigns/au-1', { foo: 'bar' }).catch(error => {
+    get('api/v2/campaigns/f440df6c-1101-4331-ac78-4fc5bc276f4e', {
+      foo: 'bar'
+    }).catch(error => {
       expect(error.status).to.eql(500)
       done()
     })
@@ -77,14 +83,14 @@ describe('Utils | get', () => {
   })
 
   it('allows us to update the base url', done => {
-    updateClient({ baseURL: 'https://everydayhero-staging.com' })
+    updateClient({ baseURL: 'https://api.staging.justgiving.com' })
     get('api/v2/campaigns', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://everydayhero-staging.com/api/v2/campaigns'
+        'https://api.staging.justgiving.com/api/v2/campaigns'
       )
-      updateClient({ baseURL: 'https://everydayhero.com' })
+      updateClient({ baseURL: 'https://api.justgiving.com' })
       done()
     })
   })
