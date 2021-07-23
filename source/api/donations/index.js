@@ -1,22 +1,44 @@
-import { isJustGiving } from '../../utils/client'
+import numbro from 'numbro'
+import jsonDate from '../../utils/jsonDate'
+import { stringify } from 'querystringify'
+import { get } from '../../utils/client'
+import { required } from '../../utils/params'
+import { baseUrl } from '../../utils/justgiving'
 
-import {
-  fetchDonation as fetchEDHDonation,
-  replyToDonation as replyToEDHDonation,
-  deserializeDonation as deserializeEDHDonation
-} from './everydayhero'
+export const fetchDonation = (id = required()) => get(`/v1/donation/${id}`)
 
-import {
-  fetchDonation as fetchJGDonation,
-  replyToDonation as replyToJGDonation,
-  deserializeDonation as deserializeJGDonation
-} from './justgiving'
+export const deserializeDonation = donation => ({
+  amount: parseFloat(donation.donorLocalAmount || donation.amount),
+  anonymous:
+    !donation.donorDisplayName ||
+    donation.donorDisplayName.toLowerCase().trim() === 'anonymous',
+  charity: donation.charityId,
+  createdAt: jsonDate(donation.donationDate),
+  currency: donation.donorLocalCurrencyCode || donation.currencyCode,
+  donationRef: donation.donationRef,
+  event: donation.eventId,
+  message: donation.message,
+  name: donation.donorDisplayName,
+  page: donation.pageShortName,
+  status: donation.status,
+  id: donation.id
+})
 
-export const fetchDonation = params =>
-  isJustGiving() ? fetchJGDonation(params) : fetchEDHDonation(params)
-
-export const replyToDonation = params =>
-  isJustGiving() ? replyToJGDonation(params) : replyToEDHDonation(params)
-
-export const deserializeDonation = data =>
-  isJustGiving() ? deserializeJGDonation(data) : deserializeEDHDonation(data)
+export const buildDonationUrl = ({
+  amount = required(),
+  slug,
+  id,
+  currency = 'GBP',
+  ...args
+}) => {
+  const params = stringify({
+    amount: numbro(amount).format('0.00'),
+    currency,
+    ...args
+  })
+  if (slug || id) {
+    return id
+      ? `${baseUrl('link')}/v1/fundraisingpage/donate/pageId/${id}?${params}`
+      : `${baseUrl('www')}/fundraising/${slug}/donate?${params}`
+  }
+}
