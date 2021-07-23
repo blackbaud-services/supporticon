@@ -202,7 +202,6 @@ export const fetchFitnessActivities = (params = required()) => {
 
 const activityType = type => {
   switch (type) {
-    case 'bike':
     case 'ride':
       return 'RIDE'
     case 'swim':
@@ -211,6 +210,8 @@ const activityType = type => {
       return 'RUN'
     case 'hike':
       return 'HIKE'
+    case 'wheelchair':
+      return 'WHEELCHAIR'
     default:
       return 'WALK'
   }

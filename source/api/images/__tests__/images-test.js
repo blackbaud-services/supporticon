@@ -1,4 +1,3 @@
-import moxios from 'moxios'
 import { uploadImage } from '..'
 import { imagesAPI, servicesAPI } from '../../../utils/client'
 

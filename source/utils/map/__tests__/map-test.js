@@ -3,31 +3,33 @@ import map from '..'
 describe('Utils | Param Maps', () => {
   it('performs default mappings', () => {
     const finalParams = map({
-      campaign: 'au-1',
-      charity: 'au-2',
-      group: 'group123'
+      campaign: 'f440df6c-1101-4331-ac78-4fc5bc276f4e',
+      charity: '12345'
     })
 
-    expect(Object.keys(finalParams).length).to.eql(3)
-    expect(finalParams.campaign_id).to.eql('au-1')
-    expect(finalParams.charity_id).to.eql('au-2')
-    expect(finalParams.group_value).to.eql('group123')
+    expect(Object.keys(finalParams).length).to.eql(2)
+    expect(finalParams.campaign_id).to.eql(
+      'f440df6c-1101-4331-ac78-4fc5bc276f4e'
+    )
+    expect(finalParams.charity_id).to.eql('12345')
   })
 
   it('keeps unmapped keys', () => {
     const finalParams = map({
-      campaign: 'au-1',
+      campaign: 'f440df6c-1101-4331-ac78-4fc5bc276f4e',
       custom: '123'
     })
 
     expect(Object.keys(finalParams).length).to.eql(2)
-    expect(finalParams.campaign_id).to.eql('au-1')
+    expect(finalParams.campaign_id).to.eql(
+      'f440df6c-1101-4331-ac78-4fc5bc276f4e'
+    )
     expect(finalParams.custom).to.eql('123')
   })
 
   it('allows us to pass in custom fields', () => {
     const finalParams = map(
-      { campaign: 'au-1' },
+      { campaign: 'f440df6c-1101-4331-ac78-4fc5bc276f4e' },
       {
         mappings: {
           campaign: 'campaignUID'
@@ -35,7 +37,9 @@ describe('Utils | Param Maps', () => {
       }
     )
     expect(Object.keys(finalParams).length).to.eql(1)
-    expect(finalParams.campaignUID).to.eql('au-1')
+    expect(finalParams.campaignUID).to.eql(
+      'f440df6c-1101-4331-ac78-4fc5bc276f4e'
+    )
   })
 
   it('performs transforms on values', () => {
