@@ -3,7 +3,6 @@
 Helpers related to interacting with donations
 
 - [fetchDonation](#fetchDonation)
-- [replyToDonation](#replyToDonation)
 - [deserializeDonation](#deserializeDonation)
 
 ## `fetchDonation`
@@ -59,37 +58,6 @@ buildDonationUrl({
   slug: 'test-page' ,
   reference: 'self-donate',
   exitUrl: `${process.env.APPLICATION_URL}/thank-you/JUSTGIVING-DONATION-ID`
-})
-```
-
-
-## `replyToDonation`
-
-Replies to a donation
-
-**Params**
-
-- `token` (string)
-- `pageId` (string or integer)
-- `donationId` (string)
-- `caption` (string)
-
-**Returns**
-
-A pending promise that will either resolve to:
-
-- Success: the created reply
-- Failure: the error
-
-**Example**
-
-```javascript
-import { replyToDonation } from 'supporticon/api/donations'
-
-replyToDonation({
-  pageId: 12345,
-  donationId: 'f440df6c-1101-4331-ac78-4fc5bc276f4e4',
-  caption: 'Thanks mate'
 })
 ```
 
