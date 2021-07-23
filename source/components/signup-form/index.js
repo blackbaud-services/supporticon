@@ -6,7 +6,7 @@ import merge from 'lodash/merge'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { signUp } from '../../api/authentication'
-import { isJustGiving, isStaging } from '../../utils/client'
+import { isStaging } from '../../utils/client'
 import { renderInput, renderFormFields } from '../../utils/form'
 
 import Form from 'constructicon/form'
@@ -37,8 +37,6 @@ class SignupForm extends Component {
 
     const {
       authType,
-      clientId,
-      country = 'au',
       form,
       includeAddress,
       onSuccess,
@@ -58,30 +56,23 @@ class SignupForm extends Component {
         status: 'fetching'
       })
 
-      const dataPayload = isJustGiving()
-        ? merge(
-          {
-            authType,
-            title: data.title || 'Other',
-            ...data
-          },
-          includeAddress && {
-            address: {
-              line1: data.line1,
-              line2: data.line2,
-              townOrCity: data.townOrCity,
-              countyOrState: data.countyOrState,
-              country: data.country,
-              postcodeOrZipcode: data.postcodeOrZipcode
-            }
-          }
-        )
-        : {
-          clientId,
-          country,
-          name: [data.firstName, data.lastName].join(' '),
+      const dataPayload = merge(
+        {
+          authType,
+          title: data.title || 'Other',
           ...data
+        },
+        includeAddress && {
+          address: {
+            line1: data.line1,
+            line2: data.line2,
+            townOrCity: data.townOrCity,
+            countyOrState: data.countyOrState,
+            country: data.country,
+            postcodeOrZipcode: data.postcodeOrZipcode
+          }
         }
+      )
 
       return signUp(dataPayload)
         .then(onSuccess)
@@ -203,7 +194,6 @@ class SignupForm extends Component {
 
   render () {
     const {
-      country,
       disableInvalidForm,
       form,
       formComponent,
@@ -254,48 +244,33 @@ class SignupForm extends Component {
         />
         {showPasswordValidations && <PasswordValidations form={form} />}
 
-        {!isJustGiving() ? (
-          country ? (
-            <InputField {...form.fields.phone} {...inputField} />
-          ) : (
+        {includeAddress && (
+          <fieldset>
+            <Heading tag='legend' {...legend}>
+              Address
+            </Heading>
+            <InputField {...form.fields.line1} {...inputField} />
+            <InputField {...form.fields.line2} {...inputField} />
             <Grid spacing={{ x: 0.5 }} {...grid}>
               <GridColumn sm={7} {...gridColumn}>
-                <InputField {...form.fields.phone} {...inputField} />
+                <InputField {...form.fields.townOrCity} {...inputField} />
               </GridColumn>
               <GridColumn sm={5} {...gridColumn}>
-                <InputSelect {...form.fields.country} {...inputField} />
+                <InputField {...form.fields.countyOrState} {...inputField} />
               </GridColumn>
             </Grid>
-          )
-        ) : (
-          includeAddress && (
-            <fieldset>
-              <Heading tag='legend' {...legend}>
-                Address
-              </Heading>
-              <InputField {...form.fields.line1} {...inputField} />
-              <InputField {...form.fields.line2} {...inputField} />
-              <Grid spacing={{ x: 0.5 }} {...grid}>
-                <GridColumn sm={7} {...gridColumn}>
-                  <InputField {...form.fields.townOrCity} {...inputField} />
-                </GridColumn>
-                <GridColumn sm={5} {...gridColumn}>
-                  <InputField {...form.fields.countyOrState} {...inputField} />
-                </GridColumn>
-              </Grid>
-              <Grid spacing={{ x: 0.5 }} {...grid}>
-                <GridColumn sm={8} {...gridColumn}>
-                  <InputSelect {...form.fields.country} {...inputField} />
-                </GridColumn>
-                <GridColumn sm={4} {...gridColumn}>
-                  <InputField
-                    {...form.fields.postcodeOrZipcode}
-                    {...inputField}
-                  />
-                </GridColumn>
-              </Grid>
-            </fieldset>
-          )
+            <Grid spacing={{ x: 0.5 }} {...grid}>
+              <GridColumn sm={8} {...gridColumn}>
+                <InputSelect {...form.fields.country} {...inputField} />
+              </GridColumn>
+              <GridColumn sm={4} {...gridColumn}>
+                <InputField
+                  {...form.fields.postcodeOrZipcode}
+                  {...inputField}
+                />
+              </GridColumn>
+            </Grid>
+          </fieldset>
         )}
 
         {includeTerms && <InputField {...form.fields.terms} {...inputField} />}
@@ -325,16 +300,6 @@ class SignupForm extends Component {
 }
 
 SignupForm.propTypes = {
-  /**
-   * The clientId for a valid OauthApplication (EDH only)
-   */
-  clientId: PropTypes.string,
-
-  /**
-   * Country for new user (EDH only)
-   */
-  country: PropTypes.oneOf(['au', 'nz', 'uk', 'us', 'ie']),
-
   /**
    * Disable form submission when invalid
    */
@@ -420,6 +385,12 @@ SignupForm.defaultProps = {
   authType: 'Bearer',
   disableInvalidForm: false,
   fields: {},
+  formComponent: {
+    submitProps: {
+      background: 'justgiving',
+      foreground: 'light'
+    }
+  },
   showPasswordValidations: true,
   submit: 'Sign Up',
   legend: {
@@ -429,8 +400,7 @@ SignupForm.defaultProps = {
 }
 
 const form = props => {
-  const includeCountry = !isJustGiving() && !props.country
-  const includeAddress = isJustGiving() && props.includeAddress
+  const includeAddress = props.includeAddress
   const includeTerms = props.includeTerms
 
   const fields = merge(
@@ -486,49 +456,6 @@ const form = props => {
             'email',
             'Your password must not include your email address'
           )
-        ]
-      }
-    },
-    !isJustGiving() && {
-      phone: {
-        label: 'Phone Number',
-        type: 'tel',
-        required: true,
-        validators: [validators.required('Please enter your phone number')]
-      }
-    },
-    includeCountry && {
-      country: {
-        label: 'Country',
-        type: 'select',
-        required: true,
-        validators: [validators.required('Please select a country')],
-        options: [
-          {
-            label: 'Select a country',
-            value: '',
-            disabled: true
-          },
-          {
-            label: 'Australia',
-            value: 'au'
-          },
-          {
-            label: 'New Zealand',
-            value: 'nz'
-          },
-          {
-            label: 'United States',
-            value: 'us'
-          },
-          {
-            label: 'United Kingdom',
-            value: 'uk'
-          },
-          {
-            label: 'Ireland',
-            value: 'ie'
-          }
         ]
       }
     },
@@ -598,7 +525,7 @@ const form = props => {
     },
     includeTerms && {
       terms: {
-        label: isJustGiving() ? (
+        label: (
           <span>
             I agree to JustGiving's{' '}
             <a target='_blank' href='https://www.justgiving.com/info/privacy/'>
@@ -610,17 +537,6 @@ const form = props => {
               href='https://www.justgiving.com/info/terms-of-service/'
             >
               Terms of Service
-            </a>
-          </span>
-        ) : (
-          <span>
-            I agree to Everydayhero's{' '}
-            <a target='_blank' href='https://everydayhero.com/au/terms/privacy'>
-              Privacy Policy
-            </a>{' '}
-            and{' '}
-            <a target='_blank' href='https://everydayhero.com/au/terms'>
-              Terms and Conditions
             </a>
           </span>
         ),
