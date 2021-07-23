@@ -1,4 +1,3 @@
-import { isJustGiving } from '../../utils/client'
 import * as validators from 'constructicon/lib/validators'
 
 export default () => ({
@@ -7,18 +6,16 @@ export default () => ({
       label: 'Team name',
       placeholder: 'Enter your team name'
     },
-    ...(isJustGiving() && {
-      target: {
-        type: 'number',
-        label: 'Fundraising target',
-        placeholder: '100',
-        validators: [validators.required('Enter your team fundraising target')]
-      },
-      story: {
-        type: 'textarea',
-        label: 'Team story',
-        validators: [validators.required('Please enter your team story')]
-      }
-    })
+    target: {
+      type: 'number',
+      label: 'Fundraising target',
+      placeholder: '100',
+      validators: [validators.required('Enter your team fundraising target')]
+    },
+    story: {
+      type: 'textarea',
+      label: 'Team story',
+      validators: [validators.required('Please enter your team story')]
+    }
   }
 })
