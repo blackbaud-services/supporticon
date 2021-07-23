@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
-import { fetchFitnessLeaderboard } from '../../api/fitness-leaderboard'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
-import { isJustGiving } from '../../utils/client'
 import { formatElevation } from '../../utils/fitness'
 
 import Icon from 'constructicon/icon'
@@ -14,8 +12,6 @@ class TotalElevation extends Component {
   constructor () {
     super()
     this.fetchData = this.fetchData.bind(this)
-    this.fetchEDHElevation = this.fetchEDHElevation.bind(this)
-    this.fetchJGElevation = this.fetchJGElevation.bind(this)
     this.state = { status: 'fetching' }
   }
 
@@ -31,40 +27,15 @@ class TotalElevation extends Component {
   }
 
   fetchData () {
-    const fetchElevation = isJustGiving()
-      ? this.fetchJGElevation
-      : this.fetchEDHElevation
+    const { campaign, startDate, endDate } = this.props
 
-    fetchElevation()
+    return fetchFitnessTotals({ campaign, startDate, endDate })
+      .then(totals => totals.elevation)
       .then(data => this.setState({ data, status: 'fetched' }))
       .catch(error => {
         this.setState({ status: 'failed' })
         return Promise.reject(error)
       })
-  }
-
-  fetchEDHElevation () {
-    const { activity, campaign, includeManual } = this.props
-
-    return fetchFitnessLeaderboard({
-      activity,
-      campaign,
-      include_manual: includeManual,
-      limit: 9999,
-      sortBy: 'elevation'
-    }).then(data => this.calculateTotal(data))
-  }
-
-  fetchJGElevation () {
-    const { campaign, startDate, endDate } = this.props
-
-    return fetchFitnessTotals({ campaign, startDate, endDate }).then(
-      totals => totals.elevation
-    )
-  }
-
-  calculateTotal (data) {
-    return data.reduce((total, item) => total + item.elevation_in_meters, 0)
   }
 
   render () {
@@ -124,14 +95,9 @@ TotalElevation.propTypes = {
 
   /**
    * The type of activity to get kms for
-   * e.g. bike, [bike, run, walk, swim]
+   * e.g. [walk, run, ride, swim, wheelchair]
    */
   activity: PropTypes.oneOf([PropTypes.string, PropTypes.array]),
-
-  /**
-   * Include manual fitness activities
-   */
-  includeManual: PropTypes.bool,
 
   /**
    * Offset

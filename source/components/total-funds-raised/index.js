@@ -36,7 +36,6 @@ class TotalFundsRaised extends Component {
       event,
       excludeOffline,
       country,
-      group,
       startDate,
       endDate
     } = this.props
@@ -46,7 +45,6 @@ class TotalFundsRaised extends Component {
       charity,
       event,
       country,
-      group,
       includeOffline: !excludeOffline,
       startDate,
       endDate
@@ -147,11 +145,6 @@ TotalFundsRaised.propTypes = {
    * Exclude offline donations?
    */
   excludeOffline: PropTypes.bool,
-
-  /**
-   * The group value(s) to filter by
-   */
-  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
    * Start date filter (ISO Format)
