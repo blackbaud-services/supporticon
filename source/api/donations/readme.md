@@ -88,7 +88,7 @@ import { replyToDonation } from 'supporticon/api/donations'
 
 replyToDonation({
   pageId: 12345,
-  donationId: 'au-1234',
+  donationId: 'f440df6c-1101-4331-ac78-4fc5bc276f4e4',
   caption: 'Thanks mate'
 })
 ```
