@@ -22,7 +22,7 @@ class LoginForm extends Component {
   handleSubmit (e) {
     e.preventDefault()
 
-    const { authType, clientId, country, form, onSuccess } = this.props
+    const { authType, form, onSuccess } = this.props
 
     return form.submit().then(data => {
       this.setState({
@@ -32,8 +32,6 @@ class LoginForm extends Component {
 
       return signIn({
         authType,
-        clientId,
-        country,
         ...data
       })
         .then(onSuccess)
@@ -96,16 +94,6 @@ class LoginForm extends Component {
 
 LoginForm.propTypes = {
   /**
-   * The clientId for a valid OauthApplication (EDH only)
-   */
-  clientId: PropTypes.string,
-
-  /**
-   * Country for new user (EDH only)
-   */
-  country: PropTypes.oneOf(['au', 'nz', 'uk', 'us', 'ie']),
-
-  /**
    * Disable form submission when invalid
    */
   disableInvalidForm: PropTypes.bool,
@@ -140,7 +128,13 @@ LoginForm.defaultProps = {
   authType: 'Bearer',
   disableInvalidForm: false,
   fields: {},
-  submit: 'Log in'
+  formComponent: {
+    submitProps: {
+      background: 'justgiving',
+      foreground: 'light'
+    }
+  },
+  submit: 'Log in to JustGiving'
 }
 
 const form = props => ({
