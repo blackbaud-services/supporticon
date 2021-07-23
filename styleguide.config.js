@@ -6,11 +6,12 @@ const { styles, theme } = require('./styleguide.styles')
 
 module.exports = {
   title: `Supporticon ${version}`,
-  template: './styleguide.template.html',
+  template: {
+    favicon: 'https://www.blackbaud.com/favicon.ico'
+  },
   styleguideDir: 'styleguide/components',
-  editorConfig: { theme: 'cobalt' },
   serverPort: 3000,
-  showUsage: true,
+  usageMode: 'expand',
   styles,
   theme,
   getComponentPathLine: componentPath => {
@@ -144,19 +145,16 @@ module.exports = {
       ]
     }
   ],
-  require: [path.join(__dirname, 'node_modules/minimal.css/minimal.css')],
   webpackConfig: {
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.jsx?$/,
           exclude: /node_modules/,
-          loader: 'babel-loader'
-        },
-        {
-          test: /\.css$/,
-          include: path.join(__dirname, 'node_modules', 'minimal.css'),
-          loader: 'style-loader!css-loader?modules'
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env', '@babel/preset-react']
+          }
         }
       ]
     }

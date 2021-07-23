@@ -60,14 +60,14 @@ commands:
 jobs:
   test:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:14
     steps:
       - install
       - lint
 
   deploy:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:14
     steps:
       - install
       - lint
