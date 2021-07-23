@@ -1,33 +1,20 @@
-import { isJustGiving } from '../../utils/client'
+import { servicesAPI } from '../../utils/client'
+import { required } from '../../utils/params'
 
-import {
-  getAddressDetails as getEDHAddressDetails,
-  searchAddress as searchEDHAddress,
-  deserializeAddress as deserializeEDHAddress
-} from './everydayhero'
+export const searchAddress = (postcode = required()) =>
+  servicesAPI
+    .get(`/v1/justgiving/addresses/search/postcode/${postcode}`)
+    .then(response => response.data)
 
-import {
-  getAddressDetails as getJGAddressDetails,
-  searchAddress as searchJGAddress,
-  deserializeAddress as deserializeJGAddress
-} from './justgiving'
+export const getAddressDetails = (id = required()) =>
+  servicesAPI
+    .get(`/v1/justgiving/addresses/${id}`)
+    .then(response => response.data)
 
-/**
- * @function search an address
- */
-export const searchAddress = (query, region) =>
-  isJustGiving() ? searchJGAddress(query) : searchEDHAddress(query, region)
-
-/**
- * @function get address details
- */
-export const getAddressDetails = (id, region) =>
-  isJustGiving() ? getJGAddressDetails(id) : getEDHAddressDetails(id, region)
-
-/**
- * @function deserialize an address
- */
-export const deserializeAddress = address =>
-  isJustGiving()
-    ? deserializeJGAddress(address)
-    : deserializeEDHAddress(address)
+export const deserializeAddress = address => ({
+  streetAddress: address.AddressLine1,
+  extendedAddress: address.AddressLine2,
+  locality: address.Town,
+  region: address.County,
+  postCode: address.Postcode
+})
