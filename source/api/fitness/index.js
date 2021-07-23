@@ -1,5 +1,5 @@
 import capitalize from 'lodash/capitalize'
-import { get, isJustGiving, servicesAPI } from '../../utils/client'
+import { get, servicesAPI } from '../../utils/client'
 import { encodeBase64String } from '../../utils/base64'
 import { required } from '../../utils/params'
 
@@ -52,10 +52,6 @@ export const disconnectFitness = ({
   token = required(),
   provider = 'Strava'
 }) => {
-  if (!isJustGiving()) {
-    throw new Error('Method not supported')
-  }
-
   const query = `
     mutation {
       setFitnessApplicationSettings(
