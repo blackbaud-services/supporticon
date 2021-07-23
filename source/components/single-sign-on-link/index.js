@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import omit from 'lodash/omit'
-import { getBaseURL, isJustGiving } from '../../utils/client'
+import { getBaseURL } from '../../utils/client'
 import { fetchCurrentUser } from '../../api/me'
 import { submitCrossDomainForm } from '../../utils/cross-domain'
 import { decodeBase64String } from '../../utils/base64'
@@ -31,38 +31,22 @@ class SingleSignOnLink extends Component {
   }
 
   render () {
-    const { label, loadingProps, method, token, url, ...props } = this.props
+    const { label, loadingProps, token, url, ...props } = this.props
     const { loading, target } = this.state
     const safeProps = omit(props, ['authType'])
 
     return (
       <div ref='root'>
-        {token && !isJustGiving() ? (
-          <form
-            action={`${getBaseURL()}/api/v2/authentication/sessions`}
-            method={method}
-            target={target}
-            onSubmit={e => this.setState({ loading: true })}
-          >
-            <input type='hidden' name='access_token' value={token} />
-            <input type='hidden' name='return_to' value={url} />
-            <Button {...safeProps} type='submit'>
-              <span>{label}</span>
-              {loading && <Loading {...loadingProps} />}
-            </Button>
-          </form>
-        ) : (
-          <Button
-            tag='a'
-            href={url}
-            target={target}
-            onClick={token && isJustGiving() && this.submitForm}
-            {...safeProps}
-          >
-            <span>{label}</span>
-            {loading && <Loading {...loadingProps} />}
-          </Button>
-        )}
+        <Button
+          tag='a'
+          href={url}
+          target={target}
+          onClick={token && this.submitForm}
+          {...safeProps}
+        >
+          <span>{label}</span>
+          {loading && <Loading {...loadingProps} />}
+        </Button>
       </div>
     )
   }
