@@ -4,7 +4,7 @@
 
 ```
 <FitnessLeaderboard
-  campaign='au-21638'
+  campaign='31fde560-dc11-43ca-9696-e373818208a3'
 />
 ```
 
@@ -12,7 +12,7 @@
 
 ```
 <FitnessLeaderboard
-  campaign='au-24234'
+  campaign='96e2266e-2fa2-4109-a2b6-c017b79011bd'
   limit={100}
   pageSize={10}
   showPage
@@ -28,20 +28,29 @@
 
 ```
 <FitnessLeaderboard
-  campaign='au-21937'
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   type='team'
   miles
 />
 ```
 
-*Leaderboard by Group*
+*Leaderboard by Tag Value*
 
 ```
 <FitnessLeaderboard
-  campaign='au-21937'
-  type='group'
-  groupID={58}
-  excludePageIds={['Sydney, NSW']}
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  tagId='branch'
+  tagValue='Sevenoaks'
+/>
+```
+
+
+*Leaderboard by Tag*
+
+```
+<FitnessLeaderboard
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  tagId='branch'
 />
 ```
 
@@ -49,7 +58,7 @@
 
 ```
 <FitnessLeaderboard
-  campaign='nz-1608'
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   sortBy='elevation'
   miles
 />
@@ -59,7 +68,7 @@
 
 ```
 <FitnessLeaderboard
-  campaign='nz-1608'
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   sortBy='duration'
   limit={50}
   page={1}
@@ -67,21 +76,11 @@
 />
 ```
 
-*Leaderboard by Calories*
-
-```
-<FitnessLeaderboard
-  campaign='nz-1608'
-  sortBy='calories'
-  subtitleMethod={item => `${Math.round(item.distance / 1000)}km`}
-/>
-```
-
 *Custom metric leaderboard (1 per 100km logged)*
 
 ```
 <FitnessLeaderboard
-  campaign='au-21638'
+  campaign='31fde560-dc11-43ca-9696-e373818208a3'
   limit={50}
   multiplier={0.00001}
   offset={-50000}
