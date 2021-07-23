@@ -1,6 +1,6 @@
 # Goal
 
-Helpers related to authenticating through [the Partner API](http://developer.everydayhero.com/partner/custom-authentication/)
+Helpers related to authenticating users with JustGiving.
 
 - [signIn](#signin)
 - [signUp](#signup)
@@ -10,16 +10,14 @@ Helpers related to authenticating through [the Partner API](http://developer.eve
 
 **Purpose**
 
-Login EDH user with email and password
+Login JG user with email and password
 
 **Params**
 
 - `params` (Object)
 
-- `client_id` (String) Public OAuth Client ID.
 - `email` (String) The email address of the user.
 - `password` (String) The password of the user.
-- `country` (String) The country of the user. Defaults to 'au'
 
 **Example**
 
@@ -27,7 +25,6 @@ Login EDH user with email and password
 import { signIn } from 'supporticon/api/authentication'
 
 signIn({
-  client_id: process.env.API_CLIENT_ID,
   email: 'professionalservices@everydayhero.com.au',
   password: '********'
 })
@@ -38,18 +35,17 @@ signIn({
 
 **Purpose**
 
-Signup new EDH user.
+Signup new JG user.
 
 **Params**
 
 - `params` (Object)
 
-- `client_id` (String) Public OAuth Client ID.
-- `name` (String) The full name of the user.
 - `email` (String) The email address of the user.
 - `password` (String) The password of the user.
-- `phone` (String) The phone number of the user.
-- `country` (String) The country of the user. Defaults to 'au'
+- `firstName` (String) The first name of the user.
+- `lastName` (String) The last name of the user.
+- `address` (Object) The users' address
 
 **Example**
 
@@ -57,11 +53,10 @@ Signup new EDH user.
 import { signIn } from 'supporticon/api/authentication'
 
 signUp({
-  client_id: process.env.API_CLIENT_ID,
-  name: 'Professional Services'
   email: 'professionalservices@everydayhero.com.au',
   password: '********',
-  phone: '1300 798 768'
+  firstName: 'Professional',
+  lastName: 'Services'
 })
 ```
 
@@ -76,7 +71,6 @@ Send reset password email to user
 
 - `params` (Object)
 
-- `client_id` (String) Public OAuth Client ID.
 - `email` (String) The email of the user.
 
 **Returns**
@@ -92,7 +86,6 @@ A pending promise that will either resolve to:
 import { resetPassword } from 'supporticon/api/authentication'
 
 resetPassword({
-  client_id: process.env.API_CLIENT_ID,
   email: 'professionalservices@everydayhero.com.au'
 })
 ```
