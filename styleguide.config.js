@@ -116,7 +116,6 @@ module.exports = {
       components: () => [
         path.resolve(__dirname, 'source/components/address-search', 'index.js'),
         path.resolve(__dirname, 'source/components/charity-search', 'index.js'),
-        path.resolve(__dirname, 'source/components/charity-select', 'index.js'),
         path.resolve(
           __dirname,
           'source/components/create-fitness-form',
