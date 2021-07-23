@@ -1,10 +1,8 @@
 import React from 'react'
-import get from 'lodash/get'
 import PropTypes from 'prop-types'
 import withForm from 'constructicon/with-form'
 import form from './form'
 import { createTeam, deserializeTeam } from '../../api/teams'
-import { isJustGiving } from '../../utils/client'
 import { currencyCode } from '../../utils/currencies'
 
 import Form from 'constructicon/form'
@@ -50,31 +48,13 @@ class CreateTeamForm extends React.Component {
           return onSuccess(team)
         })
         .catch(error => {
-          const errors = this.buildErrors(error)
-          this.setState({ status: 'failed', errors })
+          this.setState({
+            status: 'failed',
+            errors: [{ message: 'An error occurred creating your team.' }]
+          })
           return Promise.reject(error)
         })
     })
-  }
-
-  buildErrors (error) {
-    const errors = get(error, 'data.error.errors', [])
-
-    if (errors.length > 0 && !isJustGiving()) {
-      return errors.map(err => {
-        switch (err.code) {
-          case 'taken':
-            return {
-              message:
-                'That name has been taken. Please try with a different team name.'
-            }
-          default:
-            return { message: `Team ${err.field} ${err.message}.` }
-        }
-      })
-    }
-
-    return [{ message: 'An error occurred creating your team.' }]
   }
 
   render () {
@@ -91,12 +71,8 @@ class CreateTeamForm extends React.Component {
         {...formProps}
       >
         <InputField {...form.fields.name} {...inputProps} />
-        {isJustGiving() && (
-          <InputField {...form.fields.target} {...inputProps} />
-        )}
-        {isJustGiving() && (
-          <InputField {...form.fields.story} {...inputProps} />
-        )}
+        <InputField {...form.fields.target} {...inputProps} />
+        <InputField {...form.fields.story} {...inputProps} />
       </Form>
     )
   }
