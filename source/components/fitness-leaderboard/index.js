@@ -285,21 +285,6 @@ FitnessLeaderboard.propTypes = {
   endDate: PropTypes.string,
 
   /**
-   * Include Virtual
-   */
-  includeVirtual: PropTypes.bool,
-
-  /**
-   * Include Manual
-   */
-  includeManual: PropTypes.bool,
-
-  /**
-   * Exclude Virtual
-   */
-  excludeVirtual: PropTypes.bool,
-
-  /**
    * Use imperial units (miles, feet, yards)
    */
   miles: PropTypes.bool,

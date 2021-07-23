@@ -3,7 +3,6 @@ import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 import { fetchPage } from '../../api/pages'
-import { isJustGiving } from '../../utils/client'
 
 import InputField from 'constructicon/input-field'
 
@@ -26,10 +25,9 @@ class InputSlug extends Component {
     })
 
     if (slug) {
-      const { campaignSlug, countryCode } = this.props
       this.props.onBlur && this.props.onBlur(slug)
 
-      fetchPage(isJustGiving() ? slug : { campaignSlug, countryCode, slug })
+      fetchPage(slug)
         .then(() => {
           this.props.handleFetch(false)
           this.setState({
@@ -50,9 +48,7 @@ class InputSlug extends Component {
 
   render () {
     const { status, slug } = this.state
-
     const { validations = [], touched, ...props } = this.props
-
     const errors = validations.concat(this.state.validations)
 
     return (
@@ -71,16 +67,6 @@ class InputSlug extends Component {
 }
 
 InputSlug.propTypes = {
-  /**
-   * The campaign slug for the page slug lookup (EDH only - required)
-   */
-  campaignSlug: PropTypes.string,
-
-  /**
-   * Country for the page slug lookup (EDH only - required)
-   */
-  countryCode: PropTypes.oneOf(['au', 'nz', 'uk', 'us', 'ie']),
-
   /**
    * The change handler
    */
