@@ -1,34 +1,63 @@
-import { isJustGiving } from '../../utils/client'
-import { required } from '../../utils/params'
+import { get } from '../../utils/client'
+import { required, paramsSerializer, isURL } from '../../utils/params'
+import { baseUrl } from '../../utils/justgiving'
 
-import {
-  deserializeCharity as deserializeJGCharity,
-  fetchCharities as fetchJGCharities,
-  fetchCharity as fetchJGCharity,
-  searchCharities as searchJGCharities
-} from './justgiving'
+export const fetchCharity = (id = required()) => get(`/v1/charity/${id}`)
 
-import {
-  deserializeCharity as deserializeEDHCharity,
-  fetchCharities as fetchEDHCharities,
-  fetchCharity as fetchEDHCharity,
-  searchCharities as searchEDHCharities
-} from './everydayhero'
+export const searchCharities = (params = required()) => {
+  if (params.campaign) {
+    const finalParams = {
+      ...params,
+      field: 'charityNameSuggest',
+      includeFuzzySearch: true,
+      maxResults: params.limit,
+      campaignGuid: params.campaign
+    }
 
-export const fetchCharities = (params = required()) => {
-  return isJustGiving() ? fetchJGCharities(params) : fetchEDHCharities(params)
-}
+    return get(
+      '/v1/campaign/autocomplete',
+      finalParams,
+      {},
+      { paramsSerializer }
+    )
+  } else {
+    const finalParams = {
+      ...params,
+      i: 'Charity'
+    }
 
-export const fetchCharity = (id = required()) => {
-  return isJustGiving() ? fetchJGCharity(id) : fetchEDHCharity(id)
-}
-
-export const searchCharities = params => {
-  return isJustGiving() ? searchJGCharities(params) : searchEDHCharities(params)
+    return get('/v1/onesearch', finalParams).then(
+      response =>
+        (response.GroupedResults &&
+          response.GroupedResults.length &&
+          response.GroupedResults[0].Results) ||
+        []
+    )
+  }
 }
 
 export const deserializeCharity = charity => {
-  return isJustGiving()
-    ? deserializeJGCharity(charity)
-    : deserializeEDHCharity(charity)
+  const id = charity.id || charity.Id
+
+  return {
+    active: true,
+    categories: charity.categories,
+    country: charity.countryCode || charity.CountryCode,
+    description: charity.description || charity.Description,
+    donateUrl: `${baseUrl()}/onecheckout/donation/direct/${id}`,
+    email: charity.emailAddress,
+    events: charity.EventIds,
+    getStartedUrl: `${baseUrl()}/fundraising-page/creation/?cid=${id}`,
+    id,
+    logo:
+      charity.logoAbsoluteUrl ||
+      (isURL(charity.Logo)
+        ? charity.Logo
+        : `${baseUrl('images')}/image/${charity.Logo}`),
+    name: charity.displayName || charity.name || charity.Name,
+    registrationNumber: charity.registrationNumber,
+    slug:
+      charity.pageShortName || (charity.Link && charity.Link.split('/').pop()),
+    url: charity.profilePageUrl
+  }
 }
