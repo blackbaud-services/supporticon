@@ -2,27 +2,18 @@
 
 Helpers related to fetching & creating fitness activities
 
-- [fetchFitnessActivities](#fetchFitnessActivities)
-- [createFitnessActivity](#createFitnessActivity)
+- [fetchFitnessActivities](#fetchfitnessactivities)
+- [createFitnessActivity](#createfitnessactivity)
+- [deleteFitnessActivity](#deletefitnessactivity)
 
 ## `fetchFitnessActivities`
 
 Fetches fitness activities
 
-See [the API documentation](http://developer.everydayhero.com/fitness-activities/#retreive-a-list-of-fitness-activities) for more information.
-
 **Params**
 
-- `pageId` (string or array)
-- `teamId` (string)
-- `teamUid` (string)
-- `teamPageId` (string)
 - `startAt` (string/date-time)
 - `endAt` (string/date-time)
-- `type` (string)
-- `includeManual` (boolean)
-- `excludeVirtual` (boolean)
-- `excludeNonVirtual` (boolean)
 
 **Returns**
 
@@ -36,36 +27,29 @@ A pending promise that will either resolve to:
 ```javascript
 import { fetchFitnessActivities } from 'supporticon/api/fitness-activities'
 
-fetchFitnessActivities({ campaign: 'au-0' })
+fetchFitnessActivities({ campaign: 'f440df6c-1101-4331-ac78-4fc5bc276f4e' })
 ```
 
 
 ## `createFitnessActivity`
 
-Create a fitness activity for an authenticated User, optionally for a page.
-
-See [the API documentation](http://developer.everydayhero.com/fitness-activities#createupdate-fitness-activity) for more information.
+Create a fitness activity for a page as an authenticated user.
 
 **Params**
 
 - `token` (String) OAuth User Token _required_
 - `type` (String) Activity type _required_
-- `duration` (String) Activity duration in seconds _required_
-- `calories` (Integer) kcals total burned per activity, e.g. ~600 for a 10km run
+- `userId` (String) User GUID _required_
+- `pageId` (String) Fundraising page GUID _required_
+- `distance` (Integer) Distance covered in any distance format. Requires `unit`, otherwise defaults to metres
+- `duration` (String) Activity duration in any duration format. Requires `durationUnit`, otherwise defaults to seconds
+- `elevation` (String) Activity elevation in any distance format. Requires `elevationUnit`, otherwise defaults to metres
 - `caption` (String) Title/caption for activity
-- `coordinates` (Array) To be used to render a map, if provided. Array of lat/longs
 - `description` (String) Description of an activity
-- `distance` (Integer) Distance covered in any distance format. Requires `unit`
-- `distanceInMeters` (Integer) Distance covered for activity in meters
-- `elevationSeries` (Array) Array of elevation points (in meters)
-- `manual` (Boolean) Manually logged activity, default is `true`
-- `pageId` (String) Fundraising page to attribute the activity to
 - `startedAt` (Date/time) Timestamp for start of activity, ISO8601 format
-- `trainer` (Boolean)
-- `uid` (String) Unique uuid reference for activity
 - `unit` (String) Unit for distance, e.g.: meter, foot, step, yard, mile, km. Requires `distance`
-- `virtual` (Boolean)
-- `visible` (Boolean) Must be true for the fitness activity to be visible
+- `durationUnit` (String) Unit for duration, e.g.: seconds, days, hours, minutes. Requires `duration`
+- `elevationUnit` (String) Unit for elevation, e.g.: meter, foot, step, yard, mile, km. Requires `elevation`
 
 **Returns**
 
@@ -81,55 +65,8 @@ import { createFitnessActivity } from 'supporticon/api/fitness-activities'
 
 createFitnessActivity({
   token: 'xxxxx',
-  type: 'sport',
+  type: 'walk',
   duration: '60'
-})
-```
-
-## `updateFitnessActivity`
-
-Update an existing fitness activity for an authenticated User.
-
-See [the API documentation](http://developer.everydayhero.com/fitness-activities#createupdate-fitness-activity) for more information.
-
-**Params**
-
-- `id` (String) Fitness activity ID _required_
-- `params` (Object) Containing the following:
-  - `token` (String) OAuth User Token _required_
-  - `type` (String) Activity type _required_
-  - `duration` (String) Activity duration in seconds _required_
-  - `calories` (Integer) kcals total burned per activity, e.g. ~600 for a 10km run
-  - `caption` (String) Title/caption for activity
-  - `coordinates` (Array) To be used to render a map, if provided. Array of lat/longs
-  - `description` (String) Description of an activity
-  - `distance` (Integer) Distance covered in any distance format. Requires `unit`
-  - `distanceInMeters` (Integer) Distance covered for activity in meters
-  - `elevationSeries` (Array) Array of elevation points (in meters)
-  - `manual` (Boolean) Manually logged activity, default is `true`
-  - `pageId` (String) Fundraising page to attribute the activity to
-  - `startedAt` (Date/time) Timestamp for start of activity, ISO8601 format
-  - `trainer` (Boolean)
-  - `uid` (String) Unique uuid reference for activity
-  - `unit` (String) Unit for distance, e.g.: meter, foot, step, yard, mile, km. Requires `distance`
-  - `virtual` (Boolean)
-  - `visible` (Boolean) Must be true for the fitness activity to be visible
-
-**Returns**
-
-A pending promise that will either resolve to:
-
-- Success: the data returned from the request
-- Failure: the error encountered
-
-**Example**
-
-```javascript
-import { updateFitnessActivity } from 'supporticon/api/fitness-activities'
-
-createFitnessActivity(1234, {
-  token: 'xxxxx',
-  type: 'run'
 })
 ```
 
@@ -140,6 +77,7 @@ Delete an existing fitness activity for an authenticated User.
 **Params**
 
 - `id` (String) Fitness activity ID _required_
+- `page` (String) Page GUID _required_
 - `token` (String) OAuth User Token _required_
 
 **Returns**
@@ -154,8 +92,9 @@ A pending promise that will either resolve to:
 ```javascript
 import { updateFitnessActivity } from 'supporticon/api/fitness-activities'
 
-createFitnessActivity(1234, {
-  token: 'xxxxx',
-  type: 'run'
+deleteFitnessActivity({
+  id: 'f440df6c-1101-4331-ac78-4fc5bc276f4e'
+  page: '95c0c89f-468c-4a6e-84dd-08a75cbc96ca',
+  token: 'xxxxx'
 })
 ```
