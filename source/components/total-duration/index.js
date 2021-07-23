@@ -99,7 +99,7 @@ TotalDuration.propTypes = {
 
   /**
    * The type of activity to get kms for
-   * e.g. bike, [bike, run, walk, swim]
+   * e.g. [walk, run, ride, swim, wheelchair]
    */
   activity: PropTypes.oneOf([PropTypes.string, PropTypes.array]),
 

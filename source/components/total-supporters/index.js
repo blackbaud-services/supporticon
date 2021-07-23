@@ -33,7 +33,6 @@ class TotalSupporters extends Component {
       event,
       country,
       type,
-      group,
       startDate,
       endDate,
       search
@@ -46,7 +45,6 @@ class TotalSupporters extends Component {
       event,
       country,
       type,
-      group,
       startDate,
       endDate,
       search
@@ -138,11 +136,6 @@ TotalSupporters.propTypes = {
    * Whether to include active pages
    */
   active: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-
-  /**
-   * The group value(s) to filter by
-   */
-  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
    * Start date filter (ISO Format)
