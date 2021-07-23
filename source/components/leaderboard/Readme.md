@@ -3,7 +3,7 @@
 *Standard Use*
 ```
 <Leaderboard
-  campaign='au-23374'
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
 />
 ```
 
@@ -11,7 +11,7 @@
 
 ```
 <Leaderboard
-  campaign='au-23374'
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   leaderboard={{
     columns: {
       sm: 2
@@ -27,18 +27,27 @@
 
 ```
 <Leaderboard
-  campaign='au-23374'
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   type='team'
 />
 ```
 
-*Leaderboard by Group*
+*Leaderboard by Tag Value*
 
 ```
 <Leaderboard
-  campaign='au-21937'
-  type='group'
-  groupID={58}
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  tagId='branch'
+  tagValue='Sevenoaks'
+/>
+```
+
+*Leaderboard by Tag*
+
+```
+<Leaderboard
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  tagId='branch'
 />
 ```
 
@@ -46,7 +55,7 @@
 
 ```
 <Leaderboard
-  campaign='au-23374'
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   currency={false}
   limit={50}
   multiplier={0.001}

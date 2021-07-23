@@ -69,19 +69,15 @@ class FitnessLeaderboard extends Component {
       charity,
       country,
       deserializeMethod,
-      type,
-      group,
-      startDate,
       endDate,
-      includeManual,
-      excludeVirtual,
       excludePageIds,
       limit,
       page,
-      groupID,
       sortBy,
+      startDate,
       tagId,
-      tagValue
+      tagValue,
+      type
     } = this.props
 
     !refresh &&
@@ -96,21 +92,17 @@ class FitnessLeaderboard extends Component {
       campaign,
       charity,
       country,
-      type,
-      group,
-      startDate,
       endDate,
-      include_manual: includeManual,
-      exclude_virtual: excludeVirtual,
       limit: limit + 10,
       page,
-      groupID,
-      sortBy: formatMeasurementDomain(sortBy),
       q,
+      sortBy: formatMeasurementDomain(sortBy),
+      startDate,
       tagId,
-      tagValue
+      tagValue,
+      type
     })
-      .then(data => this.removeExcludedPages(excludePageIds, data, type))
+      .then(data => this.removeExcludedPages(excludePageIds, data, tagId))
       .then(data =>
         data.map(deserializeMethod || deserializeFitnessLeaderboard)
       )
@@ -129,12 +121,12 @@ class FitnessLeaderboard extends Component {
       })
   }
 
-  removeExcludedPages (excludePageIds, pages, type) {
+  removeExcludedPages (excludePageIds, pages, tagId) {
     if (!excludePageIds) return pages
 
     return pages.filter(page => {
       const item = deserializeFitnessLeaderboard(page)
-      const id = type === 'group' ? item.name : item.id
+      const id = tagId ? item.name : item.id
 
       const excluded = Array.isArray(excludePageIds)
         ? excludePageIds
@@ -275,17 +267,12 @@ FitnessLeaderboard.propTypes = {
   /**
    * The type of page to include in the leaderboard
    */
-  type: PropTypes.oneOf(['group', 'individual', 'team']),
+  type: PropTypes.oneOf(['individual', 'team']),
 
   /**
-   * The activity type of page to include in the leaderboard (bike, gym, hike, run, sport, swim, walk)
+   * The activity type of page to include in the leaderboard (walk, run, ride, hike, swim, wheelchair)
    */
   activity: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-
-  /**
-   * The group value(s) to filter by
-   */
-  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
    * Start date filter (ISO Format)
@@ -331,11 +318,6 @@ FitnessLeaderboard.propTypes = {
    * The page to fetch
    */
   page: PropTypes.number,
-
-  /**
-   * The group ID to group the leaderboard by (only relevant if type is group)
-   */
-  groupID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /**
    * The tag ID to group the leaderboard by

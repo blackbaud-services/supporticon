@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
-import { isJustGiving } from '../../utils/client'
 
 import Filter from 'constructicon/filter'
 import Grid from 'constructicon/grid'
@@ -54,15 +53,6 @@ class Leaderboard extends Component {
     this.fetchLeaderboard(q)
   }
 
-  removeExcludedGroups (groups, values) {
-    if (!values) return groups
-
-    return groups.filter(item => {
-      const excluded = Array.isArray(values) ? values : values.split(',')
-      return excluded.indexOf(item.tagValue.toString()) === -1
-    })
-  }
-
   handleData (data, excludeOffline, deserializeMethod, limit) {
     const leaderboardData = data
       .filter(item => item.status !== 'Cancelled')
@@ -90,8 +80,6 @@ class Leaderboard extends Component {
       event,
       excludeOffline,
       excludePageIds,
-      group,
-      groupID,
       limit,
       maxAmount,
       minAmount,
@@ -116,10 +104,8 @@ class Leaderboard extends Component {
       country,
       endDate,
       event,
-      excludePageIds: type === 'group' ? undefined : excludePageIds,
-      group,
-      groupID,
-      limit: isJustGiving() ? limit : limit + 5,
+      excludePageIds,
+      limit,
       maxAmount,
       minAmount,
       page,
@@ -130,12 +116,6 @@ class Leaderboard extends Component {
       tagValue,
       type
     })
-      .then(
-        data =>
-          type === 'group'
-            ? this.removeExcludedGroups(data, excludePageIds)
-            : data
-      )
       .then(data => {
         this.setState({
           status: 'fetched',
@@ -286,12 +266,7 @@ Leaderboard.propTypes = {
   /**
    * The type of page to include in the leaderboard
    */
-  type: PropTypes.oneOf(['group', 'individual', 'team']),
-
-  /**
-   * The group value(s) to filter by
-   */
-  group: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  type: PropTypes.oneOf(['individual', 'team']),
 
   /**
    * Start date filter (ISO Format)
@@ -317,11 +292,6 @@ Leaderboard.propTypes = {
    * The page to fetch
    */
   page: PropTypes.number,
-
-  /**
-   * The group ID to group the leaderboard by (only relevant if type is group)
-   */
-  groupID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /**
    * The tag ID to group the leaderboard by
