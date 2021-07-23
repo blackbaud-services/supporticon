@@ -22,7 +22,7 @@ class ResetPasswordForm extends Component {
   handleSubmit (e) {
     e.preventDefault()
 
-    const { clientId, form, onSuccess, reference, returnTo } = this.props
+    const { form, onSuccess } = this.props
 
     return form.submit().then(data => {
       this.setState({
@@ -30,15 +30,9 @@ class ResetPasswordForm extends Component {
         status: 'fetching'
       })
 
-      return resetPassword({
-        clientId,
-        reference,
-        returnTo,
-        ...data
-      })
+      return resetPassword(data)
         .then(result => {
           this.setState({ status: 'fetched' })
-
           return onSuccess(result)
         })
         .catch(error => {
@@ -92,11 +86,6 @@ class ResetPasswordForm extends Component {
 
 ResetPasswordForm.propTypes = {
   /**
-   * The clientId for a valid OauthApplication (EDH only)
-   */
-  clientId: PropTypes.string,
-
-  /**
    * Disable form submission when invalid
    */
   disableInvalidForm: PropTypes.bool,
@@ -119,21 +108,17 @@ ResetPasswordForm.propTypes = {
   /**
    * The label for the form submit button
    */
-  submit: PropTypes.string,
-
-  /**
-   * The campaign slug for branding (EDH only)
-   */
-  reference: PropTypes.string,
-
-  /**
-   * The URL to return to after updating password (EDH only)
-   */
-  returnTo: PropTypes.string
+  submit: PropTypes.string
 }
 
 ResetPasswordForm.defaultProps = {
   disableInvalidForm: false,
+  formComponent: {
+    submitProps: {
+      background: 'justgiving',
+      foreground: 'light'
+    }
+  },
   submit: 'Send reset password instructions'
 }
 
