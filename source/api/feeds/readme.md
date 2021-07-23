@@ -27,7 +27,7 @@ A pending promise that will either resolve to:
 import { fetchDonationFeed } from 'supporticon/api/feeds'
 
 fetchDonationFeed({
-  campaign: 'au-123'
+  campaign: 'f440df6c-1101-4331-ac78-4fc5bc276f4e'
 })
 ```
 
