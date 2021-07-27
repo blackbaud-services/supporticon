@@ -94,18 +94,28 @@ class PageSearch extends Component {
       limit: this.props.limit,
       page: this.props.page
     })
-      .then(data => {
-        this.setState({
-          status: 'fetched',
-          data: data.map(this.props.deserializeMethod || deserializePage)
-        })
-      })
+      .then(data => data.map(this.props.deserializeMethod || deserializePage))
+      .then(data => this.filterResults(data, this.props.excludePageIds))
+      .then(data => this.setState({ data, status: 'fetched' }))
       .catch(error => {
         this.setState({
           status: 'failed'
         })
         return Promise.reject(error)
       })
+  }
+
+  filterResults (results, excludePageIds) {
+    if (!excludePageIds) return results
+
+    return results.filter(result =>
+      ['id', 'slug', 'uuid'].reduce((current, key) => {
+        if (!result[key]) return current
+        return current
+          ? excludePageIds.indexOf(result[key].toString()) < 0
+          : false
+      }, true)
+    )
   }
 
   getSubtitle (subtitle, page) {
@@ -178,6 +188,11 @@ PageSearch.propTypes = {
    * The event id
    */
   event: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+
+  /**
+   * Page/Team ids you want to exclude from the list
+   */
+  excludePageIds: PropTypes.string,
 
   /**
    * The type of page to include in the leaderboard
