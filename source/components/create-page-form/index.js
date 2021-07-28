@@ -26,6 +26,7 @@ import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
 import InputField from 'constructicon/input-field'
 import InputSelect from 'constructicon/input-select'
+import RichText from 'constructicon/rich-text'
 
 class CreatePageForm extends Component {
   constructor () {
@@ -58,6 +59,7 @@ class CreatePageForm extends Component {
       form,
       onSubmitError,
       onSuccess,
+      showValidationErrorMessage,
       timeBox,
       token
     } = this.props
@@ -165,7 +167,54 @@ class CreatePageForm extends Component {
             }
           })
       })
-      .catch(error => onSubmitError(error))
+      .catch(error => {
+        onSubmitError(error)
+
+        if (showValidationErrorMessage && form.invalid) {
+          this.handleValidationErrors(error)
+        }
+      })
+  }
+
+  handleValidationErrors (errors) {
+    const fieldErrors = Object.keys(errors)
+      .map(key => ({
+        key,
+        message: Array.isArray(errors[key]) ? errors[key].join(' ') : null
+      }))
+      .filter(field => !!field.message)
+      .filter(field => field.message !== 'This field is required')
+
+    const handleErrorClick = id => {
+      const el = document.querySelector(`form [name="${id}"]`)
+
+      if (el) {
+        el.focus()
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }
+
+    this.setState({
+      status: 'failed',
+      errors: [
+        {
+          message: (
+            <RichText>
+              <p>
+                <strong>Please fix the following errors:</strong>
+              </p>
+              <ul>
+                {fieldErrors.map((error, index) => (
+                  <li key={index} onClick={() => handleErrorClick(error.key)}>
+                    {error.message}
+                  </li>
+                ))}
+              </ul>
+            </RichText>
+          )
+        }
+      ]
+    })
   }
 
   handleSubmitAddress (token, address) {
@@ -385,6 +434,11 @@ CreatePageForm.propTypes = {
    * The onSuccess event handler
    */
   onSuccess: PropTypes.func.isRequired,
+
+  /**
+   * Show form validation errors on submit?
+   */
+  showValidationErrorMessage: PropTypes.bool,
 
   /**
    * The label for the form submit button
