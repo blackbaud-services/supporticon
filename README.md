@@ -6,7 +6,7 @@ Also provides some common data-driven components, using the [Constructicon](http
 
 ## Important Links
 
-- [Documentation](https://blackbaud-services.github.io/supporticon/book)
+- [Documentation](https://blackbaud-services.github.io/supporticon)
 - [Components](https://blackbaud-services.github.io/supporticon/components)
 
 ## Development

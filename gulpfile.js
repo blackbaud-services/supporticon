@@ -23,6 +23,18 @@ gulp.task('npm-prep-meta', function() {
     .pipe(gulp.dest(npmDir))
 })
 
+/**
+* Move markdown files into docsc dir
+*/
+gulp.task('docs-prepare', function() {
+  return gulp.src([
+    './source/**/*.md',
+    './docs/README.md',
+    './docs/index.html',
+    './docs/.nojekyll'
+  ])
+    .pipe(gulp.dest('./styleguide'))
+})
 
 gulp.task('npm-prepare', gulp.series(
   'npm-prep-files',

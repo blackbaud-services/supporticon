@@ -19,3 +19,15 @@ Please note that not all endpoints accept all params, so refer to the API docs i
 - `country` (String) two letter country code (e.g. `au`)
 - `limit` (Integer) the number of results to fetch
 - `page` (Integer) the page of results to fetch
+
+# Table of contents
+
+  * [Campaigns](/api/campaigns/)
+  * [Donations](/api/donations/)
+  * [Donation Totals](/api/donation-totals/)
+  * [Feeds](/api/feeds/)
+  * [Leaderboard](/api/leaderboard/)
+  * [Pages](/api/pages/)
+  * [Pages Totals](/api/pages-totals/)
+  * [Posts](/api/posts/)
+  * [Authentication](/api/authentication/)

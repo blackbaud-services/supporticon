@@ -1,4 +1,4 @@
-# Goal
+# Pages
 
 Helpers related to fetching fundraising pages
 

@@ -1,4 +1,4 @@
-# Goal
+# Pages Totals
 
 Helpers related to fetching the number of pages for campaigns, charities etc.
 

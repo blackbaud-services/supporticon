@@ -1,4 +1,4 @@
-# Goal
+# Campaigns
 
 Helpers related to fetching campaigns
 
