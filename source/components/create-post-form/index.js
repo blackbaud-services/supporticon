@@ -46,7 +46,7 @@ class CreatePostForm extends React.Component {
               message: 'Please include a message or an image or video.'
             })
         )
-        .then(() => this.setState({ status: 'fetching' }))
+        .then(() => this.setState({ errors: [], status: 'fetching' }))
         .then(() => data.image && uploadImage(data.image))
         .then(image =>
           createPost({
