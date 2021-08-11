@@ -1,96 +1,69 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import numbro from 'numbro'
-import { fetchFitnessTotals } from '../../api/fitness-totals'
+import { useFitnessTotals } from '../../hooks/use-fitness-totals'
 import { formatDistance } from '../../utils/fitness'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
 
-class TotalDistance extends Component {
-  constructor () {
-    super()
-    this.fetchData = this.fetchData.bind(this)
-    this.state = { status: 'fetching' }
+const TotalDistance = ({
+  activity,
+  campaign,
+  endDate,
+  format,
+  icon,
+  label,
+  metric,
+  miles,
+  multiplier,
+  offset,
+  refreshInterval,
+  startDate,
+  units
+}) => {
+  const { data, status } = useFitnessTotals({
+    activity,
+    campaign,
+    endDate,
+    refreshInterval,
+    startDate
+  })
+
+  console.log('TotalDistance', status, data)
+
+  const formatAmount = labelFormat => {
+    const amount = (offset + data.elevation) * multiplier
+
+    return units
+      ? formatDistance(amount, miles, labelFormat)
+      : numbro(amount).format(format)
   }
 
-  componentDidMount () {
-    const { refreshInterval } = this.props
-    this.fetchData()
-    this.interval =
-      refreshInterval && setInterval(this.fetchData, refreshInterval)
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval)
-  }
-
-  fetchData () {
-    const { activity, campaign, startDate, endDate } = this.props
-
-    fetchFitnessTotals({
-      campaign,
-      startDate,
-      endDate,
-      types: activity
-    })
-      .then(totals =>
-        this.setState({ status: 'fetched', data: totals.distance })
-      )
-      .catch(error => {
-        this.setState({ status: 'failed' })
-        return Promise.reject(error)
-      })
-  }
-
-  render () {
-    const { icon, label, metric } = this.props
-
-    return (
-      <Metric
-        icon={icon}
-        label={label}
-        amount={this.renderAmount()}
-        amountLabel={this.renderAmountLabel()}
-        {...metric}
-      />
-    )
-  }
-
-  renderAmount () {
-    const { status, data } = this.state
-    const { format, miles, multiplier, offset, units } = this.props
-    const amount = (offset + data) * multiplier
-
-    switch (status) {
-      case 'fetching':
-        return <Loading />
-      case 'failed':
-        return <Icon name='warning' />
-      default:
-        return units
-          ? formatDistance(amount, miles)
-          : numbro(amount).format(format)
-    }
-  }
-
-  renderAmountLabel () {
-    const { status, data } = this.state
-    const { format, miles, multiplier, offset, units } = this.props
-    const amount = (offset + data) * multiplier
-
-    switch (status) {
-      case 'fetching':
-        return 'Loading'
-      case 'failed':
-        return 'Error'
-      default:
-        return units
-          ? formatDistance(amount, miles, 'full')
-          : numbro(amount).format(format)
-    }
-  }
+  return (
+    <Metric
+      icon={icon}
+      label={label}
+      amount={
+        status === 'fetched' ? (
+          formatAmount()
+        ) : status === 'fetching' ? (
+          <Loading />
+        ) : (
+          <Icon name='warning' />
+        )
+      }
+      amountLabel={
+        status === 'fetched'
+          ? formatAmount('full')
+          : status === 'fetching'
+            ? 'Loading'
+            : 'Error'
+      }
+      {...metric}
+    />
+  )
 }
 
 TotalDistance.propTypes = {
