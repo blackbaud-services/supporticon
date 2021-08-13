@@ -1,5 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import moment from 'moment'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  useEffect
+} from 'react'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
 
 const initialState = { data: {}, errors: [], status: 'initial' }
@@ -16,8 +21,18 @@ export const FitnessTotalsContext = createContext({
 export const FitnessTotalsProvider = ({ children }) => {
   const [totals, setTotals] = useState(initialState)
 
+  let ref = totals
+
   return (
-    <FitnessTotalsContext.Provider value={{ totals, setTotals }}>
+    <FitnessTotalsContext.Provider
+      value={{
+        getTotals: () => ref,
+        setTotals: totals => {
+          ref = totals
+          setTotals(totals)
+        }
+      }}
+    >
       {children}
     </FitnessTotalsContext.Provider>
   )
@@ -32,30 +47,23 @@ export const withFitnessTotals = WrappedComponent => props => (
 )
 
 export const useFitnessTotals = params => {
-  const { totals, setTotals } = useFitnessTotalsContext()
+  const { getTotals, setTotals } = useFitnessTotalsContext()
+
+  const totals = getTotals()
 
   useEffect(
     () => {
-      const fetch = () => {
-        return fetchFitnessTotals(params)
+      console.log('useFitnessTotals.useEffect', totals, getTotals())
+      if (totals.status !== 'fetched' && totals.status !== 'fetching') {
+        setTotals({ data: totals.data, errors: [], status: 'fetching' })
+
+        fetchFitnessTotals(params)
           .then(data => setTotals({ data, errors: [], status: 'fetched' }))
           .catch(error => {
             setTotals({ data: {}, errors: error.data, status: 'failed' })
             Promise.reject(error)
           })
       }
-
-      setTotals(freshTotals => {
-        console.log(totals, freshTotals)
-        if (freshTotals.status === 'initial') {
-          console.log('FETCHING THE DATA....')
-          fetch()
-
-          return { data: totals.data, errors: [], status: 'fetching' }
-        }
-
-        return freshTotals
-      })
     },
     [...Object.values(params), totals.status]
   )
