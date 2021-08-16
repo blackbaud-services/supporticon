@@ -1,8 +1,9 @@
 export const localityLabel = country => {
   switch (country) {
     case 'au':
-    case 'nz':
       return 'Town/Suburb'
+    case 'nz':
+      return 'Suburb'
     case 'ie':
       return 'Town/City'
     case 'uk':
@@ -21,6 +22,8 @@ export const regionLabel = country => {
       return 'County'
     case 'ca':
       return 'Province'
+    case 'nz':
+      return 'City'
     default:
       return 'State'
   }
