@@ -10,16 +10,16 @@ orbs:
 
 workflows:
   version: 2
-  staging:
+  test:
     jobs:
-      - staging:
+      - test:
         filters:
           branches:
             ignore: master
 
-  production:
+  deploy:
     jobs:
-      - production:
+      - deploy:
           filters:
             branches:
               only: master
@@ -58,14 +58,14 @@ commands:
           package-path: npm-supporticon
 
 jobs:
-  staging:
+  test:
     docker:
       - image: circleci/node:8
     steps:
       - install
       - lint
 
-  production:
+  deploy:
     docker:
       - image: circleci/node:8
     steps:
