@@ -128,7 +128,7 @@ export const deserializePage = page => {
       page.teams && page.teams.length > 0 ? page.teams[0].teamShortName : null,
     type: page.type || 'individual',
     url: page.Link || page.PageUrl || `${baseUrl()}/fundraising/${shortName}`,
-    uuid: page.pageGuid || page.fundraisingPageGuid
+    uuid: page.pageGuid || page.fundraisingPageGuid || page.FundraiserPageGuid
   }
 }
 
