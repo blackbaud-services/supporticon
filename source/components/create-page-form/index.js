@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
-import pick from 'lodash/pick'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { createPage } from '../../api/pages'
@@ -66,15 +65,14 @@ class CreatePageForm extends Component {
           status: 'fetching'
         })
 
-        const addressFields = pick(data, [
-          'streetAddress',
-          'extendedAddress',
-          'locality',
-          'region',
-          'postCode',
-          'country',
-          'charityId'
-        ])
+        const addressFields = {
+          streetAddress: data.streetAddress,
+          extendedAddress: data.extendedAddress,
+          locality: data.localityAddress,
+          region: data.regionAddress,
+          postCode: data.postCodeAddress,
+          country: data.countryAddress
+        }
 
         const dataPayload = merge(
           {
@@ -222,10 +220,10 @@ class CreatePageForm extends Component {
     return renderFormFields(fields, [
       'streetAddress',
       'extendedAddress',
-      'locality',
-      'region',
-      'postCode',
-      'country'
+      'localityAddress',
+      'regionAddress',
+      'postCodeAddress',
+      'countryAddress'
     ])
   }
 
@@ -312,7 +310,7 @@ class CreatePageForm extends Component {
         </GridColumn>
         <GridColumn>
           <InputField
-            {...form.fields.locality}
+            {...form.fields.localityAddress}
             {...inputField}
             required={selectedCountry !== 'nz'}
             label={addressHelpers.localityLabel(selectedCountry)}
@@ -320,19 +318,19 @@ class CreatePageForm extends Component {
         </GridColumn>
         <GridColumn md={country ? 6 : 4}>
           <InputField
-            {...form.fields.region}
+            {...form.fields.regionAddress}
             {...inputField}
             label={addressHelpers.regionLabel(selectedCountry)}
           />
         </GridColumn>
         {!country && (
           <GridColumn md={4}>
-            <InputSelect {...form.fields.country} {...inputField} />
+            <InputSelect {...form.fields.countryAddress} {...inputField} />
           </GridColumn>
         )}
         <GridColumn md={country ? 6 : 4}>
           <InputField
-            {...form.fields.postCode}
+            {...form.fields.postCodeAddress}
             {...inputField}
             label={addressHelpers.postCodeLabel(selectedCountry)}
           />
@@ -484,7 +482,7 @@ const form = props => {
       }
     }),
     ...(props.includeAddress && {
-      country: {
+      countryAddress: {
         label: 'Country',
         initial: props.country,
         options: countries,
@@ -498,7 +496,7 @@ const form = props => {
         validators: [validators.required('Please enter a street address')]
       },
       extendedAddress: {},
-      locality: {
+      localityAddress: {
         required: true,
         validators: [
           (val, { country }) =>
@@ -510,7 +508,7 @@ const form = props => {
             )(val)
         ]
       },
-      region: {
+      regionAddress: {
         required: true,
         validators: [
           (val, { country }) =>
@@ -521,7 +519,7 @@ const form = props => {
             )(val)
         ]
       },
-      postCode: {
+      postCodeAddress: {
         required: true,
         validators: [
           (val, { country }) =>
