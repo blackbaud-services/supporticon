@@ -120,8 +120,8 @@ export const fetchFitnessActivities = (params = required()) => {
 
   if (params.page) {
     if (params.useLegacy) {
-      return get(`/v1/fitness/fundraising/${params.page}`, query).then(
-        response => response.activities
+      return Promise.reject(
+        'Legacy method no longer supported since it does not return individual activities'
       )
     }
 
