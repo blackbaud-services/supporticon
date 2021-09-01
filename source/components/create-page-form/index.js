@@ -212,7 +212,16 @@ class CreatePageForm extends Component {
   }
 
   handleAddressLookup (address) {
-    this.props.form.updateValues(address)
+    const addressFields = {
+      streetAddress: address.streetAddress,
+      extendedAddress: address.extendedAddress,
+      localityAddress: address.locality,
+      regionAddress: address.region,
+      postCodeAddress: address.postCode,
+      countryAddress: address.country
+    }
+
+    this.props.form.updateValues(addressFields)
     this.setState({ manualAddress: true })
   }
 
