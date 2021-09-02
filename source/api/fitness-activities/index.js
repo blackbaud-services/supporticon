@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import lodashGet from 'lodash/get'
-import { get, post, destroy, servicesAPI } from '../../utils/client'
-import { paramsSerializer, required } from '../../utils/params'
+import { post, destroy, servicesAPI } from '../../utils/client'
+import { required } from '../../utils/params'
 import { convertToMeters, convertToSeconds } from '../../utils/units'
 import { extractData } from '../../utils/graphql'
 import { encodeBase64String } from '../../utils/base64'
@@ -111,13 +111,6 @@ export const deserializeFitnessActivity = (activity = required()) => {
 }
 
 export const fetchFitnessActivities = (params = required()) => {
-  const query = {
-    limit: params.limit || 100,
-    offset: params.offset || 0,
-    start: params.startDate,
-    end: params.endDate
-  }
-
   if (params.page) {
     if (params.useLegacy) {
       return Promise.reject(
@@ -183,18 +176,15 @@ export const fetchFitnessActivities = (params = required()) => {
   }
 
   if (params.team) {
-    return get(`/v1/fitness/teams/${params.team}`, query).then(
-      response => response.activities
+    return Promise.reject(
+      "Fetching list of a team's individual activities is not supported"
     )
   }
 
   if (params.campaign) {
-    return get(
-      '/v1/fitness/campaign',
-      { ...query, campaignGuid: params.campaign },
-      {},
-      { paramsSerializer }
-    ).then(response => response.activities)
+    return Promise.reject(
+      "Fetching list of a campaign's individual activities is not supported"
+    )
   }
 
   return required()
