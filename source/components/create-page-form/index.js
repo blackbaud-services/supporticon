@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
+import pickBy from 'lodash/pickBy'
 import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { createPage } from '../../api/pages'
@@ -212,14 +213,14 @@ class CreatePageForm extends Component {
   }
 
   handleAddressLookup (address) {
-    const addressFields = {
+    const addressFields = pickBy({
       streetAddress: address.streetAddress,
       extendedAddress: address.extendedAddress,
       localityAddress: address.locality,
       regionAddress: address.region,
       postCodeAddress: address.postCode,
       countryAddress: address.country
-    }
+    })
 
     this.props.form.updateValues(addressFields)
     this.setState({ manualAddress: true })
