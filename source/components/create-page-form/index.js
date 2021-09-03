@@ -304,6 +304,7 @@ class CreatePageForm extends Component {
           inputProps={inputField}
           label={addressSearchLabel}
           required
+          touched={form.fields.streetAddress.touched}
           validations={form.fields.streetAddress.validations}
           {...addressSearchProps}
         />

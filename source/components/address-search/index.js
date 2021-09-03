@@ -55,7 +55,7 @@ class AddressSearch extends Component {
   }
 
   render () {
-    const { error, inputProps, validations } = this.props
+    const { error, inputProps, touched, validations } = this.props
     const { country, results, status, value } = this.state
 
     return (
@@ -77,6 +77,7 @@ class AddressSearch extends Component {
           <InputSearch
             autoComplete='nope'
             error={error}
+            invalid={!!error}
             label={this.renderLabel()}
             onChange={this.handleSelect}
             onSearch={this.handleQuery}
@@ -84,6 +85,7 @@ class AddressSearch extends Component {
             showMore
             status={status}
             placeholder='Search postcode'
+            touched={touched}
             validations={validations}
             value={value}
             {...inputProps}
