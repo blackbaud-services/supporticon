@@ -31,12 +31,12 @@ export const formatMeasurementDomain = sortBy => {
 export const formatDistance = (distance, miles, label = 'abbreviation') => {
   if (miles) {
     return (
-      numbro(units.convertMetersToMiles(distance)).format('0,0[.]0') +
+      numbro(units.convertMetersToMiles(distance)).format('0,0[.]0[0]') +
       ` ${labels.miles[label]}`
     )
   } else {
     return (
-      numbro(units.convertMetersToKm(distance)).format('0,0[.]0') +
+      numbro(units.convertMetersToKm(distance)).format('0,0[.]0[0]') +
       ` ${labels.kilometers[label]}`
     )
   }
