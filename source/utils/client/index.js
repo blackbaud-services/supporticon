@@ -49,6 +49,8 @@ export const updateClient = (options = {}) => {
 
 export const getBaseURL = () => instance.defaults.baseURL
 
+export const getApiKey = () => instance.defaults.headers['x-api-key']
+
 export const isStaging = () => /staging/.test(instance.defaults.baseURL)
 
 // Services API Client
