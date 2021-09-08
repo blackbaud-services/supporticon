@@ -1,4 +1,4 @@
-import { isStaging, servicesAPI } from '../client'
+import { getApiKey, isStaging, servicesAPI } from '../client'
 import get from 'lodash/get'
 
 export const isValidJSON = json => {
@@ -36,6 +36,8 @@ const parseTextSection = (section = {}) => {
 export const baseUrl = (subdomain = 'www') => {
   return `https://${subdomain}${isStaging() ? '.staging' : ''}.justgiving.com`
 }
+
+export const apiUrl = () => `${baseUrl('api')}/${getApiKey()}`
 
 export const imageUrl = (image, template = 'CrowdfundingOwnerAvatar') => {
   return image

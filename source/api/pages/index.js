@@ -7,7 +7,7 @@ import lodashFilter from 'lodash/filter'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
 import { get, post, put, servicesAPI } from '../../utils/client'
-import { apiImageUrl, baseUrl, imageUrl } from '../../utils/justgiving'
+import { apiUrl, apiImageUrl, baseUrl, imageUrl } from '../../utils/justgiving'
 import { getUID, isEqual, isEmpty, isUuid, required } from '../../utils/params'
 import { defaultPageTags } from '../../utils/tags'
 import { deserializeFitnessActivity } from '../fitness-activities'
@@ -65,6 +65,7 @@ export const deserializePage = page => {
     donationUrl: id
       ? `${baseUrl('link')}/v1/fundraisingpage/donate/pageId/${id}`
       : `${baseUrl('www')}/fundraising/${shortName}/donate`,
+    donateQrCodeImage: `${apiUrl()}/v1/fundraising/pages/${shortName}/qrcode`,
     event: page.Subtext || page.eventId || page.EventId || page.eventName,
     expired: jsonDate(page.expiryDate) && dayjs(page.expiryDate).isBefore(),
     fitness: page.fitness || {},
