@@ -33,6 +33,7 @@ class TotalFundsRaised extends Component {
     const {
       campaign,
       charity,
+      donationRef,
       event,
       excludeOffline,
       country,
@@ -43,6 +44,7 @@ class TotalFundsRaised extends Component {
     fetchDonationTotals({
       campaign,
       charity,
+      donationRef,
       event,
       country,
       includeOffline: !excludeOffline,
@@ -103,7 +105,7 @@ TotalFundsRaised.propTypes = {
   ]),
 
   /**
-   * The event uid to fetch totals for (JG only)
+   * The event uid to fetch totals for
    */
   event: PropTypes.oneOfType([
     PropTypes.string,
@@ -114,14 +116,19 @@ TotalFundsRaised.propTypes = {
   /**
    * The charity uid to fetch totals for
    */
-  activity: PropTypes.oneOf([
+  charity: PropTypes.oneOf([
     PropTypes.string,
     PropTypes.object,
     PropTypes.array
   ]),
 
   /**
-   * Country code for API (JG only)
+   * The donation ref to fetch totals for
+   */
+  donationRef: PropTypes.string,
+
+  /**
+   * Country code for API
    */
   country: PropTypes.oneOf([
     'au',

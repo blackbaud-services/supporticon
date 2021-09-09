@@ -13,8 +13,10 @@ export const isEmpty = val => {
   }
 }
 
-export const dataSource = ({ event, charity, campaign }) => {
-  if (!isEmpty(event)) {
+export const dataSource = ({ event, charity, campaign, donationRef }) => {
+  if (donationRef) {
+    return 'donationRef'
+  } else if (!isEmpty(event)) {
     if (isNaN(event) && isNaN(event.uid) && !Array.isArray(event)) {
       throw new Error('Event parameter must be an ID or an array')
     }
