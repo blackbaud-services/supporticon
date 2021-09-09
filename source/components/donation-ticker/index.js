@@ -33,6 +33,7 @@ class DonationTicker extends Component {
     const {
       campaign,
       charity,
+      donationRef,
       event,
       fetchAll,
       includeOffline,
@@ -46,6 +47,7 @@ class DonationTicker extends Component {
     fetchDonationFeed({
       campaign,
       charity,
+      donationRef,
       event,
       fetchAll,
       includeOffline,
@@ -144,6 +146,11 @@ DonationTicker.propTypes = {
     PropTypes.object,
     PropTypes.array
   ]),
+
+  /**
+   * The donation ref to fetch feed for
+   */
+  donationRef: PropTypes.string,
 
   /**
    * The event id to fetch feed for
