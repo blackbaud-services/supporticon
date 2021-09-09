@@ -108,6 +108,11 @@ export const deserializePage = page => {
         page.PageOwner ||
         page.pageOwner ||
         lodashGet(page, 'pageOwner.fullName'),
+    ownerGuid:
+      page.ownerGuid ||
+      page.pageOwnerGuid ||
+      lodashGet(page, 'owner.userGuid') ||
+      lodashGet(page, 'owner.id'),
     qrCodes: getQrCodes(page),
     raised: onlineAmount + offlineAmount,
     raisedOnline: onlineAmount,
