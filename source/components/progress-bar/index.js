@@ -38,6 +38,7 @@ class ProgressBar extends Component {
       campaign,
       charity,
       country,
+      donationRef,
       endDate,
       event,
       excludeOffline,
@@ -47,6 +48,7 @@ class ProgressBar extends Component {
     fetchDonationTotals({
       campaign,
       charity,
+      donationRef,
       country,
       endDate,
       event,
@@ -170,7 +172,12 @@ ProgressBar.propTypes = {
   ]),
 
   /**
-   * The event uid to fetch totals for (JG only)
+   * The donation ref to fetch totals for
+   */
+  donationRef: PropTypes.string,
+
+  /**
+   * The event uid to fetch totals for
    */
   event: PropTypes.oneOfType([
     PropTypes.string,
@@ -179,7 +186,7 @@ ProgressBar.propTypes = {
   ]),
 
   /**
-   * Country code for API (JG only)
+   * Country code for API
    */
   country: PropTypes.oneOf([
     'au',

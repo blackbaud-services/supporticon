@@ -48,6 +48,10 @@ const fetchAllCampaignTotals = campaignIds =>
 
 export const fetchDonationTotals = (params = required()) => {
   switch (dataSource(params)) {
+    case 'donationRef':
+      return client.get(`/v1/donationtotal/ref/${params.donationRef}`, {
+        currencyCode: currencyCode(params.country)
+      })
     case 'event':
       return Promise.all([
         fetchDonations(params),
@@ -101,6 +105,7 @@ export const deserializeDonationTotals = totals => ({
   raised:
     totals.totalRaised ||
     totals.raisedAmount ||
+    totals.DonationsTotal ||
     get(totals, 'meta.totalAmount') ||
     get(totals, 'donationSummary.totalAmount') ||
     get(totals, 'totals.donationTotalAmount') ||
@@ -109,6 +114,7 @@ export const deserializeDonationTotals = totals => ({
   donations:
     totals.totalResults ||
     totals.numberOfDirectDonations ||
+    totals.NumberOfDonations ||
     get(totals, 'donationSummary.totalNumberOfDonations') ||
     get(totals, 'totals.donationCount') ||
     0
