@@ -1,13 +1,12 @@
 import { getUID } from '../params'
 
 const defaultMappings = {
-  campaign: 'campaign_id',
-  charity: 'charity_id',
-  endDate: 'end_at',
+  campaign: 'campaignGuid',
+  charity: 'charityId',
+  event: 'eventId',
+  endDate: 'end',
   filter: 'q',
-  pageIds: 'page_ids',
-  startDate: 'start_at',
-  type: 'group_by'
+  startDate: 'start'
 }
 
 const transformUid = v => (Array.isArray(v) ? v.map(getUID) : getUID(v))

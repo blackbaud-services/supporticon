@@ -8,10 +8,10 @@ describe('Utils | Param Maps', () => {
     })
 
     expect(Object.keys(finalParams).length).to.eql(2)
-    expect(finalParams.campaign_id).to.eql(
+    expect(finalParams.campaignGuid).to.eql(
       'f440df6c-1101-4331-ac78-4fc5bc276f4e'
     )
-    expect(finalParams.charity_id).to.eql('12345')
+    expect(finalParams.charityId).to.eql('12345')
   })
 
   it('keeps unmapped keys', () => {
@@ -21,7 +21,7 @@ describe('Utils | Param Maps', () => {
     })
 
     expect(Object.keys(finalParams).length).to.eql(2)
-    expect(finalParams.campaign_id).to.eql(
+    expect(finalParams.campaignGuid).to.eql(
       'f440df6c-1101-4331-ac78-4fc5bc276f4e'
     )
     expect(finalParams.custom).to.eql('123')
