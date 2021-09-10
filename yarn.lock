@@ -2267,10 +2267,10 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
 
-constructicon@^3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-3.0.3.tgz#2f31be1f21db8ca1f55cdbb3880b4a789992b70e"
-  integrity sha512-qYcOnQtiCsR3qri5rZHkfkFHzME5X05yl06kC1YXum1MOrN8WXVwG5YelI2RIb98ouNm4d1hH0BZ+ZGJ2MUwSQ==
+constructicon@^3.0.12:
+  version "3.0.12"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-3.0.12.tgz#327e1cd65519a29b5e0292a93714fead6a0f1f54"
+  integrity sha512-j4XRuJ0AgzNjBpbj/TizWnkwIu+hgGIajyjsIU4tOxMqMAYRoyAGqDH0N0wKxJj10yJxsD+7rGfE8LJSpKeO5A==
   dependencies:
     axios "^0.19.2"
     dayjs "^1.10.5"
