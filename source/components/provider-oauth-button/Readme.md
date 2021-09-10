@@ -29,8 +29,8 @@ You can disable the default popup functionality by setting `popup` to false.
   redirectUri='https://oauth.blackbaud-sites.com'
   provider='fitbit'
   label='Connect with Fitbit'
-  authParams={{ expires_in: 604800 }},
-  state=`${user.token};${page.slug};METRIC;WALK`
+  authParams={{ expires_in: 604800 }}
+  state='${user.token};${page.slug};METRIC;WALK'
 />
 ```
 
