@@ -155,7 +155,11 @@ DonationTicker.propTypes = {
   /**
    * The event id to fetch feed for
    */
-  event: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  event: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.array
+  ]),
 
   /**
    * The page uid to fetch feed for
