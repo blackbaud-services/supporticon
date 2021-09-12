@@ -7,11 +7,18 @@ const { styles, theme } = require('./styleguide.styles')
 module.exports = {
   title: `Supporticon ${version}`,
   template: {
-    favicon: 'https://www.blackbaud.com/favicon.ico'
+    favicon: 'https://www.blackbaud.com/favicon.ico',
+    head: {
+      links: [{
+        rel: 'stylesheet',
+        href: 'https://assets.blackbaud-sites.com/fonts/blackbaud-sans/stylesheet.css'
+      }]
+    }
   },
   styleguideDir: 'styleguide/components',
   serverPort: 3000,
   usageMode: 'expand',
+  mountPointId: 'mount',
   styles,
   theme,
   getComponentPathLine: componentPath => {
@@ -145,9 +152,17 @@ module.exports = {
       ]
     }
   ],
+  require: [
+    path.join(__dirname, 'node_modules/constructicon/lib/css/reset.css')
+  ],
   webpackConfig: {
     module: {
       rules: [
+        {
+          test: /\.js$/,
+          enforce: 'pre',
+          use: ['source-map-loader'],
+        },
         {
           test: /\.jsx?$/,
           exclude: /node_modules/,
@@ -155,6 +170,10 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env', '@babel/preset-react']
           }
+        },
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader']
         }
       ]
     }
