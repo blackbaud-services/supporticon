@@ -116,7 +116,7 @@ TotalDonations.propTypes = {
   /**
    * The charity uid to fetch totals for
    */
-  charity: PropTypes.oneOf([
+  charity: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
     PropTypes.array
