@@ -1,10 +1,5 @@
 version: 2.1
 
-parameters:
-  PRISMIC_DOCUMENT_REF:
-    type: string
-    default: ""
-
 orbs:
   npm-publisher: uraway/npm-publisher@0.2.0
 
@@ -15,7 +10,9 @@ workflows:
       - test:
         filters:
           branches:
-            ignore: master
+            ignore:
+              - master
+              - gh-pages
 
   deploy:
     jobs:
@@ -42,6 +39,17 @@ commands:
       - run:
           name: Lint 🛠
           command: yarn test
+
+  docs:
+    steps:
+      - run:
+          name: Setup git user
+          command: |
+            git config user.email "ci-build@blackbaud.com"
+            git config user.name "ci-build"
+      - run:
+          name: Publish Docs 📄
+          command: yarn docs:build && yarn docs:deploy
 
   publish:
     steps:
@@ -71,4 +79,5 @@ jobs:
     steps:
       - install
       - lint
+      - docs
       - publish
