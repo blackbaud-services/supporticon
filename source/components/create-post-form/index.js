@@ -42,9 +42,11 @@ class CreatePostForm extends React.Component {
         .then(
           () =>
             values(data).every(isEmpty) &&
-            Promise.reject({
-              message: 'Please include a message or an image or video.'
-            })
+            Promise.reject(
+              new Error({
+                message: 'Please include a message or an image or video.'
+              })
+            )
         )
         .then(() => this.setState({ errors: [], status: 'fetching' }))
         .then(() => data.image && uploadImage(data.image))
@@ -137,8 +139,7 @@ class CreatePostForm extends React.Component {
                   height={height}
                   onChange={val => this.handleChangeAttachment(val, 'image')}
                   onFileChange={val =>
-                    this.handleChangeAttachment(val, 'image')
-                  }
+                    this.handleChangeAttachment(val, 'image')}
                 />
               </InputModal>
             </GridColumn>
@@ -154,8 +155,7 @@ class CreatePostForm extends React.Component {
                   {...form.fields.video}
                   onChange={val => this.handleChangeAttachment(val, 'video')}
                   onVideoChange={val =>
-                    this.handleChangeAttachment(val, 'video')
-                  }
+                    this.handleChangeAttachment(val, 'video')}
                 />
               </InputModal>
             </GridColumn>

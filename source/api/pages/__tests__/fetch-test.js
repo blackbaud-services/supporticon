@@ -23,7 +23,7 @@ describe('Fetch Pages', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.justgiving.com/v1/onesearch'
+          '/v1/onesearch'
         )
         expect(request.url).to.contain('eventId=EVENT_ID')
         done()
@@ -35,7 +35,7 @@ describe('Fetch Pages', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/campaigns'
+          '/v1/justgiving/campaigns'
         )
         expect(request.url).to.contain('UID')
         done()
@@ -54,7 +54,7 @@ describe('Fetch Pages', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/fundraising/pages/my-page-shortname'
+          '/v1/fundraising/pages/my-page-shortname'
         )
         done()
       })
@@ -65,7 +65,7 @@ describe('Fetch Pages', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/fundraising/pages/123'
+          '/v1/fundraising/pages/123'
         )
         done()
       })
@@ -76,7 +76,7 @@ describe('Fetch Pages', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/fundraising/pagebyid/123'
+          '/v1/fundraising/pagebyid/123'
         )
         done()
       })
@@ -87,7 +87,7 @@ describe('Fetch Pages', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.justgiving.com/v1/event/123/pages'
+          '/v1/event/123/pages'
         )
         expect(request.url).to.contain('pageSize=50')
         done()
@@ -106,7 +106,7 @@ describe('Fetch Pages', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/fundraising/pages'
+          '/v1/fundraising/pages'
         )
         done()
       })
@@ -120,7 +120,7 @@ describe('Fetch Pages', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/fundraising/pages/my-page-shortname/donations'
+          '/v1/fundraising/pages/my-page-shortname/donations'
         )
         done()
       })

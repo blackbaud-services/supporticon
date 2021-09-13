@@ -19,7 +19,7 @@ describe('Page | Update Page', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://api.justgiving.com/v1/fundraising/pages'
+        '/v1/fundraising/pages'
       )
       expect(request.url).to.contain('fundraising-page')
       expect(request.config.headers['Authorization']).to.eql(
@@ -38,7 +38,7 @@ describe('Page | Update Page', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://api.justgiving.com/v1/fundraising/pages'
+        '/v1/fundraising/pages'
       )
       expect(request.url).to.contain('fundraising-page')
       expect(request.config.headers['Authorization']).to.eql(
@@ -64,13 +64,13 @@ describe('Page | Update Page', () => {
       ]
 
       expect(requests).to.include(
-        'https://api.justgiving.com/v1/fundraising/pages/page-slug/pagestory'
+        '/v1/fundraising/pages/page-slug/pagestory'
       )
       expect(requests).to.include(
-        'https://api.justgiving.com/v1/fundraising/pages/page-slug/attribution'
+        '/v1/fundraising/pages/page-slug/attribution'
       )
       expect(requests).to.include(
-        'https://api.justgiving.com/v1/fundraising/pages/page-slug/images'
+        '/v1/fundraising/pages/page-slug/images'
       )
       done()
     })

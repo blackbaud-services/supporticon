@@ -47,6 +47,10 @@ const fetchAllCampaignTotals = campaignIds =>
   )
 
 export const fetchDonationTotals = (params = required()) => {
+  const campaignGuids = Array.isArray(params.campaign)
+    ? params.campaign.map(getUID)
+    : [getUID(params.campaign)]
+
   switch (dataSource(params)) {
     case 'donationRef':
       return client.get(`/v1/donationtotal/ref/${params.donationRef}`, {
@@ -72,7 +76,7 @@ export const fetchDonationTotals = (params = required()) => {
       }))
     case 'charity':
       return client.get(
-        'donationsleaderboards/v1/totals',
+        '/donationsleaderboards/v1/totals',
         {
           charityIds: Array.isArray(params.charity)
             ? params.charity.map(getUID)
@@ -83,14 +87,10 @@ export const fetchDonationTotals = (params = required()) => {
         { paramsSerializer }
       )
     default:
-      const campaignGuids = Array.isArray(params.campaign)
-        ? params.campaign.map(getUID)
-        : [getUID(params.campaign)]
-
       return params.includeOffline
         ? fetchAllCampaignTotals(campaignGuids)
         : client.get(
-          'donationsleaderboards/v1/totals',
+          '/donationsleaderboards/v1/totals',
           {
             campaignGuids,
             currencyCode: currencyCode(params.country)

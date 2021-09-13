@@ -19,7 +19,7 @@ describe('Fetch Fitness Totals', () => {
       const request = moxios.requests.mostRecent()
       const data = JSON.parse(request.config.data)
       expect(request.url).to.contain(
-        'https://api.blackbaud.services/v1/justgiving/graphql'
+        '/v1/justgiving/graphql'
       )
       expect(data.query).to.contain('page:campaign:12345')
       done()
@@ -31,7 +31,7 @@ describe('Fetch Fitness Totals', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://api.justgiving.com/v1/fitness/campaign'
+        '/v1/fitness/campaign'
       )
       expect(request.url).to.contain('campaignGuid=12345&campaignGuid=98765')
       done()

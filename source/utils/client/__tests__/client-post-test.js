@@ -10,17 +10,18 @@ describe('Utils | post', () => {
   })
 
   it('performs a simple post request', done => {
-    post('api/v2/pages', { foo: 'bar' })
+    post('/api/v2/pages', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://api.justgiving.com/api/v2/pages')
+      expect(request.config.baseURL).to.eql('https://api.justgiving.com')
+      expect(request.url).to.contain('/api/v2/pages')
       expect(JSON.parse(request.config.data)).to.deep.equal({ foo: 'bar' })
       done()
     })
   })
 
   it('rejects if the request returns a 404', done => {
-    post('api/v2/does-not-exist', { foo: 'bar' }).catch(error => {
+    post('/api/v2/does-not-exist', { foo: 'bar' }).catch(error => {
       expect(error.status).to.eql(404)
       done()
     })
@@ -34,7 +35,7 @@ describe('Utils | post', () => {
   })
 
   it('rejects if the request returns a 500', done => {
-    post('api/v2/campaigns', { foo: 'bar' }).catch(error => {
+    post('/api/v2/campaigns', { foo: 'bar' }).catch(error => {
       expect(error.status).to.eql(500)
       done()
     })
@@ -54,12 +55,10 @@ describe('Utils | post', () => {
 
   it('allows us to update the base url', done => {
     updateClient({ baseURL: 'https://api.staging.justgiving.com' })
-    post('api/v2/campaigns', { foo: 'bar' })
+    post('/api/v2/campaigns', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain(
-        'https://api.staging.justgiving.com/api/v2/campaigns'
-      )
+      expect(request.url).to.contain('/api/v2/campaigns')
       updateClient({ baseURL: 'https://api.justgiving.com' })
       done()
     })

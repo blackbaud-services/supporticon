@@ -55,7 +55,9 @@ describe('Utils | Form', () => {
       const test = renderFormFields(fields, ['email'])
       expect(test.length).to.eql(3)
       expect(test.map(({ name }) => name)).to.eql(['name', 'password', 'test'])
-      expect(test).to.include({ name: 'name', order: 1 })
+      expect(JSON.stringify(test)).to.include(
+        JSON.stringify({ name: 'name', order: 1 })
+      )
     })
   })
 })

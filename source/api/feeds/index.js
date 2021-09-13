@@ -25,7 +25,9 @@ export const fetchDonationFeed = ({
   }
 
   return Promise.reject(
-    'You must pass a charity UID, event ID, page ID, page short name, campaign GUID or donationRef for this method'
+    new Error(
+      'You must pass a charity UID, event ID, page ID, page short name, campaign GUID or donationRef for this method'
+    )
   )
 }
 

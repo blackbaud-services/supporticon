@@ -38,27 +38,29 @@ const InputModal = ({
   const label = `Add ${type === 'image' ? 'an' : 'a'} ${type}`
 
   return (
-    <Fragment>
-      {data ? (
-        <Button {...buttonProps} block spacing={0.25} onClick={onToggle}>
-          <Card {...cardProps} {...cardData()} />
-        </Button>
-      ) : (
-        <Button
-          {...buttonProps}
-          aria-label={label}
-          block
-          spacing={0.5}
-          onClick={onToggle}
-          background='transparent'
-          borderColor='primary'
-          borderWidth={2}
-          foreground='primary'
-        >
-          <Icon name={type} />
-          <span>{label}</span>
-        </Button>
-      )}
+    <>
+      {data
+        ? (
+          <Button {...buttonProps} block spacing={0.25} onClick={onToggle}>
+            <Card {...cardProps} {...cardData()} />
+          </Button>
+          )
+        : (
+          <Button
+            {...buttonProps}
+            aria-label={label}
+            block
+            spacing={0.5}
+            onClick={onToggle}
+            background='transparent'
+            borderColor='primary'
+            borderWidth={2}
+            foreground='primary'
+          >
+            <Icon name={type} />
+            <span>{label}</span>
+          </Button>
+          )}
       <Modal
         width={width}
         isOpen={toggled}
@@ -70,7 +72,7 @@ const InputModal = ({
           {data ? `Add ${type} to post` : 'Cancel'}
         </Button>
       </Modal>
-    </Fragment>
+    </>
   )
 }
 

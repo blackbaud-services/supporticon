@@ -21,7 +21,7 @@ describe('Fetch Posts', () => {
       const headers = request.config.headers
 
       expect(request.url).to.contain(
-        'https://api.blackbaud.services/v1/justgiving/graphql'
+        '/v1/justgiving/graphql'
       )
       done()
     })

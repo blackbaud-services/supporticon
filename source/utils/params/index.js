@@ -83,7 +83,7 @@ export const parseUrlParams = () => {
     .split('&')
 
   return paramsArray.reduce(function (params, part) {
-    var [key, val] = part.split('=')
+    const [key, val] = part.split('=')
     params[decodeURIComponent(key)] = decodeURIComponent(val)
     return params
   }, {})

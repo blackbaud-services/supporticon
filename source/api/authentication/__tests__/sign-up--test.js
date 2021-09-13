@@ -33,7 +33,7 @@ describe('Authentication | Sign Up', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         const data = JSON.parse(request.config.data)
-        expect(request.url).to.eql('https://api.justgiving.com/v1/account')
+        expect(request.url).to.eql('/v1/account')
         expect(data.email).to.eql('test@gmail.com')
         done()
       })
@@ -50,7 +50,7 @@ describe('Authentication | Sign Up', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         const data = JSON.parse(request.config.data)
-        expect(request.url).to.eql('https://api.justgiving.com/v1/account/lite')
+        expect(request.url).to.eql('/v1/account/lite')
         expect(data.email).to.eql('test@gmail.com')
         done()
       })
@@ -71,7 +71,7 @@ describe('Authentication | Sign Up', () => {
         const request = moxios.requests.mostRecent()
         const data = JSON.parse(request.config.data)
         expect(request.url).to.eql(
-          'https://api.blackbaud.services/v1/justgiving/iam/register'
+          '/v1/justgiving/iam/register'
         )
         expect(data.email).to.eql('test@gmail.com')
         done()
@@ -89,7 +89,7 @@ describe('Authentication | Sign Up', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         const data = JSON.parse(request.config.data)
-        expect(request.url).to.eql('https://api.justgiving.com/v1/account/lite')
+        expect(request.url).to.eql('/v1/account/lite')
         expect(data.email).to.eql('test@gmail.com')
         done()
       })

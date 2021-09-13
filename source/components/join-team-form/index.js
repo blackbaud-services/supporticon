@@ -15,7 +15,7 @@ import InputSearch from 'constructicon/input-search'
 class JoinTeamForm extends React.Component {
   constructor () {
     super()
-    this.filterResults = this.filterResults.bind(this)
+    this.handleFilterResults = this.handleFilterResults.bind(this)
     this.handleJoinTeam = this.handleJoinTeam.bind(this)
     this.state = {
       errors: [],
@@ -58,7 +58,7 @@ class JoinTeamForm extends React.Component {
       .then(teams => this.setState({ status: 'fetched', teams }))
   }
 
-  filterResults (q) {
+  handleFilterResults (q) {
     const { teams } = this.state
     const results = teams.filter(
       team => team.label.toLowerCase().indexOf(q.toLowerCase()) !== -1
@@ -115,7 +115,7 @@ class JoinTeamForm extends React.Component {
         <InputSearch
           {...form.fields.team}
           onBlur={() => {}}
-          onSearch={this.filterResults}
+          onSearch={this.handleFilterResults}
           results={results}
           valueFormatter={team => team.label}
           {...inputProps}

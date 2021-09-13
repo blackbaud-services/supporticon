@@ -18,7 +18,7 @@ describe('Fetch Teams', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/proxy/campaigns/v1/teams/search'
+          '/v1/justgiving/proxy/campaigns/v1/teams/search'
         )
         expect(request.url).to.contain('CampaignGuid=abc123')
         done()
@@ -32,7 +32,7 @@ describe('Fetch Teams', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/proxy/campaigns/v1/teams/uuid/full'
+          '/v1/justgiving/proxy/campaigns/v1/teams/uuid/full'
         )
         done()
       })
@@ -43,7 +43,7 @@ describe('Fetch Teams', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/proxy/campaigns/v1/teams/by-short-name/my-team/full'
+          '/v1/justgiving/proxy/campaigns/v1/teams/by-short-name/my-team/full'
         )
         done()
       })

@@ -28,13 +28,13 @@ describe('Create Page', () => {
       })
 
       expect(shortNameRequest.url).to.eql(
-        'https://api.justgiving.com/v1/fundraising/pages/suggest?preferredName=super-supporter'
+        '/v1/fundraising/pages/suggest?preferredName=super-supporter'
       )
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.eql(
-          'https://api.justgiving.com/v1/fundraising/pages'
+          '/v1/fundraising/pages'
         )
         expect(request.config.headers['Authorization']).to.eql(
           'Basic 012345abcdef'

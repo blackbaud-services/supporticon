@@ -25,11 +25,11 @@ describe('Donation Totals', () => {
         const secondRequest = moxios.requests.mostRecent()
 
         expect(firstRequest.url).to.equal(
-          'https://api.blackbaud.services/v1/justgiving/donations?eventId=12345'
+          '/v1/justgiving/donations?eventId=12345'
         )
 
         expect(secondRequest.url).to.equal(
-          'https://api.justgiving.com/v1/events/leaderboard?eventid=12345&currency=GBP'
+          '/v1/events/leaderboard?eventid=12345&currency=GBP'
         )
         done()
       })
@@ -40,7 +40,7 @@ describe('Donation Totals', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/events/leaderboard?eventid=12345&currency=EUR'
+          '/v1/events/leaderboard?eventid=12345&currency=EUR'
         )
         done()
       })
@@ -53,10 +53,10 @@ describe('Donation Totals', () => {
         const secondRequest = moxios.requests.at(1)
 
         expect(firstRequest.url).to.equal(
-          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign'
+          '/v1/justgiving/campaigns/my-campaign'
         )
         expect(secondRequest.url).to.equal(
-          'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign/pages'
+          '/v1/justgiving/campaigns/my-campaign/pages'
         )
         done()
       })
@@ -67,7 +67,7 @@ describe('Donation Totals', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/donationsleaderboards/v1/totals?campaignGuids=1234&campaignGuids=5678&currencyCode=GBP'
+          '/donationsleaderboards/v1/totals?campaignGuids=1234&campaignGuids=5678&currencyCode=GBP'
         )
         done()
       })
@@ -78,7 +78,7 @@ describe('Donation Totals', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.include(
-          'https://api.justgiving.com/donationsleaderboards/v1/totals?charityIds=1234'
+          '/donationsleaderboards/v1/totals?charityIds=1234'
         )
         done()
       })

@@ -13,7 +13,7 @@ class SingleSignOnLink extends Component {
   constructor (props) {
     super(props)
     this.submitForm = this.submitForm.bind(this)
-
+    this.rootRef = React.createRef()
     this.state = {
       loading: false,
       target: props.target
@@ -36,7 +36,7 @@ class SingleSignOnLink extends Component {
     const safeProps = omit(props, ['authType'])
 
     return (
-      <div ref='root'>
+      <div ref={this.rootRef}>
         <Button
           tag='a'
           href={url}
@@ -53,9 +53,8 @@ class SingleSignOnLink extends Component {
 
   submitForm (event) {
     const { authType, token, url, method } = this.props
-
-    const { root } = this.refs
     const { target } = this.state
+    const root = this.rootRef.current
     const decoded = decodeBase64String(token).split(':')
 
     event.preventDefault()

@@ -16,7 +16,7 @@ describe('Donations', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.equal(
-          'https://api.justgiving.com/v1/donation/donation-id'
+          '/v1/donation/donation-id'
         )
         done()
       })

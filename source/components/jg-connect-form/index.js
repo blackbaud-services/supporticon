@@ -200,11 +200,9 @@ class JGConnectForm extends React.Component {
               {...buttonProps}
             >
               <span>Next</span>
-              {isLoading ? (
-                <Icon name='loading' spin />
-              ) : (
-                <Icon name='chevron' />
-              )}
+              {isLoading
+                ? <Icon name='loading' spin />
+                : <Icon name='chevron' />}
             </Button>
           </GridColumn>
           {isTouched && (

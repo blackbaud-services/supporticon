@@ -10,12 +10,11 @@ describe('Utils | get', () => {
   })
 
   it('performs a simple get request', done => {
-    get('api/v2/campaigns', { foo: 'bar' })
+    get('/api/v2/campaigns', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain(
-        'https://api.justgiving.com/api/v2/campaigns'
-      )
+      expect(request.config.baseURL).to.eql('https://api.justgiving.com')
+      expect(request.url).to.contain('/api/v2/campaigns')
       expect(request.url).to.contain('foo=bar')
       expect(request.config.method).to.eql('get')
       done()
@@ -23,7 +22,7 @@ describe('Utils | get', () => {
   })
 
   it('resolves to the fetched data', done => {
-    get('api/v2/campaigns/f440df6c-1101-4331-ac78-4fc5bc276f4e', {
+    get('/api/v2/campaigns/f440df6c-1101-4331-ac78-4fc5bc276f4e', {
       foo: 'bar'
     }).then(data => {
       expect(data.campaign.uid).to.eql('f440df6c-1101-4331-ac78-4fc5bc276f4e')
@@ -46,7 +45,7 @@ describe('Utils | get', () => {
   })
 
   it('rejects if the request returns a 404', done => {
-    get('api/v2/campaigns/f440df6c-1101-4331-ac78-4fc5bc276f4e', {
+    get('/api/v2/campaigns/f440df6c-1101-4331-ac78-4fc5bc276f4e', {
       foo: 'bar'
     }).catch(error => {
       expect(error.status).to.eql(404)
@@ -62,7 +61,7 @@ describe('Utils | get', () => {
   })
 
   it('rejects if the request returns a 500', done => {
-    get('api/v2/campaigns/f440df6c-1101-4331-ac78-4fc5bc276f4e', {
+    get('/api/v2/campaigns/f440df6c-1101-4331-ac78-4fc5bc276f4e', {
       foo: 'bar'
     }).catch(error => {
       expect(error.status).to.eql(500)
@@ -84,12 +83,11 @@ describe('Utils | get', () => {
 
   it('allows us to update the base url', done => {
     updateClient({ baseURL: 'https://api.staging.justgiving.com' })
-    get('api/v2/campaigns', { foo: 'bar' })
+    get('/api/v2/campaigns', { foo: 'bar' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain(
-        'https://api.staging.justgiving.com/api/v2/campaigns'
-      )
+      expect(request.config.baseURL).to.eql('https://api.staging.justgiving.com')
+      expect(request.url).to.contain('/api/v2/campaigns')
       updateClient({ baseURL: 'https://api.justgiving.com' })
       done()
     })

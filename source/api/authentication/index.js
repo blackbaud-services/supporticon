@@ -37,7 +37,7 @@ export const signIn = ({
     const token = encodeBase64String(`${email}:${password}`)
 
     return get(
-      'v1/account',
+      '/v1/account',
       {},
       {},
       {
@@ -86,8 +86,8 @@ export const signUp = ({
     }
 
     const request = address
-      ? put('v1/account', payload)
-      : post('v1/account/lite', payload)
+      ? put('/v1/account', payload)
+      : post('/v1/account/lite', payload)
 
     return request.then(data => ({
       address,
@@ -113,13 +113,13 @@ export const signUp = ({
         },
         address
           ? {
-            streetAddress: address.line1 || address.streetAddress,
-            extendedAddress: address.line2 || address.extendedAddress,
-            locality: address.townOrCity || address.locality,
-            region: address.countyOrState || address.region,
-            country: address.country || address.country,
-            postCode: address.postcodeOrZipcode || address.postCode
-          }
+              streetAddress: address.line1 || address.streetAddress,
+              extendedAddress: address.line2 || address.extendedAddress,
+              locality: address.townOrCity || address.locality,
+              region: address.countyOrState || address.region,
+              country: address.country || address.country,
+              postCode: address.postcodeOrZipcode || address.postCode
+            }
           : {}
       )
     )

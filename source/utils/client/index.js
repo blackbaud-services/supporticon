@@ -37,7 +37,7 @@ export const destroy = (endpoint = required(), config = {}) =>
     .catch(error => Promise.reject(error.response))
 
 export const updateClient = (options = {}) => {
-  Object.keys(options).map(option => {
+  Object.keys(options).forEach(option => {
     instance.defaults[option] = options[option]
   })
 

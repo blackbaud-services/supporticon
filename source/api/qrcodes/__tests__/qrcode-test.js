@@ -18,7 +18,7 @@ describe('Create QR Code', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.include(
-        'https://api.justgiving.com/v1/qrcodes/create'
+        '/v1/qrcodes/create'
       )
       expect(request.url).to.include('1234')
       done()

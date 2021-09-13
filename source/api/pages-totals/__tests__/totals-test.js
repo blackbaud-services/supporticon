@@ -22,7 +22,7 @@ describe('Fetch Pages Totals', () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.equal(
-        'https://api.justgiving.com/v1/event/12345/pages'
+        '/v1/event/12345/pages'
       )
       done()
     })
@@ -33,7 +33,7 @@ describe('Fetch Pages Totals', () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.include(
-        'https://api.blackbaud.services/v1/justgiving/campaigns/12345/leaderboard'
+        '/v1/justgiving/campaigns/12345/leaderboard'
       )
       done()
     })

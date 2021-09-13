@@ -31,7 +31,7 @@ describe('Create Post', () => {
       const headers = request.config.headers
 
       expect(request.url).to.contain(
-        'https://api.blackbaud.services/v1/justgiving/graphql'
+        '/v1/justgiving/graphql'
       )
       expect(headers.Authorization).to.equal('Bearer test-token')
       done()

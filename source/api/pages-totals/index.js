@@ -9,7 +9,7 @@ import {
 import { currencyCode } from '../../utils/currencies'
 
 const fetchEvent = id =>
-  get(`v1/event/${id}/pages`).then(response => response.totalFundraisingPages)
+  get(`/v1/event/${id}/pages`).then(response => response.totalFundraisingPages)
 
 const fetchCampaign = id =>
   servicesAPI
@@ -25,12 +25,12 @@ const fetchCampaignTeams = id =>
     .then(response => response.data.totalResults)
 
 export const fetchPagesTotals = (params = required()) => {
+  const eventIds = Array.isArray(params.event)
+    ? params.event
+    : [params.event]
+
   switch (dataSource(params)) {
     case 'event':
-      const eventIds = Array.isArray(params.event)
-        ? params.event
-        : [params.event]
-
       return Promise.all(eventIds.map(getUID).map(fetchEvent)).then(events =>
         events.reduce((acc, total) => acc + total, 0)
       )
@@ -54,7 +54,7 @@ export const fetchPagesTotals = (params = required()) => {
       }
     default:
       return get(
-        'donationsleaderboards/v1/leaderboard',
+        '/donationsleaderboards/v1/leaderboard',
         {
           ...params,
           currencyCode: currencyCode(params.country)

@@ -17,10 +17,10 @@ describe('Fetch Campaigns', () => {
       const secondRequest = moxios.requests.at(1)
 
       expect(firstRequest.url).to.equal(
-        'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign'
+        '/v1/justgiving/campaigns/my-campaign'
       )
       expect(secondRequest.url).to.equal(
-        'https://api.blackbaud.services/v1/justgiving/campaigns/another-campaign'
+        '/v1/justgiving/campaigns/another-campaign'
       )
       done()
     })
@@ -31,7 +31,7 @@ describe('Fetch Campaigns', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.equal(
-        'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign'
+        '/v1/justgiving/campaigns/my-campaign'
       )
       done()
     })

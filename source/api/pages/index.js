@@ -100,8 +100,8 @@ export const deserializePage = page => {
       lodashGet(page, 'pageOwner.fullName'),
     owner: page.owner
       ? !lodashGet(page, 'owner.firstName')
-        ? page.owner
-        : lodashGet(page, 'owner.firstName') +
+          ? page.owner
+          : lodashGet(page, 'owner.firstName') +
           ' ' +
           lodashGet(page, 'owner.lastName')
       : page.OwnerFullName ||
@@ -273,8 +273,8 @@ export const fetchPage = (page = required(), slug, options = {}) => {
         page =>
           options.includeFitness
             ? fetchPageFitness(page, options.fitnessParams).then(fitness =>
-              resolve({ ...page, fitness })
-            )
+                resolve({ ...page, fitness })
+              )
             : resolve(page)
       )
     ),
@@ -357,8 +357,8 @@ const truncate = (string, length = 50) => {
   if (string) {
     return String(string).length > length
       ? String(string)
-        .substring(0, length - 3)
-        .trim() + '...'
+          .substring(0, length - 3)
+          .trim() + '...'
       : String(string)
   }
 
@@ -455,13 +455,13 @@ export const createPage = ({
       {
         ...(eventId
           ? {
-            eventId
-          }
+              eventId
+            }
           : {
-            activityType,
-            eventDate,
-            eventName: eventName || pageTitle
-          }),
+              activityType,
+              eventDate,
+              eventName: eventName || pageTitle
+            }),
         attribution,
         campaignGuid: campaignGuid || campaignId,
         causeId,
