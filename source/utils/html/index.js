@@ -13,8 +13,8 @@ const removeConsecutiveSpaces = string => string.replace(/ {2,}/g, ' ').trim()
 export const stripTags = (htmlString = '', preserveNewlines = false) =>
   preserveNewlines
     ? removeConsecutiveSpaces(
-      removeTags(
-        htmlString.replace(/(<\/[p|h1-6]>)\s*(<[p|h1-6]>)/gim, '$1\n\n$2')
+        removeTags(
+          htmlString.replace(/(<\/[p|h1-6]>)\s*(<[p|h1-6]>)/gim, '$1\n\n$2')
+        )
       )
-    )
     : removeConsecutiveWhitespace(removeTags(htmlString))

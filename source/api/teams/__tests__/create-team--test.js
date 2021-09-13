@@ -35,15 +35,18 @@ describe('Create a Team', () => {
         response: { isAvailable: true }
       })
 
+      expect(shortNameRequest.config.baseURL).to.eql('https://api.blackbaud.services')
       expect(shortNameRequest.url).to.contain(
-        'https://api.blackbaud.services/v1/justgiving/proxy/campaigns/v1/teams/shortNames/my-team/isAvailable'
+        '/v1/justgiving/proxy/campaigns/v1/teams/shortNames/my-team/isAvailable'
       )
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         const data = JSON.parse(request.config.data)
 
-        expect(request.url).to.contain('https://api.justgiving.com/v2/teams')
+
+        expect(request.config.baseURL).to.eql('https://api.justgiving.com')
+        expect(request.url).to.contain('/v2/teams')
         expect(request.config.headers['Authorization']).to.eql(
           'Bearer 012345abcdef'
         )

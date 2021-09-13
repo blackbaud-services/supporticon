@@ -18,7 +18,7 @@ class Leaderboard extends Component {
   constructor () {
     super()
     this.fetchLeaderboard = this.fetchLeaderboard.bind(this)
-    this.setFilter = this.setFilter.bind(this)
+    this.handleSetFilter = this.handleSetFilter.bind(this)
     this.renderLeader = this.renderLeader.bind(this)
     this.state = {
       status: 'fetching',
@@ -47,7 +47,7 @@ class Leaderboard extends Component {
     }
   }
 
-  setFilter (filterValue) {
+  handleSetFilter (filterValue) {
     const q = filterValue || null
     this.setState({ q })
     this.fetchLeaderboard(q)
@@ -141,52 +141,54 @@ class Leaderboard extends Component {
 
     return (
       <div>
-        {filter && <Filter onChange={this.setFilter} {...filter} />}
-        {status === 'fetching' || status === 'failed' ? (
-          <LeaderboardWrapper
-            {...leaderboard}
-            loading={status === 'fetching'}
-            error={status === 'failed'}
-          />
-        ) : data.length ? (
-          <Pagination max={pageSize} toPaginate={data}>
-            {({
-              currentPage,
-              isPaginated,
-              prev,
-              next,
-              canPrev,
-              canNext,
-              pageOf
-            }) => (
-              <React.Fragment>
-                <LeaderboardWrapper {...leaderboard}>
-                  {currentPage.map(this.renderLeader)}
-                </LeaderboardWrapper>
-                {pageSize &&
-                  isPaginated && (
-                  <Section spacing={{ t: 0.5 }}>
-                    <Grid align='center' justify='center'>
-                      <PaginationLink
-                        onClick={prev}
-                        direction='prev'
-                        disabled={!canPrev}
-                      />
-                      {showPage && <RichText size={-1}>{pageOf}</RichText>}
-                      <PaginationLink
-                        onClick={next}
-                        direction='next'
-                        disabled={!canNext}
-                      />
-                    </Grid>
-                  </Section>
+        {filter && <Filter onChange={this.handleSetFilter} {...filter} />}
+        {(status === 'fetching' || status === 'failed')
+          ? (
+            <LeaderboardWrapper
+              {...leaderboard}
+              loading={status === 'fetching'}
+              error={status === 'failed'}
+            />
+            )
+          : data.length
+            ? (
+              <Pagination max={pageSize} toPaginate={data}>
+                {({
+                  currentPage,
+                  isPaginated,
+                  prev,
+                  next,
+                  canPrev,
+                  canNext,
+                  pageOf
+                }) => (
+                  <>
+                    <LeaderboardWrapper {...leaderboard}>
+                      {currentPage.map(this.renderLeader)}
+                    </LeaderboardWrapper>
+                    {pageSize &&
+                      isPaginated && (
+                        <Section spacing={{ t: 0.5 }}>
+                          <Grid align='center' justify='center'>
+                            <PaginationLink
+                              onClick={prev}
+                              direction='prev'
+                              disabled={!canPrev}
+                            />
+                            {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                            <PaginationLink
+                              onClick={next}
+                              direction='next'
+                              disabled={!canNext}
+                            />
+                          </Grid>
+                        </Section>
+                    )}
+                  </>
                 )}
-              </React.Fragment>
-            )}
-          </Pagination>
-        ) : (
-          <LeaderboardWrapper {...leaderboard} empty />
-        )}
+              </Pagination>
+              )
+            : <LeaderboardWrapper {...leaderboard} empty />}
       </div>
     )
   }

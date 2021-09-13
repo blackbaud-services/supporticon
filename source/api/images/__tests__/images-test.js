@@ -17,9 +17,7 @@ describe('Uploading images', () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.eql(
-        'https://api.blackbaud.services/v1/justgiving/images'
-      )
+      expect(request.url).to.eql('/v1/justgiving/images')
       expect(request.config.method).to.eql('post')
       done()
     })
@@ -32,7 +30,8 @@ describe('Uploading images', () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.eql('https://images.justgiving.com/image')
+      expect(request.config.baseURL).to.eql('https://images.justgiving.com')
+      expect(request.url).to.eql('/image')
       expect(request.config.method).to.eql('post')
       done()
     })
@@ -43,7 +42,8 @@ describe('Uploading images', () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.eql('https://images.justgiving.com/image')
+      expect(request.config.baseURL).to.eql('https://images.justgiving.com')
+      expect(request.url).to.eql('/image')
       expect(request.config.method).to.eql('post')
       done()
     })

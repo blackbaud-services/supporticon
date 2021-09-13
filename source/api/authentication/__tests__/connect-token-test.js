@@ -15,9 +15,8 @@ describe('Authentication | Connect Token', () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain(
-        'https://api.blackbaud.services/v1/justgiving/oauth/connect'
-      )
+      expect(request.config.baseURL).to.eql('https://api.blackbaud.services')
+      expect(request.url).to.contain('/v1/justgiving/oauth/connect')
       expect(JSON.parse(request.config.data).code).to.eql('foobar')
 
       done()

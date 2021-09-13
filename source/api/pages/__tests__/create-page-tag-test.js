@@ -27,7 +27,7 @@ describe('Create Page', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://api.justgiving.com/v1/tags/my-page'
+        '/v1/tags/my-page'
       )
       done()
     })

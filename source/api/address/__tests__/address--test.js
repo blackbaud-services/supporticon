@@ -16,8 +16,9 @@ describe('Addresses', () => {
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
+        expect(request.config.baseURL).to.eql('https://api.blackbaud.services')
         expect(request.url).to.eql(
-          'https://api.blackbaud.services/v1/justgiving/addresses/search/postcode/SW1A1AA'
+          '/v1/justgiving/addresses/search/postcode/SW1A1AA'
         )
         done()
       })
@@ -30,9 +31,7 @@ describe('Addresses', () => {
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.eql(
-          'https://api.blackbaud.services/v1/justgiving/addresses/1234'
-        )
+        expect(request.url).to.eql('/v1/justgiving/addresses/1234')
         done()
       })
     })

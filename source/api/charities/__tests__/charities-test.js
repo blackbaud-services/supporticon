@@ -15,7 +15,7 @@ describe('Search charities', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.equal(
-        'https://api.justgiving.com/v1/charity/12345'
+        '/v1/charity/12345'
       )
       done()
     })
@@ -31,7 +31,7 @@ describe('Search charities', () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://api.justgiving.com/v1/onesearch')
+      expect(request.url).to.contain('/v1/onesearch')
       expect(request.url).to.contain('i=Charity')
       expect(request.url).to.contain('q=foo')
       done()
@@ -44,7 +44,7 @@ describe('Search charities', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://api.justgiving.com/v1/campaign/autocomplete'
+        '/v1/campaign/autocomplete'
       )
       expect(request.url).to.contain('campaignGuid=test')
       expect(request.url).to.contain('q=foo')

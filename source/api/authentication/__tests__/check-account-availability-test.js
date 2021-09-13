@@ -15,10 +15,7 @@ describe('Authentication | Check Account Availability', () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain(
-        'https://api.justgiving.com/v1/account/foo@mail.com'
-      )
-
+      expect(request.url).to.contain('/v1/account/foo@mail.com')
       done()
     })
   })

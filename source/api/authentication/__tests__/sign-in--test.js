@@ -20,7 +20,7 @@ describe('Authentication | Sign In', () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.eql('https://api.justgiving.com/v1/account')
+      expect(request.url).to.eql('/v1/account')
       done()
     })
   })
@@ -35,7 +35,7 @@ describe('Authentication | Sign In', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.eql(
-        'https://api.blackbaud.services/v1/justgiving/iam/login'
+        '/v1/justgiving/iam/login'
       )
       done()
     })

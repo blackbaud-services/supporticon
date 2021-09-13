@@ -93,62 +93,66 @@ class ProgressBar extends Component {
 
     const { raised, donations, status } = this.state
 
-    return status === 'fetched' ? (
-      <Grid spacing={0.25} {...grid}>
-        <GridColumn xs={6}>
-          <Metric
-            align='left'
-            label={raisedLabel}
-            amount={
-              useDonationCount
-                ? numbro(donations + offset).format(format)
-                : numbro(raised + offset).formatCurrency(format)
-            }
-            {...metric}
-          />
-        </GridColumn>
-        <GridColumn xs={6} xsAlign='right'>
-          <Metric
-            align='right'
-            label={targetLabel}
-            amount={
-              useDonationCount
-                ? numbro(target).format(format)
-                : numbro(target).formatCurrency(format)
-            }
-            {...metric}
-          />
-        </GridColumn>
-        <GridColumn>
-          <Progress
-            alt='<%= progress %>% there'
-            progress={this.calculatePercentage()}
-            {...progressBar}
-          />
-        </GridColumn>
-        {fundedLabel ? (
+    return status === 'fetched'
+      ? (
+        <Grid spacing={0.25} {...grid}>
           <GridColumn xs={6}>
-            <Heading size={0} tag='strong' {...heading}>
-              {this.calculatePercentage()}%
-            </Heading>{' '}
-            {fundedLabel}
+            <Metric
+              align='left'
+              label={raisedLabel}
+              amount={
+                useDonationCount
+                  ? numbro(donations + offset).format(format)
+                  : numbro(raised + offset).formatCurrency(format)
+              }
+              {...metric}
+            />
           </GridColumn>
-        ) : (
-          <GridColumn xs={6} />
-        )}
-        {remainingLabel &&
-          eventDate && (
           <GridColumn xs={6} xsAlign='right'>
-            <Heading size={0} tag='strong' {...heading}>
-              {this.calculateDaysRemaining(eventDate)}
-            </Heading>{' '}
-            {remainingLabel}
+            <Metric
+              align='right'
+              label={targetLabel}
+              amount={
+                useDonationCount
+                  ? numbro(target).format(format)
+                  : numbro(target).formatCurrency(format)
+              }
+              {...metric}
+            />
           </GridColumn>
-        )}
-      </Grid>
-    ) : (
-      <Loading />
-    )
+          <GridColumn>
+            <Progress
+              alt='<%= progress %>% there'
+              progress={this.calculatePercentage()}
+              {...progressBar}
+            />
+          </GridColumn>
+          {fundedLabel
+            ? (
+              <GridColumn xs={6}>
+                <Heading size={0} tag='strong' {...heading}>
+                  {this.calculatePercentage()}%
+                </Heading>{' '}
+                {fundedLabel}
+              </GridColumn>
+              )
+            : (
+              <GridColumn xs={6} />
+              )}
+          {remainingLabel &&
+            eventDate && (
+              <GridColumn xs={6} xsAlign='right'>
+                <Heading size={0} tag='strong' {...heading}>
+                  {this.calculateDaysRemaining(eventDate)}
+                </Heading>{' '}
+                {remainingLabel}
+              </GridColumn>
+          )}
+        </Grid>
+        )
+      : (
+        <Loading />
+        )
   }
 }
 

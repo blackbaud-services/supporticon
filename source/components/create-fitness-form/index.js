@@ -96,22 +96,24 @@ class CreateFitnessForm extends Component {
         {...formComponent}
       >
         <Grid spacing={{ x: 0.5 }}>
-          {includeUnit ? (
-            <GridColumn>
-              <Grid spacing={{ x: 0.25 }}>
-                <GridColumn xs={7} sm={7.5} md={8} lg={9}>
-                  <InputField {...form.fields.distance} {...inputField} />
-                </GridColumn>
-                <GridColumn xs={5} sm={4.5} md={4} lg={3}>
-                  <InputSelect {...form.fields.unit} {...inputField} />
-                </GridColumn>
-              </Grid>
-            </GridColumn>
-          ) : (
-            <GridColumn>
-              <InputField {...form.fields.distance} {...inputField} />
-            </GridColumn>
-          )}
+          {includeUnit
+            ? (
+              <GridColumn>
+                <Grid spacing={{ x: 0.25 }}>
+                  <GridColumn xs={7} sm={7.5} md={8} lg={9}>
+                    <InputField {...form.fields.distance} {...inputField} />
+                  </GridColumn>
+                  <GridColumn xs={5} sm={4.5} md={4} lg={3}>
+                    <InputSelect {...form.fields.unit} {...inputField} />
+                  </GridColumn>
+                </Grid>
+              </GridColumn>
+              )
+            : (
+              <GridColumn>
+                <InputField {...form.fields.distance} {...inputField} />
+              </GridColumn>
+              )}
 
           {includeDuration && (
             <GridColumn lg={includeElevation ? 6 : 12}>

@@ -106,7 +106,7 @@ const TeamLeaderboard = ({
   return (
     <Pagination max={pageSize} toPaginate={sortedPages}>
       {({ currentPage, isPaginated, prev, next, canPrev, canNext, pageOf }) => (
-        <React.Fragment>
+        <>
           <Leaderboard {...leaderboard}>
             {currentPage.map((page, i) => (
               <LeaderboardItem
@@ -124,23 +124,23 @@ const TeamLeaderboard = ({
           </Leaderboard>
           {pageSize &&
             isPaginated && (
-            <Section spacing={{ t: 0.5 }}>
-              <Grid align='center' justify='center'>
-                <PaginationLink
-                  onClick={prev}
-                  direction='prev'
-                  disabled={!canPrev}
-                />
-                {showPage && <RichText size={-1}>{pageOf}</RichText>}
-                <PaginationLink
-                  onClick={next}
-                  direction='next'
-                  disabled={!canNext}
-                />
-              </Grid>
-            </Section>
+              <Section spacing={{ t: 0.5 }}>
+                <Grid align='center' justify='center'>
+                  <PaginationLink
+                    onClick={prev}
+                    direction='prev'
+                    disabled={!canPrev}
+                  />
+                  {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                  <PaginationLink
+                    onClick={next}
+                    direction='next'
+                    disabled={!canNext}
+                  />
+                </Grid>
+              </Section>
           )}
-        </React.Fragment>
+        </>
       )}
     </Pagination>
   )

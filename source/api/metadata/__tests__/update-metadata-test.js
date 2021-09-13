@@ -21,9 +21,8 @@ describe('Updating Metadata', () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain(
-        'https://metadata.blackbaud.services/v1/apps/123/metadata'
-      )
+      expect(request.config.baseURL).to.eql('https://metadata.blackbaud.services')
+      expect(request.url).to.contain('/v1/apps/123/metadata')
       done()
     })
   })

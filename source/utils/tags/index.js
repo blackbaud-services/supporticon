@@ -72,26 +72,26 @@ export const defaultPageTags = (page, timeBox) => {
         },
         ...(timeBox
           ? [
-            {
-              measurementDomains,
-              segment: 'BeforeEventCommsFitness',
-              timeBox: {
-                notAfter: timeBox.notBefore
+              {
+                measurementDomains,
+                segment: 'BeforeEventCommsFitness',
+                timeBox: {
+                  notAfter: timeBox.notBefore
+                }
+              },
+              {
+                measurementDomains,
+                segment: 'DuringEventCommsFitness',
+                timeBox
+              },
+              {
+                measurementDomains,
+                segment: 'AfterEventCommsFitness',
+                timeBox: {
+                  notBefore: timeBox.notAfter
+                }
               }
-            },
-            {
-              measurementDomains,
-              segment: 'DuringEventCommsFitness',
-              timeBox
-            },
-            {
-              measurementDomains,
-              segment: 'AfterEventCommsFitness',
-              timeBox: {
-                notBefore: timeBox.notAfter
-              }
-            }
-          ]
+            ]
           : [])
       ]
     },

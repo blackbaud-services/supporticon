@@ -17,10 +17,8 @@ describe('Authentication | Reset Password', () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-
-      expect(request.url).to.contain(
-        'https://api.blackbaud.services/v1/justgiving/iam/reset-password'
-      )
+      expect(request.config.baseURL).to.eql('https://api.blackbaud.services')
+      expect(request.url).to.contain('/v1/justgiving/iam/reset-password')
       expect(JSON.parse(request.config.data).email).to.eql('test@example.com')
       done()
     })

@@ -10,7 +10,7 @@ import SearchResults from 'constructicon/search-results'
 class PageSearch extends Component {
   constructor () {
     super()
-    this.sendQuery = this.sendQuery.bind(this)
+    this.handleSendQuery = this.handleSendQuery.bind(this)
     this.state = {
       status: 'inactive',
       data: [],
@@ -63,7 +63,7 @@ class PageSearch extends Component {
     }
   }
 
-  sendQuery (query) {
+  handleSendQuery (query) {
     if (!query) {
       return this.setState({
         q: null,
@@ -123,11 +123,12 @@ class PageSearch extends Component {
   render () {
     return (
       <SearchForm
-        onChange={this.sendQuery}
-        children={this.state.status !== 'inactive' && this.renderResults()}
+        onChange={this.handleSendQuery}
         button={this.props.button}
         {...this.props.searchForm}
-      />
+      >
+        {this.state.status !== 'inactive' && this.renderResults()}
+      </SearchForm>
     )
   }
 

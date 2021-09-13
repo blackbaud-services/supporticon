@@ -17,7 +17,7 @@ describe('Fetch Donation Feed', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.eql(
-          'https://api.blackbaud.services/v1/justgiving/donations?charityId=12345'
+          '/v1/justgiving/donations?charityId=12345'
         )
         done()
       })
@@ -29,7 +29,7 @@ describe('Fetch Donation Feed', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/donations?fundraisingPageId=123456'
+          '/v1/justgiving/donations?fundraisingPageId=123456'
         )
         done()
       })
@@ -41,7 +41,7 @@ describe('Fetch Donation Feed', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/donations?campaignGuid=1234-abcd-5678'
+          '/v1/justgiving/donations?campaignGuid=1234-abcd-5678'
         )
         done()
       })
@@ -53,7 +53,7 @@ describe('Fetch Donation Feed', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/donations'
+          '/v1/justgiving/donations'
         )
         expect(request.url).to.contain(
           'campaignGuid=1234-abcd-5678,abcd-1234-9876'
@@ -68,7 +68,7 @@ describe('Fetch Donation Feed', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/donations?eventId=1234'
+          '/v1/justgiving/donations?eventId=1234'
         )
         done()
       })
@@ -80,7 +80,7 @@ describe('Fetch Donation Feed', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/donations'
+          '/v1/justgiving/donations'
         )
         expect(request.url).to.contain('eventId=1234,5678')
         done()
@@ -93,7 +93,7 @@ describe('Fetch Donation Feed', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/donations'
+          '/v1/justgiving/donations'
         )
         expect(request.url).to.contain('eventId=1234')
         expect(request.url).to.contain('campaignGuid=1234-abcd-5678')

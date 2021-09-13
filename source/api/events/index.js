@@ -12,7 +12,7 @@ export const deserializeEvent = event => {
   }
 }
 
-export const fetchEvent = ({ id = required() }) => get(`v1/event/${id}`)
+export const fetchEvent = ({ id = required() }) => get(`/v1/event/${id}`)
 
 export const createEvent = ({
   completionDate = required(),

@@ -80,54 +80,58 @@ class FitnessProgressBar extends Component {
     const distanceInKm = distanceInMeters / 1000
     const distance = unit === 'km' ? distanceInKm : distanceInKm * 0.621371
 
-    return status === 'fetched' ? (
-      <Grid spacing={0.25} {...grid}>
-        <GridColumn xs={6}>
-          <Metric
-            align='left'
-            label={distanceLabel}
-            amount={`${numbro(distance + offset).format(format)}${unit}`}
-            {...metric}
-          />
-        </GridColumn>
-        <GridColumn xs={6} xsAlign='right'>
-          <Metric
-            align='right'
-            label={targetLabel}
-            amount={`${numbro(target).format(format)}${unit}`}
-            {...metric}
-          />
-        </GridColumn>
-        <GridColumn>
-          <Progress
-            alt='<%= progress %>% there'
-            progress={this.calculatePercentage()}
-            {...progressBar}
-          />
-        </GridColumn>
-        {travelledLabel ? (
+    return status === 'fetched'
+      ? (
+        <Grid spacing={0.25} {...grid}>
           <GridColumn xs={6}>
-            <Heading size={0} tag='strong' {...heading}>
-              {this.calculatePercentage()}%
-            </Heading>{' '}
-            {travelledLabel}
+            <Metric
+              align='left'
+              label={distanceLabel}
+              amount={`${numbro(distance + offset).format(format)}${unit}`}
+              {...metric}
+            />
           </GridColumn>
-        ) : (
-          <GridColumn xs={6} />
-        )}
-        {remainingLabel &&
-          eventDate && (
           <GridColumn xs={6} xsAlign='right'>
-            <Heading size={0} tag='strong' {...heading}>
-              {this.calculateDaysRemaining(eventDate)}
-            </Heading>{' '}
-            {remainingLabel}
+            <Metric
+              align='right'
+              label={targetLabel}
+              amount={`${numbro(target).format(format)}${unit}`}
+              {...metric}
+            />
           </GridColumn>
-        )}
-      </Grid>
-    ) : (
-      <Loading />
-    )
+          <GridColumn>
+            <Progress
+              alt='<%= progress %>% there'
+              progress={this.calculatePercentage()}
+              {...progressBar}
+            />
+          </GridColumn>
+          {travelledLabel
+            ? (
+              <GridColumn xs={6}>
+                <Heading size={0} tag='strong' {...heading}>
+                  {this.calculatePercentage()}%
+                </Heading>{' '}
+                {travelledLabel}
+              </GridColumn>
+              )
+            : (
+              <GridColumn xs={6} />
+              )}
+          {remainingLabel &&
+            eventDate && (
+              <GridColumn xs={6} xsAlign='right'>
+                <Heading size={0} tag='strong' {...heading}>
+                  {this.calculateDaysRemaining(eventDate)}
+                </Heading>{' '}
+                {remainingLabel}
+              </GridColumn>
+          )}
+        </Grid>
+        )
+      : (
+        <Loading />
+        )
   }
 }
 

@@ -79,6 +79,9 @@ class SignupForm extends Component {
         .then(() => this.setState({ status: 'fetched' }))
         .catch(error => {
           let errors = []
+          const message =
+            get(error, 'data.error.message') ||
+            get(error, 'data.errorMessage')
 
           switch (error.status) {
             case 400:
@@ -109,6 +112,7 @@ class SignupForm extends Component {
                               <a
                                 href={loginUrl || defaultLoginUrl}
                                 target={loginTarget || '_blank'}
+                                rel='noreferrer'
                               >
                                 Log in here
                               </a>
@@ -118,6 +122,7 @@ class SignupForm extends Component {
                                   resetPasswordUrl || defaultResetPasswordUrl
                                 }
                                 target={resetPasswordTarget || '_blank'}
+                                rel='noreferrer'
                               >
                                 reset your JustGiving password here.
                               </a>
@@ -149,6 +154,7 @@ class SignupForm extends Component {
                             <a
                               href={resetPasswordUrl || defaultResetPasswordUrl}
                               target={resetPasswordTarget || '_blank'}
+                              rel='noreferrer'
                             >
                               reset your JustGiving password here.
                             </a>
@@ -162,10 +168,6 @@ class SignupForm extends Component {
                 })
               })
             default:
-              const message =
-                get(error, 'data.error.message') ||
-                get(error, 'data.errorMessage')
-
               return this.setState({
                 status: 'failed',
                 errors: message ? [{ message }] : []
@@ -528,13 +530,18 @@ const form = props => {
         label: (
           <span>
             I agree to JustGiving's{' '}
-            <a target='_blank' href='https://www.justgiving.com/info/privacy/'>
+            <a
+              target='_blank'
+              href='https://www.justgiving.com/info/privacy/'
+              rel='noreferrer'
+            >
               Privacy Policy
             </a>{' '}
             and{' '}
             <a
               target='_blank'
               href='https://www.justgiving.com/info/terms-of-service/'
+              rel='noreferrer'
             >
               Terms of Service
             </a>

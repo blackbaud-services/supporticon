@@ -35,13 +35,13 @@ const formattedAddress = ({
 export const deserializeUser = user => ({
   address: user.address
     ? {
-      streetAddress: user.address.line1,
-      extendedAddress: user.address.line2,
-      locality: user.address.townOrCity,
-      state: user.address.countyOrState,
-      postcode: user.address.postcodeOrZipcode,
-      country: user.address.country
-    }
+        streetAddress: user.address.line1,
+        extendedAddress: user.address.line2,
+        locality: user.address.townOrCity,
+        state: user.address.countyOrState,
+        postcode: user.address.postcodeOrZipcode,
+        country: user.address.country
+      }
     : {},
   birthday: null,
   country: user.country,
@@ -52,7 +52,7 @@ export const deserializeUser = user => ({
   id: user.accountId || user.justgiving_consumer_id,
   image:
     user.profileImageUrls && user.profileImageUrls.length
-      ? user.profileImageUrls[0]['Value']
+      ? user.profileImageUrls[0].Value
       : 'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
   lastName: user.lastName || user.family_name,
   name: user.name || [user.firstName, user.lastName].join(' '),
@@ -67,7 +67,7 @@ export const fetchCurrentUser = ({
 }) => {
   if (authType === 'Basic' || token.length > 32) {
     return get(
-      'v1/account',
+      '/v1/account',
       {},
       {},
       {
@@ -78,7 +78,7 @@ export const fetchCurrentUser = ({
     )
   } else {
     return jgIdentityClient
-      .get('connect/userinfo', {
+      .get('/connect/userinfo', {
         headers: {
           Authorization: [authType, token].join(' ')
         }
@@ -97,7 +97,7 @@ export const updateCurrentUser = ({
   address = {}
 }) =>
   put(
-    `v1/account/${uuid}`,
+    `/v1/account/${uuid}`,
     {
       firstName,
       lastName,

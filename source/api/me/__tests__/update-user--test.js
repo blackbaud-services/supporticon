@@ -25,7 +25,7 @@ describe('Update User', () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain('https://api.justgiving.com/v1/account')
+      expect(request.url).to.contain('/v1/account')
       expect(request.url).to.contain('123456-abcdef')
       done()
     })

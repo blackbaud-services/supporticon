@@ -29,7 +29,7 @@ describe('Join a Team', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.eql(
-        'https://api.blackbaud.services/v1/justgiving/teams/join'
+        '/v1/justgiving/teams/join'
       )
       expect(request.config.headers['Authorization']).to.eql(
         'Bearer 012345abcdef'

@@ -98,54 +98,51 @@ class CreatePageForm extends Component {
             return onSuccess(result, dataPayload)
           })
           .catch(error => {
+            const getErrorMessage = () => {
+              const errorId = get(error, 'data.error.id')
+
+              switch (errorId) {
+                case 'CampaignNotFound':
+                  return 'Campaign not found'
+                case 'CampaignExpired':
+                  return 'Campaign has expired'
+                case 'CampaignFundraisingDisabled':
+                  return 'Campaign has not enabled fundraising'
+                case 'CampaignInvalidCharityId':
+                  return 'Charity is not part of the campaign'
+                case 'CampaignMismatchEventId':
+                  return 'Event and Campaign do not match'
+                default:
+                  return (
+                    get(error, 'data.error.message') ||
+                    get(error, 'data.errorMessage') ||
+                    'There was an unexpected error'
+                  )
+              }
+            }
+
+            const message = getErrorMessage()
+
             switch (error.status) {
               case 422:
-                const errors = get(error, 'data.error.errors') || []
-
                 return this.setState({
                   status: 'failed',
-                  errors: errors.map(({ field, message }) => ({
-                    message: [
-                      capitalize(field.split('_').join(' ')),
-                      message
-                    ].join(' ')
-                  }))
+                  errors: get(error, 'data.error.errors', [])
+                    .map(({ field, message }) => ({
+                      message: [
+                        capitalize(field.split('_').join(' ')),
+                        message
+                      ].join(' ')
+                    }))
                 })
               case 400:
-                const errorMessages = error.data || []
-
                 return this.setState({
                   status: 'failed',
-                  errors: errorMessages.map(({ desc }) => ({
+                  errors: get(error, 'data', []).map(({ desc }) => ({
                     message: capitalize(desc)
                   }))
                 })
               default:
-                const getErrorMessage = () => {
-                  const errorId = get(error, 'data.error.id')
-
-                  switch (errorId) {
-                    case 'CampaignNotFound':
-                      return 'Campaign not found'
-                    case 'CampaignExpired':
-                      return 'Campaign has expired'
-                    case 'CampaignFundraisingDisabled':
-                      return 'Campaign has not enabled fundraising'
-                    case 'CampaignInvalidCharityId':
-                      return 'Charity is not part of the campaign'
-                    case 'CampaignMismatchEventId':
-                      return 'Event and Campaign do not match'
-                    default:
-                      return (
-                        get(error, 'data.error.message') ||
-                        get(error, 'data.errorMessage') ||
-                        'There was an unexpected error'
-                      )
-                  }
-                }
-
-                const message = getErrorMessage()
-
                 return this.setState({
                   status: 'failed',
                   errors: message ? [{ message }] : []
@@ -262,6 +259,8 @@ class CreatePageForm extends Component {
         {...formComponent}
       >
         {this.getAutoRenderedFields(form.fields).map(field => {
+          const Tag = renderInput(field.type)
+
           switch (field.name) {
             case 'charityId':
               return (
@@ -273,7 +272,6 @@ class CreatePageForm extends Component {
                 />
               )
             default:
-              const Tag = renderInput(field.type)
               return <Tag key={field.name} {...field} {...inputField} />
           }
         })}

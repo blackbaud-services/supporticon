@@ -114,7 +114,9 @@ export const fetchFitnessActivities = (params = required()) => {
   if (params.page) {
     if (params.useLegacy) {
       return Promise.reject(
-        'Legacy method no longer supported since it does not return individual activities'
+        new Error(
+          'Legacy method no longer supported since it does not return individual activities'
+        )
       )
     }
 
@@ -177,13 +179,17 @@ export const fetchFitnessActivities = (params = required()) => {
 
   if (params.team) {
     return Promise.reject(
-      "Fetching list of a team's individual activities is not supported"
+      new Error(
+        "Fetching list of a team's individual activities is not supported"
+      )
     )
   }
 
   if (params.campaign) {
     return Promise.reject(
-      "Fetching list of a campaign's individual activities is not supported"
+      new Error(
+        "Fetching list of a campaign's individual activities is not supported"
+      )
     )
   }
 

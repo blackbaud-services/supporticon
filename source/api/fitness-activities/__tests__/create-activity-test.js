@@ -30,7 +30,7 @@ describe('Create Fitness Activity', () => {
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('https://api.justgiving.com/v1/fitness')
+        expect(request.url).to.contain('/v1/fitness')
         done()
       })
     })
@@ -48,7 +48,7 @@ describe('Create Fitness Activity', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          'https://api.blackbaud.services/v1/justgiving/graphql'
+          '/v1/justgiving/graphql'
         )
         done()
       })

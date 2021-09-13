@@ -34,6 +34,10 @@ export const fetchLeaderboard = (params = required()) => {
     ).then(results => removeExcludedPages(results, params.excludePageIds))
   }
 
+  const isTeam = params.type === 'team'
+  const maxPerRequest = 20
+  const { results = [], ...otherParams } = params
+
   switch (dataSource(params)) {
     case 'event':
       if (params.type === 'team') {
@@ -66,12 +70,8 @@ export const fetchLeaderboard = (params = required()) => {
         .then(results => removeExcludedPages(results, params.excludePageIds))
 
     default:
-      const isTeam = params.type === 'team'
-      const maxPerRequest = 20
-      const { results = [], ...otherParams } = params
-
       return get(
-        'donationsleaderboards/v1/leaderboard',
+        '/donationsleaderboards/v1/leaderboard',
         {
           ...otherParams,
           currencyCode: currencyCode(params.country)
@@ -155,43 +155,43 @@ const mapLeaderboardResults = (results = [], isTeam) => {
   return results.map(result => {
     return isTeam
       ? {
-        ...result,
-        ...result.team,
-        currencyCode: lodashGet(
-          result.team,
-          'fundraisingConfiguration.currencyCode'
-        ),
-        donationAmount:
+          ...result,
+          ...result.team,
+          currencyCode: lodashGet(
+            result.team,
+            'fundraisingConfiguration.currencyCode'
+          ),
+          donationAmount:
             lodashGet(result, 'team.donationSummary.totalAmount') ||
             result.donationAmount,
-        eventName: [
-          result.team.captain.firstName,
-          result.team.captain.lastName
-        ].join(' '),
-        numberOfSupporters: result.team.numberOfSupporters,
-        pageId: result.id,
-        pageImages: [result.team.coverImageName],
-        pageShortName: result.team.shortName,
-        target: lodashGet(
-          result.team,
-          'fundraisingConfiguration.targetAmount'
-        ),
-        type: 'team'
-      }
+          eventName: [
+            result.team.captain.firstName,
+            result.team.captain.lastName
+          ].join(' '),
+          numberOfSupporters: result.team.numberOfSupporters,
+          pageId: result.id,
+          pageImages: [result.team.coverImageName],
+          pageShortName: result.team.shortName,
+          target: lodashGet(
+            result.team,
+            'fundraisingConfiguration.targetAmount'
+          ),
+          type: 'team'
+        }
       : {
-        ...result,
-        ...result.page,
-        donationAmount:
+          ...result,
+          ...result.page,
+          donationAmount:
             lodashGet(result, 'page.raisedAmount') || result.donationAmount,
-        eventName: [
-          result.page.owner.firstName,
-          result.page.owner.lastName
-        ].join(' '),
-        pageImages: [result.page.photo],
-        pageShortName: result.page.shortName,
-        numberOfSupporters: result.donationCount,
-        type: 'individual'
-      }
+          eventName: [
+            result.page.owner.firstName,
+            result.page.owner.lastName
+          ].join(' '),
+          pageImages: [result.page.photo],
+          pageShortName: result.page.shortName,
+          numberOfSupporters: result.donationCount,
+          type: 'individual'
+        }
   })
 }
 

@@ -221,12 +221,12 @@ class ProviderOauthButton extends Component {
 
     const actionProps = popup
       ? {
-        onClick: e => this.handleAuth()
-      }
+          onClick: e => this.handleAuth()
+        }
       : {
-        href: this.providerUrl(),
-        tag: 'a'
-      }
+          href: this.providerUrl(),
+          tag: 'a'
+        }
 
     return (
       <Button
@@ -250,8 +250,8 @@ class ProviderOauthButton extends Component {
         <span>
           {isLoading
             ? status === 'fetching'
-              ? 'Fetching data...'
-              : 'Connecting...'
+                ? 'Fetching data...'
+                : 'Connecting...'
             : label}
         </span>
       </Button>

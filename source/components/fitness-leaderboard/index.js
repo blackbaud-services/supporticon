@@ -27,7 +27,7 @@ class FitnessLeaderboard extends Component {
   constructor () {
     super()
     this.fetchLeaderboard = this.fetchLeaderboard.bind(this)
-    this.setFilter = this.setFilter.bind(this)
+    this.handleSetFilter = this.handleSetFilter.bind(this)
     this.renderLeader = this.renderLeader.bind(this)
     this.state = {
       status: 'fetching',
@@ -56,7 +56,7 @@ class FitnessLeaderboard extends Component {
     }
   }
 
-  setFilter (q) {
+  handleSetFilter (q) {
     this.setState({ q })
     this.fetchLeaderboard(q)
   }
@@ -142,52 +142,56 @@ class FitnessLeaderboard extends Component {
 
     return (
       <div>
-        {filter && <Filter onChange={this.setFilter} {...filter} />}
-        {status === 'fetching' || status === 'failed' ? (
-          <LeaderboardWrapper
-            {...leaderboard}
-            loading={status === 'fetching'}
-            error={status === 'failed'}
-          />
-        ) : data.length ? (
-          <Pagination max={pageSize} toPaginate={data}>
-            {({
-              currentPage,
-              isPaginated,
-              prev,
-              next,
-              canPrev,
-              canNext,
-              pageOf
-            }) => (
-              <React.Fragment>
-                <LeaderboardWrapper {...leaderboard}>
-                  {currentPage.map(this.renderLeader)}
-                </LeaderboardWrapper>
-                {pageSize &&
-                  isPaginated && (
-                  <Section spacing={{ t: 0.5 }}>
-                    <Grid align='center' justify='center'>
-                      <PaginationLink
-                        onClick={prev}
-                        direction='prev'
-                        disabled={!canPrev}
-                      />
-                      {showPage && <RichText size={-1}>{pageOf}</RichText>}
-                      <PaginationLink
-                        onClick={next}
-                        direction='next'
-                        disabled={!canNext}
-                      />
-                    </Grid>
-                  </Section>
+        {filter && <Filter onChange={this.handleSetFilter} {...filter} />}
+        {(status === 'fetching' || status === 'failed')
+          ? (
+            <LeaderboardWrapper
+              {...leaderboard}
+              loading={status === 'fetching'}
+              error={status === 'failed'}
+            />
+            )
+          : data.length
+            ? (
+              <Pagination max={pageSize} toPaginate={data}>
+                {({
+                  currentPage,
+                  isPaginated,
+                  prev,
+                  next,
+                  canPrev,
+                  canNext,
+                  pageOf
+                }) => (
+                  <>
+                    <LeaderboardWrapper {...leaderboard}>
+                      {currentPage.map(this.renderLeader)}
+                    </LeaderboardWrapper>
+                    {pageSize &&
+                      isPaginated && (
+                        <Section spacing={{ t: 0.5 }}>
+                          <Grid align='center' justify='center'>
+                            <PaginationLink
+                              onClick={prev}
+                              direction='prev'
+                              disabled={!canPrev}
+                            />
+                            {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                            <PaginationLink
+                              onClick={next}
+                              direction='next'
+                              disabled={!canNext}
+                            />
+                          </Grid>
+                        </Section>
+                    )}
+                  </>
                 )}
-              </React.Fragment>
-            )}
-          </Pagination>
-        ) : (
-          <LeaderboardWrapper {...leaderboard} empty />
-        )}
+              </Pagination>
+              )
+            : (
+              <LeaderboardWrapper {...leaderboard} empty />
+              )}
       </div>
     )
   }
@@ -213,6 +217,7 @@ class FitnessLeaderboard extends Component {
   getMetric (leader) {
     const { miles, multiplier, offset, sortBy, units } = this.props
     const { totals = {} } = leader
+    const distance = (offset + leader.distance) * multiplier
 
     switch (sortBy) {
       case 'activities':
@@ -222,7 +227,6 @@ class FitnessLeaderboard extends Component {
       case 'elevation':
         return formatElevation((offset + totals.meters) * multiplier, miles)
       default:
-        const distance = (offset + leader.distance) * multiplier
         return units
           ? formatDistance(distance, miles)
           : numbro(distance).format('0,0')
@@ -232,6 +236,7 @@ class FitnessLeaderboard extends Component {
   getMetricLabel (leader) {
     const { miles, multiplier, offset, sortBy, units } = this.props
     const { totals = {} } = leader
+    const distance = (offset + leader.distance) * multiplier
 
     switch (sortBy) {
       case 'activities':
@@ -245,7 +250,6 @@ class FitnessLeaderboard extends Component {
           'full'
         )
       default:
-        const distance = (offset + leader.distance) * multiplier
         return units
           ? formatDistance(distance, miles, 'full')
           : numbro(distance).format('0,0')

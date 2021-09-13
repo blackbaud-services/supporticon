@@ -19,7 +19,7 @@ describe('Fetch Event', () => {
     fetchEvent({ id: '12345' })
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.equal('https://api.justgiving.com/v1/event/12345')
+      expect(request.url).to.equal('/v1/event/12345')
       done()
     })
   })

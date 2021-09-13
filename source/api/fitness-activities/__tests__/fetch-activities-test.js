@@ -31,7 +31,7 @@ describe('Fetch Fitness Activities', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://api.blackbaud.services/v1/justgiving/graphql'
+        '/v1/justgiving/graphql'
       )
       done()
     })

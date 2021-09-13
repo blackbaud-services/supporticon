@@ -23,7 +23,7 @@ describe('Fitness', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.eql(
-          'https://api.blackbaud.services/v1/justgiving/graphql'
+          '/v1/justgiving/graphql'
         )
         expect(request.config.method).to.eql('post')
         done()
@@ -48,7 +48,7 @@ describe('Fitness', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.eql(
-          'https://api.blackbaud.services/v1/justgiving/graphql'
+          '/v1/justgiving/graphql'
         )
         expect(request.config.method).to.eql('post')
         done()
@@ -73,7 +73,7 @@ describe('Fitness', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.eql(
-          'https://api.blackbaud.services/v1/justgiving/graphql'
+          '/v1/justgiving/graphql'
         )
         expect(request.config.method).to.eql('post')
         done()

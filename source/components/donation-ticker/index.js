@@ -118,13 +118,17 @@ class DonationTicker extends Component {
     const { label, ticker } = this.props
     const { donations, status } = this.state
 
-    return status === 'fetched' ? (
-      <Ticker label={label} items={donations} {...ticker} />
-    ) : status === 'failed' ? (
-      <Metric icon='warning' label='An error occurred' />
-    ) : (
-      <Loading />
-    )
+    return status === 'fetched'
+      ? (
+        <Ticker label={label} items={donations} {...ticker} />
+        )
+      : status === 'failed'
+        ? (
+          <Metric icon='warning' label='An error occurred' />
+          )
+        : (
+          <Loading />
+          )
   }
 }
 

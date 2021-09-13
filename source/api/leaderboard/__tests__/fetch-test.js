@@ -22,7 +22,7 @@ describe('Fetch Leaderboards', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://api.justgiving.com/donationsleaderboards/v1/leaderboard?campaignGuids=1234'
+        '/donationsleaderboards/v1/leaderboard?campaignGuids=1234'
       )
       done()
     })
@@ -33,7 +33,7 @@ describe('Fetch Leaderboards', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://api.justgiving.com/donationsleaderboards/v1/leaderboard?campaignGuids=1234&groupBy=TeamGuid'
+        '/donationsleaderboards/v1/leaderboard?campaignGuids=1234&groupBy=TeamGuid'
       )
       done()
     })
@@ -44,7 +44,7 @@ describe('Fetch Leaderboards', () => {
     moxios.wait(() => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain(
-        'https://api.blackbaud.services/v1/justgiving/campaigns/my-campaign/pages'
+        '/v1/justgiving/campaigns/my-campaign/pages'
       )
       done()
     })
@@ -55,7 +55,7 @@ describe('Fetch Leaderboards', () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.equal(
-        'https://api.justgiving.com/v1/events/leaderboard?eventid=12345&currency=GBP'
+        '/v1/events/leaderboard?eventid=12345&currency=GBP'
       )
       done()
     })
@@ -66,7 +66,7 @@ describe('Fetch Leaderboards', () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.equal(
-        'https://api.justgiving.com/v1/events/leaderboard?eventid=12345&currency=AUD'
+        '/v1/events/leaderboard?eventid=12345&currency=AUD'
       )
       done()
     })
@@ -77,7 +77,7 @@ describe('Fetch Leaderboards', () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.equal(
-        'https://api.justgiving.com/v1/events/leaderboard?eventid=12345&eventid=54321&currency=GBP'
+        '/v1/events/leaderboard?eventid=12345&eventid=54321&currency=GBP'
       )
       done()
     })
@@ -88,7 +88,7 @@ describe('Fetch Leaderboards', () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.equal(
-        'https://api.justgiving.com/v1/events/leaderboard?eventid=12345&currency=GBP&maxResults=50'
+        '/v1/events/leaderboard?eventid=12345&currency=GBP&maxResults=50'
       )
       done()
     })
@@ -104,7 +104,7 @@ describe('Fetch Leaderboards', () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.include(
-        'https://api.justgiving.com/donationsleaderboards/v1/leaderboard?charityIds=4567'
+        '/donationsleaderboards/v1/leaderboard?charityIds=4567'
       )
       done()
     })
