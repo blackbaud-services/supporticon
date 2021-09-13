@@ -35,7 +35,7 @@ module.exports = {
   sections: [
     {
       name: '',
-      content: 'source/components/readme.md'
+      content: 'source/components/README.md'
     },
     {
       name: 'Leaderboards',
