@@ -22,7 +22,7 @@ describe('Fetch User', () => {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.contain('/v1/account')
       expect(request.config.headers['Authorization']).to.eql(
-        'Basic dGVzdEBleGFtcGxlLmNvbTpmb29iYXIxMjM='
+        'Bearer dGVzdEBleGFtcGxlLmNvbTpmb29iYXIxMjM='
       )
       done()
     })

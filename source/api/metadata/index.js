@@ -15,7 +15,7 @@ export const fetchMetadata = ({
   app = required(),
   token = required(),
   id,
-  authType = 'Basic'
+  authType = 'Bearer'
 }) =>
   metadataAPI
     .get(`/v1/apps/${app}/metadata`, {
@@ -29,7 +29,7 @@ export const createMetadata = ({
   token = required(),
   id = required(),
   metadata = required(),
-  authType = 'Basic'
+  authType = 'Bearer'
 }) => {
   const headers = { Authorization: [authType, token].join(' ') }
   const values = keys(metadata).map(key => ({ key, value: metadata[key] }))
@@ -45,7 +45,7 @@ export const updateMetadata = ({
   id = required(),
   key = required(),
   value = required(),
-  authType = 'Basic'
+  authType = 'Bearer'
 }) =>
   metadataAPI
     .put(

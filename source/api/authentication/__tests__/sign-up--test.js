@@ -33,7 +33,7 @@ describe('Authentication | Sign Up', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         const data = JSON.parse(request.config.data)
-        expect(request.url).to.eql('/v1/account')
+        expect(request.url).to.eql('/v1/justgiving/iam/register')
         expect(data.email).to.eql('test@gmail.com')
         done()
       })
@@ -41,6 +41,7 @@ describe('Authentication | Sign Up', () => {
 
     it('without address supplied', done => {
       signUp({
+        authType: 'Basic',
         firstName: 'Just',
         lastName: 'Giving',
         email: 'test@gmail.com',
@@ -70,9 +71,7 @@ describe('Authentication | Sign Up', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         const data = JSON.parse(request.config.data)
-        expect(request.url).to.eql(
-          '/v1/justgiving/iam/register'
-        )
+        expect(request.url).to.eql('/v1/justgiving/iam/register')
         expect(data.email).to.eql('test@gmail.com')
         done()
       })
@@ -89,7 +88,7 @@ describe('Authentication | Sign Up', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         const data = JSON.parse(request.config.data)
-        expect(request.url).to.eql('/v1/account/lite')
+        expect(request.url).to.eql('/v1/justgiving/iam/register')
         expect(data.email).to.eql('test@gmail.com')
         done()
       })

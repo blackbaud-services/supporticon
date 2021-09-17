@@ -37,7 +37,7 @@ describe('Create Page', () => {
           '/v1/fundraising/pages'
         )
         expect(request.config.headers['Authorization']).to.eql(
-          'Basic 012345abcdef'
+          'Bearer 012345abcdef'
         )
         expect(JSON.parse(request.config.data).pageShortName).to.eql(
           'super-supporter-2'

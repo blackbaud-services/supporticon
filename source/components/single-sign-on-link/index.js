@@ -129,7 +129,7 @@ SingleSignOnLink.propTypes = {
 }
 
 SingleSignOnLink.defaultProps = {
-  authType: 'Basic',
+  authType: 'Bearer',
   label: 'My Fundraising Page',
   target: '_top',
   method: 'POST'

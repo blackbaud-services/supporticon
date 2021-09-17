@@ -63,7 +63,7 @@ export const deserializeUser = user => ({
 
 export const fetchCurrentUser = ({
   token = required(),
-  authType = 'Basic'
+  authType = 'Bearer'
 }) => {
   if (authType === 'Basic' || token.length > 32) {
     return get(
@@ -91,7 +91,7 @@ export const updateCurrentUser = ({
   token = required(),
   uuid = required(),
   email = required(),
-  authType = 'Basic',
+  authType = 'Bearer',
   firstName,
   lastName,
   address = {}
