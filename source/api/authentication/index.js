@@ -31,7 +31,7 @@ export const validateToken = (token = required()) =>
 export const signIn = ({
   email = required(),
   password = required(),
-  authType = 'Basic'
+  authType = 'Bearer'
 }) => {
   if (authType === 'Basic') {
     const token = encodeBase64String(`${email}:${password}`)
@@ -70,7 +70,7 @@ export const signUp = ({
   cause,
   phone,
   reference,
-  authType = 'Basic'
+  authType = 'Bearer'
 }) => {
   if (authType === 'Basic') {
     const payload = {

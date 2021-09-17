@@ -1,8 +1,8 @@
 const path = require('path')
 const camelCase = require('lodash/camelCase')
 const upperFirst = require('lodash/upperFirst')
-const { version } = require('./package.json')
 const { styles, theme } = require('./styleguide.styles')
+const { version } = require('./package.json')
 
 module.exports = {
   title: `Supporticon ${version}`,

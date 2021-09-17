@@ -23,7 +23,7 @@ describe('Page | Update Page', () => {
       )
       expect(request.url).to.contain('fundraising-page')
       expect(request.config.headers['Authorization']).to.eql(
-        'Basic 012345abcdef'
+        'Bearer 012345abcdef'
       )
       done()
     })
@@ -42,7 +42,7 @@ describe('Page | Update Page', () => {
       )
       expect(request.url).to.contain('fundraising-page')
       expect(request.config.headers['Authorization']).to.eql(
-        'Basic 012345abcdef'
+        'Bearer 012345abcdef'
       )
       done()
     })

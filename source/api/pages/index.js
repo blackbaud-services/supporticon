@@ -189,7 +189,7 @@ const recursivelyFetchJGPages = ({
 export const fetchPages = (params = required()) => {
   const {
     allPages,
-    authType = 'Basic',
+    authType = 'Bearer',
     campaign,
     charity,
     event,
@@ -288,7 +288,7 @@ export const fetchPage = (page = required(), slug, options = {}) => {
 }
 
 export const fetchUserPages = ({
-  authType = 'Basic',
+  authType = 'Bearer',
   campaign,
   charity,
   event,
@@ -417,7 +417,7 @@ export const createPage = ({
   slug,
   activityType = 'othercelebration',
   attribution,
-  authType = 'Basic',
+  authType = 'Bearer',
   campaignId,
   campaignGuid,
   causeId,
@@ -528,7 +528,7 @@ export const updatePage = (
   {
     token = required(),
     attribution,
-    authType = 'Basic',
+    authType = 'Bearer',
     image,
     name,
     offline,

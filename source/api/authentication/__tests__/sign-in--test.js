@@ -14,6 +14,7 @@ describe('Authentication | Sign In', () => {
 
   it('should hit the JG api with the correct url and data', done => {
     signIn({
+      authType: 'Basic',
       email: 'test@gmail.com',
       password: 'password'
     })

@@ -457,7 +457,7 @@ CreatePageForm.propTypes = {
 }
 
 CreatePageForm.defaultProps = {
-  authType: 'Basic',
+  authType: 'Bearer',
   charityFunded: false,
   disableInvalidForm: false,
   fields: {},
