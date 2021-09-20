@@ -123,7 +123,7 @@ const styles = {
         },
         '&:hover:after': {
           opacity: 0.75,
-          color: colors.dark
+          color: colors.light
         }
       },
       '& .rsg-logo-name, & .rsg-logo-version': {

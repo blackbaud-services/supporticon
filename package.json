@@ -35,7 +35,7 @@
     "@babel/register": "^7.15.3",
     "babel-loader": "^8.2.2",
     "chai": "^4.3.4",
-    "constructicon": "^3.0.12",
+    "constructicon": "^4.0.3",
     "css-loader": "^5.1.1",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
@@ -71,7 +71,7 @@
     "url-parse": "^1.5.3"
   },
   "peerDependencies": {
-    "constructicon": "^3.0.0",
+    "constructicon": "^3.0.0 || ^4.0.0",
     "numbro": "^1.0.0 || ^2.0.0",
     "react": "^16.8.0 || ^17.0.0",
     "react-dom": "^16.8.0 || ^17.0.0"
