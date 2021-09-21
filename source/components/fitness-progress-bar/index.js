@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
-import numbro from 'numbro'
+import { formatNumber } from '../../utils/numbers'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
 
 import Grid from 'constructicon/grid'
@@ -64,10 +64,10 @@ class FitnessProgressBar extends Component {
       distanceLabel,
       eventDate,
       grid,
-      format,
       heading,
       metric,
       offset,
+      places,
       progressBar,
       remainingLabel,
       target,
@@ -80,14 +80,17 @@ class FitnessProgressBar extends Component {
     const distanceInKm = distanceInMeters / 1000
     const distance = unit === 'km' ? distanceInKm : distanceInKm * 0.621371
 
-    return status === 'fetched'
-      ? (
+    if (status === 'fetched') {
+      return (
         <Grid spacing={0.25} {...grid}>
           <GridColumn xs={6}>
             <Metric
               align='left'
               label={distanceLabel}
-              amount={`${numbro(distance + offset).format(format)}${unit}`}
+              amount={`${formatNumber({
+                amount: distance + offset,
+                places
+              })}${unit}`}
               {...metric}
             />
           </GridColumn>
@@ -95,7 +98,7 @@ class FitnessProgressBar extends Component {
             <Metric
               align='right'
               label={targetLabel}
-              amount={`${numbro(target).format(format)}${unit}`}
+              amount={`${formatNumber({ amount: target, places })}${unit}`}
               {...metric}
             />
           </GridColumn>
@@ -106,32 +109,28 @@ class FitnessProgressBar extends Component {
               {...progressBar}
             />
           </GridColumn>
-          {travelledLabel
-            ? (
-              <GridColumn xs={6}>
+          <GridColumn xs={6}>
+            {travelledLabel && (
+              <>
                 <Heading size={0} tag='strong' {...heading}>
                   {this.calculatePercentage()}%
                 </Heading>{' '}
                 {travelledLabel}
-              </GridColumn>
-              )
-            : (
-              <GridColumn xs={6} />
-              )}
-          {remainingLabel &&
-            eventDate && (
-              <GridColumn xs={6} xsAlign='right'>
-                <Heading size={0} tag='strong' {...heading}>
-                  {this.calculateDaysRemaining(eventDate)}
-                </Heading>{' '}
-                {remainingLabel}
-              </GridColumn>
+              </>
+            )}
+          </GridColumn>
+          {remainingLabel && eventDate && (
+            <GridColumn xs={6} xsAlign='right'>
+              <Heading size={0} tag='strong' {...heading}>
+                {this.calculateDaysRemaining(eventDate)}
+              </Heading>{' '}
+              {remainingLabel}
+            </GridColumn>
           )}
         </Grid>
-        )
-      : (
-        <Loading />
-        )
+      )
+    }
+    return <Loading />
   }
 }
 
@@ -187,6 +186,11 @@ FitnessProgressBar.propTypes = {
   heading: PropTypes.object,
 
   /**
+   * The max number of places after decimal point to display
+   */
+  places: PropTypes.number,
+
+  /**
    * Props to be passed to the Constructicon Metric components
    */
   metric: PropTypes.object,
@@ -213,7 +217,7 @@ FitnessProgressBar.propTypes = {
 }
 
 FitnessProgressBar.defaultProps = {
-  format: '0,0',
+  places: '0',
   unit: 'km',
   offset: 0
 }

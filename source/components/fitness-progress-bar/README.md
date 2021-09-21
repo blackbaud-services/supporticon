@@ -4,6 +4,7 @@
 <FitnessProgressBar
   campaign='96e2266e-2fa2-4109-a2b6-c017b79011bd'
   target={500000}
+  places={3}
 />
 ```
 

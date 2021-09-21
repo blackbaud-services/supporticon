@@ -10,7 +10,7 @@
     "test:unit": "mocha source/**/**/__tests__/*.js --require @babel/register --require test/common.js",
     "test": "npm run test:lint && npm run test:unit",
     "format": "prettier-standard 'source/**/*.js'",
-    "precommit": "lint-staged",
+    "precommit": "yarn lint-staged",
     "docsify:watch": "docsify serve ./source",
     "styleguide:build": "styleguidist build",
     "docs:build": "npm run styleguide:build && gulp docs-prepare",
@@ -72,7 +72,6 @@
   },
   "peerDependencies": {
     "constructicon": "^3.0.0 || ^4.0.0",
-    "numbro": "^1.0.0 || ^2.0.0",
     "react": "^16.8.0 || ^17.0.0",
     "react-dom": "^16.8.0 || ^17.0.0"
   },
@@ -95,11 +94,9 @@
     ]
   },
   "lint-staged": {
-    "linters": {
-      "source/**/*.js": [
-        "prettier-standard",
-        "git add"
-      ]
-    }
+    "source/**/*.js": [
+      "prettier-standard",
+      "git add"
+    ]
   }
 }

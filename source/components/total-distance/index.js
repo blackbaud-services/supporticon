@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import numbro from 'numbro'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
 import { formatDistance } from '../../utils/fitness'
+import { formatCurrency } from '../../utils/numbers'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -60,7 +60,7 @@ class TotalDistance extends Component {
 
   renderAmount () {
     const { status, data } = this.state
-    const { format, miles, multiplier, offset, units } = this.props
+    const { miles, multiplier, offset, places, units } = this.props
     const amount = (offset + data) * multiplier
 
     switch (status) {
@@ -70,14 +70,14 @@ class TotalDistance extends Component {
         return <Icon name='warning' />
       default:
         return units
-          ? formatDistance(amount, miles)
-          : numbro(amount).format(format)
+          ? formatDistance({ amount, miles, places })
+          : formatCurrency({ amount })
     }
   }
 
   renderAmountLabel () {
     const { status, data } = this.state
-    const { format, miles, multiplier, offset, units } = this.props
+    const { miles, multiplier, offset, places, units } = this.props
     const amount = (offset + data) * multiplier
 
     switch (status) {
@@ -87,8 +87,8 @@ class TotalDistance extends Component {
         return 'Error'
       default:
         return units
-          ? formatDistance(amount, miles, 'full')
-          : numbro(amount).format(format)
+          ? formatDistance({ amount, miles, label: 'full', places })
+          : formatCurrency({ amount })
     }
   }
 }
@@ -121,9 +121,9 @@ TotalDistance.propTypes = {
   label: PropTypes.string,
 
   /**
-   * The format of the number
+   * The max number of places after decimal point to display
    */
-  format: PropTypes.string,
+  places: PropTypes.number,
 
   /**
    * Use imperial units (miles, feet, yards)
@@ -169,11 +169,11 @@ TotalDistance.propTypes = {
 }
 
 TotalDistance.defaultProps = {
-  format: '0,0',
   label: 'Total Distance',
   miles: false,
   multiplier: 1,
   offset: 0,
+  places: 0,
   units: true
 }
 

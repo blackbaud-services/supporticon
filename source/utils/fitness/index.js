@@ -1,8 +1,8 @@
-import numbro from 'numbro'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import get from 'lodash/get'
 import * as units from '../units'
+import { formatNumber } from '../numbers'
 
 dayjs.extend(duration)
 
@@ -28,15 +28,20 @@ export const formatMeasurementDomain = sortBy => {
   }
 }
 
-export const formatDistance = (distance, miles, label = 'abbreviation') => {
+export const formatDistance = ({
+  amount,
+  miles,
+  label = 'abbreviation',
+  places = 0
+}) => {
   if (miles) {
     return (
-      numbro(units.convertMetersToMiles(distance)).format('0,0[.]0[0]') +
+      formatNumber({ amount: units.convertMetersToMiles(amount), places }) +
       ` ${labels.miles[label]}`
     )
   } else {
     return (
-      numbro(units.convertMetersToKm(distance)).format('0,0[.]0[0]') +
+      formatNumber({ amount: units.convertMetersToKm(amount), places }) +
       ` ${labels.kilometers[label]}`
     )
   }
@@ -58,19 +63,26 @@ export const formatDuration = (duration, label = 'abbreviation') => {
   }
 }
 
-export const formatElevation = (elevation, miles, label = 'abbreviation') => {
+export const formatElevation = (
+  elevation,
+  miles,
+  label = 'abbreviation',
+  places
+) => {
   if (miles) {
     return (
-      numbro(units.convertMetersToFeet(elevation)).format('0,0') +
+      formatNumber({ amount: units.convertMetersToFeet(elevation), places }) +
       ` ${labels.feet[label]}`
     )
   } else {
-    return numbro(elevation).format('0,0') + ` ${labels.meters[label]}`
+    return (
+      formatNumber({ amount: elevation, places }) + ` ${labels.meters[label]}`
+    )
   }
 }
 
-export const formatActivities = activities => {
-  return numbro(activities).format('0,0')
+export const formatActivities = (activities, places) => {
+  return formatNumber({ amount: activities, places })
 }
 
 export const getDistanceTotal = (page = {}) => {

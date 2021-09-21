@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
-import numbro from 'numbro'
+import { formatCurrency, formatNumber } from '../../utils/numbers'
 import {
   fetchDonationTotals,
   deserializeDonationTotals
@@ -77,7 +77,6 @@ class ProgressBar extends Component {
   render () {
     const {
       eventDate,
-      format,
       fundedLabel,
       grid,
       heading,
@@ -92,9 +91,8 @@ class ProgressBar extends Component {
     } = this.props
 
     const { raised, donations, status } = this.state
-
-    return status === 'fetched'
-      ? (
+    if (status === 'fetched') {
+      return (
         <Grid spacing={0.25} {...grid}>
           <GridColumn xs={6}>
             <Metric
@@ -102,8 +100,8 @@ class ProgressBar extends Component {
               label={raisedLabel}
               amount={
                 useDonationCount
-                  ? numbro(donations + offset).format(format)
-                  : numbro(raised + offset).formatCurrency(format)
+                  ? formatNumber({ amount: donations + offset })
+                  : formatCurrency({ amount: raised + offset })
               }
               {...metric}
             />
@@ -114,8 +112,8 @@ class ProgressBar extends Component {
               label={targetLabel}
               amount={
                 useDonationCount
-                  ? numbro(target).format(format)
-                  : numbro(target).formatCurrency(format)
+                  ? formatNumber({ amount: target })
+                  : formatCurrency({ amount: target })
               }
               {...metric}
             />
@@ -127,32 +125,28 @@ class ProgressBar extends Component {
               {...progressBar}
             />
           </GridColumn>
-          {fundedLabel
-            ? (
-              <GridColumn xs={6}>
+          <GridColumn xs={6}>
+            {fundedLabel && (
+              <>
                 <Heading size={0} tag='strong' {...heading}>
                   {this.calculatePercentage()}%
                 </Heading>{' '}
                 {fundedLabel}
-              </GridColumn>
-              )
-            : (
-              <GridColumn xs={6} />
-              )}
-          {remainingLabel &&
-            eventDate && (
-              <GridColumn xs={6} xsAlign='right'>
-                <Heading size={0} tag='strong' {...heading}>
-                  {this.calculateDaysRemaining(eventDate)}
-                </Heading>{' '}
-                {remainingLabel}
-              </GridColumn>
+              </>
+            )}
+          </GridColumn>
+          {remainingLabel && eventDate && (
+            <GridColumn xs={6} xsAlign='right'>
+              <Heading size={0} tag='strong' {...heading}>
+                {this.calculateDaysRemaining(eventDate)}
+              </Heading>{' '}
+              {remainingLabel}
+            </GridColumn>
           )}
         </Grid>
-        )
-      : (
-        <Loading />
-        )
+      )
+    }
+    return <Loading />
   }
 }
 
@@ -251,11 +245,6 @@ ProgressBar.propTypes = {
   remainingLabel: PropTypes.string,
 
   /**
-   * The format of the number
-   */
-  format: PropTypes.string,
-
-  /**
    * Props to be passed to the Constructicon Grid component
    */
   grid: PropTypes.object,
@@ -288,7 +277,6 @@ ProgressBar.propTypes = {
 
 ProgressBar.defaultProps = {
   excludeOffline: false,
-  format: '0,0',
   offset: 0
 }
 

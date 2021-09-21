@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import numbro from 'numbro'
 import orderBy from 'lodash/orderBy'
 import { deserializeTeamPage, fetchTeamPages } from '../../api/teams'
 import {
@@ -9,6 +8,7 @@ import {
   formatDuration,
   formatElevation
 } from '../../utils/fitness'
+import { formatCurrency, formatNumber } from '../../utils/numbers'
 
 import Grid from 'constructicon/grid'
 import LeaderboardItem from 'constructicon/leaderboard-item'
@@ -59,17 +59,17 @@ const TeamLeaderboard = ({
         case 'activities':
           return formatActivities(amount)
         case 'distance':
-          return formatDistance(amount, miles, format)
+          return formatDistance({ amount, miles, label: format })
         case 'duration':
           return formatDuration(amount, format)
         case 'elevation':
           return formatElevation(amount, miles, format)
         default:
-          return numbro(amount).formatCurrency('0,0')
+          return formatCurrency({ amount })
       }
     }
 
-    return numbro(amount).format('0,0')
+    return formatNumber({ amount })
   }
 
   const fetchData = () =>
@@ -122,23 +122,22 @@ const TeamLeaderboard = ({
               />
             ))}
           </Leaderboard>
-          {pageSize &&
-            isPaginated && (
-              <Section spacing={{ t: 0.5 }}>
-                <Grid align='center' justify='center'>
-                  <PaginationLink
-                    onClick={prev}
-                    direction='prev'
-                    disabled={!canPrev}
-                  />
-                  {showPage && <RichText size={-1}>{pageOf}</RichText>}
-                  <PaginationLink
-                    onClick={next}
-                    direction='next'
-                    disabled={!canNext}
-                  />
-                </Grid>
-              </Section>
+          {pageSize && isPaginated && (
+            <Section spacing={{ t: 0.5 }}>
+              <Grid align='center' justify='center'>
+                <PaginationLink
+                  onClick={prev}
+                  direction='prev'
+                  disabled={!canPrev}
+                />
+                {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                <PaginationLink
+                  onClick={next}
+                  direction='next'
+                  disabled={!canNext}
+                />
+              </Grid>
+            </Section>
           )}
         </>
       )}
@@ -226,6 +225,7 @@ TeamLeaderboard.propTypes = {
 
 TeamLeaderboard.defaultProps = {
   activeOnly: true,
+  country: 'gb',
   limit: 250,
   multiplier: 1,
   offset: 0,

@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'
-import numbro from 'numbro'
+import {
+  formatCurrency,
+  formatNumber,
+  setCurrencyFromCountry
+} from '../../utils/numbers'
 
 import Filter from 'constructicon/filter'
 import Grid from 'constructicon/grid'
@@ -57,11 +61,8 @@ class Leaderboard extends Component {
     const leaderboardData = data
       .filter(item => item.status !== 'Cancelled')
       .map(deserializeMethod)
-      .map(
-        item =>
-          excludeOffline
-            ? { ...item, raised: item.raised - item.offline }
-            : item
+      .map(item =>
+        excludeOffline ? { ...item, raised: item.raised - item.offline } : item
       )
 
     return orderBy(leaderboardData, ['raised'], ['desc'])
@@ -142,77 +143,78 @@ class Leaderboard extends Component {
     return (
       <div>
         {filter && <Filter onChange={this.handleSetFilter} {...filter} />}
-        {(status === 'fetching' || status === 'failed')
-          ? (
-            <LeaderboardWrapper
-              {...leaderboard}
-              loading={status === 'fetching'}
-              error={status === 'failed'}
-            />
-            )
-          : data.length
-            ? (
-              <Pagination max={pageSize} toPaginate={data}>
-                {({
-                  currentPage,
-                  isPaginated,
-                  prev,
-                  next,
-                  canPrev,
-                  canNext,
-                  pageOf
-                }) => (
-                  <>
-                    <LeaderboardWrapper {...leaderboard}>
-                      {currentPage.map(this.renderLeader)}
-                    </LeaderboardWrapper>
-                    {pageSize &&
-                      isPaginated && (
-                        <Section spacing={{ t: 0.5 }}>
-                          <Grid align='center' justify='center'>
-                            <PaginationLink
-                              onClick={prev}
-                              direction='prev'
-                              disabled={!canPrev}
-                            />
-                            {showPage && <RichText size={-1}>{pageOf}</RichText>}
-                            <PaginationLink
-                              onClick={next}
-                              direction='next'
-                              disabled={!canNext}
-                            />
-                          </Grid>
-                        </Section>
-                    )}
-                  </>
+        {status === 'fetching' && (
+          <LeaderboardWrapper {...leaderboard} loading />
+        )}
+        {status === 'error' && <LeaderboardWrapper {...leaderboard} error />}
+        {status === 'fetched' && data.length === 0 && (
+          <LeaderboardWrapper {...leaderboard} empty />
+        )}
+        {data.length > 0 && (
+          <Pagination max={pageSize} toPaginate={data}>
+            {({
+              currentPage,
+              isPaginated,
+              prev,
+              next,
+              canPrev,
+              canNext,
+              pageOf
+            }) => (
+              <>
+                <LeaderboardWrapper {...leaderboard}>
+                  {currentPage.map(this.renderLeader)}
+                </LeaderboardWrapper>
+                {pageSize && isPaginated && (
+                  <Section spacing={{ t: 0.5 }}>
+                    <Grid align='center' justify='center'>
+                      <PaginationLink
+                        onClick={prev}
+                        direction='prev'
+                        disabled={!canPrev}
+                      />
+                      {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                      <PaginationLink
+                        onClick={next}
+                        direction='next'
+                        disabled={!canNext}
+                      />
+                    </Grid>
+                  </Section>
                 )}
-              </Pagination>
-              )
-            : <LeaderboardWrapper {...leaderboard} empty />}
+              </>
+            )}
+          </Pagination>
+        )}
       </div>
     )
   }
 
   renderLeader (leader, i) {
     const {
+      country,
       currency,
-      format,
       leaderboardItem = {},
       multiplier,
+      places,
       subtitleMethod,
       offset
     } = this.props
-    const formatMethod = currency ? 'formatCurrency' : 'format'
-
+    const amount = (offset + leader.raised) * multiplier
     return (
       <LeaderboardItem
         key={i}
         title={leader.name}
         subtitle={subtitleMethod(leader)}
         image={leader.image}
-        amount={numbro((offset + leader.raised) * multiplier)[formatMethod](
-          format
-        )}
+        amount={
+          currency
+            ? formatCurrency({
+                amount,
+                currencyCode: setCurrencyFromCountry(country)
+              })
+            : formatNumber({ amount, locale: country, places })
+        }
         href={leader.url}
         rank={leader.position}
         {...leaderboardItem}
@@ -250,7 +252,7 @@ Leaderboard.propTypes = {
   ]),
 
   /**
-   * Country code for API (JG only)
+   * Country code
    */
   country: PropTypes.oneOf([
     'au',
@@ -346,6 +348,11 @@ Leaderboard.propTypes = {
   multiplier: PropTypes.number,
 
   /**
+   * The max number of places after decimal point to display
+   */
+  places: PropTypes.number,
+
+  /**
    * Interval (in milliseconds) to refresh data from API
    */
   refreshInterval: PropTypes.number,
@@ -357,13 +364,14 @@ Leaderboard.propTypes = {
 }
 
 Leaderboard.defaultProps = {
+  country: 'gb',
   currency: true,
   filter: {},
-  format: '0,0',
   limit: 10,
   multiplier: 1,
   offset: 0,
   page: 1,
+  places: 0,
   showPage: false,
   subtitleMethod: item => item.subtitle
 }

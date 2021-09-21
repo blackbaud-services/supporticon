@@ -11,5 +11,6 @@
 ```
 <TotalDonations
   event='4872958'
+  places={2}
 />
 ```
