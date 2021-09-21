@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import numbro from 'numbro'
+import { formatCurrency } from '../../utils/numbers'
 import { fetchDonationFeed, deserializeDonation } from '../../api/feeds'
 
 import Loading from 'constructicon/loading'
@@ -74,8 +74,11 @@ class DonationTicker extends Component {
   }
 
   formatDonation (donation) {
-    const { layout, format } = this.props
-    const formattedAmount = numbro(donation.amount).formatCurrency(format)
+    const { layout } = this.props
+    const formattedAmount = formatCurrency({
+      amount: donation.amount,
+      currencyCode: donation.currency
+    })
 
     switch (layout) {
       case 'name-only':
@@ -118,17 +121,13 @@ class DonationTicker extends Component {
     const { label, ticker } = this.props
     const { donations, status } = this.state
 
-    return status === 'fetched'
-      ? (
-        <Ticker label={label} items={donations} {...ticker} />
-        )
-      : status === 'failed'
-        ? (
-          <Metric icon='warning' label='An error occurred' />
-          )
-        : (
-          <Loading />
-          )
+    if (status === 'fetched') {
+      return <Ticker label={label} items={donations} {...ticker} />
+    }
+    if (status === 'failed') {
+      return <Metric icon='warning' label='An error occurred' />
+    }
+    return <Loading />
   }
 }
 
@@ -184,11 +183,6 @@ DonationTicker.propTypes = {
   ]),
 
   /**
-   * Donation amount format
-   */
-  format: PropTypes.string,
-
-  /**
    * Recursively fetch all donations (up to 5000)
    */
   fetchAll: PropTypes.bool,
@@ -235,7 +229,6 @@ DonationTicker.propTypes = {
 
 DonationTicker.defaultProps = {
   fetchAll: false,
-  format: '0,0[.]00',
   layout: 'name-amount',
   ticker: {}
 }

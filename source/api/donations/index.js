@@ -1,4 +1,4 @@
-import numbro from 'numbro'
+import { formatNumber } from '../../utils/numbers'
 import jsonDate from '../../utils/jsonDate'
 import { stringify } from 'querystringify'
 import { get } from '../../utils/client'
@@ -32,7 +32,7 @@ export const buildDonationUrl = ({
   ...args
 }) => {
   const params = stringify({
-    amount: numbro(amount).format('0.00'),
+    amount: formatNumber({ amount }),
     currency,
     ...args
   })

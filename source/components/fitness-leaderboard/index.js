@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import numbro from 'numbro'
+import { formatNumber } from '../../utils/numbers'
 import {
   formatActivities,
   formatDistance,
@@ -143,55 +143,49 @@ class FitnessLeaderboard extends Component {
     return (
       <div>
         {filter && <Filter onChange={this.handleSetFilter} {...filter} />}
-        {(status === 'fetching' || status === 'failed')
-          ? (
-            <LeaderboardWrapper
-              {...leaderboard}
-              loading={status === 'fetching'}
-              error={status === 'failed'}
-            />
-            )
-          : data.length
-            ? (
-              <Pagination max={pageSize} toPaginate={data}>
-                {({
-                  currentPage,
-                  isPaginated,
-                  prev,
-                  next,
-                  canPrev,
-                  canNext,
-                  pageOf
-                }) => (
-                  <>
-                    <LeaderboardWrapper {...leaderboard}>
-                      {currentPage.map(this.renderLeader)}
-                    </LeaderboardWrapper>
-                    {pageSize &&
-                      isPaginated && (
-                        <Section spacing={{ t: 0.5 }}>
-                          <Grid align='center' justify='center'>
-                            <PaginationLink
-                              onClick={prev}
-                              direction='prev'
-                              disabled={!canPrev}
-                            />
-                            {showPage && <RichText size={-1}>{pageOf}</RichText>}
-                            <PaginationLink
-                              onClick={next}
-                              direction='next'
-                              disabled={!canNext}
-                            />
-                          </Grid>
-                        </Section>
-                    )}
-                  </>
+        {status === 'fetching' && (
+          <LeaderboardWrapper {...leaderboard} loading />
+        )}
+        {status === 'error' && <LeaderboardWrapper {...leaderboard} error />}
+        {status === 'fetched' && data.length === 0 && (
+          <LeaderboardWrapper {...leaderboard} empty />
+        )}
+        {data.length > 0 && (
+          <Pagination max={pageSize} toPaginate={data}>
+            {({
+              currentPage,
+              isPaginated,
+              prev,
+              next,
+              canPrev,
+              canNext,
+              pageOf
+            }) => (
+              <>
+                <LeaderboardWrapper {...leaderboard}>
+                  {currentPage.map(this.renderLeader)}
+                </LeaderboardWrapper>
+                {pageSize && isPaginated && (
+                  <Section spacing={{ t: 0.5 }}>
+                    <Grid align='center' justify='center'>
+                      <PaginationLink
+                        onClick={prev}
+                        direction='prev'
+                        disabled={!canPrev}
+                      />
+                      {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                      <PaginationLink
+                        onClick={next}
+                        direction='next'
+                        disabled={!canNext}
+                      />
+                    </Grid>
+                  </Section>
                 )}
-              </Pagination>
-              )
-            : (
-              <LeaderboardWrapper {...leaderboard} empty />
-              )}
+              </>
+            )}
+          </Pagination>
+        )}
       </div>
     )
   }
@@ -215,7 +209,7 @@ class FitnessLeaderboard extends Component {
   }
 
   getMetric (leader) {
-    const { miles, multiplier, offset, sortBy, units } = this.props
+    const { miles, multiplier, offset, places, sortBy, units } = this.props
     const { totals = {} } = leader
     const distance = (offset + leader.distance) * multiplier
 
@@ -225,16 +219,21 @@ class FitnessLeaderboard extends Component {
       case 'duration':
         return formatDuration((offset + totals.seconds) * multiplier)
       case 'elevation':
-        return formatElevation((offset + totals.meters) * multiplier, miles)
+        return formatElevation(
+          (offset + totals.meters) * multiplier,
+          miles,
+          'abbreviation',
+          places
+        )
       default:
         return units
-          ? formatDistance(distance, miles)
-          : numbro(distance).format('0,0')
+          ? formatDistance({ amount: distance, miles, places })
+          : formatNumber({ amount: distance, places })
     }
   }
 
   getMetricLabel (leader) {
-    const { miles, multiplier, offset, sortBy, units } = this.props
+    const { miles, multiplier, offset, places, sortBy, units } = this.props
     const { totals = {} } = leader
     const distance = (offset + leader.distance) * multiplier
 
@@ -251,8 +250,8 @@ class FitnessLeaderboard extends Component {
         )
       default:
         return units
-          ? formatDistance(distance, miles, 'full')
-          : numbro(distance).format('0,0')
+          ? formatDistance({ amount: distance, miles, label: 'full', places })
+          : formatNumber({ amount: distance, places })
     }
   }
 }
@@ -307,6 +306,11 @@ FitnessLeaderboard.propTypes = {
    * The page to fetch
    */
   page: PropTypes.number,
+
+  /**
+   * The max number of places after decimal point to display
+   */
+  places: PropTypes.number,
 
   /**
    * The tag ID to group the leaderboard by

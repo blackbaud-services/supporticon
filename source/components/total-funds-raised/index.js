@@ -1,16 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import numbro from 'numbro'
-
-import Icon from 'constructicon/icon'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
-
 import {
   fetchDonationTotals,
   deserializeDonationTotals
 } from '../../api/donation-totals'
+import { formatCurrency, formatNumber } from '../../utils/numbers'
 
+import Icon from 'constructicon/icon'
+import Loading from 'constructicon/loading'
+import Metric from 'constructicon/metric'
 class TotalFundsRaised extends Component {
   constructor () {
     super()
@@ -80,16 +78,17 @@ class TotalFundsRaised extends Component {
 
   renderAmount () {
     const { status, data = {} } = this.state
-    const { currency, format, offset, multiplier } = this.props
-    const formatMethod = currency ? 'formatCurrency' : 'format'
-
+    const { currency, offset, multiplier, places } = this.props
+    const amount = (offset + data.raised) * multiplier
     switch (status) {
       case 'fetching':
         return <Loading />
       case 'failed':
         return <Icon name='warning' />
       default:
-        return numbro((offset + data.raised) * multiplier)[formatMethod](format)
+        return currency
+          ? formatCurrency({ amount })
+          : formatNumber({ amount, places })
     }
   }
 }
@@ -179,9 +178,9 @@ TotalFundsRaised.propTypes = {
   label: PropTypes.string,
 
   /**
-   * The format of the number
+   * The max number of places after decimal point to display
    */
-  format: PropTypes.string,
+  places: PropTypes.number,
 
   /**
    * The icon to use
@@ -209,10 +208,10 @@ TotalFundsRaised.propTypes = {
 TotalFundsRaised.defaultProps = {
   currency: true,
   excludeOffline: false,
-  format: '0,0',
   label: 'Funds Raised',
   multiplier: 1,
-  offset: 0
+  offset: 0,
+  places: 0
 }
 
 export default TotalFundsRaised

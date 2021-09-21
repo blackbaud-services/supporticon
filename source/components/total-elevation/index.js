@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import numbro from 'numbro'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
 import { formatElevation } from '../../utils/fitness'
+import { formatNumber } from '../../utils/numbers'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -54,7 +54,7 @@ class TotalElevation extends Component {
 
   renderAmount () {
     const { status, data } = this.state
-    const { format, miles, multiplier, offset, units } = this.props
+    const { miles, multiplier, offset, places, units } = this.props
     const amount = (offset + data) * multiplier
 
     switch (status) {
@@ -65,13 +65,13 @@ class TotalElevation extends Component {
       default:
         return units
           ? formatElevation(amount, miles)
-          : numbro(amount).format(format)
+          : formatNumber({ amount, places })
     }
   }
 
   renderAmountLabel () {
     const { status, data } = this.state
-    const { format, miles, multiplier, offset, units } = this.props
+    const { miles, multiplier, offset, places, units } = this.props
     const amount = (offset + data) * multiplier
 
     switch (status) {
@@ -82,7 +82,7 @@ class TotalElevation extends Component {
       default:
         return units
           ? formatElevation(amount, miles, 'full')
-          : numbro(amount).format(format)
+          : formatNumber({ amount, places })
     }
   }
 }
@@ -110,9 +110,9 @@ TotalElevation.propTypes = {
   multiplier: PropTypes.number,
 
   /**
-   * The format of the number
+   * The max number of places after decimal point to display
    */
-  format: PropTypes.string,
+  places: PropTypes.number,
 
   /**
    * The label of the metric
@@ -163,11 +163,11 @@ TotalElevation.propTypes = {
 }
 
 TotalElevation.defaultProps = {
-  format: '0,0',
   label: 'Total Elevation',
   miles: false,
   multiplier: 1,
   offset: 0,
+  places: 0,
   units: true
 }
 

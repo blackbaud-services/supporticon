@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import numbro from 'numbro'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
 import { formatDuration } from '../../utils/fitness'
+import { formatNumber } from '../../utils/numbers'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -60,7 +60,7 @@ class TotalDuration extends Component {
 
   renderAmount () {
     const { status, data } = this.state
-    const { format, multiplier, offset, units } = this.props
+    const { multiplier, offset, places, units } = this.props
     const amount = (offset + data) * multiplier
 
     switch (status) {
@@ -69,13 +69,13 @@ class TotalDuration extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return units ? formatDuration(amount) : numbro(amount).format(format)
+        return units ? formatDuration(amount) : formatNumber({ amount, places })
     }
   }
 
   renderAmountLabel () {
     const { status, data } = this.state
-    const { format, multiplier, offset, units } = this.props
+    const { multiplier, offset, places, units } = this.props
     const amount = (offset + data) * multiplier
 
     switch (status) {
@@ -86,7 +86,7 @@ class TotalDuration extends Component {
       default:
         return units
           ? formatDuration(amount, 'full')
-          : numbro(amount).format(format)
+          : formatNumber({ amount, places })
     }
   }
 }
@@ -114,9 +114,12 @@ TotalDuration.propTypes = {
   multiplier: PropTypes.number,
 
   /**
-   * The format of the number
+   * The max number of places after decimal point to display
    */
-  format: PropTypes.string,
+  /**
+   * The max number of places after decimal point to display
+   */
+  places: PropTypes.number,
 
   /**
    * The label of the metric
@@ -162,9 +165,9 @@ TotalDuration.propTypes = {
 }
 
 TotalDuration.defaultProps = {
-  format: '0,0',
   label: 'Total Duration',
   multiplier: 1,
+  places: 0,
   offset: 0,
   units: true
 }

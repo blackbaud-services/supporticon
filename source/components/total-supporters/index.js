@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import numbro from 'numbro'
+import { formatNumber } from '../../utils/numbers'
 import { fetchPagesTotals } from '../../api/pages-totals'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
-
 class TotalSupporters extends Component {
   constructor () {
     super()
@@ -77,7 +76,7 @@ class TotalSupporters extends Component {
   renderAmount () {
     const { status, data = {} } = this.state
 
-    const { format, offset, multiplier } = this.props
+    const { offset, multiplier, places } = this.props
 
     switch (status) {
       case 'fetching':
@@ -85,7 +84,7 @@ class TotalSupporters extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return numbro((offset + data) * multiplier).format(format)
+        return formatNumber({ amount: (offset + data) * multiplier, places })
     }
   }
 }
@@ -156,9 +155,9 @@ TotalSupporters.propTypes = {
   multiplier: PropTypes.number,
 
   /**
-   * The format of the number
+   * The max number of places after decimal point to display
    */
-  format: PropTypes.string,
+  places: PropTypes.number,
 
   /**
    * The label of the metric
@@ -192,7 +191,7 @@ TotalSupporters.defaultProps = {
   label: 'Supporters',
   offset: 0,
   multiplier: 1,
-  format: '0,0',
+  places: 0,
   type: 'individual'
 }
 

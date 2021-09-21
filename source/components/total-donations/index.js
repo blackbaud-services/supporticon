@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import numbro from 'numbro'
+import { formatNumber } from '../../utils/numbers'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -81,7 +81,7 @@ class TotalDonations extends Component {
   renderAmount () {
     const { status, data = {} } = this.state
 
-    const { format, offset, multiplier } = this.props
+    const { offset, multiplier } = this.props
 
     switch (status) {
       case 'fetching':
@@ -89,7 +89,7 @@ class TotalDonations extends Component {
       case 'failed':
         return <Icon name='warning' />
       default:
-        return numbro((offset + data.donations) * multiplier).format(format)
+        return formatNumber({ amount: (offset + data.donations) * multiplier })
     }
   }
 }
@@ -169,11 +169,6 @@ TotalDonations.propTypes = {
   multiplier: PropTypes.number,
 
   /**
-   * The format of the number
-   */
-  format: PropTypes.string,
-
-  /**
    * The label of the metric
    */
   label: PropTypes.string,
@@ -203,7 +198,6 @@ TotalDonations.propTypes = {
 
 TotalDonations.defaultProps = {
   excludeOffline: false,
-  format: '0,0',
   label: 'Donations',
   multiplier: 1,
   offset: 0
