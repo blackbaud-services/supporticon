@@ -31,15 +31,15 @@ export const setCurrencyFromCountry = location => {
     case 'au':
       return 'aud'
     case 'ca':
-      return 'CAD'
+      return 'cad'
     case 'hk':
-      return 'HKD'
+      return 'hkd'
     case 'ie':
-      return 'EUR'
+      return 'eur'
     case 'nz':
-      return 'NZD'
+      return 'nzd'
     case 'sg':
-      return 'SGD'
+      return 'sgd'
     case 'us':
       return 'usd'
     case 'za':
@@ -49,15 +49,20 @@ export const setCurrencyFromCountry = location => {
   }
 }
 
-export const formatNumber = ({ amount, places = 0, locale }) => {
+export const formatNumber = ({ amount, places = 0, locale, notation }) => {
   const country = !locale ? setLocaleFromCountry('gb') : locale
   return new Intl.NumberFormat(country, {
     maximumFractionDigits: amount > 999999 ? Math.max(1, places) : places,
-    notation: amount > 999999 ? 'compact' : 'standard'
+    notation: !notation ? (amount > 999999 ? 'compact' : 'standard') : notation
   }).format(amount)
 }
 
-export const formatCurrency = ({ amount, currencyCode = 'gbp', locale }) => {
+export const formatCurrency = ({
+  amount,
+  currencyCode = 'gbp',
+  locale,
+  notation
+}) => {
   const country = !locale ? setLocaleFromCurrency(currencyCode) : locale
   const isLargeNumber = amount > 999999
   const isWholeNumber = amount % 1 === 0
@@ -67,6 +72,6 @@ export const formatCurrency = ({ amount, currencyCode = 'gbp', locale }) => {
     currency: currencyCode.toUpperCase(),
     minimumFractionDigits: isWholeNumber || isLargeNumber ? 0 : 2,
     maximumFractionDigits: isLargeNumber ? 1 : 2,
-    notation: isLargeNumber ? 'compact' : 'standard'
+    notation: !notation ? (isLargeNumber ? 'compact' : 'standard') : notation
   }).format(amount)
 }
