@@ -1,85 +1,34 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { formatCurrency } from '../../utils/numbers'
 import { fetchDonationFeed, deserializeDonation } from '../../api/feeds'
+import useAsync from '../../hooks/use-async'
 
 import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
 import Ticker from 'constructicon/ticker'
 
-class DonationTicker extends Component {
-  constructor () {
-    super()
-    this.fetchData = this.fetchData.bind(this)
-    this.formatDonation = this.formatDonation.bind(this)
-    this.state = {
-      donations: [],
-      status: 'fetching'
-    }
-  }
-
-  componentDidMount () {
-    const { refreshInterval } = this.props
-    this.fetchData()
-    this.interval =
-      refreshInterval && setInterval(this.fetchData, refreshInterval)
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval)
-  }
-
-  fetchData () {
-    const {
-      campaign,
-      charity,
-      donationRef,
-      event,
-      fetchAll,
-      includeOffline,
-      layout,
-      limit,
-      page,
-      sort,
-      team
-    } = this.props
-
-    fetchDonationFeed({
-      campaign,
-      charity,
-      donationRef,
-      event,
-      fetchAll,
-      includeOffline,
-      limit,
-      page,
-      sort,
-      team
-    })
-      .then(donations => donations.map(deserializeDonation))
-      .then(donations =>
-        donations.filter(donation => {
-          if (donation.anonymous) return false
-          if (layout.indexOf('amount') > -1) return !!donation.amount
-          if (layout.indexOf('message') > -1) return !!donation.message
-          if (layout.indexOf('name') > -1) return !!donation.name
-          return true
-        })
-      )
-      .then(donations =>
-        donations.map(donation => this.formatDonation(donation))
-      )
-      .then(donations => this.setState({ donations, status: 'fetched' }))
-      .catch(() => this.setState({ status: 'failed' }))
-  }
-
-  formatDonation (donation) {
-    const { layout } = this.props
+const DonationTicker = ({
+  campaign,
+  charity,
+  donationRef,
+  event,
+  fetchAll,
+  includeOffline,
+  label,
+  layout,
+  limit,
+  page,
+  refreshInterval,
+  sort,
+  team,
+  ticker
+}) => {
+  const formatDonation = donation => {
     const formattedAmount = formatCurrency({
       amount: donation.amount,
       currencyCode: donation.currency
     })
-
     switch (layout) {
       case 'name-only':
         return donation.name
@@ -117,18 +66,46 @@ class DonationTicker extends Component {
     }
   }
 
-  render () {
-    const { label, ticker } = this.props
-    const { donations, status } = this.state
+  const fetchData = () =>
+    Promise.resolve()
+      .then(() =>
+        fetchDonationFeed({
+          campaign,
+          charity,
+          donationRef,
+          event,
+          fetchAll,
+          includeOffline,
+          limit,
+          page,
+          sort,
+          team
+        })
+      )
+      .then(response => response.map(deserializeDonation))
+      .then(deserializeDonations => {
+        const filteredDonations = deserializeDonations.filter(donation => {
+          if (donation.anonymous) return false
+          if (layout.indexOf('amount') > -1) return !!donation.amount
+          if (layout.indexOf('message') > -1) return !!donation.message
+          if (layout.indexOf('name') > -1) return !!donation.name
+          return true
+        })
+        const donations = filteredDonations.map(donation =>
+          formatDonation(donation)
+        )
+        return donations
+      })
 
-    if (status === 'fetched') {
-      return <Ticker label={label} items={donations} {...ticker} />
-    }
-    if (status === 'failed') {
-      return <Metric icon='warning' label='An error occurred' />
-    }
-    return <Loading />
+  const { status, data } = useAsync(fetchData, { refreshInterval })
+
+  if (status === 'fetched' && data) {
+    return <Ticker label={label} items={data} {...ticker} />
   }
+  if (status === 'failed') {
+    return <Metric icon='warning' label='An error occurred' amount={0} />
+  }
+  return <Loading />
 }
 
 DonationTicker.propTypes = {

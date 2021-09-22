@@ -1,8 +1,10 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
 import { formatNumber } from '../../utils/numbers'
+import { convertMetersToUnit } from '../../utils/units'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
+import useAsync from '../../hooks/use-async'
 
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
@@ -11,127 +13,99 @@ import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
 import Progress from 'constructicon/progress-bar'
 
-class FitnessProgressBar extends Component {
-  constructor () {
-    super()
-    this.calculatePercentage = this.calculatePercentage.bind(this)
-    this.fetchData = this.fetchData.bind(this)
-    this.state = { status: 'fetching' }
-  }
-
-  componentDidMount () {
-    const { refreshInterval } = this.props
-    this.fetchData()
-    this.interval =
-      refreshInterval && setInterval(this.fetchData, refreshInterval)
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval)
-  }
-
-  fetchData () {
-    const { campaign, fitnessTypes, startDate, endDate } = this.props
-
+const FitnessProgressBar = ({
+  campaign,
+  distanceLabel,
+  endDate,
+  eventDate,
+  fitnessTypes,
+  grid,
+  heading,
+  metric,
+  offset,
+  places,
+  progressBar,
+  remainingLabel,
+  refreshInterval,
+  startDate,
+  target,
+  targetLabel,
+  travelledLabel,
+  unit
+}) => {
+  const fetchData = () =>
     fetchFitnessTotals({
       campaign,
       startDate,
       endDate,
       types: fitnessTypes
-    })
-      .then(({ distance }) => this.setState({ status: 'fetched', distance }))
-      .catch(() => this.setState({ status: 'failed' }))
-  }
+    }).then(({ distance }) => distance)
 
-  calculateDaysRemaining (eventDate) {
+  const calculateDaysRemaining = eventDate => {
     const today = dayjs()
     const eventDateObj = dayjs(eventDate)
     const daysDiff = Math.ceil(eventDateObj.diff(today, 'days', true)) // we want to round up
     return Math.max(0, daysDiff)
   }
 
-  calculatePercentage () {
-    const { offset, target } = this.props
-    const { distance = 0 } = this.state
-    return Math.min(
-      100,
-      Math.floor(((distance / 1000 + offset) / target) * 100)
+  const calculatePercentage = () =>
+    Math.min(100, Math.floor(((data / 1000 + offset) / target) * 100))
+
+  const { data, status } = useAsync(fetchData, { refreshInterval })
+
+  const distance = convertMetersToUnit(data, unit)
+
+  if (status === 'fetched') {
+    return (
+      <Grid spacing={0.25} {...grid}>
+        <GridColumn xs={6}>
+          <Metric
+            align='left'
+            label={distanceLabel}
+            amount={`${formatNumber({
+              amount: distance + offset,
+              places
+            })}${unit}`}
+            {...metric}
+          />
+        </GridColumn>
+        <GridColumn xs={6} xsAlign='right'>
+          <Metric
+            align='right'
+            label={targetLabel}
+            amount={`${formatNumber({ amount: target, places })}${unit}`}
+            {...metric}
+          />
+        </GridColumn>
+        <GridColumn>
+          <Progress
+            alt='<%= progress %>% there'
+            progress={calculatePercentage()}
+            {...progressBar}
+          />
+        </GridColumn>
+        <GridColumn xs={6}>
+          {travelledLabel && (
+            <>
+              <Heading size={0} tag='strong' {...heading}>
+                {calculatePercentage()}%
+              </Heading>{' '}
+              {travelledLabel}
+            </>
+          )}
+        </GridColumn>
+        {remainingLabel && eventDate && (
+          <GridColumn xs={6} xsAlign='right'>
+            <Heading size={0} tag='strong' {...heading}>
+              {calculateDaysRemaining(eventDate)}
+            </Heading>{' '}
+            {remainingLabel}
+          </GridColumn>
+        )}
+      </Grid>
     )
   }
-
-  render () {
-    const {
-      distanceLabel,
-      eventDate,
-      grid,
-      heading,
-      metric,
-      offset,
-      places,
-      progressBar,
-      remainingLabel,
-      target,
-      targetLabel,
-      travelledLabel,
-      unit
-    } = this.props
-
-    const { status, distance: distanceInMeters = 0 } = this.state
-    const distanceInKm = distanceInMeters / 1000
-    const distance = unit === 'km' ? distanceInKm : distanceInKm * 0.621371
-
-    if (status === 'fetched') {
-      return (
-        <Grid spacing={0.25} {...grid}>
-          <GridColumn xs={6}>
-            <Metric
-              align='left'
-              label={distanceLabel}
-              amount={`${formatNumber({
-                amount: distance + offset,
-                places
-              })}${unit}`}
-              {...metric}
-            />
-          </GridColumn>
-          <GridColumn xs={6} xsAlign='right'>
-            <Metric
-              align='right'
-              label={targetLabel}
-              amount={`${formatNumber({ amount: target, places })}${unit}`}
-              {...metric}
-            />
-          </GridColumn>
-          <GridColumn>
-            <Progress
-              alt='<%= progress %>% there'
-              progress={this.calculatePercentage()}
-              {...progressBar}
-            />
-          </GridColumn>
-          <GridColumn xs={6}>
-            {travelledLabel && (
-              <>
-                <Heading size={0} tag='strong' {...heading}>
-                  {this.calculatePercentage()}%
-                </Heading>{' '}
-                {travelledLabel}
-              </>
-            )}
-          </GridColumn>
-          {remainingLabel && eventDate && (
-            <GridColumn xs={6} xsAlign='right'>
-              <Heading size={0} tag='strong' {...heading}>
-                {this.calculateDaysRemaining(eventDate)}
-              </Heading>{' '}
-              {remainingLabel}
-            </GridColumn>
-          )}
-        </Grid>
-      )
-    }
-    return <Loading />
-  }
+  return <Loading />
 }
 
 FitnessProgressBar.propTypes = {
@@ -217,7 +191,7 @@ FitnessProgressBar.propTypes = {
 }
 
 FitnessProgressBar.defaultProps = {
-  places: '0',
+  places: 0,
   unit: 'km',
   offset: 0
 }

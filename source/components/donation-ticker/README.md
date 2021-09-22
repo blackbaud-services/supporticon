@@ -6,6 +6,7 @@
 <DonationTicker
   campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   label='Donations'
+  withCleanup={true}
 />
 ```
 
@@ -30,5 +31,14 @@
   campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
   label='Messages'
   layout='name-message'
+/>
+```
+
+*Refresh Interval*
+
+```
+<DonationTicker
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  refreshInterval={10000}
 />
 ```

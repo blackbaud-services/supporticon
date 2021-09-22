@@ -1,44 +1,35 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import {
   fetchDonationTotals,
   deserializeDonationTotals
 } from '../../api/donation-totals'
+import useAsync from '../../hooks/use-async'
 import { formatCurrency, formatNumber } from '../../utils/numbers'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
-class TotalFundsRaised extends Component {
-  constructor () {
-    super()
-    this.fetchData = this.fetchData.bind(this)
-    this.state = { status: 'fetching' }
-  }
 
-  componentDidMount () {
-    const { refreshInterval } = this.props
-    this.fetchData()
-    this.interval =
-      refreshInterval && setInterval(this.fetchData, refreshInterval)
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval)
-  }
-
-  fetchData () {
-    const {
-      campaign,
-      charity,
-      donationRef,
-      event,
-      excludeOffline,
-      country,
-      startDate,
-      endDate
-    } = this.props
-
+const TotalFundsRaised = ({
+  campaign,
+  charity,
+  country,
+  currency,
+  donationRef,
+  endDate,
+  event,
+  excludeOffline,
+  icon,
+  label,
+  metric,
+  multiplier,
+  offset,
+  places,
+  refreshInterval,
+  startDate
+}) => {
+  const fetchData = () =>
     fetchDonationTotals({
       campaign,
       charity,
@@ -48,49 +39,27 @@ class TotalFundsRaised extends Component {
       includeOffline: !excludeOffline,
       startDate,
       endDate
-    })
-      .then(data => {
-        this.setState({
-          status: 'fetched',
-          data: deserializeDonationTotals(data, excludeOffline)
-        })
-      })
-      .catch(error => {
-        this.setState({
-          status: 'failed'
-        })
-        return Promise.reject(error)
-      })
-  }
+    }).then(data => deserializeDonationTotals(data, excludeOffline))
 
-  render () {
-    const { icon, label, metric } = this.props
+  const { data, status } = useAsync(fetchData, { refreshInterval })
 
+  if (status === 'failed') return <Icon name='warning' />
+  if (status === 'fetched' && data) {
+    const amount = (offset + data.raised) * multiplier
     return (
       <Metric
         icon={icon}
         label={label}
-        amount={this.renderAmount()}
+        amount={
+          currency
+            ? formatCurrency({ amount })
+            : formatNumber({ amount, places })
+        }
         {...metric}
       />
     )
   }
-
-  renderAmount () {
-    const { status, data = {} } = this.state
-    const { currency, offset, multiplier, places } = this.props
-    const amount = (offset + data.raised) * multiplier
-    switch (status) {
-      case 'fetching':
-        return <Loading />
-      case 'failed':
-        return <Icon name='warning' />
-      default:
-        return currency
-          ? formatCurrency({ amount })
-          : formatNumber({ amount, places })
-    }
-  }
+  return <Loading />
 }
 
 TotalFundsRaised.propTypes = {

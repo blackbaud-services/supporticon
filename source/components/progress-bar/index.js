@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
 import { formatCurrency, formatNumber } from '../../utils/numbers'
@@ -6,6 +6,7 @@ import {
   fetchDonationTotals,
   deserializeDonationTotals
 } from '../../api/donation-totals'
+import useAsync from '../../hooks/use-async'
 
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
@@ -14,37 +15,30 @@ import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
 import Progress from 'constructicon/progress-bar'
 
-class ProgressBar extends Component {
-  constructor () {
-    super()
-    this.calculatePercentage = this.calculatePercentage.bind(this)
-    this.fetchData = this.fetchData.bind(this)
-    this.state = { status: 'fetching' }
-  }
-
-  componentDidMount () {
-    const { refreshInterval } = this.props
-    this.fetchData()
-    this.interval =
-      refreshInterval && setInterval(this.fetchData, refreshInterval)
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval)
-  }
-
-  fetchData () {
-    const {
-      campaign,
-      charity,
-      country,
-      donationRef,
-      endDate,
-      event,
-      excludeOffline,
-      startDate
-    } = this.props
-
+const ProgressBar = ({
+  campaign,
+  charity,
+  country,
+  donationRef,
+  endDate,
+  event,
+  excludeOffline,
+  eventDate,
+  fundedLabel,
+  grid,
+  heading,
+  metric,
+  offset,
+  progressBar,
+  raisedLabel,
+  refreshInterval,
+  remainingLabel,
+  startDate,
+  target,
+  targetLabel,
+  useDonationCount
+}) => {
+  const fetchData = () =>
     fetchDonationTotals({
       campaign,
       charity,
@@ -54,100 +48,78 @@ class ProgressBar extends Component {
       event,
       includeOffline: !excludeOffline,
       startDate
-    })
-      .then(data => deserializeDonationTotals(data, excludeOffline))
-      .then(data => this.setState({ status: 'fetched', ...data }))
-      .catch(() => this.setState({ status: 'failed' }))
-  }
+    }).then(data => deserializeDonationTotals(data, excludeOffline))
 
-  calculateDaysRemaining (eventDate) {
+  const calculateDaysRemaining = eventDate => {
     const today = dayjs()
     const eventDateObj = dayjs(eventDate)
     const daysDiff = Math.ceil(eventDateObj.diff(today, 'days', true)) // we want to round up
     return Math.max(0, daysDiff)
   }
 
-  calculatePercentage () {
-    const { offset, target, useDonationCount } = this.props
-    const { raised = 0, donations = 0 } = this.state
-    const amount = useDonationCount ? donations : raised
+  const calculatePercentage = () => {
+    const amount = useDonationCount ? data.donations : data.raised
     return Math.min(100, Math.floor(((amount + offset) / target) * 100))
   }
 
-  render () {
-    const {
-      eventDate,
-      fundedLabel,
-      grid,
-      heading,
-      metric,
-      offset,
-      progressBar,
-      raisedLabel,
-      remainingLabel,
-      target,
-      targetLabel,
-      useDonationCount
-    } = this.props
+  const { status, data } = useAsync(fetchData, { refreshInterval })
 
-    const { raised, donations, status } = this.state
-    if (status === 'fetched') {
-      return (
-        <Grid spacing={0.25} {...grid}>
-          <GridColumn xs={6}>
-            <Metric
-              align='left'
-              label={raisedLabel}
-              amount={
-                useDonationCount
-                  ? formatNumber({ amount: donations + offset })
-                  : formatCurrency({ amount: raised + offset })
-              }
-              {...metric}
-            />
-          </GridColumn>
-          <GridColumn xs={6} xsAlign='right'>
-            <Metric
-              align='right'
-              label={targetLabel}
-              amount={
-                useDonationCount
-                  ? formatNumber({ amount: target })
-                  : formatCurrency({ amount: target })
-              }
-              {...metric}
-            />
-          </GridColumn>
-          <GridColumn>
-            <Progress
-              alt='<%= progress %>% there'
-              progress={this.calculatePercentage()}
-              {...progressBar}
-            />
-          </GridColumn>
-          <GridColumn xs={6}>
-            {fundedLabel && (
-              <>
-                <Heading size={0} tag='strong' {...heading}>
-                  {this.calculatePercentage()}%
-                </Heading>{' '}
-                {fundedLabel}
-              </>
-            )}
-          </GridColumn>
-          {remainingLabel && eventDate && (
-            <GridColumn xs={6} xsAlign='right'>
+  if (status === 'fetched') {
+    return (
+      <Grid spacing={0.25} {...grid}>
+        <GridColumn xs={6}>
+          <Metric
+            align='left'
+            label={raisedLabel}
+            amount={
+              useDonationCount
+                ? formatNumber({ amount: data.donations + offset })
+                : formatCurrency({ amount: data.raised + offset })
+            }
+            {...metric}
+          />
+        </GridColumn>
+        <GridColumn xs={6} xsAlign='right'>
+          <Metric
+            align='right'
+            label={targetLabel}
+            amount={
+              useDonationCount
+                ? formatNumber({ amount: target })
+                : formatCurrency({ amount: target })
+            }
+            {...metric}
+          />
+        </GridColumn>
+        <GridColumn>
+          <Progress
+            alt='<%= progress %>% there'
+            progress={calculatePercentage()}
+            {...progressBar}
+          />
+        </GridColumn>
+        <GridColumn xs={6}>
+          {fundedLabel && (
+            <>
               <Heading size={0} tag='strong' {...heading}>
-                {this.calculateDaysRemaining(eventDate)}
+                {calculatePercentage()}%
               </Heading>{' '}
-              {remainingLabel}
-            </GridColumn>
+              {fundedLabel}
+            </>
           )}
-        </Grid>
-      )
-    }
-    return <Loading />
+        </GridColumn>
+        {remainingLabel && eventDate && (
+          <GridColumn xs={6} xsAlign='right'>
+            <Heading size={0} tag='strong' {...heading}>
+              {calculateDaysRemaining(eventDate)}
+            </Heading>{' '}
+            {remainingLabel}
+          </GridColumn>
+        )}
+      </Grid>
+    )
   }
+  return <Loading />
 }
 
 ProgressBar.propTypes = {

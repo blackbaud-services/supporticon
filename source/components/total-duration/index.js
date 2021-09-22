@@ -1,94 +1,59 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
 import { formatDuration } from '../../utils/fitness'
 import { formatNumber } from '../../utils/numbers'
+import useAsync from '../../hooks/use-async'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
 
-class TotalDuration extends Component {
-  constructor () {
-    super()
-    this.fetchData = this.fetchData.bind(this)
-    this.state = { status: 'fetching' }
-  }
-
-  componentDidMount () {
-    const { refreshInterval } = this.props
-    this.fetchData()
-    this.interval =
-      refreshInterval && setInterval(this.fetchData, refreshInterval)
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval)
-  }
-
-  fetchData () {
-    const { activity, campaign, startDate, endDate } = this.props
-
+const TotalDuration = ({
+  activity,
+  campaign,
+  endDate,
+  icon,
+  label,
+  metric,
+  multiplier,
+  offset,
+  places,
+  refreshInterval,
+  startDate,
+  units
+}) => {
+  const fetchData = () =>
     fetchFitnessTotals({
       campaign,
       startDate,
       endDate,
       types: activity
-    })
-      .then(totals =>
-        this.setState({ status: 'fetched', data: totals.duration })
-      )
-      .catch(error => {
-        this.setState({ status: 'failed' })
-        return Promise.reject(error)
-      })
-  }
+    }).then(({ duration }) => duration)
 
-  render () {
-    const { icon, label, metric } = this.props
+  const { data, status } = useAsync(fetchData, { refreshInterval })
 
+  if (status === 'failed') return <Icon name='warning' />
+  if (status === 'fetched') {
+    const amount = (offset + data) * multiplier
     return (
       <Metric
         icon={icon}
         label={label}
-        amount={this.renderAmount()}
-        amountLabel={this.renderAmountLabel()}
+        amount={
+          units ? formatDuration(amount) : formatNumber({ amount, places })
+        }
+        amountLabel={
+          units
+            ? formatDuration(amount, 'full')
+            : formatNumber({ amount, places })
+        }
         {...metric}
       />
     )
   }
 
-  renderAmount () {
-    const { status, data } = this.state
-    const { multiplier, offset, places, units } = this.props
-    const amount = (offset + data) * multiplier
-
-    switch (status) {
-      case 'fetching':
-        return <Loading />
-      case 'failed':
-        return <Icon name='warning' />
-      default:
-        return units ? formatDuration(amount) : formatNumber({ amount, places })
-    }
-  }
-
-  renderAmountLabel () {
-    const { status, data } = this.state
-    const { multiplier, offset, places, units } = this.props
-    const amount = (offset + data) * multiplier
-
-    switch (status) {
-      case 'fetching':
-        return 'Loading'
-      case 'failed':
-        return 'Error'
-      default:
-        return units
-          ? formatDuration(amount, 'full')
-          : formatNumber({ amount, places })
-    }
-  }
+  return <Loading />
 }
 
 TotalDuration.propTypes = {

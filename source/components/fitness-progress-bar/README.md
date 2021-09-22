@@ -14,9 +14,10 @@
   distanceLabel='Walked'
   fitnessTypes='walk'
   targetLabel='Target'
-  target={500000}
+  target={50000}
   eventDate='2018-09-09'
   travelledLabel='travelled'
   remainingLabel='days remaining'
+  unit='mi'
 />
 ```
