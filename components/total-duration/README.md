@@ -20,6 +20,7 @@
 <TotalDuration
   campaign='31fde560-dc11-43ca-9696-e373818208a3'
   multiplier={0.5}
+  places={2}
   offset={1}
   units={false}
 />

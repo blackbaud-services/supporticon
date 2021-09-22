@@ -5,6 +5,7 @@
 ```
 <FitnessLeaderboard
   campaign='31fde560-dc11-43ca-9696-e373818208a3'
+  places={2}
 />
 ```
 
@@ -16,6 +17,7 @@
   limit={100}
   pageSize={10}
   showPage
+  unit={false}
   leaderboard={{
     columns: {
       sm: 2
@@ -86,6 +88,7 @@
   offset={-50000}
   page={1}
   pageSize={5}
+  places={3}
   units={false}
 />
 ```

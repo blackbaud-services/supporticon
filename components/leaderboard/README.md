@@ -4,6 +4,15 @@
 ```
 <Leaderboard
   campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  country='us'
+/>
+```
+
+*Set Country*
+```
+<Leaderboard
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  country='us'
 />
 ```
 
