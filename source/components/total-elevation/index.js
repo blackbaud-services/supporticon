@@ -1,90 +1,53 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
 import { formatElevation } from '../../utils/fitness'
 import { formatNumber } from '../../utils/numbers'
+import useAsync from '../../hooks/use-async'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
 
-class TotalElevation extends Component {
-  constructor () {
-    super()
-    this.fetchData = this.fetchData.bind(this)
-    this.state = { status: 'fetching' }
-  }
+const TotalElevation = ({
+  campaign,
+  endDate,
+  icon,
+  label,
+  metric,
+  miles,
+  multiplier,
+  offset,
+  places,
+  refreshInterval,
+  startDate,
+  units
+}) => {
+  const fetchData = () =>
+    fetchFitnessTotals({ campaign, startDate, endDate }).then(
+      ({ elevation }) => elevation
+    )
 
-  componentDidMount () {
-    const { refreshInterval } = this.props
-    this.fetchData()
-    this.interval =
-      refreshInterval && setInterval(this.fetchData, refreshInterval)
-  }
+  const { data, status } = useAsync(fetchData, { refreshInterval })
 
-  componentWillUnmount () {
-    clearInterval(this.interval)
-  }
-
-  fetchData () {
-    const { campaign, startDate, endDate } = this.props
-
-    return fetchFitnessTotals({ campaign, startDate, endDate })
-      .then(totals => totals.elevation)
-      .then(data => this.setState({ data, status: 'fetched' }))
-      .catch(error => {
-        this.setState({ status: 'failed' })
-        return Promise.reject(error)
-      })
-  }
-
-  render () {
-    const { icon, label, metric } = this.props
-
+  if (status === 'failed') return <Icon name='warning' />
+  if (status === 'fetched') {
+    const amount = (offset + data) * multiplier
     return (
       <Metric
         icon={icon}
         label={label}
-        amount={this.renderAmount()}
-        amountLabel={this.renderAmountLabel()}
+        amount={formatNumber({ amount, places })}
+        amountLabel={
+          units
+            ? formatElevation(amount, miles, 'full')
+            : formatNumber({ amount, places })
+        }
         {...metric}
       />
     )
   }
-
-  renderAmount () {
-    const { status, data } = this.state
-    const { miles, multiplier, offset, places, units } = this.props
-    const amount = (offset + data) * multiplier
-
-    switch (status) {
-      case 'fetching':
-        return <Loading />
-      case 'failed':
-        return <Icon name='warning' />
-      default:
-        return units
-          ? formatElevation(amount, miles)
-          : formatNumber({ amount, places })
-    }
-  }
-
-  renderAmountLabel () {
-    const { status, data } = this.state
-    const { miles, multiplier, offset, places, units } = this.props
-    const amount = (offset + data) * multiplier
-
-    switch (status) {
-      case 'fetching':
-        return 'Loading'
-      case 'failed':
-        return 'Error'
-      default:
-        return units
-          ? formatElevation(amount, miles, 'full')
-          : formatNumber({ amount, places })
-    }
-  }
+  return <Loading />
 }
 
 TotalElevation.propTypes = {

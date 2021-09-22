@@ -1,46 +1,33 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { formatNumber } from '../../utils/numbers'
+import {
+  fetchDonationTotals,
+  deserializeDonationTotals
+} from '../../api/donation-totals'
+import useAsync from '../../hooks/use-async'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
 
-import {
-  fetchDonationTotals,
-  deserializeDonationTotals
-} from '../../api/donation-totals'
-
-class TotalDonations extends Component {
-  constructor () {
-    super()
-    this.fetchData = this.fetchData.bind(this)
-    this.state = { status: 'fetching' }
-  }
-
-  componentDidMount () {
-    const { refreshInterval } = this.props
-    this.fetchData()
-    this.interval =
-      refreshInterval && setInterval(this.fetchData, refreshInterval)
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval)
-  }
-
-  fetchData () {
-    const {
-      campaign,
-      charity,
-      donationRef,
-      event,
-      excludeOffline,
-      country,
-      startDate,
-      endDate
-    } = this.props
-
+const TotalDonations = ({
+  campaign,
+  charity,
+  country,
+  donationRef,
+  endDate,
+  event,
+  excludeOffline,
+  icon,
+  label,
+  offset,
+  metric,
+  multiplier,
+  refreshInterval,
+  startDate
+}) => {
+  const fetchData = () =>
     fetchDonationTotals({
       campaign,
       charity,
@@ -50,48 +37,25 @@ class TotalDonations extends Component {
       includeOffline: !excludeOffline,
       startDate,
       endDate
-    })
-      .then(data => {
-        this.setState({
-          status: 'fetched',
-          data: deserializeDonationTotals(data, excludeOffline)
-        })
-      })
-      .catch(error => {
-        this.setState({
-          status: 'failed'
-        })
-        return Promise.reject(error)
-      })
-  }
+    }).then(data => deserializeDonationTotals(data, excludeOffline))
 
-  render () {
-    const { icon, label, metric } = this.props
+  const { data, status } = useAsync(fetchData, { refreshInterval })
 
+  if (status === 'failed') return <Icon name='warning' />
+  if (status === 'fetched') {
     return (
       <Metric
         icon={icon}
         label={label}
-        amount={this.renderAmount()}
+        amount={formatNumber({
+          amount: (offset + data.donations) * multiplier
+        })}
         {...metric}
       />
     )
   }
 
-  renderAmount () {
-    const { status, data = {} } = this.state
-
-    const { offset, multiplier } = this.props
-
-    switch (status) {
-      case 'fetching':
-        return <Loading />
-      case 'failed':
-        return <Icon name='warning' />
-      default:
-        return formatNumber({ amount: (offset + data.donations) * multiplier })
-    }
-  }
+  return <Loading />
 }
 
 TotalDonations.propTypes = {
