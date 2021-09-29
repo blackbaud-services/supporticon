@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { fetchFitnessTotals } from '../../api/fitness-totals'
 import { formatDistance } from '../../utils/fitness'
-import { formatCurrency } from '../../utils/numbers'
+import { formatNumber } from '../../utils/numbers'
 import useAsync from '../../hooks/use-async'
 
 import Icon from 'constructicon/icon'
@@ -35,6 +35,7 @@ const TotalDistance = ({
   const { data, status } = useAsync(fetchData, { refreshInterval })
 
   if (status === 'failed') return <Icon name='warning' />
+
   if (status === 'fetched') {
     const amount = (offset + data) * multiplier
     return (
@@ -44,17 +45,18 @@ const TotalDistance = ({
         amount={
           units
             ? formatDistance({ amount, miles, places })
-            : formatCurrency({ amount })
+            : formatNumber({ amount })
         }
         amountLabel={
           units
             ? formatDistance({ amount, miles, label: 'full', places })
-            : formatCurrency({ amount })
+            : formatNumber({ amount })
         }
         {...metric}
       />
     )
   }
+
   return <Loading />
 }
 
@@ -138,7 +140,7 @@ TotalDistance.defaultProps = {
   miles: false,
   multiplier: 1,
   offset: 0,
-  places: 0,
+  places: 2,
   units: true
 }
 

@@ -40,7 +40,7 @@ const TotalElevation = ({
         amount={formatNumber({ amount, places })}
         amountLabel={
           units
-            ? formatElevation(amount, miles, 'full')
+            ? formatElevation({ amount, label: 'full', miles, places })
             : formatNumber({ amount, places })
         }
         {...metric}

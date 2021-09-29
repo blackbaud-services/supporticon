@@ -5,7 +5,12 @@ import {
   deserializeDonationTotals
 } from '../../api/donation-totals'
 import useAsync from '../../hooks/use-async'
-import { formatCurrency, formatNumber } from '../../utils/numbers'
+import {
+  formatCurrency,
+  formatNumber,
+  setLocaleFromCountry
+} from '../../utils/numbers'
+import { currencyCode } from '../../utils/currencies'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -42,8 +47,10 @@ const TotalFundsRaised = ({
     }).then(data => deserializeDonationTotals(data, excludeOffline))
 
   const { data, status } = useAsync(fetchData, { refreshInterval })
+  const locale = setLocaleFromCountry(country)
 
   if (status === 'failed') return <Icon name='warning' />
+
   if (status === 'fetched' && data) {
     const amount = (offset + data.raised) * multiplier
     return (
@@ -52,13 +59,18 @@ const TotalFundsRaised = ({
         label={label}
         amount={
           currency
-            ? formatCurrency({ amount })
-            : formatNumber({ amount, places })
+            ? formatCurrency({
+                amount,
+                currencyCode: currencyCode(country),
+                locale
+              })
+            : formatNumber({ amount, locale, places })
         }
         {...metric}
       />
     )
   }
+
   return <Loading />
 }
 
@@ -175,6 +187,7 @@ TotalFundsRaised.propTypes = {
 }
 
 TotalFundsRaised.defaultProps = {
+  country: 'gb',
   currency: true,
   excludeOffline: false,
   label: 'Funds Raised',
