@@ -83,31 +83,28 @@ export const deserializeTeamPage = page => {
   }
 }
 
+const searchTeams = ({ campaign, limit, offset }) => client.servicesAPI
+  .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
+    params: { CampaignGuid: campaign, Take: limit, offset },
+    paramsSerializer
+  })
+  .then(response => response.data)
+
 const recursivelyFetchTeams = ({
-  CampaignGuid,
-  Take,
+  campaign,
+  limit,
   offset = 0,
   results = []
 }) => {
-  const params = {
-    CampaignGuid,
-    Take,
-    offset
-  }
-  return client.servicesAPI
-    .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
-      params,
-      paramsSerializer
-    })
-    .then(response => response.data)
+  return searchTeams({ campaign, limit, offset })
     .then(data => {
       const { next } = data
       const offset = next && next.split('offset=')[1]
       const updatedResults = [...results, ...data.results]
       if (offset) {
         return recursivelyFetchTeams({
-          CampaignGuid,
-          Take,
+          campaign,
+          limit,
           offset,
           results: updatedResults
         })
@@ -119,21 +116,16 @@ const recursivelyFetchTeams = ({
 
 export const fetchTeams = (options = required()) => {
   const { allTeams, campaign = required(), limit = 100 } = options
+  const campaigns = Array.isArray(campaign) ? campaign : campaign.split(',')
 
-  const params = {
-    CampaignGuid: campaign,
-    Take: limit
-  }
-  if (allTeams) {
-    return recursivelyFetchTeams(params)
-  } else {
-    return client.servicesAPI
-      .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
-        params,
-        paramsSerializer
-      })
-      .then(response => response.data.results)
-  }
+  return Promise.all(
+    campaigns.map(campaign =>
+      allTeams
+        ? recursivelyFetchTeams({ campaign, limit })
+        : searchTeams({ campaign, limit }).then(data => data.results)
+    )
+  )
+    .then(flatten)
 }
 
 export const fetchTeam = (id = required()) => {
