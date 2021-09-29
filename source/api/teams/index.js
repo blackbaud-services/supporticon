@@ -171,7 +171,7 @@ export const fetchTeamBySlug = (slug = required(), options = {}) => {
 
 export const fetchTeamFitness = (slug, options = {}) => {
   const params = {
-    limit: options.fitnesslimit,
+    limit: options.fitnesslimit || 100,
     start: options.startDate,
     end: options.endDate
   }
