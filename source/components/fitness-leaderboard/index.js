@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { formatNumber } from '../../utils/numbers'
+import { formatNumber, setLocaleFromCountry } from '../../utils/numbers'
 import {
   formatActivities,
   formatDistance,
@@ -209,9 +209,10 @@ class FitnessLeaderboard extends Component {
   }
 
   getMetric (leader) {
-    const { miles, multiplier, offset, places, sortBy, units } = this.props
+    const { country, miles, multiplier, offset, places, sortBy, units } = this.props
     const { totals = {} } = leader
     const distance = (offset + leader.distance) * multiplier
+    const locale = setLocaleFromCountry(country)
 
     switch (sortBy) {
       case 'activities':
@@ -219,23 +220,24 @@ class FitnessLeaderboard extends Component {
       case 'duration':
         return formatDuration((offset + totals.seconds) * multiplier)
       case 'elevation':
-        return formatElevation(
-          (offset + totals.meters) * multiplier,
+        return formatElevation({
+          amount: (offset + totals.meters) * multiplier,
+          locale,
           miles,
-          'abbreviation',
           places
-        )
+        })
       default:
         return units
-          ? formatDistance({ amount: distance, miles, places })
-          : formatNumber({ amount: distance, places })
+          ? formatDistance({ amount: distance, locale, miles, places })
+          : formatNumber({ amount: distance, locale, places })
     }
   }
 
   getMetricLabel (leader) {
-    const { miles, multiplier, offset, places, sortBy, units } = this.props
+    const { country, miles, multiplier, offset, places, sortBy, units } = this.props
     const { totals = {} } = leader
     const distance = (offset + leader.distance) * multiplier
+    const locale = setLocaleFromCountry(country)
 
     switch (sortBy) {
       case 'activities':
@@ -243,11 +245,13 @@ class FitnessLeaderboard extends Component {
       case 'duration':
         return formatDuration((offset + totals.seconds) * multiplier, 'full')
       case 'elevation':
-        return formatElevation(
-          (offset + totals.meters) * multiplier,
+        return formatElevation({
+          amount: (offset + totals.meters) * multiplier,
+          locale,
+          label: 'full',
           miles,
-          'full'
-        )
+          places
+        })
       default:
         return units
           ? formatDistance({ amount: distance, miles, label: 'full', places })
@@ -380,11 +384,13 @@ FitnessLeaderboard.propTypes = {
 
 FitnessLeaderboard.defaultProps = {
   activeOnly: true,
+  country: 'gb',
   filter: {},
   limit: 10,
   multiplier: 1,
   offset: 0,
   page: 1,
+  places: 2,
   showPage: false,
   sortBy: 'distance',
   subtitleMethod: item => item.subtitle,

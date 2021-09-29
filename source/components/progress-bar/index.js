@@ -1,7 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
-import { formatCurrency, formatNumber } from '../../utils/numbers'
+import {
+  formatCurrency,
+  formatNumber,
+  setLocaleFromCountry
+} from '../../utils/numbers'
 import {
   fetchDonationTotals,
   deserializeDonationTotals
@@ -29,6 +33,7 @@ const ProgressBar = ({
   heading,
   metric,
   offset,
+  places,
   progressBar,
   raisedLabel,
   refreshInterval,
@@ -63,6 +68,7 @@ const ProgressBar = ({
   }
 
   const { status, data } = useAsync(fetchData, { refreshInterval })
+  const locale = setLocaleFromCountry(country)
 
   if (status === 'fetched') {
     return (
@@ -73,8 +79,8 @@ const ProgressBar = ({
             label={raisedLabel}
             amount={
               useDonationCount
-                ? formatNumber({ amount: data.donations + offset })
-                : formatCurrency({ amount: data.raised + offset })
+                ? formatNumber({ amount: data.donations + offset, locale, places })
+                : formatCurrency({ amount: data.raised + offset, locale, places })
             }
             {...metric}
           />
@@ -85,8 +91,8 @@ const ProgressBar = ({
             label={targetLabel}
             amount={
               useDonationCount
-                ? formatNumber({ amount: target })
-                : formatCurrency({ amount: target })
+                ? formatNumber({ amount: target, locale })
+                : formatCurrency({ amount: target, locale })
             }
             {...metric}
           />
@@ -119,6 +125,7 @@ const ProgressBar = ({
       </Grid>
     )
   }
+
   return <Loading />
 }
 
@@ -232,6 +239,11 @@ ProgressBar.propTypes = {
   metric: PropTypes.object,
 
   /**
+   * The max number of places after decimal point to display
+   */
+  places: PropTypes.number,
+
+  /**
    * Props to be passed to the Constructicon ProgressBar component
    */
   progressBar: PropTypes.object,
@@ -248,8 +260,10 @@ ProgressBar.propTypes = {
 }
 
 ProgressBar.defaultProps = {
+  country: 'gb',
   excludeOffline: false,
-  offset: 0
+  offset: 0,
+  places: 0
 }
 
 export default ProgressBar

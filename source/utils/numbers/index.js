@@ -1,5 +1,11 @@
-const setLocaleFromCurrency = currencyCode => {
-  const code = currencyCode.toLowerCase()
+import merge from 'lodash/merge'
+import { currencyCode } from '../currencies'
+
+export const setLocaleFromCurrency = currency => {
+  if (typeof currency !== 'string') return 'en-GB'
+
+  const code = currency.toLowerCase()
+
   switch (code) {
     case 'aud':
       return 'en-AU'
@@ -23,56 +29,49 @@ const setLocaleFromCurrency = currencyCode => {
   }
 }
 
-export const setLocaleFromCountry = country => `en-${country.toUpperCase()}`
-
-export const setCurrencyFromCountry = location => {
-  const country = location.toLowerCase().replace(/(en|cy|fr|ga)-/, '')
-
-  switch (country) {
-    case 'au':
-      return 'aud'
-    case 'ca':
-      return 'cad'
-    case 'hk':
-      return 'hkd'
-    case 'ie':
-      return 'eur'
-    case 'nz':
-      return 'nzd'
-    case 'sg':
-      return 'sgd'
-    case 'us':
-      return 'usd'
-    case 'za':
-      return 'zar'
-    default:
-      return 'gbp'
-  }
+export const setLocaleFromCountry = country => {
+  if (typeof country !== 'string') return 'en-GB'
+  return `en-${country.toUpperCase()}`
 }
 
-export const formatNumber = ({ amount, places = 0, locale, notation }) => {
-  const country = locale || 'en-GB'
-  return new Intl.NumberFormat(country, {
-    maximumFractionDigits: amount > 999999 ? Math.max(1, places) : places,
-    notation: !notation ? (amount > 999999 ? 'compact' : 'standard') : notation
-  }).format(amount)
+export const formatNumber = ({
+  amount,
+  locale = 'en-GB',
+  notation = 'standard',
+  places = 0,
+  style = 'decimal',
+  ...options
+}) => {
+  const config = merge({}, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: Math.min(places, 20),
+    notation,
+    style
+  }, options)
+
+  return Intl.NumberFormat(locale, config).format(amount)
 }
 
 export const formatCurrency = ({
   amount,
-  currencyCode,
-  locale,
-  notation
+  currencyCode: currency,
+  currencyDisplay = 'symbol',
+  locale: baseLocale,
+  notation,
+  places
 }) => {
-  const country = locale || 'en-GB'
-  const isLargeNumber = amount > 999999
+  const locale = baseLocale || setLocaleFromCurrency(currency)
   const isWholeNumber = amount % 1 === 0
 
-  return new Intl.NumberFormat(country, {
-    style: 'currency',
-    currency: currencyCode ? currencyCode.toUpperCase() : setCurrencyFromCountry(country),
-    minimumFractionDigits: isWholeNumber || isLargeNumber ? 0 : 2,
-    maximumFractionDigits: isLargeNumber ? 1 : 2,
-    notation: !notation ? (isLargeNumber ? 'compact' : 'standard') : notation
-  }).format(amount)
+  return formatNumber({
+    amount,
+    currency: currency ? currency.toUpperCase() : currencyCode(locale),
+    currencyDisplay,
+    locale,
+    minimumFractionDigits: places && !isWholeNumber ? 2 : 0,
+    maximumFractionDigits: places ? 2 : 0,
+    notation,
+    places,
+    style: 'currency'
+  })
 }

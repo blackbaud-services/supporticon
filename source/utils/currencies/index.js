@@ -1,5 +1,7 @@
 export const currencyCode = (country = 'UK') => {
-  switch (country.toLowerCase()) {
+  const countryCode = country.toLowerCase().replace(/(en|cy|fr|ga)-/, '')
+
+  switch (countryCode) {
     case 'au':
       return 'AUD'
     case 'us':

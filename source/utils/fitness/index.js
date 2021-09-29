@@ -31,17 +31,18 @@ export const formatMeasurementDomain = sortBy => {
 export const formatDistance = ({
   amount,
   miles,
+  locale,
   label = 'abbreviation',
-  places = 0
+  places = 2
 }) => {
   if (miles) {
     return (
-      formatNumber({ amount: units.convertMetersToMiles(amount), places }) +
+      formatNumber({ amount: units.convertMetersToMiles(amount), locale, places }) +
       ` ${labels.miles[label]}`
     )
   } else {
     return (
-      formatNumber({ amount: units.convertMetersToKm(amount), places }) +
+      formatNumber({ amount: units.convertMetersToKm(amount), locale, places }) +
       ` ${labels.kilometers[label]}`
     )
   }
@@ -63,20 +64,21 @@ export const formatDuration = (duration, label = 'abbreviation') => {
   }
 }
 
-export const formatElevation = (
-  elevation,
+export const formatElevation = ({
+  amount,
   miles,
+  locale,
   label = 'abbreviation',
-  places
-) => {
+  places = 0
+}) => {
   if (miles) {
     return (
-      formatNumber({ amount: units.convertMetersToFeet(elevation), places }) +
+      formatNumber({ amount: units.convertMetersToFeet(amount), locale, places }) +
       ` ${labels.feet[label]}`
     )
   } else {
     return (
-      formatNumber({ amount: elevation, places }) + ` ${labels.meters[label]}`
+      formatNumber({ amount, locale, places }) + ` ${labels.meters[label]}`
     )
   }
 }

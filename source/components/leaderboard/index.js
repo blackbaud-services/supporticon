@@ -1,11 +1,8 @@
 import React, { Component } from 'react'
 import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'
-import {
-  formatCurrency,
-  formatNumber,
-  setCurrencyFromCountry
-} from '../../utils/numbers'
+import { formatCurrency, formatNumber, setLocaleFromCountry } from '../../utils/numbers'
+import { currencyCode } from '../../utils/currencies'
 
 import Filter from 'constructicon/filter'
 import Grid from 'constructicon/grid'
@@ -201,6 +198,7 @@ class Leaderboard extends Component {
       offset
     } = this.props
     const amount = (offset + leader.raised) * multiplier
+    const locale = setLocaleFromCountry(country)
     return (
       <LeaderboardItem
         key={i}
@@ -211,9 +209,11 @@ class Leaderboard extends Component {
           currency
             ? formatCurrency({
                 amount,
-                currencyCode: setCurrencyFromCountry(country)
+                currencyCode: leader.currency || currencyCode(country),
+                locale,
+                places
               })
-            : formatNumber({ amount, locale: country, places })
+            : formatNumber({ amount, locale, places })
         }
         href={leader.url}
         rank={leader.position}

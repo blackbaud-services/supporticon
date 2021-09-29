@@ -8,7 +8,12 @@ import {
   formatDuration,
   formatElevation
 } from '../../utils/fitness'
-import { formatCurrency, formatNumber } from '../../utils/numbers'
+import {
+  formatCurrency,
+  formatNumber,
+  setLocaleFromCountry
+} from '../../utils/numbers'
+import { currencyCode } from '../../utils/currencies'
 
 import Grid from 'constructicon/grid'
 import LeaderboardItem from 'constructicon/leaderboard-item'
@@ -20,6 +25,7 @@ import Section from 'constructicon/section'
 
 const TeamLeaderboard = ({
   activeOnly,
+  country,
   deserializeMethod,
   leaderboard,
   leaderboardItem,
@@ -53,6 +59,7 @@ const TeamLeaderboard = ({
 
   const renderAmount = (page, format) => {
     const amount = (offset + page[sortKey]) * multiplier
+    const locale = setLocaleFromCountry(country)
 
     if (units) {
       switch (sortBy) {
@@ -63,13 +70,17 @@ const TeamLeaderboard = ({
         case 'duration':
           return formatDuration(amount, format)
         case 'elevation':
-          return formatElevation(amount, miles, format)
+          return formatElevation({ amount, locale, miles, format })
         default:
-          return formatCurrency({ amount })
+          return formatCurrency({
+            amount,
+            locale,
+            currencyCode: currencyCode(country)
+          })
       }
     }
 
-    return formatNumber({ amount })
+    return formatNumber({ amount, locale })
   }
 
   const fetchData = () =>
