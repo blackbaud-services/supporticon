@@ -26,7 +26,7 @@ export const fetchLeaderboard = (params = required()) => {
     }).then(results => removeExcludedPages(results, params.excludePageIds))
   }
 
-  if (!isEmpty(params.campaign) && params.allPages) {
+  if (!isEmpty(params.campaign) && (params.allPages || params.q)) {
     return recursivelyFetchJGLeaderboard(
       getUID(params.campaign),
       params.q,
