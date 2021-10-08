@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
 
 const useAsync = (asyncFunction, options = {}) => {
-  const { withCleanup = true, refreshInterval } = options
+  const { withCleanup, refreshInterval } = options
   const intervalRef = useRef(null)
   const asyncRef = useRef(asyncFunction)
 
