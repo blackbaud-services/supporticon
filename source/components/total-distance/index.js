@@ -45,12 +45,12 @@ const TotalDistance = ({
         amount={
           units
             ? formatDistance({ amount, miles, places })
-            : formatNumber({ amount })
+            : formatNumber({ amount, places })
         }
         amountLabel={
           units
             ? formatDistance({ amount, miles, label: 'full', places })
-            : formatNumber({ amount })
+            : formatNumber({ amount, places })
         }
         {...metric}
       />

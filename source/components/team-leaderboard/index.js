@@ -57,7 +57,7 @@ const TeamLeaderboard = ({
     .map((page, index) => ({ ...page, position: index + 1 }))
     .slice(0, limit)
 
-  const renderAmount = (page, format) => {
+  const renderAmount = (page, label) => {
     const amount = (offset + page[sortKey]) * multiplier
     const locale = setLocaleFromCountry(country)
 
@@ -66,11 +66,11 @@ const TeamLeaderboard = ({
         case 'activities':
           return formatActivities(amount)
         case 'distance':
-          return formatDistance({ amount, miles, label: format })
+          return formatDistance({ amount, miles, label })
         case 'duration':
-          return formatDuration(amount, format)
+          return formatDuration({ amount, label })
         case 'elevation':
-          return formatElevation({ amount, locale, miles, format })
+          return formatElevation({ amount, label, locale, miles })
         default:
           return formatCurrency({
             amount,

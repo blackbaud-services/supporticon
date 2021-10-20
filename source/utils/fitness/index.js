@@ -48,7 +48,10 @@ export const formatDistance = ({
   }
 }
 
-export const formatDuration = (duration, label = 'abbreviation') => {
+export const formatDuration = ({
+  amount: duration,
+  label = 'abbreviation'
+}) => {
   if (duration >= 86400) {
     return `${Math.floor(dayjs.duration(duration, 'seconds').asDays())}${
       labels.days[label]
