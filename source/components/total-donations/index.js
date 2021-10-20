@@ -47,9 +47,7 @@ const TotalDonations = ({
       <Metric
         icon={icon}
         label={label}
-        amount={formatNumber({
-          amount: (offset + data.donations) * multiplier
-        })}
+        amount={formatNumber({ amount: (offset + data.donations) * multiplier })}
         {...metric}
       />
     )

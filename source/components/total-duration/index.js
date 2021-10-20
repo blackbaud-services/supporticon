@@ -41,11 +41,13 @@ const TotalDuration = ({
         icon={icon}
         label={label}
         amount={
-          units ? formatDuration(amount) : formatNumber({ amount, places })
+          units
+            ? formatDuration({ amount })
+            : formatNumber({ amount, places })
         }
         amountLabel={
           units
-            ? formatDuration(amount, 'full')
+            ? formatDuration({ amount, label: 'full' })
             : formatNumber({ amount, places })
         }
         {...metric}

@@ -218,7 +218,7 @@ class FitnessLeaderboard extends Component {
       case 'activities':
         return formatActivities((offset + totals.count) * multiplier)
       case 'duration':
-        return formatDuration((offset + totals.seconds) * multiplier)
+        return formatDuration({ amount: (offset + totals.seconds) * multiplier })
       case 'elevation':
         return formatElevation({
           amount: (offset + totals.meters) * multiplier,
@@ -243,7 +243,10 @@ class FitnessLeaderboard extends Component {
       case 'activities':
         return formatActivities((offset + totals.count) * multiplier)
       case 'duration':
-        return formatDuration((offset + totals.seconds) * multiplier, 'full')
+        return formatDuration({
+          amount: (offset + totals.seconds) * multiplier,
+          label: 'full'
+        })
       case 'elevation':
         return formatElevation({
           amount: (offset + totals.meters) * multiplier,
