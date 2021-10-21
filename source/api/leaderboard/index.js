@@ -18,7 +18,7 @@ import { getMonetaryValue } from '../../utils/totals'
  * @function fetches fundraising pages ranked by funds raised
  */
 export const fetchLeaderboard = (params = required()) => {
-  if (params.tagId || params.tagValue) {
+  if (params.tagId || params.tagValue || params.sortBy) {
     return getGraphQLeaderboard({
       ...params,
       id: getUID(params.campaign),
@@ -288,7 +288,8 @@ export const deserializeLeaderboard = (supporter, index) => {
     totalDonations:
       supporter.numberOfSupporters ||
       supporter.donationCount ||
-      lodashGet(supporter, 'donationSummary.donationCount'),
+      lodashGet(supporter, 'donationSummary.donationCount') ||
+      lodashGet(supporter, 'amounts[0].value'),
     url:
       supporter.url ||
       [baseUrl(), isTeam ? 'team' : 'fundraising', slug].join('/')

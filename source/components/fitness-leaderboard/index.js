@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { formatNumber, setLocaleFromCountry } from '../../utils/numbers'
+import { formatMeasurementDomain } from '../../utils/tags'
 import {
   formatActivities,
   formatDistance,
   formatDuration,
-  formatElevation,
-  formatMeasurementDomain
+  formatElevation
 } from '../../utils/fitness'
 
 import Filter from 'constructicon/filter'

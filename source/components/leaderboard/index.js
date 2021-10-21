@@ -3,6 +3,7 @@ import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'
 import { formatCurrency, formatNumber, setLocaleFromCountry } from '../../utils/numbers'
 import { currencyCode } from '../../utils/currencies'
+import { formatMeasurementDomain } from '../../utils/tags'
 
 import Filter from 'constructicon/filter'
 import Grid from 'constructicon/grid'
@@ -19,8 +20,10 @@ class Leaderboard extends Component {
   constructor () {
     super()
     this.fetchLeaderboard = this.fetchLeaderboard.bind(this)
+    this.handleData = this.handleData.bind(this)
     this.handleSetFilter = this.handleSetFilter.bind(this)
     this.renderLeader = this.renderLeader.bind(this)
+
     this.state = {
       status: 'fetching',
       q: null
@@ -54,15 +57,18 @@ class Leaderboard extends Component {
     this.fetchLeaderboard(q)
   }
 
-  handleData (data, excludeOffline, deserializeMethod, limit) {
+  handleData (data) {
+    const { excludeOffline, deserializeMethod, limit, sortBy } = this.props
+    const handleDeserializeData = deserializeMethod || deserializeLeaderboard
+
     const leaderboardData = data
       .filter(item => item.status !== 'Cancelled')
-      .map(deserializeMethod)
+      .map(handleDeserializeData)
       .map(item =>
         excludeOffline ? { ...item, raised: item.raised - item.offline } : item
       )
 
-    return orderBy(leaderboardData, ['raised'], ['desc'])
+    return orderBy(leaderboardData, [sortBy], ['desc'])
       .map((item, index) => ({ ...item, position: index + 1 }))
       .slice(0, limit)
   }
@@ -73,16 +79,15 @@ class Leaderboard extends Component {
       campaign,
       charity,
       country,
-      deserializeMethod,
       endDate,
       event,
-      excludeOffline,
       excludePageIds,
       limit,
       maxAmount,
       minAmount,
       page,
       pageIds,
+      sortBy,
       startDate,
       tagId,
       tagValue,
@@ -109,6 +114,7 @@ class Leaderboard extends Component {
       page,
       pageIds,
       q,
+      sortBy: formatMeasurementDomain(sortBy),
       startDate,
       tagId,
       tagValue,
@@ -117,12 +123,7 @@ class Leaderboard extends Component {
       .then(data => {
         this.setState({
           status: 'fetched',
-          data: this.handleData(
-            data,
-            excludeOffline,
-            deserializeMethod || deserializeLeaderboard,
-            limit
-          )
+          data: this.handleData(data)
         })
       })
       .catch(error => {
@@ -194,11 +195,16 @@ class Leaderboard extends Component {
       leaderboardItem = {},
       multiplier,
       places,
+      sortBy,
       subtitleMethod,
       offset
     } = this.props
-    const amount = (offset + leader.raised) * multiplier
+
+    const metric = sortBy === 'donations' ? leader.totalDonations : leader.raised
+    const amount = (offset + metric) * multiplier
     const locale = setLocaleFromCountry(country)
+    const showCurrency = currency && sortBy !== 'donations'
+
     return (
       <LeaderboardItem
         key={i}
@@ -206,7 +212,7 @@ class Leaderboard extends Component {
         subtitle={subtitleMethod(leader)}
         image={leader.image}
         amount={
-          currency
+          showCurrency
             ? formatCurrency({
                 amount,
                 currencyCode: leader.currency || currencyCode(country),
@@ -356,6 +362,11 @@ Leaderboard.propTypes = {
    * Interval (in milliseconds) to refresh data from API
    */
   refreshInterval: PropTypes.number,
+
+  /**
+   * The type of measurement to sort by
+   */
+  sortBy: PropTypes.oneOf(['raised', 'donations']),
 
   /**
    * The field to show as a subtitle

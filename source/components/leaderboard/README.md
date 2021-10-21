@@ -60,6 +60,15 @@
 />
 ```
 
+*Donations leaderboard*
+
+```
+<Leaderboard
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  sortBy='donations'
+/>
+```
+
 *Custom amount leaderboard (1 per $1000 raised)*
 
 ```
