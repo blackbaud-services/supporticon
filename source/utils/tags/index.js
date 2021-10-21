@@ -18,6 +18,21 @@ export const getPrimaryUnit = measurementDomain => {
   return 'meters'
 }
 
+export const formatMeasurementDomain = sortBy => {
+  switch (sortBy) {
+    case 'raised':
+      return 'donations_received'
+    case 'donations':
+      return 'donations_made'
+    case 'duration':
+      return 'elapsed_time'
+    case 'elevation':
+      return 'elevation_gain'
+    default:
+      return sortBy
+  }
+}
+
 export const measurementDomains = [
   'fundraising:donations_received',
   'fundraising:donations_made',

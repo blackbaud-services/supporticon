@@ -17,17 +17,6 @@ const labels = {
   meters: { abbreviation: 'm', full: 'meters' }
 }
 
-export const formatMeasurementDomain = sortBy => {
-  switch (sortBy) {
-    case 'duration':
-      return 'elapsed_time'
-    case 'elevation':
-      return 'elevation_gain'
-    default:
-      return sortBy
-  }
-}
-
 export const formatDistance = ({
   amount,
   miles,
