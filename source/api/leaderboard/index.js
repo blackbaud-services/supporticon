@@ -18,20 +18,20 @@ import { getMonetaryValue } from '../../utils/totals'
  * @function fetches fundraising pages ranked by funds raised
  */
 export const fetchLeaderboard = (params = required()) => {
-  if (params.tagId || params.tagValue || params.sortBy) {
-    return getGraphQLeaderboard({
-      ...params,
-      id: getUID(params.campaign),
-      type: 'campaign'
-    }).then(results => removeExcludedPages(results, params.excludePageIds))
-  }
-
   if (!isEmpty(params.campaign) && (params.allPages || params.q)) {
     return recursivelyFetchJGLeaderboard(
       getUID(params.campaign),
       params.q,
       params.limit
     ).then(results => removeExcludedPages(results, params.excludePageIds))
+  }
+
+  if (params.tagId || params.tagValue || params.sortBy) {
+    return getGraphQLeaderboard({
+      ...params,
+      id: getUID(params.campaign),
+      type: 'campaign'
+    }).then(results => removeExcludedPages(results, params.excludePageIds))
   }
 
   const isTeam = params.type === 'team'
@@ -289,7 +289,7 @@ export const deserializeLeaderboard = (supporter, index) => {
       supporter.numberOfSupporters ||
       supporter.donationCount ||
       lodashGet(supporter, 'donationSummary.donationCount') ||
-      lodashGet(supporter, 'amounts[0].value'),
+      lodashGet(supporter, 'amounts[0].value', 0),
     url:
       supporter.url ||
       [baseUrl(), isTeam ? 'team' : 'fundraising', slug].join('/')
