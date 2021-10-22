@@ -1,3 +1,4 @@
+import flatten from 'lodash/flatten'
 import lodashGet from 'lodash/get'
 import orderBy from 'lodash/orderBy'
 import { get, servicesAPI } from '../../utils/client'
@@ -20,7 +21,9 @@ import { getMonetaryValue } from '../../utils/totals'
 export const fetchLeaderboard = (params = required()) => {
   if (!isEmpty(params.campaign) && (params.allPages || params.q)) {
     return recursivelyFetchJGLeaderboard(
-      getUID(params.campaign),
+      Array.isArray(params.campaign)
+        ? params.campaign.map(getUID).join(',')
+        : getUID(params.campaign),
       params.q,
       params.q ? 10 : params.limit
     ).then(results => removeExcludedPages(results, params.excludePageIds))
@@ -258,6 +261,14 @@ const recursivelyFetchJGLeaderboard = (
   results = [],
   page = 1
 ) => {
+  if (campaign.split(',').length > 1) {
+    return Promise.all(
+      campaign.split(',').map(id => recursivelyFetchJGLeaderboard(id, q, limit))
+    )
+      .then(flatten)
+      .then(results => orderBy(results, ['raisedAmount'], ['desc']))
+  }
+
   const options = {
     params: { page, q }
   }
