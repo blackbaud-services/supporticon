@@ -1,5 +1,7 @@
+import flatten from 'lodash/flatten'
 import get from 'lodash/get'
 import kebabCase from 'lodash/kebabCase'
+import orderBy from 'lodash/orderBy'
 import * as client from '../client'
 import { required } from '../params'
 import { getPrimaryUnit, measurementDomains } from '../tags'
@@ -138,6 +140,26 @@ export const fetchLeaderboard = ({
   tagValue,
   type = 'campaign'
 }) => {
+  if (id.split(',').length > 1) {
+    return Promise.all(
+      id.split(',').map(idx =>
+        fetchLeaderboard({
+          id: idx,
+          activityType,
+          limit,
+          sortBy,
+          tagId,
+          tagValue,
+          type
+        })
+      )
+    )
+      .then(flatten)
+      .then(results =>
+        orderBy(results, [item => get(item, 'amounts[0].value', 0)], ['desc'])
+      )
+  }
+
   const leaderboardId = genId({
     id,
     measurementDomain: [activityType, sortBy].join(':'),

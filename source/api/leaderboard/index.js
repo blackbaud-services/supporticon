@@ -29,7 +29,9 @@ export const fetchLeaderboard = (params = required()) => {
   if (params.tagId || params.tagValue || params.sortBy) {
     return getGraphQLeaderboard({
       ...params,
-      id: getUID(params.campaign),
+      id: Array.isArray(params.campaign)
+        ? params.campaign.map(getUID).join(',')
+        : getUID(params.campaign),
       type: 'campaign'
     }).then(results => removeExcludedPages(results, params.excludePageIds))
   }

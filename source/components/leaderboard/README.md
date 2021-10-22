@@ -69,6 +69,16 @@
 />
 ```
 
+*Donations leaderboard (Multiple campaigns)*
+
+```
+<Leaderboard
+  campaign={['e8017c12-4119-41b0-b44a-2b3d9ccff22e', 'bcfb2b43-61ff-4812-9f06-af6384358d4b']}
+  sortBy='donations'
+  pageSize={10}
+/>
+```
+
 *Custom amount leaderboard (1 per $1000 raised)*
 
 ```
