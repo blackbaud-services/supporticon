@@ -22,7 +22,7 @@ export const fetchLeaderboard = (params = required()) => {
     return recursivelyFetchJGLeaderboard(
       getUID(params.campaign),
       params.q,
-      params.limit
+      params.q ? 10 : params.limit
     ).then(results => removeExcludedPages(results, params.excludePageIds))
   }
 
