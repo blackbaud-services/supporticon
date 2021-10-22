@@ -37,7 +37,11 @@ const DonationTicker = ({
       case 'message-only':
         return donation.message
       case 'name-message':
-        return <span>{[donation.name, donation.message].join(' - ')}</span>
+        return (
+          <span>
+            {[donation.name, donation.message].filter(Boolean).join(' - ')}
+          </span>
+        )
       case 'message-amount':
         return (
           <span>
@@ -47,7 +51,7 @@ const DonationTicker = ({
       case 'name-message-amount':
         return (
           <span>
-            {[donation.name, donation.message].join(' - ')}{' '}
+            {[donation.name, donation.message].filter(Boolean).join(' - ')}{' '}
             <strong>{formattedAmount}</strong>
           </span>
         )
