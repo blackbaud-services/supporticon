@@ -41,9 +41,9 @@ describe('Fetch Fitness Totals', () => {
   it('returns the distance for the campaign', done => {
     fetchFitnessTotals({ campaign: '12345', useLegacy: false }).then(
       response => {
-        expect(response.fitnessDistanceTotal).to.equal(100)
-        expect(response.fitnessElevationTotal).to.equal(100)
-        expect(response.fitnessDurationTotal).to.equal(60)
+        expect(response.distance).to.equal(100)
+        expect(response.elevation).to.equal(100)
+        expect(response.duration).to.equal(60)
         done()
       }
     )

@@ -22,6 +22,8 @@ const TotalDistance = ({
   places,
   refreshInterval,
   startDate,
+  tagId,
+  tagValue,
   units
 }) => {
   const fetchData = () =>
@@ -29,6 +31,8 @@ const TotalDistance = ({
       campaign,
       startDate,
       endDate,
+      tagId,
+      tagValue,
       types: activity
     }).then(({ distance }) => distance)
 
@@ -132,7 +136,17 @@ TotalDistance.propTypes = {
   /**
    * Interval (in milliseconds) to refresh data from API
    */
-  refreshInterval: PropTypes.number
+  refreshInterval: PropTypes.number,
+
+  /**
+   * The tag ID to filter by
+   */
+  tagId: PropTypes.string,
+
+  /**
+   * The tag value to filter by
+   */
+  tagValue: PropTypes.string
 }
 
 TotalDistance.defaultProps = {

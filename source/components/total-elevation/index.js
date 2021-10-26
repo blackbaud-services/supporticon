@@ -21,12 +21,18 @@ const TotalElevation = ({
   places,
   refreshInterval,
   startDate,
+  tagId,
+  tagValue,
   units
 }) => {
   const fetchData = () =>
-    fetchFitnessTotals({ campaign, startDate, endDate }).then(
-      ({ elevation }) => elevation
-    )
+    fetchFitnessTotals({
+      campaign,
+      endDate,
+      startDate,
+      tagId,
+      tagValue
+    }).then(({ elevation }) => elevation)
 
   const { data, status } = useAsync(fetchData, { refreshInterval })
 
@@ -37,7 +43,11 @@ const TotalElevation = ({
       <Metric
         icon={icon}
         label={label}
-        amount={formatNumber({ amount, places })}
+        amount={
+          units
+            ? formatElevation({ amount, miles, places })
+            : formatNumber({ amount, places })
+        }
         amountLabel={
           units
             ? formatElevation({ amount, label: 'full', miles, places })
@@ -122,7 +132,17 @@ TotalElevation.propTypes = {
   /**
    * Interval (in milliseconds) to refresh data from API
    */
-  refreshInterval: PropTypes.number
+  refreshInterval: PropTypes.number,
+
+  /**
+   * The tag ID to filter by
+   */
+  tagId: PropTypes.string,
+
+  /**
+   * The tag value to filter by
+   */
+  tagValue: PropTypes.string
 }
 
 TotalElevation.defaultProps = {
