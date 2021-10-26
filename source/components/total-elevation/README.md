@@ -26,3 +26,13 @@
   units={false}
 />
 ```
+
+### Filtered by tag
+
+```
+<TotalElevation
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  tagId='branch'
+  tagValue='Aberdeen'
+/>
+```

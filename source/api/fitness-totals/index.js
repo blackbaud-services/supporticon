@@ -11,29 +11,37 @@ export function fetchFitnessTotals ({
   offset = 0,
   useLegacy = true,
   startDate,
-  endDate
+  endDate,
+  tagId,
+  tagValue
 }) {
-  if (useLegacy) {
-    const params = {
-      campaignGuid: campaign,
-      limit,
-      offset,
-      start: startDate,
-      end: endDate
-    }
-
-    return client
-      .get('/v1/fitness/campaign', params, {}, { paramsSerializer })
+  if ((tagId && tagValue) || !useLegacy) {
+    return fetchTotals({
+      segment: `page:campaign:${campaign}`,
+      tagId: tagId || 'page:campaign',
+      tagValue: tagValue || `page:campaign:${campaign}`
+    })
+      .then(deserializeTotals)
       .then(result => ({
-        distance: result.totalAmount,
-        duration: result.totalAmountTaken,
-        elevation: result.totalAmountElevation
+        distance: result.fitnessDistanceTotal,
+        duration: result.fitnessDurationTotal,
+        elevation: result.fitnessElevationTotal
       }))
   }
 
-  return fetchTotals({
-    segment: `page:campaign:${campaign}`,
-    tagId: 'page:campaign',
-    tagValue: `page:campaign:${campaign}`
-  }).then(deserializeTotals)
+  const params = {
+    campaignGuid: campaign,
+    limit,
+    offset,
+    start: startDate,
+    end: endDate
+  }
+
+  return client
+    .get('/v1/fitness/campaign', params, {}, { paramsSerializer })
+    .then(result => ({
+      distance: result.totalAmount,
+      duration: result.totalAmountTaken,
+      elevation: result.totalAmountElevation
+    }))
 }
