@@ -38,4 +38,13 @@ describe('Fetch Pages Totals', () => {
       done()
     })
   })
+
+  it('uses the correct url to fetch totals by tag', done => {
+    fetchPagesTotals({ tagId: 'tag', tagValue: 'value' })
+    moxios.wait(function () {
+      const request = moxios.requests.mostRecent()
+      expect(request.url).to.include('v1/tags/search')
+      done()
+    })
+  })
 })

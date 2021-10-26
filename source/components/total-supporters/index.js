@@ -22,6 +22,8 @@ const TotalSupporters = ({
   offset,
   places,
   refreshInterval,
+  tagId,
+  tagValue,
   type,
   startDate
 }) => {
@@ -34,7 +36,9 @@ const TotalSupporters = ({
       country,
       type,
       startDate,
-      endDate
+      endDate,
+      tagId,
+      tagValue
     })
 
   const { data, status } = useAsync(fetchData, { refreshInterval })
@@ -156,7 +160,17 @@ TotalSupporters.propTypes = {
   /**
    * Interval (in milliseconds) to refresh data from API
    */
-  refreshInterval: PropTypes.number
+  refreshInterval: PropTypes.number,
+
+  /**
+   * The tag ID to filter by
+   */
+  tagId: PropTypes.string,
+
+  /**
+   * The tag value to filter by
+   */
+  tagValue: PropTypes.string
 }
 
 TotalSupporters.defaultProps = {
