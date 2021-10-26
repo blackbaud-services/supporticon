@@ -8,6 +8,7 @@ import {
 } from '../../utils/params'
 import { fetchDonations } from '../feeds'
 import { currencyCode } from '../../utils/currencies'
+import { fetchTotals, deserializeTotals } from '../../utils/totals'
 
 const fetchCampaignTotals = id =>
   Promise.all([
@@ -50,6 +51,15 @@ export const fetchDonationTotals = (params = required()) => {
   const campaignGuids = Array.isArray(params.campaign)
     ? params.campaign.map(getUID)
     : [getUID(params.campaign)]
+
+  if (campaignGuids.length && params.tagId && params.tagValue) {
+    return fetchTotals({
+      segment: `page:campaign:${campaignGuids[0]}`,
+      tagId: params.tagId,
+      tagValue: params.tagValue
+    })
+      .then(deserializeTotals)
+  }
 
   switch (dataSource(params)) {
     case 'donationRef':
@@ -103,6 +113,7 @@ export const fetchDonationTotals = (params = required()) => {
 
 export const deserializeDonationTotals = totals => ({
   raised:
+    totals.raised ||
     totals.totalRaised ||
     totals.raisedAmount ||
     totals.DonationsTotal ||
@@ -112,6 +123,7 @@ export const deserializeDonationTotals = totals => ({
     0,
   offline: totals.offlineAmount || totals.raisedAmountOfflineInGBP || 0,
   donations:
+    totals.donations ||
     totals.totalResults ||
     totals.numberOfDirectDonations ||
     totals.NumberOfDonations ||

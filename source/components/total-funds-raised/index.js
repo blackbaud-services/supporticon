@@ -32,7 +32,9 @@ const TotalFundsRaised = ({
   offset,
   places,
   refreshInterval,
-  startDate
+  startDate,
+  tagId,
+  tagValue
 }) => {
   const fetchData = () =>
     fetchDonationTotals({
@@ -43,7 +45,9 @@ const TotalFundsRaised = ({
       country,
       includeOffline: !excludeOffline,
       startDate,
-      endDate
+      endDate,
+      tagId,
+      tagValue
     }).then(data => deserializeDonationTotals(data, excludeOffline))
 
   const { data, status } = useAsync(fetchData, { refreshInterval })
@@ -183,7 +187,17 @@ TotalFundsRaised.propTypes = {
   /**
    * Interval (in milliseconds) to refresh data from API
    */
-  refreshInterval: PropTypes.number
+  refreshInterval: PropTypes.number,
+
+  /**
+   * The tag ID to filter by
+   */
+  tagId: PropTypes.string,
+
+  /**
+   * The tag value to filter by
+   */
+  tagValue: PropTypes.string
 }
 
 TotalFundsRaised.defaultProps = {
