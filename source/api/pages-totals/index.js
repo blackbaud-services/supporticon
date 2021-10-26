@@ -7,6 +7,7 @@ import {
   splitOnDelimiter
 } from '../../utils/params'
 import { currencyCode } from '../../utils/currencies'
+import { fetchPagesByTag } from '../pages'
 
 const fetchEvent = id =>
   get(`/v1/event/${id}/pages`).then(response => response.totalFundraisingPages)
@@ -25,6 +26,10 @@ const fetchCampaignTeams = id =>
     .then(response => response.data.totalResults)
 
 export const fetchPagesTotals = (params = required()) => {
+  if (params.tagId && params.tagValue) {
+    return fetchPagesByTag(params).then(res => res.numberOfHits)
+  }
+
   const eventIds = Array.isArray(params.event)
     ? params.event
     : [params.event]
