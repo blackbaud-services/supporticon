@@ -3,11 +3,11 @@ export const getPrimaryUnit = measurementDomain => {
     return 'count'
   }
 
-  if (measurementDomain.indexOf('donations_made') > -1) {
+  if (['fundraising:donations_made', 'fundraising:offline_donations_count'].indexOf(measurementDomain) > -1) {
     return 'count'
   }
 
-  if (measurementDomain.indexOf('donations_received') > -1) {
+  if (measurementDomain.indexOf('donations') > -1) {
     return 'gbp'
   }
 
@@ -22,6 +22,8 @@ export const formatMeasurementDomain = sortBy => {
   switch (sortBy) {
     case 'raised':
       return 'donations_received'
+    case 'offline':
+      return 'offline_donations'
     case 'donations':
       return 'donations_made'
     case 'duration':
@@ -36,6 +38,8 @@ export const formatMeasurementDomain = sortBy => {
 export const measurementDomains = [
   'fundraising:donations_received',
   'fundraising:donations_made',
+  'fundraising:offline_donations',
+  'fundraising:offline_donations_count',
   'any:activities',
   'any:distance',
   'any:elapsed_time',

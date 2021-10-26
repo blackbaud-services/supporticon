@@ -54,6 +54,12 @@ export const deserializeTotals = (totals, currency = 'GBP') =>
             raised: getAmountByCurrency(amounts, currency)
           }
 
+        case 'fundraising:offline_donations':
+          return {
+            ...acc,
+            offlineAmount: getAmountByCurrency(amounts, currency)
+          }
+
         case 'fundraising:donations_made':
           return {
             ...acc,
