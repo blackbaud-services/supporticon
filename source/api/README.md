@@ -19,6 +19,8 @@ Please note that not all endpoints accept all params, so refer to the API docs i
 - `country` (String) two letter country code (e.g. `au`)
 - `limit` (Integer) the number of results to fetch
 - `page` (Integer) the page of results to fetch
+- `tagId` (string) the tag ID to filter by
+- `tagValue` (string) the tag value to filter by
 
 # Table of contents
 
