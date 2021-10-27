@@ -179,11 +179,14 @@ export const fetchLeaderboard = ({
             ... on Page {
               slug
               title
+              createDate
               summary
               status
               legacyId
               url
               owner {
+                avatar
+                legacyId
                 name
               }
               donationSummary {

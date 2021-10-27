@@ -1,5 +1,6 @@
 import { getApiKey, isStaging, servicesAPI } from '../client'
 import get from 'lodash/get'
+import last from 'lodash/last'
 
 export const isValidJSON = json => {
   try {
@@ -41,7 +42,7 @@ export const apiUrl = () => `${baseUrl('api')}/${getApiKey()}`
 
 export const imageUrl = (image, template = 'CrowdfundingOwnerAvatar') => {
   return image
-    ? `${baseUrl('images')}/image/${image}?template=${template}`
+    ? `${baseUrl('images')}/image/${last(image.split('/'))}?template=${template}`
     : null
 }
 
