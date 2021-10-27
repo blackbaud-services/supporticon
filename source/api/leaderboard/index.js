@@ -80,7 +80,7 @@ export const fetchLeaderboard = (params = required()) => {
       .post('/v1/justgiving/graphql', {
         query,
         variables: {
-          id: params.campaign,
+          id: getUID(params.campaign),
           limit: params.limit || 100,
           type: params.type === 'team' ? 'TEAMS' : 'FUNDRAISERS'
         }
