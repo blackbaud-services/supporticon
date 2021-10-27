@@ -93,3 +93,30 @@
   subtitleMethod={item => `$${Math.round(item.raised)}`}
 />
 ```
+
+*Use graphql leaderboard*
+
+```
+<Leaderboard
+  campaign='27b2edbf-ad04-4f20-9a3e-76f37b4515b6'
+  country='us'
+  leaderboard={{
+    columns: { sm: 2 }
+  }}
+  limit={50}
+  pageSize={15}
+  useGraphql
+  useOwnerImage
+/>
+```
+
+*Use page owner image*
+
+```
+<Leaderboard
+  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  sortBy='raised'
+  useOwnerImage
+  limit={5}
+/>
+```
