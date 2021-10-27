@@ -36,6 +36,60 @@ export const fetchLeaderboard = (params = required()) => {
     }).then(results => removeExcludedPages(results, params.excludePageIds))
   }
 
+  if (params.campaign && params.useGraphql) {
+    const query = `
+      query($id: ID!, $limit: Int!, $type: PageLeaderboardType!,) {
+        page(type: CAMPAIGN, id: $id) {
+          leaderboard (first: $limit, type: $type) {
+            nodes {
+              createDate
+              legacyId
+              slug
+              status
+              title
+              cover {
+                ... on ImageMedia { url }
+              }
+              donationSummary {
+                totalAmount { value currencyCode }
+                onlineAmount { value currencyCode }
+                offlineAmount { value currencyCode }
+                donationCount
+              }
+              owner {
+                legacyId
+                name
+                avatar
+              }
+              targetWithCurrency {
+                value
+                currencyCode
+              }
+            }
+            totalCount
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+          }
+        }
+      }
+    `
+
+    return servicesAPI
+      .post('/v1/justgiving/graphql', {
+        query,
+        variables: {
+          id: params.campaign,
+          limit: params.limit || 100,
+          type: params.type === 'team' ? 'TEAMS' : 'FUNDRAISERS'
+        }
+      })
+      .then(response => response.data)
+      .then(result => lodashGet(result, 'data.page.leaderboard.nodes', []))
+      .then(pages => orderBy(pages, ['donationSummary.totalAmount.value'], ['desc']))
+  }
+
   const isTeam = params.type === 'team'
   const maxPerRequest = 20
   const { results = [], ...otherParams } = params
@@ -234,7 +288,7 @@ const recursivelyFetchJGLeaderboard = (
  */
 export const deserializeLeaderboard = (supporter, index) => {
   const isTeam = supporter.type === 'team'
-  const slug = supporter.pageShortName || supporter.shortName || supporter.slug
+  const slug = supporter.pageShortName || supporter.shortName || (supporter.slug ? supporter.slug.replace(/\/fundraising\//, '') : undefined)
   const owner =
     lodashGet(supporter, 'pageOwner.fullName') ||
     lodashGet(supporter, 'owner.firstName')
@@ -251,8 +305,10 @@ export const deserializeLeaderboard = (supporter, index) => {
     image: lodashGet(supporter, 'heroMedia.url')
       ? `${lodashGet(supporter, 'heroMedia.url')}?template=Size186x186Crop`
       : supporter.defaultImage ||
+        imageUrl(lodashGet(supporter, 'cover.url'), 'Size186x186Crop') ||
         imageUrl(lodashGet(supporter, 'pageImages[0]'), 'Size186x186Crop') ||
         imageUrl(supporter.photo, 'Size186x186Crop') ||
+        imageUrl(lodashGet(supporter, 'owner.avatar'), 'Size186x186Crop') ||
         (isTeam
           ? 'https://assets.blackbaud-sites.com/images/supporticon/user.svg'
           : apiImageUrl(slug, 'Size186x186Crop')),
@@ -268,6 +324,7 @@ export const deserializeLeaderboard = (supporter, index) => {
         getMonetaryValue(lodashGet(supporter, 'donationSummary.offlineAmount'))
     ),
     owner,
+    ownerImage: imageUrl(lodashGet(supporter, 'owner.avatar'), 'Size186x186Crop'),
     position: index + 1,
     raised: parseFloat(
       lodashGet(supporter, 'team.donationSummary.totalAmount') ||

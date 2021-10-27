@@ -91,7 +91,8 @@ class Leaderboard extends Component {
       startDate,
       tagId,
       tagValue,
-      type
+      type,
+      useGraphql
     } = this.props
 
     !refresh &&
@@ -118,7 +119,8 @@ class Leaderboard extends Component {
       startDate,
       tagId,
       tagValue,
-      type
+      type,
+      useGraphql
     })
       .then(data => {
         this.setState({
@@ -197,7 +199,8 @@ class Leaderboard extends Component {
       places,
       sortBy,
       subtitleMethod,
-      offset
+      offset,
+      useOwnerImage
     } = this.props
 
     const metric = sortBy === 'donations' ? leader.totalDonations : leader.raised
@@ -210,7 +213,7 @@ class Leaderboard extends Component {
         key={i}
         title={leader.name}
         subtitle={subtitleMethod(leader)}
-        image={leader.image}
+        image={useOwnerImage ? leader.ownerImage || leader.image : leader.image}
         amount={
           showCurrency
             ? formatCurrency({
