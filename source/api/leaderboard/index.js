@@ -288,7 +288,7 @@ const recursivelyFetchJGLeaderboard = (
  */
 export const deserializeLeaderboard = (supporter, index) => {
   const isTeam = supporter.type === 'team'
-  const slug = supporter.pageShortName || supporter.shortName || (supporter.slug ? supporter.slug.replace(/\/fundraising\//, '') : undefined)
+  const slug = supporter.pageShortName || supporter.shortName || (supporter.slug ? supporter.slug.replace(/fundraising\//, '') : undefined)
   const owner =
     lodashGet(supporter, 'pageOwner.fullName') ||
     lodashGet(supporter, 'owner.firstName')
