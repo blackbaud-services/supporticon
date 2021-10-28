@@ -21,8 +21,9 @@
 
 ```
 <TotalFundsRaised
-  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
-  tagId='branch'
-  tagValue='Aberdeen'
+  campaign='18e72585-37db-4773-b74a-b6b43b5f2418'
+  country='ie'
+  tagId='company-name-2'
+  tagValue='Facebook'
 />
 ```
