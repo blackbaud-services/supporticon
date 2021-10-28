@@ -58,7 +58,7 @@ export const fetchDonationTotals = (params = required()) => {
       tagId: params.tagId,
       tagValue: params.tagValue
     })
-      .then(deserializeTotals)
+      .then(totals => deserializeTotals(totals, currencyCode(params.country)))
   }
 
   switch (dataSource(params)) {
