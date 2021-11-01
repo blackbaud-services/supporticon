@@ -1,9 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { fetchFitnessTotals } from '../../api/fitness-totals'
+import { useFitnessTotals } from '../../hooks/use-fitness-totals'
 import { formatElevation } from '../../utils/fitness'
 import { formatNumber } from '../../utils/numbers'
-import useAsync from '../../hooks/use-async'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -19,44 +18,42 @@ const TotalElevation = ({
   multiplier,
   offset,
   places,
-  refreshInterval,
+  refreshInterval: refetchInterval,
   startDate,
   tagId,
   tagValue,
   units
 }) => {
-  const fetchData = () =>
-    fetchFitnessTotals({
-      campaign,
-      endDate,
-      startDate,
-      tagId,
-      tagValue
-    }).then(({ elevation }) => elevation)
+  const { data, status } = useFitnessTotals({
+    campaign,
+    endDate,
+    startDate,
+    tagId,
+    tagValue
+  }, { refetchInterval })
 
-  const { data, status } = useAsync(fetchData, { refreshInterval })
+  if (status === 'error') return <Icon name='warning' />
 
-  if (status === 'failed') return <Icon name='warning' />
-  if (status === 'fetched') {
-    const amount = (offset + data) * multiplier
+  if (status === 'success') {
+    const formatAmount = label => {
+      const amount = (offset + data.elevation) * multiplier
+
+      return units
+        ? formatElevation({ amount, miles, label, places })
+        : formatNumber({ amount, places })
+    }
+
     return (
       <Metric
         icon={icon}
         label={label}
-        amount={
-          units
-            ? formatElevation({ amount, miles, places })
-            : formatNumber({ amount, places })
-        }
-        amountLabel={
-          units
-            ? formatElevation({ amount, label: 'full', miles, places })
-            : formatNumber({ amount, places })
-        }
+        amount={formatAmount()}
+        amountLabel={formatAmount('full')}
         {...metric}
       />
     )
   }
+
   return <Loading />
 }
 
