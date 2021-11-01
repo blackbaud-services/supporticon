@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useFitnessLeaderboard } from '../../hooks/use-fitness-leaderboard'
 import { formatNumber, setLocaleFromCountry } from '../../utils/numbers'
 import { formatMeasurementDomain } from '../../utils/tags'
 import {
@@ -18,75 +19,38 @@ import PaginationLink from 'constructicon/pagination-link'
 import RichText from 'constructicon/rich-text'
 import Section from 'constructicon/section'
 
-import {
-  fetchFitnessLeaderboard,
-  deserializeFitnessLeaderboard
-} from '../../api/fitness-leaderboard'
-
-class FitnessLeaderboard extends Component {
-  constructor () {
-    super()
-    this.fetchLeaderboard = this.fetchLeaderboard.bind(this)
-    this.handleSetFilter = this.handleSetFilter.bind(this)
-    this.renderLeader = this.renderLeader.bind(this)
-    this.state = {
-      status: 'fetching',
-      q: null
-    }
-  }
-
-  componentDidMount () {
-    const { refreshInterval } = this.props
-    this.fetchLeaderboard()
-    this.interval =
-      refreshInterval &&
-      setInterval(
-        () => this.fetchLeaderboard(this.state.q, true),
-        refreshInterval
-      )
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval)
-  }
-
-  componentDidUpdate (prevProps) {
-    if (this.props !== prevProps) {
-      this.fetchLeaderboard(this.state.q)
-    }
-  }
-
-  handleSetFilter (q) {
-    this.setState({ q })
-    this.fetchLeaderboard(q)
-  }
-
-  fetchLeaderboard (q, refresh) {
-    const {
-      activeOnly,
-      activity,
-      campaign,
-      charity,
-      country,
-      deserializeMethod,
-      endDate,
-      excludePageIds,
-      limit,
-      page,
-      sortBy,
-      startDate,
-      tagId,
-      tagValue,
-      type
-    } = this.props
-
-    !refresh &&
-      this.setState({
-        status: 'fetching',
-        data: undefined
-      })
-
-    fetchFitnessLeaderboard({
+const FitnessLeaderboard = ({
+  activeOnly,
+  activity,
+  campaign,
+  charity,
+  country,
+  deserializeMethod,
+  endDate,
+  excludePageIds,
+  filter,
+  leaderboard,
+  leaderboardItem,
+  limit,
+  miles,
+  multiplier,
+  offset,
+  page,
+  pageSize,
+  places,
+  refreshInterval: refetchInterval,
+  showPage,
+  sortBy,
+  startDate,
+  subtitleMethod,
+  tagId,
+  tagValue,
+  type,
+  units
+}) => {
+  const [query, setQuery] = useState('')
+  const { data, status } = useFitnessLeaderboard(
+    {
       activeOnly,
       activity,
       campaign,
@@ -95,146 +59,30 @@ class FitnessLeaderboard extends Component {
       endDate,
       limit: limit + 10,
       page,
-      q,
+      q: query,
       sortBy: formatMeasurementDomain(sortBy),
       startDate,
       tagId,
       tagValue,
       type
-    })
-      .then(data => this.removeExcludedPages(excludePageIds, data, tagId))
-      .then(data =>
-        data.map(deserializeMethod || deserializeFitnessLeaderboard)
-      )
-      .then(data => data.slice(0, limit))
-      .then(data => {
-        this.setState({
-          status: 'fetched',
-          data
-        })
-      })
-      .catch(error => {
-        this.setState({
-          status: 'failed'
-        })
-        return Promise.reject(error)
-      })
-  }
-
-  removeExcludedPages (excludePageIds, pages, tagId) {
-    if (!excludePageIds) return pages
-
-    return pages.filter(page => {
-      const item = deserializeFitnessLeaderboard(page)
-      const id = tagId ? item.name : item.id
-
-      const excluded = Array.isArray(excludePageIds)
-        ? excludePageIds
-        : excludePageIds.split(',')
-
-      return excluded.indexOf(id.toString()) === -1
-    })
-  }
-
-  render () {
-    const { status, data = [] } = this.state
-    const { leaderboard, filter, pageSize, showPage } = this.props
-
-    return (
-      <div>
-        {filter && <Filter onChange={this.handleSetFilter} {...filter} />}
-        {status === 'fetching' && (
-          <LeaderboardWrapper {...leaderboard} loading />
-        )}
-        {status === 'error' && <LeaderboardWrapper {...leaderboard} error />}
-        {status === 'fetched' && data.length === 0 && (
-          <LeaderboardWrapper {...leaderboard} empty />
-        )}
-        {data.length > 0 && (
-          <Pagination max={pageSize} toPaginate={data}>
-            {({
-              currentPage,
-              isPaginated,
-              prev,
-              next,
-              canPrev,
-              canNext,
-              pageOf
-            }) => (
-              <>
-                <LeaderboardWrapper {...leaderboard}>
-                  {currentPage.map(this.renderLeader)}
-                </LeaderboardWrapper>
-                {pageSize && isPaginated && (
-                  <Section spacing={{ t: 0.5 }}>
-                    <Grid align='center' justify='center'>
-                      <PaginationLink
-                        onClick={prev}
-                        direction='prev'
-                        disabled={!canPrev}
-                      />
-                      {showPage && <RichText size={-1}>{pageOf}</RichText>}
-                      <PaginationLink
-                        onClick={next}
-                        direction='next'
-                        disabled={!canNext}
-                      />
-                    </Grid>
-                  </Section>
-                )}
-              </>
-            )}
-          </Pagination>
-        )}
-      </div>
-    )
-  }
-
-  renderLeader (leader, i) {
-    const { leaderboardItem = {}, subtitleMethod } = this.props
-
-    return (
-      <LeaderboardItem
-        key={i}
-        title={leader.name}
-        subtitle={subtitleMethod(leader)}
-        image={leader.image}
-        amount={this.getMetric(leader)}
-        amountLabel={this.getMetricLabel(leader)}
-        href={leader.url}
-        rank={leader.position}
-        {...leaderboardItem}
-      />
-    )
-  }
-
-  getMetric (leader) {
-    const { country, miles, multiplier, offset, places, sortBy, units } = this.props
-    const { totals = {} } = leader
-    const distance = (offset + leader.distance) * multiplier
-    const locale = setLocaleFromCountry(country)
-
-    switch (sortBy) {
-      case 'activities':
-        return formatActivities((offset + totals.count) * multiplier)
-      case 'duration':
-        return formatDuration({ amount: (offset + totals.seconds) * multiplier })
-      case 'elevation':
-        return formatElevation({
-          amount: (offset + totals.meters) * multiplier,
-          locale,
-          miles,
-          places
-        })
-      default:
-        return units
-          ? formatDistance({ amount: distance, locale, miles, places })
-          : formatNumber({ amount: distance, locale, places })
+    },
+    {
+      refetchInterval,
+      deserializeMethod
     }
+  )
+
+  const removeExcludedPages = (item) => {
+    const id = tagId ? item.name : item.id
+
+    const excluded = Array.isArray(excludePageIds)
+      ? excludePageIds
+      : excludePageIds.split(',')
+
+    return excluded.indexOf(id.toString()) === -1
   }
 
-  getMetricLabel (leader) {
-    const { country, miles, multiplier, offset, places, sortBy, units } = this.props
+  const getMetric = (leader, label) => {
     const { totals = {} } = leader
     const distance = (offset + leader.distance) * multiplier
     const locale = setLocaleFromCountry(country)
@@ -245,22 +93,85 @@ class FitnessLeaderboard extends Component {
       case 'duration':
         return formatDuration({
           amount: (offset + totals.seconds) * multiplier,
-          label: 'full'
+          label
         })
       case 'elevation':
         return formatElevation({
           amount: (offset + totals.meters) * multiplier,
+          label,
           locale,
-          label: 'full',
           miles,
           places
         })
       default:
         return units
-          ? formatDistance({ amount: distance, miles, label: 'full', places })
+          ? formatDistance({ amount: distance, miles, label, places })
           : formatNumber({ amount: distance, places })
     }
   }
+
+  const items = (
+    excludePageIds ? data.filter(removeExcludedPages) : data
+  ).slice(0, limit)
+
+  return (
+    <div>
+      {filter && <Filter onChange={setQuery} {...filter} />}
+      {status === 'loading' && <LeaderboardWrapper {...leaderboard} loading />}
+      {status === 'error' && <LeaderboardWrapper {...leaderboard} error />}
+      {status === 'success' && items.length === 0 && (
+        <LeaderboardWrapper {...leaderboard} empty />
+      )}
+      {items.length > 0 && (
+        <Pagination max={pageSize} toPaginate={items}>
+          {({
+            currentPage,
+            isPaginated,
+            prev,
+            next,
+            canPrev,
+            canNext,
+            pageOf
+          }) => (
+            <>
+              <LeaderboardWrapper {...leaderboard}>
+                {currentPage.map((item, index) => (
+                  <LeaderboardItem
+                    key={item.id || index}
+                    title={item.name}
+                    subtitle={subtitleMethod(item)}
+                    image={item.image}
+                    amount={getMetric(item)}
+                    amountLabel={getMetric(item, 'full')}
+                    href={item.url}
+                    rank={item.position}
+                    {...leaderboardItem}
+                  />
+                ))}
+              </LeaderboardWrapper>
+              {pageSize && isPaginated && (
+                <Section spacing={{ t: 0.5 }}>
+                  <Grid align='center' justify='center'>
+                    <PaginationLink
+                      onClick={prev}
+                      direction='prev'
+                      disabled={!canPrev}
+                    />
+                    {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                    <PaginationLink
+                      onClick={next}
+                      direction='next'
+                      disabled={!canNext}
+                    />
+                  </Grid>
+                </Section>
+              )}
+            </>
+          )}
+        </Pagination>
+      )}
+    </div>
+  )
 }
 
 FitnessLeaderboard.propTypes = {
