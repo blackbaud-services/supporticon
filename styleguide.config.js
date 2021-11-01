@@ -30,7 +30,9 @@ module.exports = {
     )
   },
   styleguideComponents: {
-    Logo: path.join(__dirname, 'lib/components/logo')
+    Logo: path.join(__dirname, 'lib/components/logo'),
+    StyleGuideRenderer: path.join(__dirname, 'lib/components/container'),
+    Wrapper: path.join(__dirname, 'lib/components/wrapper')
   },
   sections: [
     {
