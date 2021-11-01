@@ -77,6 +77,7 @@ export const deserializeTeamPage = page => {
     subtitle: get(page, 'owner.name'),
     story: page.story,
     target: getMonetaryValue(page.targetWithCurrency),
+    totalDonations: get(page, 'donationSummary.numberOfDonations'),
     url: page.url,
     type: 'individual',
     uuid: page.legacyId
