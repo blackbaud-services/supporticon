@@ -1,10 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {
-  fetchDonationTotals,
-  deserializeDonationTotals
-} from '../../api/donation-totals'
-import useAsync from '../../hooks/use-async'
+import { useDonationTotals } from '../../hooks/use-donation-totals'
 import {
   formatCurrency,
   formatNumber,
@@ -31,32 +27,31 @@ const TotalFundsRaised = ({
   multiplier,
   offset,
   places,
-  refreshInterval,
+  refreshInterval: refetchInterval,
   startDate,
   tagId,
   tagValue
 }) => {
-  const fetchData = () =>
-    fetchDonationTotals({
-      campaign,
-      charity,
-      donationRef,
-      event,
-      country,
-      includeOffline: !excludeOffline,
-      startDate,
-      endDate,
-      tagId,
-      tagValue
-    }).then(data => deserializeDonationTotals(data, excludeOffline))
+  const { data, status } = useDonationTotals({
+    campaign,
+    charity,
+    donationRef,
+    event,
+    country,
+    includeOffline: !excludeOffline,
+    startDate,
+    endDate,
+    tagId,
+    tagValue
+  }, { refetchInterval })
 
-  const { data, status } = useAsync(fetchData, { refreshInterval })
   const locale = setLocaleFromCountry(country)
 
-  if (status === 'failed') return <Icon name='warning' />
+  if (status === 'error') return <Icon name='warning' />
 
-  if (status === 'fetched' && data) {
+  if (status === 'success') {
     const amount = (offset + data.raised) * multiplier
+
     return (
       <Metric
         icon={icon}
