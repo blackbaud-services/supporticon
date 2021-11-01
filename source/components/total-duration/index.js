@@ -1,9 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { fetchFitnessTotals } from '../../api/fitness-totals'
+import { useFitnessTotals } from '../../hooks/use-fitness-totals'
 import { formatDuration } from '../../utils/fitness'
 import { formatNumber } from '../../utils/numbers'
-import useAsync from '../../hooks/use-async'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -19,41 +18,37 @@ const TotalDuration = ({
   multiplier,
   offset,
   places,
-  refreshInterval,
+  refreshInterval: refetchInterval,
   startDate,
   tagId,
   tagValue,
   units
 }) => {
-  const fetchData = () =>
-    fetchFitnessTotals({
-      campaign,
-      startDate,
-      endDate,
-      tagId,
-      tagValue,
-      types: activity
-    }).then(({ duration }) => duration)
+  const { data, status } = useFitnessTotals({
+    campaign,
+    endDate,
+    startDate,
+    tagId,
+    tagValue
+  }, { refetchInterval })
 
-  const { data, status } = useAsync(fetchData, { refreshInterval })
+  if (status === 'error') return <Icon name='warning' />
 
-  if (status === 'failed') return <Icon name='warning' />
-  if (status === 'fetched') {
-    const amount = (offset + data) * multiplier
+  if (status === 'success') {
+    const formatAmount = label => {
+      const amount = (offset + data.duration) * multiplier
+
+      return units
+        ? formatDuration({ amount, label })
+        : formatNumber({ amount, places })
+    }
+
     return (
       <Metric
         icon={icon}
         label={label}
-        amount={
-          units
-            ? formatDuration({ amount })
-            : formatNumber({ amount, places })
-        }
-        amountLabel={
-          units
-            ? formatDuration({ amount, label: 'full' })
-            : formatNumber({ amount, places })
-        }
+        amount={formatAmount()}
+        amountLabel={formatAmount('full')}
         {...metric}
       />
     )
@@ -84,9 +79,6 @@ TotalDuration.propTypes = {
    */
   multiplier: PropTypes.number,
 
-  /**
-   * The max number of places after decimal point to display
-   */
   /**
    * The max number of places after decimal point to display
    */
