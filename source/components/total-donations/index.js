@@ -1,11 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { useDonationTotals } from '../../hooks/use-donation-totals'
 import { formatNumber } from '../../utils/numbers'
-import {
-  fetchDonationTotals,
-  deserializeDonationTotals
-} from '../../api/donation-totals'
-import useAsync from '../../hooks/use-async'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -24,29 +20,27 @@ const TotalDonations = ({
   offset,
   metric,
   multiplier,
-  refreshInterval,
+  refreshInterval: refetchInterval,
   startDate,
   tagId,
   tagValue
 }) => {
-  const fetchData = () =>
-    fetchDonationTotals({
-      campaign,
-      charity,
-      donationRef,
-      event,
-      country,
-      includeOffline: !excludeOffline,
-      startDate,
-      endDate,
-      tagId,
-      tagValue
-    }).then(data => deserializeDonationTotals(data, excludeOffline))
+  const { data, status } = useDonationTotals({
+    campaign,
+    charity,
+    donationRef,
+    event,
+    country,
+    includeOffline: !excludeOffline,
+    startDate,
+    endDate,
+    tagId,
+    tagValue
+  }, { refetchInterval })
 
-  const { data, status } = useAsync(fetchData, { refreshInterval })
+  if (status === 'error') return <Icon name='warning' />
 
-  if (status === 'failed') return <Icon name='warning' />
-  if (status === 'fetched') {
+  if (status === 'success') {
     return (
       <Metric
         icon={icon}
