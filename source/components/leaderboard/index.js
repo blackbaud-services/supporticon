@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
+import flatten from 'lodash/flatten'
 import orderBy from 'lodash/orderBy'
+import uniqBy from 'lodash/uniqBy'
 import PropTypes from 'prop-types'
 import { formatCurrency, formatNumber, setLocaleFromCountry } from '../../utils/numbers'
 import { currencyCode } from '../../utils/currencies'
@@ -58,17 +60,20 @@ class Leaderboard extends Component {
   }
 
   handleData (data) {
-    const { excludeOffline, deserializeMethod, limit, sortBy } = this.props
+    const { allPages, excludeOffline, deserializeMethod, limit, sortBy, tagId } = this.props
     const handleDeserializeData = deserializeMethod || deserializeLeaderboard
 
     const leaderboardData = data
-      .filter(item => item.status !== 'Cancelled')
+      .filter(item => item.status ? item.status.toLowerCase() !== 'cancelled' : true)
       .map(handleDeserializeData)
       .map(item =>
         excludeOffline ? { ...item, raised: item.raised - item.offline } : item
       )
+      .filter(item => allPages ? true : !!item.raised)
 
-    return orderBy(leaderboardData, [sortBy], ['desc'])
+    const orderedData = orderBy(leaderboardData, [sortBy || 'raised'], ['desc'])
+
+    return (tagId ? orderedData : uniqBy(orderedData, 'slug'))
       .map((item, index) => ({ ...item, position: index + 1 }))
       .slice(0, limit)
   }
@@ -91,8 +96,7 @@ class Leaderboard extends Component {
       startDate,
       tagId,
       tagValue,
-      type,
-      useGraphql
+      type
     } = this.props
 
     !refresh &&
@@ -101,7 +105,7 @@ class Leaderboard extends Component {
         data: undefined
       })
 
-    fetchLeaderboard({
+    const params = {
       allPages,
       campaign,
       charity,
@@ -119,9 +123,16 @@ class Leaderboard extends Component {
       startDate,
       tagId,
       tagValue,
-      type,
-      useGraphql
-    })
+      type
+    }
+
+    Promise.all([
+      (allPages || event || sortBy || q || tagId || tagValue)
+        ? Promise.resolve([])
+        : fetchLeaderboard({ ...params, useGraphql: true }),
+      fetchLeaderboard(params)
+    ])
+      .then(flatten)
       .then(data => {
         this.setState({
           status: 'fetched',

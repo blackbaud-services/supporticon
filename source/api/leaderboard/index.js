@@ -19,7 +19,7 @@ import { getMonetaryValue } from '../../utils/totals'
  * @function fetches fundraising pages ranked by funds raised
  */
 export const fetchLeaderboard = (params = required()) => {
-  if (!isEmpty(params.campaign) && (params.allPages || params.q)) {
+  if (!isEmpty(params.campaign) && (params.allPages || params.q) && params.type !== 'team') {
     return recursivelyFetchJGLeaderboard(
       Array.isArray(params.campaign)
         ? params.campaign.map(getUID).join(',')
@@ -91,6 +91,9 @@ export const fetchLeaderboard = (params = required()) => {
       .then(response => response.data)
       .then(result => lodashGet(result, 'data.page.leaderboard.nodes', []))
       .then(pages => orderBy(pages, ['donationSummary.totalAmount.value'], ['desc']))
+      .then(results =>
+        results.filter(result => result.slug.indexOf(params.type === 'team' ? 'team/' : 'fundraising/') === 0)
+      )
   }
 
   const isTeam = params.type === 'team'
@@ -298,8 +301,8 @@ const recursivelyFetchJGLeaderboard = (
  * @function a default deserializer for leaderboard pages
  */
 export const deserializeLeaderboard = (supporter, index) => {
-  const isTeam = supporter.type === 'team'
-  const slug = supporter.pageShortName || supporter.shortName || (supporter.slug ? supporter.slug.replace(/fundraising\//, '') : undefined)
+  const isTeam = supporter.type === 'team' || lodashGet(supporter, 'slug', '').indexOf('team/') === 0
+  const slug = supporter.pageShortName || supporter.shortName || (supporter.slug ? supporter.slug.replace(/(fundraising|team)\//, '') : undefined)
   const owner =
     lodashGet(supporter, 'pageOwner.fullName') ||
     lodashGet(supporter, 'owner.firstName')
