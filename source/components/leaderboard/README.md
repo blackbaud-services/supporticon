@@ -36,8 +36,11 @@
 
 ```
 <Leaderboard
-  campaign='e5e9b4eb-b97c-415d-b324-004708c0bd38'
+  campaign='8d4164a5-e48d-45b7-9a37-41e2397de46f'
   type='team'
+  country='us'
+  limit={50}
+  pageSize={20}
 />
 ```
 
