@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import flatten from 'lodash/flatten'
+import isEmpty from 'lodash/isEmpty'
 import orderBy from 'lodash/orderBy'
 import uniqBy from 'lodash/uniqBy'
 import PropTypes from 'prop-types'
@@ -127,7 +128,7 @@ class Leaderboard extends Component {
     }
 
     Promise.all([
-      (allPages || event || sortBy || q || tagId || tagValue)
+      (allPages || !isEmpty(event) || sortBy || q || tagId || tagValue)
         ? Promise.resolve([])
         : fetchLeaderboard({ ...params, useGraphql: true }),
       fetchLeaderboard(params)
