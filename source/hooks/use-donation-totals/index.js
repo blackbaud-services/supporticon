@@ -1,4 +1,5 @@
 import { useQuery } from 'react-query'
+import pickBy from 'lodash/pickBy'
 import {
   fetchDonationTotals,
   deserializeDonationTotals
@@ -6,7 +7,7 @@ import {
 
 export const useDonationTotals = (params, options = {}) =>
   useQuery(
-    ['donationTotals', params],
+    ['donationTotals', pickBy(params)],
     () => fetchDonationTotals(params).then(deserializeDonationTotals),
     options
   )
