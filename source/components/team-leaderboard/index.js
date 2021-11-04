@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import { useQuery } from 'react-query'
 import PropTypes from 'prop-types'
 import orderBy from 'lodash/orderBy'
 import { deserializeTeamPage, fetchTeamPages } from '../../api/teams'
@@ -34,15 +35,24 @@ const TeamLeaderboard = ({
   multiplier,
   offset,
   pageSize,
-  refreshInterval,
+  refreshInterval: refetchInterval,
   showPage,
   sortBy,
   subtitleMethod,
   team,
   units
 }) => {
-  const [pages, setPages] = useState([])
-  const [status, setStatus] = useState('fetching')
+  const { data: pages, status } = useQuery(
+    ['teamLeaderboard', team],
+    () =>
+      fetchTeamPages(team)
+        .then(data => data.map(deserializeMethod || deserializeTeamPage))
+        .then(pages => activeOnly ? pages.filter(page => page.active) : pages),
+    {
+      placeholderData: [],
+      refetchInterval
+    }
+  )
 
   const sortKeys = {
     activities: 'fitnessCount',
@@ -83,31 +93,12 @@ const TeamLeaderboard = ({
     return formatNumber({ amount, locale })
   }
 
-  const fetchData = () =>
-    fetchTeamPages(team)
-      .then(data => data.map(deserializeMethod || deserializeTeamPage))
-      .then(pages => (activeOnly ? pages.filter(page => page.active) : pages))
-      .then(setPages)
-      .then(() => setStatus('fetched'))
-      .catch(error => {
-        setStatus('failed')
-        return Promise.reject(error)
-      })
-
-  useEffect(() => {
-    fetchData()
-
-    if (refreshInterval) {
-      setInterval(fetchData, refreshInterval)
-    }
-  }, [])
-
-  if (status === 'fetching' || status === 'failed') {
+  if (status === 'loading' || status === 'error') {
     return (
       <Leaderboard
         {...leaderboard}
-        loading={status === 'fetching'}
-        error={status === 'failed'}
+        loading={status === 'loading'}
+        error={status === 'error'}
       />
     )
   }
