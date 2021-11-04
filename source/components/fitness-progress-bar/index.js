@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
 import { formatNumber } from '../../utils/numbers'
 import { convertMetersToUnit } from '../../utils/units'
-import { fetchFitnessTotals } from '../../api/fitness-totals'
-import useAsync from '../../hooks/use-async'
+import { useFitnessTotals } from '../../hooks/use-fitness-totals'
 
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
@@ -18,7 +17,6 @@ const FitnessProgressBar = ({
   distanceLabel,
   endDate,
   eventDate,
-  fitnessTypes,
   grid,
   heading,
   metric,
@@ -26,20 +24,18 @@ const FitnessProgressBar = ({
   places,
   progressBar,
   remainingLabel,
-  refreshInterval,
+  refreshInterval: refetchInterval,
   startDate,
   target,
   targetLabel,
   travelledLabel,
   unit
 }) => {
-  const fetchData = () =>
-    fetchFitnessTotals({
-      campaign,
-      startDate,
-      endDate,
-      types: fitnessTypes
-    }).then(({ distance }) => distance)
+  const { data, status } = useFitnessTotals({
+    campaign,
+    startDate,
+    endDate
+  }, { refetchInterval })
 
   const calculateDaysRemaining = eventDate => {
     const today = dayjs()
@@ -49,13 +45,11 @@ const FitnessProgressBar = ({
   }
 
   const calculatePercentage = () =>
-    Math.min(100, Math.floor(((data / 1000 + offset) / target) * 100))
+    Math.min(100, Math.floor(((data.distance / 1000 + offset) / target) * 100))
 
-  const { data, status } = useAsync(fetchData, { refreshInterval })
+  if (status === 'success') {
+    const distance = convertMetersToUnit(data.distance, unit)
 
-  const distance = convertMetersToUnit(data, unit)
-
-  if (status === 'fetched') {
     return (
       <Grid spacing={0.25} {...grid}>
         <GridColumn xs={6}>
@@ -105,6 +99,7 @@ const FitnessProgressBar = ({
       </Grid>
     )
   }
+
   return <Loading />
 }
 
