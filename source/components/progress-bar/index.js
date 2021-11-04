@@ -1,16 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
+import { useDonationTotals } from '../../hooks/use-donation-totals'
 import {
   formatCurrency,
   formatNumber,
   setLocaleFromCountry
 } from '../../utils/numbers'
-import {
-  fetchDonationTotals,
-  deserializeDonationTotals
-} from '../../api/donation-totals'
-import useAsync from '../../hooks/use-async'
 
 import Grid from 'constructicon/grid'
 import GridColumn from 'constructicon/grid-column'
@@ -36,24 +32,23 @@ const ProgressBar = ({
   places,
   progressBar,
   raisedLabel,
-  refreshInterval,
+  refreshInterval: refetchInterval,
   remainingLabel,
   startDate,
   target,
   targetLabel,
   useDonationCount
 }) => {
-  const fetchData = () =>
-    fetchDonationTotals({
-      campaign,
-      charity,
-      donationRef,
-      country,
-      endDate,
-      event,
-      includeOffline: !excludeOffline,
-      startDate
-    }).then(data => deserializeDonationTotals(data, excludeOffline))
+  const { data, status } = useDonationTotals({
+    campaign,
+    charity,
+    donationRef,
+    country,
+    endDate,
+    event,
+    includeOffline: !excludeOffline,
+    startDate
+  }, { refetchInterval })
 
   const calculateDaysRemaining = eventDate => {
     const today = dayjs()
@@ -67,10 +62,9 @@ const ProgressBar = ({
     return Math.min(100, Math.floor(((amount + offset) / target) * 100))
   }
 
-  const { status, data } = useAsync(fetchData, { refreshInterval })
   const locale = setLocaleFromCountry(country)
 
-  if (status === 'fetched') {
+  if (status === 'success') {
     return (
       <Grid spacing={0.25} {...grid}>
         <GridColumn xs={6}>
