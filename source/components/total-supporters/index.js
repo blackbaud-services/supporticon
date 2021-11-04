@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { usePagesTotals } from '../../hooks/use-pages-totals'
 import { formatNumber, setLocaleFromCountry } from '../../utils/numbers'
-import { fetchPagesTotals } from '../../api/pages-totals'
-import useAsync from '../../hooks/use-async'
 
 import Icon from 'constructicon/icon'
 import Loading from 'constructicon/loading'
@@ -21,31 +20,28 @@ const TotalSupporters = ({
   multiplier,
   offset,
   places,
-  refreshInterval,
+  refreshInterval: refetchInterval,
   tagId,
   tagValue,
   type,
   startDate
 }) => {
-  const fetchData = () =>
-    fetchPagesTotals({
-      active,
-      campaign,
-      charity,
-      event,
-      country,
-      type,
-      startDate,
-      endDate,
-      tagId,
-      tagValue
-    })
+  const { data, status } = usePagesTotals({
+    active,
+    campaign,
+    charity,
+    event,
+    country,
+    type,
+    startDate,
+    endDate,
+    tagId,
+    tagValue
+  }, { refetchInterval })
 
-  const { data, status } = useAsync(fetchData, { refreshInterval })
+  if (status === 'error') return <Icon name='warning' />
 
-  if (status === 'failed') return <Icon name='warning' />
-
-  if (status === 'fetched') {
+  if (status === 'success') {
     const formattedAmount = formatNumber({
       amount: (offset + data) * multiplier,
       locale: setLocaleFromCountry(country),
