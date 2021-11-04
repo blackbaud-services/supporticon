@@ -1,3 +1,4 @@
+import pickBy from 'lodash/pickBy'
 import { useQuery } from 'react-query'
 import {
   fetchFitnessLeaderboard,
@@ -8,7 +9,7 @@ export const useFitnessLeaderboard = (params, options) => {
   const { deserializeMethod, refetchInterval } = options
 
   return useQuery(
-    ['fitnessLeaderboard', params],
+    ['fitnessLeaderboard', pickBy(params)],
     () =>
       fetchFitnessLeaderboard(params)
         .then(results => results.map(deserializeMethod || deserializeFitnessLeaderboard)),
