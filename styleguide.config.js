@@ -47,7 +47,8 @@ module.exports = {
           __dirname,
           'source/components/fitness-leaderboard',
           'index.js'
-        )
+        ),
+        path.resolve(__dirname, 'source/components/team-leaderboard', 'index.js'),
       ]
     },
     {

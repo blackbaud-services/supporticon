@@ -2,22 +2,23 @@
 
 *Standard Use*
 ```
-<TeamLeaderboard team='105' />
+<TeamLeaderboard activeOnly={false} team='105' />
 ```
 
 *Sort by distance in miles*
 ```
-<TeamLeaderboard team='105' sortBy='distance' miles={true} />
+<TeamLeaderboard activeOnly={false} team='105' sortBy='distance' miles={true} />
 ```
 
-*Custom amount leaderboard (1 per $1000 raised)*
+*Custom amount leaderboard (1 per £100 raised)*
 
 ```
 <TeamLeaderboard
+  activeOnly={false}
   team='hitachi-rail-uk'
-  multiplier={0.001}
-  offset={-500}
+  multiplier={0.01}
   pageSize={5}
   subtitleMethod={item => `$${Math.round(item.raised)}`}
+  units={false}
 />
 ```
