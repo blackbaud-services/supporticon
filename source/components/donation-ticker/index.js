@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { formatCurrency } from '../../utils/numbers'
-import { fetchDonationFeed, deserializeDonation } from '../../api/feeds'
-import useAsync from '../../hooks/use-async'
+import { useDonationFeed } from '../../hooks/use-donation-feed'
 
 import Loading from 'constructicon/loading'
 import Metric from 'constructicon/metric'
@@ -13,22 +12,37 @@ const DonationTicker = ({
   charity,
   donationRef,
   event,
-  fetchAll,
   includeOffline,
   label,
   layout,
   limit,
   page,
-  refreshInterval,
-  sort,
+  refreshInterval: refetchInterval,
   team,
   ticker
 }) => {
+  const { data, status } = useDonationFeed(
+    {
+      campaign,
+      charity,
+      donationRef,
+      event,
+      includeOffline,
+      limit,
+      page,
+      team
+    },
+    {
+      refetchInterval
+    }
+  )
+
   const formatDonation = donation => {
     const formattedAmount = formatCurrency({
       amount: donation.amount,
       currencyCode: donation.currency
     })
+
     switch (layout) {
       case 'name-only':
         return donation.name
@@ -70,45 +84,24 @@ const DonationTicker = ({
     }
   }
 
-  const fetchData = () =>
-    Promise.resolve()
-      .then(() =>
-        fetchDonationFeed({
-          campaign,
-          charity,
-          donationRef,
-          event,
-          fetchAll,
-          includeOffline,
-          limit,
-          page,
-          sort,
-          team
-        })
-      )
-      .then(response => response.map(deserializeDonation))
-      .then(deserializeDonations => {
-        const filteredDonations = deserializeDonations.filter(donation => {
-          if (donation.anonymous) return false
-          if (layout.indexOf('amount') > -1) return !!donation.amount
-          if (layout.indexOf('message') > -1) return !!donation.message
-          if (layout.indexOf('name') > -1) return !!donation.name
-          return true
-        })
-        const donations = filteredDonations.map(donation =>
-          formatDonation(donation)
-        )
-        return donations
-      })
-
-  const { status, data } = useAsync(fetchData, { refreshInterval })
-
-  if (status === 'fetched' && data) {
-    return <Ticker label={label} items={data} {...ticker} />
-  }
-  if (status === 'failed') {
+  if (status === 'error') {
     return <Metric icon='warning' label='An error occurred' amount={0} />
   }
+
+  if (status === 'success' && data) {
+    const donations = data
+      .filter((donation) => {
+        if (donation.anonymous) return false
+        if (layout.indexOf('amount') > -1) return !!donation.amount
+        if (layout.indexOf('message') > -1) return !!donation.message
+        if (layout.indexOf('name') > -1) return !!donation.name
+        return true
+      })
+      .map(formatDonation)
+
+    return <Ticker label={label} items={donations} {...ticker} />
+  }
+
   return <Loading />
 }
 
@@ -164,11 +157,6 @@ DonationTicker.propTypes = {
   ]),
 
   /**
-   * Recursively fetch all donations (up to 5000)
-   */
-  fetchAll: PropTypes.bool,
-
-  /**
    * Donation display format
    */
   layout: PropTypes.oneOf([
@@ -209,7 +197,6 @@ DonationTicker.propTypes = {
 }
 
 DonationTicker.defaultProps = {
-  fetchAll: false,
   layout: 'name-amount',
   ticker: {}
 }
