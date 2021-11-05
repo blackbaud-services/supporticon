@@ -1,9 +1,6 @@
-import React, { Component } from 'react'
-import flatten from 'lodash/flatten'
-import isEmpty from 'lodash/isEmpty'
-import orderBy from 'lodash/orderBy'
-import uniqBy from 'lodash/uniqBy'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useLeaderboard } from '../../hooks/use-leaderboard'
 import { formatCurrency, formatNumber, setLocaleFromCountry } from '../../utils/numbers'
 import { currencyCode } from '../../utils/currencies'
 import { formatMeasurementDomain } from '../../utils/tags'
@@ -17,70 +14,41 @@ import PaginationLink from 'constructicon/pagination-link'
 import RichText from 'constructicon/rich-text'
 import Section from 'constructicon/section'
 
-import { fetchLeaderboard, deserializeLeaderboard } from '../../api/leaderboard'
-
-class Leaderboard extends Component {
-  constructor () {
-    super()
-    this.fetchLeaderboard = this.fetchLeaderboard.bind(this)
-    this.handleData = this.handleData.bind(this)
-    this.handleSetFilter = this.handleSetFilter.bind(this)
-    this.renderLeader = this.renderLeader.bind(this)
-
-    this.state = {
-      status: 'fetching',
-      q: null
-    }
-  }
-
-  componentDidMount () {
-    const { refreshInterval } = this.props
-    this.fetchLeaderboard()
-    this.interval =
-      refreshInterval &&
-      setInterval(
-        () => this.fetchLeaderboard(this.state.q, true),
-        refreshInterval
-      )
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.interval)
-  }
-
-  componentDidUpdate (prevProps) {
-    if (this.props !== prevProps) {
-      this.fetchLeaderboard(this.state.q)
-    }
-  }
-
-  handleSetFilter (filterValue) {
-    const q = filterValue || null
-    this.setState({ q })
-    this.fetchLeaderboard(q)
-  }
-
-  handleData (data) {
-    const { allPages, excludeOffline, deserializeMethod, limit, sortBy, tagId } = this.props
-    const handleDeserializeData = deserializeMethod || deserializeLeaderboard
-
-    const leaderboardData = data
-      .filter(item => item.status ? item.status.toLowerCase() !== 'cancelled' : true)
-      .map(handleDeserializeData)
-      .map(item =>
-        excludeOffline ? { ...item, raised: item.raised - item.offline } : item
-      )
-      .filter(item => allPages ? true : !!item.raised)
-
-    const orderedData = orderBy(leaderboardData, [sortBy || 'raised'], ['desc'])
-
-    return (tagId ? orderedData : uniqBy(orderedData, 'slug'))
-      .map((item, index) => ({ ...item, position: index + 1 }))
-      .slice(0, limit)
-  }
-
-  fetchLeaderboard (q, refresh) {
-    const {
+const Leaderboard = ({
+  allPages,
+  campaign,
+  charity,
+  country,
+  currency,
+  deserializeMethod,
+  endDate,
+  event,
+  excludePageIds,
+  filter,
+  leaderboard,
+  leaderboardItem = {},
+  limit,
+  maxAmount,
+  minAmount,
+  multiplier,
+  offset,
+  page,
+  pageIds,
+  pageSize,
+  places,
+  refreshInterval: refetchInterval,
+  showPage,
+  sortBy,
+  startDate,
+  subtitleMethod,
+  tagId,
+  tagValue,
+  type,
+  useOwnerImage
+}) => {
+  const [query, setQuery] = useState('')
+  const { data = [], status } = useLeaderboard(
+    {
       allPages,
       campaign,
       charity,
@@ -93,155 +61,98 @@ class Leaderboard extends Component {
       minAmount,
       page,
       pageIds,
-      sortBy,
-      startDate,
-      tagId,
-      tagValue,
-      type
-    } = this.props
-
-    !refresh &&
-      this.setState({
-        status: 'fetching',
-        data: undefined
-      })
-
-    const params = {
-      allPages,
-      campaign,
-      charity,
-      country,
-      endDate,
-      event,
-      excludePageIds,
-      limit,
-      maxAmount,
-      minAmount,
-      page,
-      pageIds,
-      q,
+      q: query,
       sortBy: formatMeasurementDomain(sortBy),
       startDate,
       tagId,
       tagValue,
       type
+    },
+    {
+      refetchInterval,
+      deserializeMethod
     }
+  )
 
-    Promise.all([
-      (allPages || !isEmpty(event) || sortBy || q || tagId || tagValue)
-        ? Promise.resolve([])
-        : fetchLeaderboard({ ...params, useGraphql: true }),
-      fetchLeaderboard(params)
-    ])
-      .then(flatten)
-      .then(data => {
-        this.setState({
-          status: 'fetched',
-          data: this.handleData(data)
-        })
-      })
-      .catch(error => {
-        this.setState({
-          status: 'failed'
-        })
-        return Promise.reject(error)
-      })
-  }
+  const leaderboardData = data
+    .map((item, index) => ({ ...item, position: index + 1 }))
+    .slice(0, limit)
 
-  render () {
-    const { status, data = [] } = this.state
-    const { leaderboard, filter, pageSize, showPage } = this.props
+  return (
+    <div>
+      {filter && <Filter onChange={setQuery} {...filter} />}
+      {status === 'loading' && <LeaderboardWrapper {...leaderboard} loading />}
+      {status === 'error' && <LeaderboardWrapper {...leaderboard} error />}
+      {status === 'success' && leaderboardData.length === 0 && (
+        <LeaderboardWrapper {...leaderboard} empty />
+      )}
+      {status === 'success' && (
+        <Pagination max={pageSize} toPaginate={leaderboardData}>
+          {({
+            currentPage,
+            isPaginated,
+            prev,
+            next,
+            canPrev,
+            canNext,
+            pageOf
+          }) => (
+            <>
+              <LeaderboardWrapper {...leaderboard}>
+                {currentPage.map((leader, i) => {
+                  const metric = sortBy === 'donations'
+                    ? leader.totalDonations
+                    : leader.raised
+                  const amount = (offset + metric) * multiplier
+                  const locale = setLocaleFromCountry(country)
+                  const showCurrency = currency && sortBy !== 'donations'
 
-    return (
-      <div>
-        {filter && <Filter onChange={this.handleSetFilter} {...filter} />}
-        {status === 'fetching' && (
-          <LeaderboardWrapper {...leaderboard} loading />
-        )}
-        {status === 'error' && <LeaderboardWrapper {...leaderboard} error />}
-        {status === 'fetched' && data.length === 0 && (
-          <LeaderboardWrapper {...leaderboard} empty />
-        )}
-        {data.length > 0 && (
-          <Pagination max={pageSize} toPaginate={data}>
-            {({
-              currentPage,
-              isPaginated,
-              prev,
-              next,
-              canPrev,
-              canNext,
-              pageOf
-            }) => (
-              <>
-                <LeaderboardWrapper {...leaderboard}>
-                  {currentPage.map(this.renderLeader)}
-                </LeaderboardWrapper>
-                {pageSize && isPaginated && (
-                  <Section spacing={{ t: 0.5 }}>
-                    <Grid align='center' justify='center'>
-                      <PaginationLink
-                        onClick={prev}
-                        direction='prev'
-                        disabled={!canPrev}
-                      />
-                      {showPage && <RichText size={-1}>{pageOf}</RichText>}
-                      <PaginationLink
-                        onClick={next}
-                        direction='next'
-                        disabled={!canNext}
-                      />
-                    </Grid>
-                  </Section>
-                )}
-              </>
-            )}
-          </Pagination>
-        )}
-      </div>
-    )
-  }
-
-  renderLeader (leader, i) {
-    const {
-      country,
-      currency,
-      leaderboardItem = {},
-      multiplier,
-      places,
-      sortBy,
-      subtitleMethod,
-      offset,
-      useOwnerImage
-    } = this.props
-
-    const metric = sortBy === 'donations' ? leader.totalDonations : leader.raised
-    const amount = (offset + metric) * multiplier
-    const locale = setLocaleFromCountry(country)
-    const showCurrency = currency && sortBy !== 'donations'
-
-    return (
-      <LeaderboardItem
-        key={i}
-        title={leader.name}
-        subtitle={subtitleMethod(leader)}
-        image={useOwnerImage ? leader.ownerImage || leader.image : leader.image}
-        amount={
-          showCurrency
-            ? formatCurrency({
-                amount,
-                currencyCode: leader.currency || currencyCode(country),
-                locale,
-                places
-              })
-            : formatNumber({ amount, locale, places })
-        }
-        href={leader.url}
-        rank={leader.position}
-        {...leaderboardItem}
-      />
-    )
-  }
+                  return (
+                    <LeaderboardItem
+                      key={i}
+                      title={leader.name}
+                      subtitle={subtitleMethod(leader)}
+                      image={useOwnerImage ? leader.ownerImage || leader.image : leader.image}
+                      amount={
+                        showCurrency
+                          ? formatCurrency({
+                              amount,
+                              currencyCode: leader.currency || currencyCode(country),
+                              locale,
+                              places
+                            })
+                          : formatNumber({ amount, locale, places })
+                      }
+                      href={leader.url}
+                      rank={leader.position}
+                      {...leaderboardItem}
+                    />
+                  )
+                })}
+              </LeaderboardWrapper>
+              {pageSize && isPaginated && (
+                <Section spacing={{ t: 0.5 }}>
+                  <Grid align='center' justify='center'>
+                    <PaginationLink
+                      onClick={prev}
+                      direction='prev'
+                      disabled={!canPrev}
+                    />
+                    {showPage && <RichText size={-1}>{pageOf}</RichText>}
+                    <PaginationLink
+                      onClick={next}
+                      direction='next'
+                      disabled={!canNext}
+                    />
+                  </Grid>
+                </Section>
+              )}
+            </>
+          )}
+        </Pagination>
+      )}
+    </div>
+  )
 }
 
 Leaderboard.propTypes = {

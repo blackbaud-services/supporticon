@@ -1,6 +1,7 @@
 import flatten from 'lodash/flatten'
 import lodashGet from 'lodash/get'
 import orderBy from 'lodash/orderBy'
+import uniqBy from 'lodash/uniqBy'
 import { get, servicesAPI } from '../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../utils/justgiving'
 import {
@@ -40,156 +41,177 @@ export const fetchLeaderboard = (params = required()) => {
   }
 
   if (params.campaign && params.useGraphql) {
-    const query = `
-      query($id: ID!, $limit: Int!, $type: PageLeaderboardType!,) {
-        page(type: CAMPAIGN, id: $id) {
-          leaderboard (first: $limit, type: $type) {
-            nodes {
-              createDate
+    return fetchCampaignGraphqlLeaderboard(params)
+  }
+
+  if (dataSource(params) === 'event') {
+    return fetchEventLeaderboard(params)
+  }
+
+  return Promise.all([
+    !isEmpty(params.campaign)
+      ? fetchCampaignGraphqlLeaderboard(params)
+      : Promise.resolve([]),
+    fetchLegacyLeaderboard(params)
+  ])
+    .then(flatten)
+    .then(items =>
+      items.map(original => ({
+        original,
+        deserialized: deserializeLeaderboard(original)
+      }))
+    )
+    .then(items => orderBy(items, ['deserialized.raised'], ['desc']))
+    .then(items => uniqBy(items, 'deserialized.slug'))
+    .then(items => items.map(item => item.original))
+    .then(results => removeExcludedPages(results, params.excludePageIds))
+}
+
+export const fetchEventLeaderboard = params => {
+  if (params.type === 'team') {
+    return Promise.reject(
+      new Error('Team leaderboards by event are not supported')
+    )
+  }
+
+  return get(
+    '/v1/events/leaderboard',
+    {
+      eventid: Array.isArray(params.event)
+        ? params.event.map(getUID)
+        : getUID(params.event),
+      currency: currencyCode(params.country),
+      maxResults: params.limit
+    },
+    {},
+    { paramsSerializer }
+  )
+    .then(response =>
+      response.pages.map(page => ({
+        ...page,
+        raisedAmount: page.amount,
+        eventName: response.eventName,
+        currencyCode: response.currency,
+        currencySymbol: currencySymbol(response.currency)
+      }))
+    )
+    .then(results => removeExcludedPages(results, params.excludePageIds))
+}
+
+export const fetchCampaignGraphqlLeaderboard = params => {
+  const query = `
+    query($id: ID!, $limit: Int!, $type: PageLeaderboardType!,) {
+      page(type: CAMPAIGN, id: $id) {
+        leaderboard (first: $limit, type: $type) {
+          nodes {
+            createDate
+            legacyId
+            slug
+            status
+            title
+            cover {
+              ... on ImageMedia { url }
+            }
+            donationSummary {
+              totalAmount { value currencyCode }
+              onlineAmount { value currencyCode }
+              offlineAmount { value currencyCode }
+              donationCount
+            }
+            owner {
               legacyId
-              slug
-              status
-              title
-              cover {
-                ... on ImageMedia { url }
-              }
-              donationSummary {
-                totalAmount { value currencyCode }
-                onlineAmount { value currencyCode }
-                offlineAmount { value currencyCode }
-                donationCount
-              }
-              owner {
-                legacyId
-                name
-                avatar
-              }
-              targetWithCurrency {
-                value
-                currencyCode
-              }
+              name
+              avatar
             }
-            totalCount
-            pageInfo {
-              endCursor
-              hasNextPage
+            targetWithCurrency {
+              value
+              currencyCode
             }
+          }
+          totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
           }
         }
       }
-    `
+    }
+  `
 
-    return servicesAPI
-      .post('/v1/justgiving/graphql', {
-        query,
-        variables: {
-          id: getUID(params.campaign),
-          limit: params.limit || 100,
-          type: params.type === 'team' ? 'TEAMS' : 'FUNDRAISERS'
-        }
-      })
-      .then(response => response.data)
-      .then(result => lodashGet(result, 'data.page.leaderboard.nodes', []))
-      .then(pages => orderBy(pages, ['donationSummary.totalAmount.value'], ['desc']))
-      .then(results =>
-        results.filter(result => result.slug.indexOf(params.type === 'team' ? 'team/' : 'fundraising/') === 0)
-      )
-  }
+  return servicesAPI
+    .post('/v1/justgiving/graphql', {
+      query,
+      variables: {
+        id: getUID(params.campaign),
+        limit: params.limit || 100,
+        type: params.type === 'team' ? 'TEAMS' : 'FUNDRAISERS'
+      }
+    })
+    .then(response => response.data)
+    .then(result => lodashGet(result, 'data.page.leaderboard.nodes', []))
+    .then(pages => pages.filter(item => lodashGet(item, 'donationSummary.totalAmount.value')))
+    .then(pages => orderBy(pages, ['donationSummary.totalAmount.value'], ['desc']))
+    .then(results =>
+      results.filter(result => result.slug.indexOf(params.type === 'team' ? 'team/' : 'fundraising/') === 0)
+    )
+    .then(results => removeExcludedPages(results, params.excludePageIds))
+}
 
+export const fetchLegacyLeaderboard = params => {
   const isTeam = params.type === 'team'
   const maxPerRequest = 20
   const { results = [], ...otherParams } = params
 
-  switch (dataSource(params)) {
-    case 'event':
-      if (params.type === 'team') {
-        return Promise.reject(
-          new Error('Team leaderboards by event are not supported')
-        )
+  return get(
+    '/donationsleaderboards/v1/leaderboard',
+    {
+      ...otherParams,
+      currencyCode: currencyCode(params.country)
+    },
+    {
+      mappings: {
+        campaign: 'campaignGuids',
+        charity: 'charityIds',
+        excludePageIds: 'excludePageGuids',
+        limit: 'take',
+        page: 'offset',
+        type: 'groupBy'
+      },
+      transforms: {
+        campaign: splitOnDelimiter,
+        charity: splitOnDelimiter,
+        excludePageIds: splitOnDelimiter,
+        limit: val => Math.min(maxPerRequest, val || 10),
+        page: val =>
+          String(
+            val
+              ? Math.min(maxPerRequest, params.limit || 10) * (val - 1)
+              : 0
+          ),
+        type: val => (isTeam ? 'TeamGuid' : 'PageGuid')
+      }
+    },
+    { paramsSerializer }
+  )
+    .then(response => {
+      const { currentPage, lastRowOnPage, pageCount } = response.meta
+      const updatedResults = [...results, ...response.results]
+
+      if (currentPage >= pageCount || lastRowOnPage >= params.limit) {
+        return updatedResults
       }
 
-      return get(
-        '/v1/events/leaderboard',
-        {
-          eventid: Array.isArray(params.event)
-            ? params.event.map(getUID)
-            : getUID(params.event),
-          currency: currencyCode(params.country),
-          maxResults: params.limit
-        },
-        {},
-        { paramsSerializer }
-      )
-        .then(response =>
-          response.pages.map(page => ({
-            ...page,
-            raisedAmount: page.amount,
-            eventName: response.eventName,
-            currencyCode: response.currency,
-            currencySymbol: currencySymbol(response.currency)
-          }))
-        )
-        .then(results => removeExcludedPages(results, params.excludePageIds))
-
-    default:
-      return get(
-        '/donationsleaderboards/v1/leaderboard',
-        {
-          ...otherParams,
-          currencyCode: currencyCode(params.country)
-        },
-        {
-          mappings: {
-            campaign: 'campaignGuids',
-            charity: 'charityIds',
-            excludePageIds: 'excludePageGuids',
-            limit: 'take',
-            page: 'offset',
-            type: 'groupBy'
-          },
-          transforms: {
-            campaign: splitOnDelimiter,
-            charity: splitOnDelimiter,
-            excludePageIds: splitOnDelimiter,
-            limit: val => Math.min(maxPerRequest, val || 10),
-            page: val =>
-              String(
-                val
-                  ? Math.min(maxPerRequest, params.limit || 10) * (val - 1)
-                  : 0
-              ),
-            type: val => (isTeam ? 'TeamGuid' : 'PageGuid')
-          }
-        },
-        { paramsSerializer }
-      )
-        .then(response => {
-          const { currentPage, lastRowOnPage, pageCount } = response.meta
-          const updatedResults = [...results, ...response.results]
-
-          if (currentPage >= pageCount || lastRowOnPage >= params.limit) {
-            return updatedResults
-          }
-
-          return fetchLeaderboard({
-            ...params,
-            results: updatedResults,
-            page: currentPage + 1
-          })
-        })
-        .then(results => filterLeaderboardResults(results, isTeam))
-        .then(results => mapLeaderboardResults(results, isTeam))
-        .then(results => removeExcludedPages(results, params.excludePageIds))
-        .then(results => rankLeaderboardResults(results, isTeam))
-  }
-}
-
-const rankLeaderboardResults = (results = [], isTeam) => {
-  return orderBy(results, ['donationAmount'], ['desc'])
-}
-
-const filterLeaderboardResults = (results = [], isTeam) => {
-  return results.filter(result => (isTeam ? result.team : result.page))
+      return fetchLegacyLeaderboard({
+        ...params,
+        results: updatedResults,
+        page: currentPage + 1
+      })
+    })
+    .then(results => results.filter(result => (isTeam ? result.team : result.page)))
+    .then(results => mapLeaderboardResults(results, isTeam))
+    .then(results => removeExcludedPages(results, params.excludePageIds))
+    .then(results => results.filter(item => item.status !== 'Cancelled'))
+    .then(results => orderBy(results, ['donationAmount'], ['desc']))
 }
 
 const removeExcludedPages = (results = [], pageIds) => {
@@ -202,6 +224,7 @@ const removeExcludedPages = (results = [], pageIds) => {
     'pageShortName',
     'shortName',
     'slug',
+    'id',
     'tagValue'
   ]
 
@@ -249,6 +272,7 @@ const mapLeaderboardResults = (results = [], isTeam) => {
             result.page.owner.firstName,
             result.page.owner.lastName
           ].join(' '),
+          pageId: result.id,
           pageImages: [result.page.photo],
           pageShortName: result.page.shortName,
           numberOfSupporters: result.donationCount,
