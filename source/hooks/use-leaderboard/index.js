@@ -1,33 +1,20 @@
-import { useState, useEffect } from 'react'
+import pickBy from 'lodash/pickBy'
+import { useQuery } from 'react-query'
 import { fetchLeaderboard, deserializeLeaderboard } from '../../api/leaderboard'
 
-const useLeaderboard = params => {
-  if (useState === undefined) {
-    console.error(
-      'Current version of React does not support Hooks. Upgrade React to 16.8 to use supporticon/hooks'
-    )
-    return []
-  }
+export const useLeaderboard = (params, options) => {
+  const { deserializeMethod, refetchInterval, staleTime = 30000 } = options
 
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState()
-  const [leaderboard, setLeaderboard] = useState([])
-
-  useEffect(() => {
-    fetchLeaderboard(params)
-      .then(result => result.map(deserializeLeaderboard))
-      .then(deserialized => {
-        setLeaderboard(deserialized)
-        setLoading(false)
-      })
-      .catch(error => {
-        setLoading(false)
-        setError(error)
-        Promise.reject(error)
-      })
-  }, [])
-
-  return [leaderboard, loading, error]
+  return useQuery(
+    ['fundraisingLeaderboard', pickBy(params)],
+    () =>
+      fetchLeaderboard(params)
+        .then(results => results.map(deserializeMethod || deserializeLeaderboard)),
+    {
+      refetchInterval,
+      staleTime
+    }
+  )
 }
 
 export default useLeaderboard
