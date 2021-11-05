@@ -21,7 +21,7 @@ const DonationTicker = ({
   team,
   ticker
 }) => {
-  const { data, status } = useDonationFeed(
+  const { data = [], status } = useDonationFeed(
     {
       campaign,
       charity,

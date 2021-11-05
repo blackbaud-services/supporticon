@@ -6,17 +6,14 @@ import {
 } from '../../api/fitness-leaderboard'
 
 export const useFitnessLeaderboard = (params, options) => {
-  const { deserializeMethod, refetchInterval } = options
+  const { deserializeMethod, refetchInterval, staleTime = 30000 } = options
 
   return useQuery(
     ['fitnessLeaderboard', pickBy(params)],
     () =>
       fetchFitnessLeaderboard(params)
         .then(results => results.map(deserializeMethod || deserializeFitnessLeaderboard)),
-    {
-      placeholderData: [],
-      refetchInterval
-    }
+    { refetchInterval, staleTime }
   )
 }
 

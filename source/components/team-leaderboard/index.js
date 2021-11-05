@@ -42,14 +42,13 @@ const TeamLeaderboard = ({
   team,
   units
 }) => {
-  const { data: pages, status } = useQuery(
+  const { data = [], status } = useQuery(
     ['teamLeaderboard', team],
     () =>
       fetchTeamPages(team)
         .then(data => data.map(deserializeMethod || deserializeTeamPage))
         .then(pages => activeOnly ? pages.filter(page => page.active) : pages),
     {
-      placeholderData: [],
       refetchInterval
     }
   )
@@ -63,7 +62,7 @@ const TeamLeaderboard = ({
 
   const sortKey = sortKeys[sortBy] || 'raised'
 
-  const sortedPages = orderBy(pages, [sortKey], ['desc'])
+  const sortedPages = orderBy(data, [sortKey], ['desc'])
     .map((page, index) => ({ ...page, position: index + 1 }))
     .slice(0, limit)
 
@@ -103,7 +102,7 @@ const TeamLeaderboard = ({
     )
   }
 
-  if (!pages.length) return <Leaderboard {...leaderboard} empty />
+  if (!sortedPages.length) return <Leaderboard {...leaderboard} empty />
 
   return (
     <Pagination max={pageSize} toPaginate={sortedPages}>
