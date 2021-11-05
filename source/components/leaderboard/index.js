@@ -99,7 +99,7 @@ const Leaderboard = ({
           }) => (
             <>
               <LeaderboardWrapper {...leaderboard}>
-                {currentPage.map((leader, i) => {
+                {currentPage.map((leader, index) => {
                   const metric = sortBy === 'donations'
                     ? leader.totalDonations
                     : leader.raised
@@ -109,7 +109,7 @@ const Leaderboard = ({
 
                   return (
                     <LeaderboardItem
-                      key={i}
+                      key={page.id || index}
                       title={leader.name}
                       subtitle={subtitleMethod(leader)}
                       image={useOwnerImage ? leader.ownerImage || leader.image : leader.image}

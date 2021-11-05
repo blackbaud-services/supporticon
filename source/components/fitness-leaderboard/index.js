@@ -49,7 +49,7 @@ const FitnessLeaderboard = ({
   units
 }) => {
   const [query, setQuery] = useState('')
-  const { data, status } = useFitnessLeaderboard(
+  const { data = [], status } = useFitnessLeaderboard(
     {
       activeOnly,
       activity,
@@ -122,7 +122,7 @@ const FitnessLeaderboard = ({
       {status === 'success' && items.length === 0 && (
         <LeaderboardWrapper {...leaderboard} empty />
       )}
-      {items.length > 0 && (
+      {status === 'success' && (
         <Pagination max={pageSize} toPaginate={items}>
           {({
             currentPage,

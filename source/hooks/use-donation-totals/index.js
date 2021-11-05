@@ -5,11 +5,17 @@ import {
   deserializeDonationTotals
 } from '../../api/donation-totals'
 
-export const useDonationTotals = (params, options = {}) =>
-  useQuery(
+export const useDonationTotals = (params, options = {}) => {
+  const { refetchInterval, staleTime = 30000 } = options
+
+  return useQuery(
     ['donationTotals', pickBy(params)],
     () => fetchDonationTotals(params).then(deserializeDonationTotals),
-    options
+    {
+      refetchInterval,
+      staleTime
+    }
   )
+}
 
 export default useDonationTotals
