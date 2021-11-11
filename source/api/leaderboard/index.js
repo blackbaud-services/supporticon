@@ -37,7 +37,11 @@ export const fetchLeaderboard = (params = required()) => {
         ? params.campaign.map(getUID).join(',')
         : getUID(params.campaign),
       type: 'campaign'
-    }).then(results => removeExcludedPages(results, params.excludePageIds))
+    })
+      .then(results => removeExcludedPages(results, params.excludePageIds))
+      .then(results =>
+        results.filter(item => lodashGet(item, 'amounts[0].value', 0) > 0)
+      )
   }
 
   if (params.campaign && params.useGraphql) {
