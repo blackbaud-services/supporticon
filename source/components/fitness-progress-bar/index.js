@@ -49,6 +49,7 @@ const FitnessProgressBar = ({
 
   if (status === 'success') {
     const distance = convertMetersToUnit(data.distance, unit)
+    const progress = calculatePercentage()
 
     return (
       <Grid spacing={0.25} {...grid}>
@@ -73,8 +74,8 @@ const FitnessProgressBar = ({
         </GridColumn>
         <GridColumn>
           <Progress
-            alt='<%= progress %>% there'
-            progress={calculatePercentage()}
+            alt={`${progress}% there`}
+            progress={progress}
             {...progressBar}
           />
         </GridColumn>
@@ -82,7 +83,7 @@ const FitnessProgressBar = ({
           {travelledLabel && (
             <>
               <Heading size={0} tag='strong' {...heading}>
-                {calculatePercentage()}%
+                {progress}%
               </Heading>{' '}
               {travelledLabel}
             </>

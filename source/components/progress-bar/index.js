@@ -65,6 +65,8 @@ const ProgressBar = ({
   const locale = setLocaleFromCountry(country)
 
   if (status === 'success') {
+    const progress = calculatePercentage()
+
     return (
       <Grid spacing={0.25} {...grid}>
         <GridColumn xs={6}>
@@ -93,8 +95,8 @@ const ProgressBar = ({
         </GridColumn>
         <GridColumn>
           <Progress
-            alt='<%= progress %>% there'
-            progress={calculatePercentage()}
+            alt={`${progress}% there`}
+            progress={progress}
             {...progressBar}
           />
         </GridColumn>
@@ -102,7 +104,7 @@ const ProgressBar = ({
           {fundedLabel && (
             <>
               <Heading size={0} tag='strong' {...heading}>
-                {calculatePercentage()}%
+                {progress}%
               </Heading>{' '}
               {fundedLabel}
             </>
