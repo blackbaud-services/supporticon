@@ -156,8 +156,7 @@ const form = props => ({
         order: 2,
         required: true,
         validators: [
-          validators.required('Password is a required field'),
-          validators.greaterThan(7, 'Must be at least 8 characters')
+          validators.required('Password is a required field')
         ]
       }
     },
