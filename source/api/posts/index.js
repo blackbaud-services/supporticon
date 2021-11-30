@@ -10,6 +10,7 @@ export const deserializePost = post => ({
   id: post.id,
   createdAt: post.createdAt,
   message: post.message,
+  legacyId: post.legacyId,
   media: post.media,
   image: getMedia(
     post,
@@ -25,13 +26,12 @@ export const fetchPosts = ({
   slug = required(),
   allPosts = false,
   after,
-  results = [],
-  type = 'FUNDRAISING'
+  results = []
 }) => {
   const query = `
-    {
-      page(type: ${type}, slug: "${slug}") {
-        timeline(first: 20${after ? `, after: "${after}"` : ''}) {
+    query getPosts($slug: Slug, $after: String) {
+      page(type: FUNDRAISING, slug: $slug) {
+        timeline(first: 20, entryType: MANUAL, after: $after) {
           pageInfo {
             hasNextPage
             endCursor
@@ -55,7 +55,7 @@ export const fetchPosts = ({
   `
 
   return servicesAPI
-    .post('/v1/justgiving/graphql', { query })
+    .post('/v1/justgiving/graphql', { query, variables: { slug, after } })
     .then(response => response.data)
     .then(result => {
       const data = lodashGet(result, 'data.page.timeline', {})
