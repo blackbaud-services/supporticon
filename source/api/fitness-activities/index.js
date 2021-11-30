@@ -97,7 +97,7 @@ export const deserializeFitnessActivity = (activity = required()) => {
     eventId: activity.EventId,
     fitnessApp: fitnessApp.product,
     id: getFitnessId(source, activity),
-    legacyId: activity.Id,
+    legacyId: activity.Id || activity.legacyId,
     manual: source === 'manual',
     page: activity.PageGuid,
     polyline: activity.mapPolyline,
@@ -122,10 +122,10 @@ export const fetchFitnessActivities = (params = required()) => {
 
     const { page, after, allActivities, results = [] } = params
 
-    const graphQLQuery = `
-      {
-        page(type: FUNDRAISING, slug: "${page}") {
-          timeline(first: 20${after ? `, after: "${after}"` : ' '}) {
+    const query = `
+      query getFitness($slug: Slug, $after: String) {
+        page(type: FUNDRAISING, slug: $slug) {
+          timeline(first: 20, entryType: FITNESS, after: $after) {
             pageInfo {
               hasNextPage
               endCursor
@@ -152,7 +152,7 @@ export const fetchFitnessActivities = (params = required()) => {
     `
 
     return servicesAPI
-      .post('/v1/justgiving/graphql', { query: graphQLQuery })
+      .post('/v1/justgiving/graphql', { query, variables: { slug: page, after } })
       .then(response => response.data)
       .then(result => {
         const data = lodashGet(result, 'data.page.timeline', {})
