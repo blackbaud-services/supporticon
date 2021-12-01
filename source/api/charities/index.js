@@ -25,6 +25,8 @@ export const searchCharities = (params = required()) => {
   } else {
     const finalParams = {
       ...params,
+      country: params.country === 'uk' ? 'gb' : params.country,
+      filterCountry: !!params.country,
       i: 'Charity'
     }
 
