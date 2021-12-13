@@ -10,13 +10,13 @@ import { fetchDonations } from '../feeds'
 import { currencyCode } from '../../utils/currencies'
 import { fetchTotals, deserializeTotals } from '../../utils/totals'
 
-const fetchCampaignTotals = id =>
+const fetchCampaignTotals = (id, currency) =>
   Promise.all([
     servicesAPI
       .get(`/v1/justgiving/campaigns/${id}`)
       .then(response => response.data.donationSummary),
     servicesAPI
-      .get(`/v1/justgiving/campaigns/${id}/pages`)
+      .get(`/v1/justgiving/campaigns/${id}/pages`, { params: { currency } })
       .then(response => response.data.meta.totalAmount)
   ]).then(
     ([
@@ -36,15 +36,16 @@ const fetchCampaignTotals = id =>
     })
   )
 
-const fetchAllCampaignTotals = campaignIds =>
-  Promise.all(campaignIds.map(fetchCampaignTotals)).then(campaigns =>
-    campaigns.reduce(
-      (acc, { totalRaised, totalResults }) => ({
-        totalRaised: acc.totalRaised + totalRaised,
-        totalResults: acc.totalResults + totalResults
-      }),
-      { totalRaised: 0, totalResults: 0 }
-    )
+const fetchAllCampaignTotals = (campaignIds, currency) =>
+  Promise.all(campaignIds.map(id => fetchCampaignTotals(id, currency))).then(
+    campaigns =>
+      campaigns.reduce(
+        (acc, { totalRaised, totalResults }) => ({
+          totalRaised: acc.totalRaised + totalRaised,
+          totalResults: acc.totalResults + totalResults
+        }),
+        { totalRaised: 0, totalResults: 0 }
+      )
   )
 
 export const fetchDonationTotals = (params = required()) => {
@@ -57,8 +58,7 @@ export const fetchDonationTotals = (params = required()) => {
       segment: `page:campaign:${campaignGuids[0]}`,
       tagId: params.tagId,
       tagValue: params.tagValue
-    })
-      .then(totals => deserializeTotals(totals, currencyCode(params.country)))
+    }).then(totals => deserializeTotals(totals, currencyCode(params.country)))
   }
 
   switch (dataSource(params)) {
@@ -98,7 +98,10 @@ export const fetchDonationTotals = (params = required()) => {
       )
     default:
       return params.includeOffline
-        ? fetchAllCampaignTotals(campaignGuids)
+        ? fetchAllCampaignTotals(
+            campaignGuids,
+            params.country && currencyCode(params.country)
+          )
         : client.get(
           '/donationsleaderboards/v1/totals',
           {
