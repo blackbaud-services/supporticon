@@ -335,7 +335,7 @@ export const deserializeLeaderboard = (supporter, index) => {
     lodashGet(supporter, 'pageOwner.fullName') ||
     lodashGet(supporter, 'owner.firstName')
       ? [supporter.owner.firstName, supporter.owner.lastName].join(' ')
-      : null
+      : typeof supporter.owner === 'string' ? supporter.owner : null
 
   return {
     currency:
