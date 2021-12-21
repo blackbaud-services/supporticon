@@ -5,9 +5,13 @@ import map from '../map'
 const defaults = {
   baseURL: process.env.SUPPORTICON_BASE_URL || 'https://api.justgiving.com',
   headers: {
-    'x-api-key': process.env.SUPPORTICON_API_KEY || 'a6ba1005',
-    'x-application-key': process.env.SUPPORTICON_API_CLIENT_SECRET
+    'x-api-key': process.env.SUPPORTICON_API_KEY || 'a6ba1005'
   }
+}
+
+if (process.env.SUPPORTICON_API_CLIENT_SECRET) {
+  defaults.headers['x-application-key'] =
+    process.env.SUPPORTICON_API_CLIENT_SECRET
 }
 
 export const instance = axios.create(defaults)
