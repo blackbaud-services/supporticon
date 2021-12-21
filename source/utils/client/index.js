@@ -55,7 +55,9 @@ export const isStaging = () => /staging/.test(instance.defaults.baseURL)
 
 // Services API Client
 export const servicesAPI = axios.create({
-  baseURL: 'https://api.blackbaud.services'
+  baseURL: isStaging()
+    ? 'https://api-staging.blackbaud.services'
+    : 'https://api.blackbaud.services'
 })
 
 const updateServicesAPIClient = () => {
@@ -66,7 +68,9 @@ const updateServicesAPIClient = () => {
 
 // Metadata API Client
 export const metadataAPI = axios.create({
-  baseURL: 'https://metadata.blackbaud.services'
+  baseURL: isStaging()
+    ? 'https://metadata-staging.blackbaud.services'
+    : 'https://metadata.blackbaud.services'
 })
 
 const updateMetadataAPIClient = () => {
@@ -77,7 +81,9 @@ const updateMetadataAPIClient = () => {
 
 // JG Images Client
 export const imagesAPI = axios.create({
-  baseURL: 'https://images.justgiving.com'
+  baseURL: isStaging()
+    ? 'https://images.staging.justgiving.com'
+    : 'https://images.justgiving.com'
 })
 
 const updateImagesAPIClient = () => {
@@ -88,7 +94,9 @@ const updateImagesAPIClient = () => {
 
 // JG Identity Client
 export const jgIdentityClient = axios.create({
-  baseURL: 'https://identity.justgiving.com'
+  baseURL: isStaging()
+    ? 'https://identity.staging.justgiving.com'
+    : 'https://identity.justgiving.com'
 })
 
 const updateJGIdentityClient = () => {
