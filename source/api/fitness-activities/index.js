@@ -152,7 +152,10 @@ export const fetchFitnessActivities = (params = required()) => {
     `
 
     return servicesAPI
-      .post('/v1/justgiving/graphql', { query, variables: { slug: page, after } })
+      .post('/v1/justgiving/graphql', {
+        query,
+        variables: { slug: page, after }
+      })
       .then(response => response.data)
       .then(result => {
         const data = lodashGet(result, 'data.page.timeline', {})
@@ -259,6 +262,7 @@ export const createFitnessActivity = ({
               distance: ${convertToMeters(distance, unit)}
               duration: ${convertToSeconds(duration, durationUnit)}
               elevation: ${convertToMeters(elevation, elevationUnit || unit)}
+              steps: 0
             }
           }
         ) {
