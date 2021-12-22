@@ -267,6 +267,7 @@ export const createFitnessActivity = ({
           }
         ) {
           id
+          legacyId
           message
           createdAt
           fitnessActivity {
