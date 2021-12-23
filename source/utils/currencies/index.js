@@ -31,6 +31,8 @@ export const currencySymbol = (code = 'GBP') => {
       return 'HK$'
     case 'aed':
       return 'د.إ'
+    case 'eur':
+      return '€'
     default:
       return '$'
   }
