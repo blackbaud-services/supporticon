@@ -127,13 +127,14 @@ class CreatePageForm extends Component {
               case 422:
                 return this.setState({
                   status: 'failed',
-                  errors: get(error, 'data.error.errors', [])
-                    .map(({ field, message }) => ({
+                  errors: get(error, 'data.error.errors', []).map(
+                    ({ field, message }) => ({
                       message: [
                         capitalize(field.split('_').join(' ')),
                         message
                       ].join(' ')
-                    }))
+                    })
+                  )
                 })
               case 400:
                 return this.setState({
@@ -474,7 +475,7 @@ const form = props => {
       type: 'text',
       order: 1,
       required: true,
-      maxLength: 255,
+      maxLength: 75,
       placeholder: 'Title of your fundraising page',
       validators: [validators.required('Please enter a page title')]
     }
