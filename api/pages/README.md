@@ -226,3 +226,25 @@ createPageTag({
   ]
 })
 ```
+
+## `cancelPage`
+
+Cancels a fundraising page
+
+**Params**
+
+- `params` (Object) Containing the following:
+  - `authType` (String) Authentication type e.g. Bearer, Basic
+  - `slug` (String) Page slug _required_
+  - `token` (String) User token _required_
+
+**Example**
+
+```javascript
+import { cancelPage } from 'supporticon/api/pages'
+
+cancelPage({
+  slug: 'my-page',
+  token: 'BEARER_TOKEN'
+})
+```
