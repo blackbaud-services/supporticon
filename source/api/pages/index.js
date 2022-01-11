@@ -6,7 +6,7 @@ import lodashGet from 'lodash/get'
 import lodashFilter from 'lodash/filter'
 import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
-import { get, post, put, servicesAPI } from '../../utils/client'
+import { destroy, get, post, put, servicesAPI } from '../../utils/client'
 import { apiUrl, apiImageUrl, baseUrl, imageUrl } from '../../utils/justgiving'
 import { getUID, isEmpty, isInArray, isUuid, required } from '../../utils/params'
 import { defaultPageTags } from '../../utils/tags'
@@ -595,4 +595,14 @@ export const updatePage = (
         )
     ].filter(promise => promise)
   )
+}
+
+export const cancelPage = ({
+  authType = 'Bearer',
+  slug = required(),
+  token = required()
+}) => {
+  const headers = { Authorization: [authType, token].join(' ') }
+
+  return destroy(`/v1/fundraising/pages/${slug}`, { headers })
 }
