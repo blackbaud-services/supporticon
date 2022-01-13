@@ -1,4 +1,5 @@
 import React from 'react'
+import get from 'lodash/get'
 import PropTypes from 'prop-types'
 import withForm from 'constructicon/with-form'
 import form from './form'
@@ -92,7 +93,24 @@ class JoinTeamForm extends React.Component {
           return onSuccess(team)
         })
         .catch(error => {
-          const errors = [{ message: 'There was an unexpected error' }]
+          const formatMessage = msg => {
+            if (msg.indexOf('incompatible-with-locks:campaign') > -1) {
+              return 'Your page must be in the same campaign as this team.'
+            }
+
+            if (msg.indexOf('incompatible-with-locks:charity') > -1) {
+              return 'Your page must be raising money for the same charity as this team.'
+            }
+
+            if (msg.indexOf('incompatible-with-locks:event') > -1) {
+              return 'Your page must be in the same event as this team.'
+            }
+
+            return message
+          }
+
+          const message = get(error, 'response.data.message', 'There was an unexpected error')
+          const errors = [{ message: formatMessage(message) }]
           this.setState({ status: 'failed', errors })
           return Promise.reject(error)
         })
