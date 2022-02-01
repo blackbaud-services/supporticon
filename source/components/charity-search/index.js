@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { deserializeCharity, searchCharities } from '../../api/charities'
+import {
+  deserializeCharity,
+  fetchCharity,
+  searchCharities
+} from '../../api/charities'
 
 import CharityResult from './CharityResult'
 import InputSearch from 'constructicon/input-search'
@@ -15,6 +19,20 @@ class CharitySearch extends Component {
       results: [],
       status: null,
       value: null
+    }
+  }
+
+  componentDidMount () {
+    const initial = this.props.initial
+
+    if (initial) {
+      Promise.resolve()
+        .then(() => fetchCharity(initial))
+        .then(data => this.setState({ value: data.name }))
+        .catch(error => {
+          this.setState({ value: null })
+          return Promise.reject(error)
+        })
     }
   }
 
@@ -70,6 +88,11 @@ CharitySearch.propTypes = {
    * Only show charities in this campaign
    */
   campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+
+  /**
+   * The id of the initially selected charity
+   */
+  initial: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /**
    * The props to be passed to the input search component
