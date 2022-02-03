@@ -51,6 +51,8 @@ export const paramsSerializer = params =>
       if (isEmpty(value)) return false
 
       if (Array.isArray(value)) {
+        if (!value[0]) return false
+
         return value.map(val => [key, val].join('=')).join('&')
       }
 
