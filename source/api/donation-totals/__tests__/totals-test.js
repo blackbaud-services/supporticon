@@ -83,6 +83,17 @@ describe('Donation Totals', () => {
         done()
       })
     })
+
+    it('uses the correct url to fetch totals for a charity within a campaign', done => {
+      fetchDonationTotals({ campaign: 1234, charity: 5678 })
+      moxios.wait(() => {
+        const request = moxios.requests.mostRecent()
+        expect(request.url).to.include(
+          '/donationsleaderboards/v1/totals?campaignGuids=1234&charityIds=5678'
+        )
+        done()
+      })
+    })
   })
 
   describe('Deserialize donation totals', () => {
