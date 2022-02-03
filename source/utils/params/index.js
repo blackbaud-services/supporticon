@@ -22,7 +22,7 @@ export const dataSource = ({ event, charity, campaign, donationRef }) => {
     }
 
     return 'event'
-  } else if (!isEmpty(charity) && isEmpty(campaign)) {
+  } else if (!isEmpty(charity)) {
     return 'charity'
   } else if (!isEmpty(campaign)) {
     return 'campaign'
@@ -48,7 +48,7 @@ export const paramsSerializer = params =>
     .map(key => {
       const value = params[key]
 
-      if (!value) return false
+      if (isEmpty(value)) return false
 
       if (Array.isArray(value)) {
         return value.map(val => [key, val].join('=')).join('&')
