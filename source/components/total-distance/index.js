@@ -11,6 +11,7 @@ import Metric from 'constructicon/metric'
 const TotalDistance = ({
   activity,
   campaign,
+  charity,
   endDate,
   icon,
   label,
@@ -27,6 +28,7 @@ const TotalDistance = ({
 }) => {
   const { data, status } = useFitnessTotals({
     campaign,
+    charity,
     endDate,
     startDate,
     tagId,

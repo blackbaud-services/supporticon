@@ -10,6 +10,7 @@ import Metric from 'constructicon/metric'
 
 const TotalElevation = ({
   campaign,
+  charity,
   endDate,
   icon,
   label,
@@ -26,6 +27,7 @@ const TotalElevation = ({
 }) => {
   const { data, status } = useFitnessTotals({
     campaign,
+    charity,
     endDate,
     startDate,
     tagId,
