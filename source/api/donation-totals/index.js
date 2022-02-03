@@ -88,6 +88,7 @@ export const fetchDonationTotals = (params = required()) => {
       return client.get(
         '/donationsleaderboards/v1/totals',
         {
+          campaignGuids,
           charityIds: Array.isArray(params.charity)
             ? params.charity.map(getUID)
             : getUID(params.charity),
