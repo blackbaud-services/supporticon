@@ -1,5 +1,5 @@
 import * as client from '../../utils/client'
-import { paramsSerializer, required } from '../../utils/params'
+import { isEmpty, paramsSerializer, required } from '../../utils/params'
 import { fetchTotals, deserializeTotals } from '../../utils/totals'
 
 export const fetchFitnessSummary = (campaign = required(), types) =>
@@ -7,6 +7,7 @@ export const fetchFitnessSummary = (campaign = required(), types) =>
 
 export function fetchFitnessTotals ({
   campaign = required(),
+  charity,
   limit = 100,
   offset = 0,
   useLegacy = true,
@@ -15,6 +16,20 @@ export function fetchFitnessTotals ({
   tagId,
   tagValue
 }) {
+  if (!isEmpty(charity)) {
+    return fetchTotals({
+      segment: `page:campaign:${campaign}:charity:${charity}`,
+      tagId: 'page:campaign:charity',
+      tagValue: `page:campaign:${campaign}:charity:${charity}`
+    })
+      .then(deserializeTotals)
+      .then(result => ({
+        distance: result.fitnessDistanceTotal,
+        duration: result.fitnessDurationTotal,
+        elevation: result.fitnessElevationTotal
+      }))
+  }
+
   if ((tagId && tagValue) || !useLegacy) {
     return fetchTotals({
       segment: `page:campaign:${campaign}`,
