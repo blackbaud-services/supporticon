@@ -20,7 +20,11 @@ import { getMonetaryValue } from '../../utils/totals'
  * @function fetches fundraising pages ranked by funds raised
  */
 export const fetchLeaderboard = (params = required()) => {
-  if (!isEmpty(params.campaign) && (params.allPages || params.q) && params.type !== 'team') {
+  if (
+    !isEmpty(params.campaign) &&
+    (params.allPages || params.q) &&
+    params.type !== 'team'
+  ) {
     return recursivelyFetchJGLeaderboard(
       Array.isArray(params.campaign)
         ? params.campaign.map(getUID).join(',')
@@ -53,7 +57,7 @@ export const fetchLeaderboard = (params = required()) => {
   }
 
   return Promise.all([
-    (!isEmpty(params.campaign) && isEmpty(params.charity))
+    !isEmpty(params.campaign) && isEmpty(params.charity)
       ? fetchCampaignGraphqlLeaderboard(params)
       : Promise.resolve([]),
     fetchLegacyLeaderboard(params)
@@ -153,10 +157,19 @@ export const fetchCampaignGraphqlLeaderboard = params => {
     })
     .then(response => response.data)
     .then(result => lodashGet(result, 'data.page.leaderboard.nodes', []))
-    .then(pages => pages.filter(item => lodashGet(item, 'donationSummary.totalAmount.value')))
-    .then(pages => orderBy(pages, ['donationSummary.totalAmount.value'], ['desc']))
+    .then(pages =>
+      pages.filter(item => lodashGet(item, 'donationSummary.totalAmount.value'))
+    )
+    .then(pages =>
+      orderBy(pages, ['donationSummary.totalAmount.value'], ['desc'])
+    )
     .then(results =>
-      results.filter(result => result.slug.indexOf(params.type === 'team' ? 'team/' : 'fundraising/') === 0)
+      results.filter(
+        result =>
+          result.slug.indexOf(
+            params.type === 'team' ? 'team/' : 'fundraising/'
+          ) === 0
+      )
     )
     .then(results => removeExcludedPages(results, params.excludePageIds))
 }
@@ -188,9 +201,7 @@ export const fetchLegacyLeaderboard = params => {
         limit: val => Math.min(maxPerRequest, val || 10),
         page: val =>
           String(
-            val
-              ? Math.min(maxPerRequest, params.limit || 10) * (val - 1)
-              : 0
+            val ? Math.min(maxPerRequest, params.limit || 10) * (val - 1) : 0
           ),
         type: val => (isTeam ? 'TeamGuid' : 'PageGuid')
       }
@@ -211,7 +222,9 @@ export const fetchLegacyLeaderboard = params => {
         page: currentPage + 1
       })
     })
-    .then(results => results.filter(result => (isTeam ? result.team : result.page)))
+    .then(results =>
+      results.filter(result => (isTeam ? result.team : result.page))
+    )
     .then(results => mapLeaderboardResults(results, isTeam))
     .then(results => removeExcludedPages(results, params.excludePageIds))
     .then(results => results.filter(item => item.status !== 'Cancelled'))
@@ -226,6 +239,7 @@ const removeExcludedPages = (results = [], pageIds) => {
     'legacyId',
     'pageGuid',
     'pageShortName',
+    'pageId',
     'shortName',
     'slug',
     'id',
@@ -329,13 +343,22 @@ const recursivelyFetchJGLeaderboard = (
  * @function a default deserializer for leaderboard pages
  */
 export const deserializeLeaderboard = (supporter, index) => {
-  const isTeam = supporter.type === 'team' || lodashGet(supporter, 'slug', '').indexOf('team/') === 0
-  const slug = supporter.pageShortName || supporter.shortName || (supporter.slug ? supporter.slug.replace(/(fundraising|team)\//, '') : undefined)
+  const isTeam =
+    supporter.type === 'team' ||
+    lodashGet(supporter, 'slug', '').indexOf('team/') === 0
+  const slug =
+    supporter.pageShortName ||
+    supporter.shortName ||
+    (supporter.slug
+      ? supporter.slug.replace(/(fundraising|team)\//, '')
+      : undefined)
   const owner =
     lodashGet(supporter, 'pageOwner.fullName') ||
     lodashGet(supporter, 'owner.firstName')
       ? [supporter.owner.firstName, supporter.owner.lastName].join(' ')
-      : typeof supporter.owner === 'string' ? supporter.owner : null
+      : typeof supporter.owner === 'string'
+        ? supporter.owner
+        : null
 
   return {
     currency:
@@ -366,7 +389,10 @@ export const deserializeLeaderboard = (supporter, index) => {
         getMonetaryValue(lodashGet(supporter, 'donationSummary.offlineAmount'))
     ),
     owner,
-    ownerImage: imageUrl(lodashGet(supporter, 'owner.avatar'), 'Size186x186Crop'),
+    ownerImage: imageUrl(
+      lodashGet(supporter, 'owner.avatar'),
+      'Size186x186Crop'
+    ),
     position: index + 1,
     raised: parseFloat(
       lodashGet(supporter, 'team.donationSummary.totalAmount') ||
