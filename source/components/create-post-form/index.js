@@ -43,9 +43,7 @@ class CreatePostForm extends React.Component {
           () =>
             values(data).every(isEmpty) &&
             Promise.reject(
-              new Error({
-                message: 'Please include a message or an image or video.'
-              })
+              new Error('Please include a message or an image or video.')
             )
         )
         .then(() => this.setState({ errors: [], status: 'fetching' }))
