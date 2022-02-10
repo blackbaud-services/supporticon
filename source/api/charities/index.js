@@ -7,7 +7,7 @@ export const fetchCharity = (id = required()) => get(`/v1/charity/${id}`)
 export const searchCharities = (params = required()) => {
   const campaign = getUID(params.campaign)
 
-  if (params.campaign) {
+  if (campaign) {
     const finalParams = {
       ...params,
       field: 'charityNameSuggest',
