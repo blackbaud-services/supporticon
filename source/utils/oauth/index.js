@@ -46,6 +46,8 @@ export const showPopup = ({
   const popupWindow = window.open(url, name, popupWindowFeatures)
 
   const popupInterval = setInterval(() => {
+    popupWindow.postMessage('ready', '*')
+
     if (popupWindow.closed) {
       clearInterval(popupInterval)
       onClose(popupWindow)

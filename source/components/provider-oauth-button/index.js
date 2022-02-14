@@ -126,6 +126,8 @@ class ProviderOauthButton extends Component {
     this.setState({ status: 'loading' })
 
     this.isPopupClosed = setInterval(() => {
+      popupWindow.postMessage('ready', '*')
+
       if (popupWindow.closed) {
         const { success } = this.state
         clearInterval(this.isPopupClosed)
