@@ -163,6 +163,7 @@ export const fetchCampaignGraphqlLeaderboard = params => {
     .then(pages =>
       orderBy(pages, ['donationSummary.totalAmount.value'], ['desc'])
     )
+    .then(results => results.filter(item => item.slug))
     .then(results =>
       results.filter(
         result =>
