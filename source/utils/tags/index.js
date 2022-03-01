@@ -139,6 +139,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:charity:${page.charityId}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:charity:${page.charityId}:all`
         }
       ]
     },
@@ -157,6 +161,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:charity:${page.charityId}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:charity:${page.charityId}:all`
         }
       ]
     },
@@ -175,6 +183,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:event:${page.event}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:event:${page.event}:all`
         }
       ]
     },
@@ -193,6 +205,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:event:${page.event}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:event:${page.event}:all`
         }
       ]
     },
@@ -211,6 +227,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:event:${page.event}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:event:${page.event}:all`
         }
       ]
     },
@@ -229,6 +249,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:charity:${page.charityId}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:charity:${page.charityId}:all`
         }
       ]
     }
@@ -250,6 +274,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:campaign:${page.campaign}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:campaign:${page.campaign}:all`
         }
       ]
     },
@@ -268,6 +296,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:campaign:${page.campaign}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:campaign:${page.campaign}:all`
         }
       ]
     },
@@ -286,6 +318,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:campaign:${page.campaign}:charity:${page.charityId}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:campaign:${page.campaign}:charity:${page.charityId}:all`
         }
       ]
     },
@@ -304,6 +340,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:campaign:${page.campaign}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:campaign:${page.campaign}:all`
         }
       ]
     },
@@ -322,6 +362,10 @@ export const defaultPageTags = (page, timeBox) => {
           measurementDomains: fitnessDomains,
           segment: `page:campaign:${page.campaign}:charity:${page.charityId}`,
           timeBox
+        },
+        {
+          measurementDomains: ['all'],
+          segment: `page:campaign:${page.campaign}:charity:${page.charityId}:all`
         }
       ]
     }
