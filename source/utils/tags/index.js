@@ -3,7 +3,12 @@ export const getPrimaryUnit = measurementDomain => {
     return 'count'
   }
 
-  if (['fundraising:donations_made', 'fundraising:offline_donations_count'].indexOf(measurementDomain) > -1) {
+  if (
+    [
+      'fundraising:donations_made',
+      'fundraising:offline_donations_count'
+    ].indexOf(measurementDomain) > -1
+  ) {
     return 'count'
   }
 
@@ -35,11 +40,14 @@ export const formatMeasurementDomain = sortBy => {
   }
 }
 
-export const measurementDomains = [
+export const fundraisingDomains = [
   'fundraising:donations_received',
   'fundraising:donations_made',
   'fundraising:offline_donations',
-  'fundraising:offline_donations_count',
+  'fundraising:offline_donations_count'
+]
+
+export const fitnessDomains = [
   'any:activities',
   'any:distance',
   'any:elapsed_time',
@@ -61,6 +69,8 @@ export const measurementDomains = [
   'walk:elapsed_time',
   'walk:elevation_gain'
 ]
+
+export const measurementDomains = [...fundraisingDomains, ...fitnessDomains]
 
 export const defaultPageTags = (page, timeBox) => {
   const tags = [
@@ -122,8 +132,13 @@ export const defaultPageTags = (page, timeBox) => {
       value: `page:charity:${page.charityId}`,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
           segment: `page:charity:${page.charityId}`
+        },
+        {
+          measurementDomains: fitnessDomains,
+          segment: `page:charity:${page.charityId}`,
+          timeBox
         }
       ]
     },
@@ -135,7 +150,11 @@ export const defaultPageTags = (page, timeBox) => {
       value: `page:fundraising:${page.uuid}`,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
+          segment: `page:charity:${page.charityId}`
+        },
+        {
+          measurementDomains: fitnessDomains,
           segment: `page:charity:${page.charityId}`,
           timeBox
         }
@@ -149,8 +168,13 @@ export const defaultPageTags = (page, timeBox) => {
       value: `page:event:${page.event}`,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
           segment: `page:event:${page.event}`
+        },
+        {
+          measurementDomains: fitnessDomains,
+          segment: `page:event:${page.event}`,
+          timeBox
         }
       ]
     },
@@ -162,7 +186,11 @@ export const defaultPageTags = (page, timeBox) => {
       value: `page:fundraising:${page.uuid}`,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
+          segment: `page:event:${page.event}`
+        },
+        {
+          measurementDomains: fitnessDomains,
           segment: `page:event:${page.event}`,
           timeBox
         }
@@ -176,8 +204,13 @@ export const defaultPageTags = (page, timeBox) => {
       value: page.event,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
           segment: `page:event:${page.event}`
+        },
+        {
+          measurementDomains: fitnessDomains,
+          segment: `page:event:${page.event}`,
+          timeBox
         }
       ]
     },
@@ -189,8 +222,13 @@ export const defaultPageTags = (page, timeBox) => {
       value: page.charityId,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
           segment: `page:charity:${page.charityId}`
+        },
+        {
+          measurementDomains: fitnessDomains,
+          segment: `page:charity:${page.charityId}`,
+          timeBox
         }
       ]
     }
@@ -205,8 +243,13 @@ export const defaultPageTags = (page, timeBox) => {
       value: page.campaign,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
           segment: `page:campaign:${page.campaign}`
+        },
+        {
+          measurementDomains: fitnessDomains,
+          segment: `page:campaign:${page.campaign}`,
+          timeBox
         }
       ]
     },
@@ -218,8 +261,13 @@ export const defaultPageTags = (page, timeBox) => {
       value: `page:campaign:${page.campaign}`,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
           segment: `page:campaign:${page.campaign}`
+        },
+        {
+          measurementDomains: fitnessDomains,
+          segment: `page:campaign:${page.campaign}`,
+          timeBox
         }
       ]
     },
@@ -231,8 +279,13 @@ export const defaultPageTags = (page, timeBox) => {
       value: `page:campaign:${page.campaign}:charity:${page.charityId}`,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
           segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
+        },
+        {
+          measurementDomains: fitnessDomains,
+          segment: `page:campaign:${page.campaign}:charity:${page.charityId}`,
+          timeBox
         }
       ]
     },
@@ -244,7 +297,11 @@ export const defaultPageTags = (page, timeBox) => {
       value: `page:fundraising:${page.uuid}`,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
+          segment: `page:campaign:${page.campaign}`
+        },
+        {
+          measurementDomains: fitnessDomains,
           segment: `page:campaign:${page.campaign}`,
           timeBox
         }
@@ -258,7 +315,11 @@ export const defaultPageTags = (page, timeBox) => {
       value: `page:fundraising:${page.uuid}`,
       aggregation: [
         {
-          measurementDomains: ['all'],
+          measurementDomains: fundraisingDomains,
+          segment: `page:campaign:${page.campaign}:charity:${page.charityId}`
+        },
+        {
+          measurementDomains: fitnessDomains,
           segment: `page:campaign:${page.campaign}:charity:${page.charityId}`,
           timeBox
         }
