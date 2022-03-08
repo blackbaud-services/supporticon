@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import withForm from 'constructicon/with-form'
 import form from './form'
 import { createTeam, deserializeTeam } from '../../api/teams'
-import { currencyCode } from '../../utils/currencies'
+import { currencyCode as currencyFromCountry } from '../../utils/currencies'
 
 import Form from 'constructicon/form'
 import InputField from 'constructicon/input-field'
@@ -21,6 +21,7 @@ class CreateTeamForm extends React.Component {
     const {
       campaign,
       country,
+      currencyCode,
       form,
       pageId,
       pageSlug,
@@ -35,7 +36,7 @@ class CreateTeamForm extends React.Component {
         campaignId: campaign,
         captainSlug: pageSlug,
         page: pageId,
-        targetCurrency: currencyCode(country),
+        targetCurrency: currencyCode || currencyFromCountry(country),
         token,
         ...data
       }
