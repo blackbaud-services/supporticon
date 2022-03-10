@@ -1,4 +1,4 @@
-# Supporticon [![Build Status](https://circleci.com/gh/blackbaud-services/supporticon/tree/master.svg?style=shield)](https://circleci.com/gh/blackbaud-services/supporticon/tree/master) [![NPM Version](https://img.shields.io/npm/v/supporticon.svg?style=flat-square&amp;colorB=1bab6b)](https://www.npmjs.com/package/supporticon)
+# Supporticon [![NPM Version](https://img.shields.io/npm/v/supporticon.svg?style=flat-square&amp;colorB=1bab6b)](https://www.npmjs.com/package/supporticon)
 
 Consistently and easily fetch data from the [JustGiving](https://developer.justgiving.com/) APIs for Blackbaud Professional Services projects.
 
@@ -6,6 +6,8 @@ Also provides some common data-driven components, using the [Constructicon](http
 
 ## Important Links
 
+- [Pipeline](https://app.circleci.com/pipelines/github/blackbaud-services/supporticon)
+- [NPM Package](https://www.npmjs.com/package/supporticon)
 - [Documentation](https://blackbaud-services.github.io/supporticon)
 - [Components](https://blackbaud-services.github.io/supporticon/components)
 
