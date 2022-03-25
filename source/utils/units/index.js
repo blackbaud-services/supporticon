@@ -6,6 +6,7 @@ export const convertYardsToMeters = data => data * 0.9144
 export const convertMetersToKm = data => data / 1000
 export const convertMetersToMiles = data => data * 0.000621371
 export const convertMetersToFeet = data => data * 3.28084
+export const convertMetersToYards = data => data * 1.0936132983
 
 export const convertMetersToUnit = (amount, unit) => {
   if (isNaN(amount)) {
@@ -23,6 +24,9 @@ export const convertMetersToUnit = (amount, unit) => {
     case 'ft':
     case 'feet':
       return convertMetersToFeet(amount)
+    case 'yd':
+    case 'yards':
+      return convertMetersToYards(amount)
     default:
       return Number(amount)
   }
