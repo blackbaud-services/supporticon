@@ -224,6 +224,7 @@ export const createFitnessActivity = ({
   durationUnit,
   elevation = 0,
   elevationUnit,
+  steps = 0,
   pageId,
   pageSlug,
   startedAt,
@@ -262,7 +263,7 @@ export const createFitnessActivity = ({
               distance: ${convertToMeters(distance, unit)}
               duration: ${convertToSeconds(duration, durationUnit)}
               elevation: ${convertToMeters(elevation, elevationUnit || unit)}
-              steps: 0
+              steps: ${steps}
             }
           }
         ) {
