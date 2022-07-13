@@ -104,6 +104,7 @@ export const deserializeFitnessActivity = (activity = required()) => {
     slug: activity.PageShortName,
     source,
     sourceUrl: fitnessApp.sourceUrl,
+    steps: activity.steps,
     teamId: activity.TeamGuid,
     title: activity.Title || activity.title,
     type: activityType
