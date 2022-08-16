@@ -392,7 +392,7 @@ SignupForm.propTypes = {
   /**
    * The initial values for firstname, lastname and emailaddress
    */
-   initialValues: object
+  initialValues: PropTypes.object
 }
 
 SignupForm.defaultProps = {
