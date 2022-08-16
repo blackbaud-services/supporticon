@@ -387,7 +387,12 @@ SignupForm.propTypes = {
   /**
    * The label for the form submit button
    */
-  submit: PropTypes.string
+  submit: PropTypes.string,
+
+  /**
+   * The initial values for firstname, lastname and emailaddress
+   */
+   initialValues: object
 }
 
 SignupForm.defaultProps = {
@@ -419,6 +424,7 @@ const form = props => {
         type: 'text',
         required: true,
         maxLength: 30,
+        initial: props.initialValues ? props.initialValues.firstname : undefined,
         validators: [
           validators.required('Please enter a first name'),
           validators.alphaNumericSpecial('Please enter a valid first name')
@@ -429,6 +435,7 @@ const form = props => {
         type: 'text',
         required: true,
         maxLength: 50,
+        initial: props.initialValues ? props.initialValues.lastname : undefined,
         validators: [
           validators.required('Please enter a last name'),
           validators.alphaNumericSpecial('Please enter a valid last name')
@@ -439,6 +446,7 @@ const form = props => {
         type: 'email',
         required: true,
         autoComplete: 'off',
+        initial: props.initialValues ? props.initialValues.email : undefined,
         validators: [
           validators.required('Email is a required field'),
           validators.email('Must be a valid email')
