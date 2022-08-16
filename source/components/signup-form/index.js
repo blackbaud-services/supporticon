@@ -171,7 +171,7 @@ class SignupForm extends Component {
               if (error.data.Errors && Array.isArray(error.data.Errors)) {
                 return this.setState({
                   status: 'failed',
-                  errors: error.data.Errors
+                  errors: error.data.Errors.map(error => ({ message: error.ErrorMessage }))
                 })
               }
 
