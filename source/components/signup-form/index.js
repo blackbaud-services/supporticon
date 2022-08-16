@@ -131,9 +131,6 @@ class SignupForm extends Component {
                         )
                       }
                     default:
-                      if (error.data.Errors && Array.isArray(error.data.Errors)) {
-                        return { message: error.data.Errors[0].ErrorMessage }
-                      }
                       return { message: error.ErrorMessage }
                   }
                 })
@@ -171,6 +168,13 @@ class SignupForm extends Component {
                 })
               })
             default:
+              if (error.data.Errors && Array.isArray(error.data.Errors)) {
+                return this.setState({
+                  status: 'failed',
+                  errors: error.data.Errors
+                })
+              }
+
               return this.setState({
                 status: 'failed',
                 errors: message ? [{ message }] : []
