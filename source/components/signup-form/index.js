@@ -132,7 +132,7 @@ class SignupForm extends Component {
                       }
                     default:
                       if (error.data.Errors && isArray(error.data.Errors)) {
-                        return { message: error.data.Errors[0].ErrorMessage }  
+                        return { message: error.data.Errors[0].ErrorMessage }
                       }
                       return { message: error.ErrorMessage }
                   }
