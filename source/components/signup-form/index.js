@@ -238,16 +238,16 @@ class SignupForm extends Component {
         <Grid spacing={{ x: 0.5 }} {...grid}>
           <GridColumn sm={6} {...gridColumn}>
             <InputField {...form.fields.firstName} {...inputField} />
-            {externalValidationMessages && externalValidationMessages.firstname ? <span>{externalValidationMessages.firstname}</span> : <React.Fragment />}
+            {externalValidationMessages && externalValidationMessages.firstname ? <span>{externalValidationMessages.firstname}</span> : <></>}
           </GridColumn>
           <GridColumn sm={6} {...gridColumn}>
             <InputField {...form.fields.lastName} {...inputField} />
-            {externalValidationMessages && externalValidationMessages.lastname ? <span>{externalValidationMessages.lastname}</span> : <React.Fragment />}
+            {externalValidationMessages && externalValidationMessages.lastname ? <span>{externalValidationMessages.lastname}</span> : <></>}
           </GridColumn>
         </Grid>
 
         <InputField {...form.fields.email} {...inputField} />
-        {externalValidationMessages && externalValidationMessages.email ? <span>{externalValidationMessages.email}</span> : <React.Fragment />}
+        {externalValidationMessages && externalValidationMessages.email ? <span>{externalValidationMessages.email}</span> : <></>}
         <InputField
           {...form.fields.password}
           validations={
