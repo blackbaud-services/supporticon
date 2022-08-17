@@ -213,7 +213,8 @@ class SignupForm extends Component {
       inputField,
       legend,
       showPasswordValidations,
-      submit
+      submit,
+      externalValidationMessages
     } = this.props
 
     const { status, errors } = this.state
@@ -237,13 +238,16 @@ class SignupForm extends Component {
         <Grid spacing={{ x: 0.5 }} {...grid}>
           <GridColumn sm={6} {...gridColumn}>
             <InputField {...form.fields.firstName} {...inputField} />
+            {externalValidationMessages && externalValidationMessages.firstname ? <span>{externalValidationMessages.firstname}</span> : <React.Fragment />}
           </GridColumn>
           <GridColumn sm={6} {...gridColumn}>
             <InputField {...form.fields.lastName} {...inputField} />
+            {externalValidationMessages && externalValidationMessages.lastname ? <span>{externalValidationMessages.lastname}</span> : <React.Fragment />}
           </GridColumn>
         </Grid>
 
         <InputField {...form.fields.email} {...inputField} />
+        {externalValidationMessages && externalValidationMessages.email ? <span>{externalValidationMessages.email}</span> : <React.Fragment />}
         <InputField
           {...form.fields.password}
           validations={
@@ -392,7 +396,12 @@ SignupForm.propTypes = {
   /**
    * The initial values for firstname, lastname and emailaddress
    */
-  initialValues: PropTypes.object
+  initialValues: PropTypes.object,
+
+  /**
+   * Validation messages generated from external sources
+   */
+  externalValidationMessages: PropTypes.object
 }
 
 SignupForm.defaultProps = {
