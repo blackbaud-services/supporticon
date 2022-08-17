@@ -218,6 +218,7 @@ class SignupForm extends Component {
     } = this.props
 
     const { status, errors } = this.state
+    const externalValidationStyles = { marginTop: '-1.5rem', marginBottom: '1.5rem', display: 'block' }
 
     return (
       <Form
@@ -238,16 +239,16 @@ class SignupForm extends Component {
         <Grid spacing={{ x: 0.5 }} {...grid}>
           <GridColumn sm={6} {...gridColumn}>
             <InputField {...form.fields.firstName} {...inputField} />
-            {externalValidationMessages && externalValidationMessages.firstname ? <span>{externalValidationMessages.firstname}</span> : <></>}
+            {externalValidationMessages && externalValidationMessages.firstname ? <span style={externalValidationStyles}>{externalValidationMessages.firstname}</span> : <></>}
           </GridColumn>
           <GridColumn sm={6} {...gridColumn}>
             <InputField {...form.fields.lastName} {...inputField} />
-            {externalValidationMessages && externalValidationMessages.lastname ? <span>{externalValidationMessages.lastname}</span> : <></>}
+            {externalValidationMessages && externalValidationMessages.lastname ? <span style={externalValidationStyles}>{externalValidationMessages.lastname}</span> : <></>}
           </GridColumn>
         </Grid>
 
         <InputField {...form.fields.email} {...inputField} />
-        {externalValidationMessages && externalValidationMessages.email ? <span>{externalValidationMessages.email}</span> : <></>}
+        {externalValidationMessages && externalValidationMessages.email ? <span style={externalValidationStyles}>{externalValidationMessages.email}</span> : <></>}
         <InputField
           {...form.fields.password}
           validations={
