@@ -218,7 +218,7 @@ class SignupForm extends Component {
     } = this.props
 
     const { status, errors } = this.state
-    const externalValidationStyles = { marginTop: '-1.5rem', marginBottom: '1.5rem', display: 'block' }
+    const externalValidationStyles = { marginTop: '-1.5rem', marginBottom: '1.5rem', display: 'block', fontWeight: 'bold', fontStyle: 'italic' }
 
     return (
       <Form
