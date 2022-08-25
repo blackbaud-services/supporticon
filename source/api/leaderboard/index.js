@@ -70,7 +70,7 @@ export const fetchLeaderboard = (params = required()) => {
       }))
     )
     .then(items => orderBy(items, ['deserialized.raised'], ['desc']))
-    .then(items => uniqBy(items, 'deserialized.slug'))
+    .then(items => uniqBy(items, 'deserialized.id'))
     .then(items => items.map(item => item.original))
     .then(results => removeExcludedPages(results, params.excludePageIds))
 }
