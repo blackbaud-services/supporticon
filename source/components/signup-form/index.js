@@ -85,6 +85,7 @@ class SignupForm extends Component {
 
           switch (error.status) {
             case 400:
+            case 406:
             case 409:
               errors = get(error, 'data.Errors') || []
 
@@ -96,6 +97,10 @@ class SignupForm extends Component {
                       return {
                         message:
                           'Your password must not include your name or email address'
+                      }
+                    case 'Sorry something went wrong RALJGU':
+                      return {
+                        message: 'The email domain you have used is not allowed. Please change your email address.'
                       }
                     case 'EmailAddress is in use.':
                       this.setState({ showModal: true })
