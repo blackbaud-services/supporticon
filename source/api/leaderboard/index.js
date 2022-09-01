@@ -84,10 +84,10 @@ export const fetchEventLeaderboard = params => {
 
   const args = {
     eventid: Array.isArray(params.event)
-        ? params.event.map(getUID)
-        : getUID(params.event),
-      currency: currencyCode(params.country),
-      maxResults: params.limit
+      ? params.event.map(getUID)
+      : getUID(params.event),
+    currency: currencyCode(params.country),
+    maxResults: params.limit
   }
 
   if (params.charity) {
