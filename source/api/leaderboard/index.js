@@ -82,15 +82,21 @@ export const fetchEventLeaderboard = params => {
     )
   }
 
-  return get(
-    '/v1/events/leaderboard',
-    {
-      eventid: Array.isArray(params.event)
+  const args = {
+    eventid: Array.isArray(params.event)
         ? params.event.map(getUID)
         : getUID(params.event),
       currency: currencyCode(params.country),
       maxResults: params.limit
-    },
+  }
+
+  if (params.charity) {
+    args.charityIds = params.charity
+  }
+
+  return get(
+    '/v1/events/leaderboard',
+    args,
     {},
     { paramsSerializer }
   )
