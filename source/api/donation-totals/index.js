@@ -67,16 +67,22 @@ export const fetchDonationTotals = (params = required()) => {
         currencyCode: currencyCode(params.country)
       })
     case 'event':
+      const args = {
+        eventid: Array.isArray(params.event)
+          ? params.event.map(getUID)
+          : getUID(params.event),
+        currency: currencyCode(params.country)
+      }
+
+      if (params.charity) {
+        args.charityIds = params.charity
+      }
+
       return Promise.all([
         fetchDonations(params),
         client.get(
           '/v1/events/leaderboard',
-          {
-            eventid: Array.isArray(params.event)
-              ? params.event.map(getUID)
-              : getUID(params.event),
-            currency: currencyCode(params.country)
-          },
+          args,
           {},
           { paramsSerializer }
         )
