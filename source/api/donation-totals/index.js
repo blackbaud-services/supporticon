@@ -69,7 +69,7 @@ export const fetchDonationTotals = (params = required()) => {
   }
 
   if (params.charity) {
-    args.charityIds = params.charity
+    eventArgs.charityIds = params.charity
   }
 
   switch (dataSource(params)) {
