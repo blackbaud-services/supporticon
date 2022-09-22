@@ -95,11 +95,13 @@ class SignupForm extends Component {
                   switch (error.ErrorMessage) {
                     case 'Password must not include email, name, or a commonly used word':
                       return {
+                        code: error.status,
                         message:
                           'Your password must not include your name or email address'
                       }
                     case 'Sorry something went wrong RALJGU':
                       return {
+                        code: error.status,
                         message: 'The email domain you have used is not allowed. Please change your email address.'
                       }
                     case 'EmailAddress is in use.':
@@ -136,7 +138,7 @@ class SignupForm extends Component {
                         )
                       }
                     default:
-                      return { message: error.ErrorMessage }
+                      return { message: error.ErrorMessage, code: error.status }
                   }
                 })
               })
@@ -176,7 +178,7 @@ class SignupForm extends Component {
               if (error.data.Errors && Array.isArray(error.data.Errors)) {
                 return this.setState({
                   status: 'failed',
-                  errors: error.data.Errors.map(error => ({ message: error.ErrorMessage }))
+                  errors: error.data.Errors.map(error => ({ message: error.ErrorMessage, code: error.status }))
                 })
               }
 
@@ -252,7 +254,11 @@ class SignupForm extends Component {
           </GridColumn>
         </Grid>
 
-        <InputField {...form.fields.email} {...inputField} />
+        <InputField
+          {...form.fields.email}
+          {...inputField}
+          onChange={() => this.setState(oldState => ({ ...oldState, errors: oldState.errors.filter(error => error.code !== 409) }))}
+        />
         {externalValidationMessages && externalValidationMessages.email ? <span style={externalValidationStyles}>{externalValidationMessages.email}</span> : <></>}
         <InputField
           {...form.fields.password}
