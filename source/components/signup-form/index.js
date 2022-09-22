@@ -82,8 +82,9 @@ class SignupForm extends Component {
           const message =
             get(error, 'data.error.message') ||
             get(error, 'data.errorMessage')
+            const errorStatus = error.status
 
-          switch (error.status) {
+          switch (errorStatus) {
             case 400:
             case 406:
             case 409:
@@ -95,13 +96,13 @@ class SignupForm extends Component {
                   switch (error.ErrorMessage) {
                     case 'Password must not include email, name, or a commonly used word':
                       return {
-                        code: error.status,
+                        code: errorStatus,
                         message:
                           'Your password must not include your name or email address'
                       }
                     case 'Sorry something went wrong RALJGU':
                       return {
-                        code: error.status,
+                        code: errorStatus,
                         message: 'The email domain you have used is not allowed. Please change your email address.'
                       }
                     case 'EmailAddress is in use.':
@@ -138,7 +139,7 @@ class SignupForm extends Component {
                         )
                       }
                     default:
-                      return { message: error.ErrorMessage, code: error.status }
+                      return { message: error.ErrorMessage, code: errorStatus }
                   }
                 })
               })
@@ -178,7 +179,7 @@ class SignupForm extends Component {
               if (error.data.Errors && Array.isArray(error.data.Errors)) {
                 return this.setState({
                   status: 'failed',
-                  errors: error.data.Errors.map(error => ({ message: error.ErrorMessage, code: error.status }))
+                  errors: error.data.Errors.map(error => ({ message: error.ErrorMessage, code: errorStatus }))
                 })
               }
 
