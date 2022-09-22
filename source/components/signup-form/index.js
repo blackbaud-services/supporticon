@@ -254,9 +254,9 @@ class SignupForm extends Component {
           </GridColumn>
         </Grid>
 
-        <InputField {...form.fields.email} {...inputField} onChange={() => {
-          this.setState(oldState => ({ ...oldState, errors: oldState.errors.filter(error => error.code !== 409) }))
-        }} />
+        <InputField {...form.fields.email} {...inputField}
+          onChange={() => this.setState(oldState => ({ ...oldState, errors: oldState.errors.filter(error => error.code !== 409) }))}
+        />
         {externalValidationMessages && externalValidationMessages.email ? <span style={externalValidationStyles}>{externalValidationMessages.email}</span> : <></>}
         <InputField
           {...form.fields.password}
