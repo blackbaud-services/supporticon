@@ -82,7 +82,8 @@ class SignupForm extends Component {
           const message =
             get(error, 'data.error.message') ||
             get(error, 'data.errorMessage')
-            const errorStatus = error.status
+
+          const errorStatus = error.status
 
           switch (errorStatus) {
             case 400:
