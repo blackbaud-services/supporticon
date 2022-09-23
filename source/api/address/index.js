@@ -11,10 +11,16 @@ export const getAddressDetails = (id = required()) =>
     .get(`/v1/justgiving/addresses/${id}`)
     .then(response => response.data)
 
-export const deserializeAddress = address => ({
-  streetAddress: address.AddressLine1,
-  extendedAddress: address.AddressLine2,
-  locality: address.Town,
-  region: address.County,
-  postCode: address.Postcode
-})
+export const deserializeAddress = address => {
+  let extendedAddress = address.AddressLine2
+  if (address.AddressLine3) {
+    extendedAddress = `${extendedAddress}, ${address.AddressLine3}`
+  }
+  return {
+    streetAddress: address.AddressLine1,
+    extendedAddress,
+    locality: address.Town,
+    region: address.County,
+    postCode: address.Postcode
+  }
+}
