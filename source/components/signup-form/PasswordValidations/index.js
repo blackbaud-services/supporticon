@@ -27,7 +27,7 @@ const PasswordValidations = ({ form }) => {
       passes: regularExpressions.passwordComplexity.test(form.values.password)
     },
     {
-      label: 'Must not include your name or email address',
+      label: 'Must not include your name or email address',
       passes:
         !containsSubstring(form.values.password, form.values.email) &&
         !containsSubstring(form.values.password, form.values.firstName) &&
