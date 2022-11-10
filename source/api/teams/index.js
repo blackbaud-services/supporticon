@@ -129,10 +129,22 @@ export const fetchTeams = (options = required()) => {
     .then(flatten)
 }
 
-export const fetchTeam = (id = required()) => {
+export const fetchTeam = (id = required(), options) => {
   return client.servicesAPI
     .get(`/v1/justgiving/proxy/campaigns/v1/teams/${id}/full`)
     .then(response => response.data)
+    .then(team => {
+      if (options && options.includePages) {
+        const ids = team.membership.members.map(p => p.fundraisingPageGuid)
+
+        return fetchPages({ allPages: true, ids }).then(members => ({
+          ...team,
+          membership: { ...team.membership, members }
+        }))
+      }
+
+      return Promise.resolve(team)
+    })
 }
 
 export const fetchTeamBySlug = (slug = required(), options = {}) => {
