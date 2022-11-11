@@ -10,13 +10,14 @@ export const fetchTotals = ({
   tagValue = required(),
   measurementDomain
 }) => {
+  const measurementDomainString = measurementDomain ? `measurementDomain: "${measurementDomain}"` : ''
   const query = `
     {
       totals(
         segment: "${segment}",
         tagDefinitionId: "${tagId}",
         tagValue: "${tagValue}",
-        ${measurementDomain ? 'measurementDomain: "${measurementDomain}"' : ''}
+        ${measurementDomainString}
       ) {
         measurementDomain
         amounts {
