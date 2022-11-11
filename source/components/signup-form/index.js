@@ -186,7 +186,7 @@ class SignupForm extends Component {
 
               return this.setState({
                 status: 'failed',
-                errors: message ? [{ message }] : []
+                errors: message ? [{ message }] : [{ message: 'Sorry something went wrong. Please try again' }]
               })
           }
         })
