@@ -83,7 +83,7 @@ class SignupForm extends Component {
             get(error, 'data.error.message') ||
             get(error, 'data.errorMessage')
 
-          const errorStatus = error.status
+          const errorStatus = error ? error.status : 500
 
           switch (errorStatus) {
             case 400:
@@ -177,7 +177,7 @@ class SignupForm extends Component {
                 })
               })
             default:
-              if (error.data.Errors && Array.isArray(error.data.Errors)) {
+              if (error && error.data.Errors && Array.isArray(error.data.Errors)) {
                 return this.setState({
                   status: 'failed',
                   errors: error.data.Errors.map(error => ({ message: error.ErrorMessage, code: errorStatus }))
