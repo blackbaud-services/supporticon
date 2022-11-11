@@ -7,14 +7,17 @@ import { getPrimaryUnit, measurementDomains } from '../tags'
 export const fetchTotals = ({
   segment = required(),
   tagId = required(),
-  tagValue = required()
+  tagValue = required(),
+  measurementDomain
 }) => {
+  const measurementDomainString = measurementDomain ? `measurementDomain: "${measurementDomain}"` : ''
   const query = `
     {
       totals(
         segment: "${segment}",
         tagDefinitionId: "${tagId}",
-        tagValue: "${tagValue}"
+        tagValue: "${tagValue}",
+        ${measurementDomainString}
       ) {
         measurementDomain
         amounts {
