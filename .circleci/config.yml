@@ -82,5 +82,4 @@ jobs:
     steps:
       - install
       - lint
-      - docs
       - publish
