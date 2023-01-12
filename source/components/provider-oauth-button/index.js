@@ -116,9 +116,10 @@ class ProviderOauthButton extends Component {
 
   handleAuth () {
     const { popupWindowFeatures, provider, onClose } = this.props
+    const baseUrl = this.providerUrl()
 
     const popupWindow = window.open(
-      this.providerUrl(),
+      baseUrl,
       `${provider}Auth`,
       popupWindowFeatures
     )
@@ -221,12 +222,13 @@ class ProviderOauthButton extends Component {
         ? 'check'
         : provider
 
+    const baseUrl = this.providerUrl()
     const actionProps = popup
       ? {
           onClick: e => this.handleAuth()
         }
       : {
-          href: this.providerUrl(),
+          href: baseUrl,
           tag: 'a'
         }
 
