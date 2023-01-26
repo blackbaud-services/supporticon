@@ -72,6 +72,7 @@ export const signUp = ({
   reference,
   authType = 'Bearer'
 }) => {
+  Bugsnag.leaveBreadcrumb(`Supporticon:authorisation:signup:init:${authType}`)
   if (authType === 'Basic') {
     const payload = {
       acceptTermsAndConditions: true,
@@ -123,8 +124,15 @@ export const signUp = ({
           : {}
       )
     )
-    .then(response => deserializeIamResponse(response.data))
-    .catch(error => Promise.reject(error.response))
+    .then(response => {
+      Bugsnag.leaveBreadcrumb(`Supporticon:authorisation:signup:response:${response.user.id}`)
+      return deserializeIamResponse(response.data)
+    })
+    .catch(error => {
+      Bugsnag.leaveBreadcrumb(`Supporticon:authorisation:signup:error`)
+      Bugsnag.notify(error)
+      return Promise.reject(error.response)
+    })
 }
 
 export const checkAccountAvailability = email => {
