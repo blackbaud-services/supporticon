@@ -8,7 +8,6 @@ import {
 } from '../../utils/client'
 import { required } from '../../utils/params'
 import { encodeBase64String } from '../../utils/base64'
-import Bugsnag from '@bugsnag/js'
 
 const deserializeIamResponse = data => ({
   ...data.user,
