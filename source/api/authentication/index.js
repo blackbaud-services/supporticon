@@ -130,7 +130,7 @@ export const signUp = ({
       return deserializeIamResponse(response.data)
     })
     .catch(error => {
-      Bugsnag.leaveBreadcrumb(`Supporticon:authorisation:signup:error`)
+      Bugsnag.leaveBreadcrumb('Supporticon:authorisation:signup:error')
       Bugsnag.notify(error)
       return Promise.reject(error.response)
     })
