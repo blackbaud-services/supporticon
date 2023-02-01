@@ -328,17 +328,17 @@ export const defaultPageTags = (page, timeBox, campaignGuidOverride) => {
     {
       tagDefinition: {
         label: 'Page Campaign Link',
-        id: campaignGuidOverride ? campaignGuidOverride : `page:campaign:${page.campaign}`
+        id: campaignGuidOverride || `page:campaign:${page.campaign}`
       },
       value: `page:fundraising:${page.uuid}`,
       aggregation: [
         {
           measurementDomains: fundraisingDomains,
-          segment: campaignGuidOverride ? campaignGuidOverride : `page:campaign:${page.campaign}`
+          segment: campaignGuidOverride || `page:campaign:${page.campaign}`
         },
         {
           measurementDomains: fitnessDomains,
-          segment: campaignGuidOverride ? campaignGuidOverride : `page:campaign:${page.campaign}`,
+          segment: campaignGuidOverride || `page:campaign:${page.campaign}`,
           timeBox
         },
         {
