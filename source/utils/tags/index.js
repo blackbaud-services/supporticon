@@ -72,7 +72,7 @@ export const fitnessDomains = [
 
 export const measurementDomains = [...fundraisingDomains, ...fitnessDomains]
 
-export const defaultPageTags = (page, timeBox) => {
+export const defaultPageTags = (page, timeBox, campaignGuidOverride) => {
   const tags = [
     {
       tagDefinition: {
@@ -328,22 +328,22 @@ export const defaultPageTags = (page, timeBox) => {
     {
       tagDefinition: {
         label: 'Page Campaign Link',
-        id: `page:campaign:${page.campaign}`
+        id: campaignGuidOverride ? campaignGuidOverride : `page:campaign:${page.campaign}`
       },
       value: `page:fundraising:${page.uuid}`,
       aggregation: [
         {
           measurementDomains: fundraisingDomains,
-          segment: `page:campaign:${page.campaign}`
+          segment: campaignGuidOverride ? campaignGuidOverride : `page:campaign:${page.campaign}`
         },
         {
           measurementDomains: fitnessDomains,
-          segment: `page:campaign:${page.campaign}`,
+          segment: campaignGuidOverride ? campaignGuidOverride : `page:campaign:${page.campaign}`,
           timeBox
         },
         {
           measurementDomains: ['all'],
-          segment: `page:campaign:${page.campaign}:all`
+          segment: campaignGuidOverride ? `${campaignGuidOverride}:all` : `page:campaign:${page.campaign}:all`
         }
       ]
     },

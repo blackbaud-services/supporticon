@@ -421,8 +421,8 @@ export const createPageTags = ({
   return request().catch(() => request()) // Retry if request fails
 }
 
-const createDefaultPageTags = (page, timeBox) =>
-  createPageTags({ slug: page.slug, tagValues: defaultPageTags(page, timeBox) })
+const createDefaultPageTags = (page, timeBox, campaignGuidOverride) =>
+  createPageTags({ slug: page.slug, tagValues: defaultPageTags(page, timeBox, campaignGuidOverride) })
 
 export const createPage = ({
   charityId = required(),
@@ -434,6 +434,7 @@ export const createPage = ({
   authType = 'Bearer',
   campaignId,
   campaignGuid,
+  campaignGuidOverride,
   causeId,
   charityFunded,
   charityOptIn = false,
@@ -514,7 +515,7 @@ export const createPage = ({
     )
       .then(result => fetchPage(result.pageId))
       .then(page => {
-        createDefaultPageTags(deserializePage(page), timeBox).then(tags => {
+        createDefaultPageTags(deserializePage(page), timeBox, campaignGuidOverride).then(tags => {
           if (typeof tagsCallback === 'function') {
             tagsCallback(tags, page)
           }

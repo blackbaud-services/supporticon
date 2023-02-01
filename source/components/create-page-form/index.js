@@ -46,6 +46,7 @@ class CreatePageForm extends Component {
     const {
       authType,
       campaignId,
+      campaignGuidOverride,
       charityFunded,
       charityId,
       country,
@@ -79,6 +80,7 @@ class CreatePageForm extends Component {
           {
             authType,
             campaignId,
+            campaignGuidOverride,
             charityFunded,
             charityId,
             charityOptIn: true,
