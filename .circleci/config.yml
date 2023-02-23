@@ -37,6 +37,9 @@ commands:
   lint:
     steps:
       - run:
+          name: Validate TypeScript
+          command: yarn validate:typescript
+      - run:
           name: Lint 🛠
           command: yarn test
 
