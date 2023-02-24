@@ -38,6 +38,8 @@ const TotalDonations = ({
     tagValue
   }, { refetchInterval })
 
+  if (charity.length && event.length) return <Icon name='warning' />
+
   if (status === 'error') return <Icon name='warning' />
 
   if (status === 'success') {
