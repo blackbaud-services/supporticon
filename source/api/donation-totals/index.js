@@ -78,7 +78,7 @@ export const fetchDonationTotals = (params = required()) => {
         currencyCode: currencyCode(params.country)
       })
     case 'event':
-      if (params.charity.length) {
+      if (params.charity && params.charity.length) {
         // no support for donations count for event & charity combination
         return client.get(
           '/v1/events/leaderboard',
