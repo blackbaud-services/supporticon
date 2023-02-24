@@ -85,9 +85,6 @@ export const fetchDonationTotals = (params = required()) => {
           eventArgs,
           {},
           { paramsSerializer })
-          .then(([totals]) => ({
-            ...totals
-          }))
       }
       return Promise.all([
         fetchDonations(params),
