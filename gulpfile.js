@@ -43,7 +43,7 @@ gulp.task('docs-prepare', function() {
 })
 
 gulp.task('npm-prepare', gulp.series(
-  'npm-prep-files-ts',
   'npm-prep-files',
+  'npm-prep-files-ts',
   'npm-prep-meta'
 ))
