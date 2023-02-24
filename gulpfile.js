@@ -18,7 +18,7 @@ gulp.task('npm-prep-files', function() {
 })
 
 gulp.task('npm-prep-files-ts', function() {
-  return tsProject.src().pipe(tsProject()).js.pipe(gulp.dest('./dist'))
+  return tsProject.src().pipe(tsProject()).js.pipe(gulp.dest(npmDir))
 })
 
 /**
