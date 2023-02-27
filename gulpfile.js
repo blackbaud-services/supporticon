@@ -1,7 +1,4 @@
 var gulp = require('gulp')
-var ts = require("gulp-typescript");
-var tsProject = ts.createProject("tsconfig.json");
-
 var npmDir = './npm-supporticon'
 
 var files = [
@@ -15,10 +12,6 @@ var files = [
 gulp.task('npm-prep-files', function() {
   return gulp.src(files)
     .pipe(gulp.dest(npmDir))
-})
-
-gulp.task('npm-prep-files-ts', function() {
-  return tsProject.src().pipe(tsProject()).js.pipe(gulp.dest(npmDir))
 })
 
 /**
@@ -44,6 +37,5 @@ gulp.task('docs-prepare', function() {
 
 gulp.task('npm-prepare', gulp.series(
   'npm-prep-files',
-  'npm-prep-files-ts',
   'npm-prep-meta'
 ))
