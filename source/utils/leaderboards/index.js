@@ -178,9 +178,6 @@ export const fetchLeaderboard = ({
     type
   })
 
-  const query = generateQuery(leaderboardId)
-  const altQuery = altTagValue && generateQuery(altLeaderboardId)
-
   const generateQuery = id => `
     {
       leaderboard(
@@ -232,6 +229,9 @@ export const fetchLeaderboard = ({
       }
     }
   `
+
+  const query = generateQuery(leaderboardId)
+  const altQuery = altTagValue && generateQuery(altLeaderboardId)
 
   return client.servicesAPI
     .post('/v1/justgiving/graphql', { query })
