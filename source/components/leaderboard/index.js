@@ -43,7 +43,6 @@ const Leaderboard = ({
   subtitleMethod,
   tagId,
   tagValue,
-  altTagValue,
   type,
   useOwnerImage
 }) => {
@@ -67,7 +66,6 @@ const Leaderboard = ({
       startDate,
       tagId,
       tagValue,
-      altTagValue,
       type
     },
     {

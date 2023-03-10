@@ -138,7 +138,6 @@ export const fetchLeaderboard = ({
   sortBy = 'donations_received',
   tagId,
   tagValue,
-  altTagValue,
   type = 'campaign'
 }) => {
   if (id.split(',').length > 1) {
@@ -151,7 +150,6 @@ export const fetchLeaderboard = ({
           sortBy,
           tagId,
           tagValue,
-          altTagValue,
           type
         })
       )
@@ -170,21 +168,10 @@ export const fetchLeaderboard = ({
     type
   })
 
-  const altLeaderboardId = altTagValue && genId({
-    id,
-    measurementDomain: [activityType, sortBy].join(':'),
-    name: altTagValue,
-    tagId,
-    type
-  })
-
-  const query = generateQuery(leaderboardId)
-  const altQuery = altTagValue && generateQuery(altLeaderboardId)
-
-  const generateQuery = id => `
+  const query = `
     {
       leaderboard(
-        id: "${id}"
+        id: "${leaderboardId}"
       ) {
         totals(limit: ${limit}) {
           tagValue
@@ -235,15 +222,7 @@ export const fetchLeaderboard = ({
 
   return client.servicesAPI
     .post('/v1/justgiving/graphql', { query })
-    .then(response => {
-      if (!response.data.leaderboard.totals.length && altQuery) {
-        return client.servicesAPI
-          .post('/v1/justgiving/graphql', { query: altQuery })
-          .then(res => res.data)
-      }
-
-      return response.data
-    })
+    .then(response => response.data)
     .then(result => get(result, 'data.leaderboard.totals', []))
     .then(results => results.map(item => ({ ...item, ...item.tagValueAsNode })))
 }
