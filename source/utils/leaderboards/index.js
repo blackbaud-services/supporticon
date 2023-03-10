@@ -236,7 +236,7 @@ export const fetchLeaderboard = ({
   return client.servicesAPI
     .post('/v1/justgiving/graphql', { query })
     .then(response => {
-      if (!response.data.data.leaderboard.totals.length && altQuery) {
+      if (!response.data.leaderboard.totals.length && altQuery) {
         return client.servicesAPI
           .post('/v1/justgiving/graphql', { query: altQuery })
           .then(res => res.data)
