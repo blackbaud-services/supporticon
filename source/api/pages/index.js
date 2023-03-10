@@ -446,7 +446,7 @@ export const createPage = ({
   eventId,
   eventName,
   expiryDate,
-  giftAid,
+  giftAid = true,
   image,
   images = [],
   reference,
