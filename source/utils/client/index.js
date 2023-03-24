@@ -60,16 +60,20 @@ export const isStaging = () => /staging/.test(instance.defaults.baseURL)
 // Services API Client
 export const servicesAPI = () => {
   return axios.create({
-    baseURL: process.env.SERVICES_API_URL ? process.env.SERVICES_API_URL : isStaging()
-      ? 'https://api-staging.blackbaud.services'
-      : 'https://api.blackbaud.services'
+    baseURL: process.env.SERVICES_API_URL
+      ? process.env.SERVICES_API_URL
+      : isStaging()
+        ? 'https://api-staging.blackbaud.services'
+        : 'https://api.blackbaud.services'
   })
 }
 
 const updateServicesAPIClient = () => {
-  return servicesAPI.defaults.baseURL = process.env.SERVICES_API_URL ? process.env.SERVICES_API_URL : isStaging()
-    ? 'https://api-staging.blackbaud.services'
-    : 'https://api.blackbaud.services'
+  servicesAPI.defaults.baseURL = process.env.SERVICES_API_URL
+    ? process.env.SERVICES_API_URL
+    : isStaging()
+      ? 'https://api-staging.blackbaud.services'
+      : 'https://api.blackbaud.services'
 }
 // export const servicesAPI = axios.create({
 //   baseURL: isStaging()
