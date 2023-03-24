@@ -29,7 +29,7 @@ const fetchCampaignTotals = (id, currency) =>
       totalAmount
     ]) => ({
       totalRaised:
-        (totalAmount || fundraiserRaisedAmount) +
+        fundraiserRaisedAmount +
         directDonationAmount +
         offlineAmount,
       totalResults: totalNumberOfDonations
