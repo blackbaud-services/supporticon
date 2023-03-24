@@ -58,22 +58,17 @@ export const getApiKey = () => instance.defaults.headers['x-api-key']
 export const isStaging = () => /staging/.test(instance.defaults.baseURL)
 
 // Services API Client
-export const servicesAPI = axios.create({ baseURL: 'https://api-staging.blackbaud.services' })
+export const servicesAPI = axios.create({
+  baseURL: isStaging()
+    ? 'https://api-staging.blackbaud.services'
+    : 'https://api.blackbaud.services'
+})
 
 const updateServicesAPIClient = () => {
-  servicesAPI.defaults.baseURL = 'https://api-staging.blackbaud.services'
+  servicesAPI.defaults.baseURL = isStaging()
+    ? 'https://api-staging.blackbaud.services'
+    : 'https://api.blackbaud.services'
 }
-// export const servicesAPI = axios.create({
-//   baseURL: isStaging()
-//     ? 'https://api-staging.blackbaud.services'
-//     : 'https://api.blackbaud.services'
-// })
-
-// const updateServicesAPIClient = () => {
-//   servicesAPI.defaults.baseURL = isStaging()
-//     ? 'https://api-staging.blackbaud.services'
-//     : 'https://api.blackbaud.services'
-// }
 
 // Metadata API Client
 export const metadataAPI = axios.create({
