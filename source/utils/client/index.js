@@ -58,15 +58,13 @@ export const getApiKey = () => instance.defaults.headers['x-api-key']
 export const isStaging = () => /staging/.test(instance.defaults.baseURL)
 
 // Services API Client
-export const servicesAPI = () => {
-  return axios.create({
-    baseURL: process.env.SERVICES_API_URL
-      ? process.env.SERVICES_API_URL
-      : isStaging()
-        ? 'https://api-staging.blackbaud.services'
-        : 'https://api.blackbaud.services'
-  })
-}
+export const servicesAPI = axios.create({
+  baseURL: process.env.SERVICES_API_URL
+    ? process.env.SERVICES_API_URL
+    : isStaging()
+      ? 'https://api-staging.blackbaud.services'
+      : 'https://api.blackbaud.services'
+})
 
 const updateServicesAPIClient = () => {
   servicesAPI.defaults.baseURL = process.env.SERVICES_API_URL
