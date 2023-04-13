@@ -302,7 +302,7 @@ const form = props => {
     fields: merge(
       {
         distance: {
-          type: 'number',
+          type: 'text',
           inputmode: 'decimal',
           label: props.distanceLabel,
           initial: '0',
