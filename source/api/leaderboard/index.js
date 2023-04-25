@@ -167,10 +167,13 @@ export const fetchCampaignGraphqlLeaderboard = params => {
     .then(results => results.filter(item => item.slug))
     .then(results =>
       results.filter(
-        result =>
-          result.slug.indexOf(
-            params.type === 'team' ? 'team/' : 'fundraising/'
-          ) === 0
+        result => {
+          if (params.type === 'team') {
+            return result.slug.indexOf('team/')
+          }
+
+          return result.slug.indexOf('fundraising/') || result.slug.indexOf('page/')
+        }
       )
     )
     .then(results => removeExcludedPages(results, params.excludePageIds))
