@@ -49,21 +49,15 @@ export const fetchLeaderboard = (params = required()) => {
       )
   }
 
-  if (params.campaign && params.useGraphql) {
-    return fetchCampaignGraphqlLeaderboard(params)
-  }
+  // if (params.campaign && params.useGraphql) {
+  //   return fetchCampaignGraphqlLeaderboard(params)
+  // }
 
   if (dataSource(params) === 'event') {
     return fetchEventLeaderboard(params)
   }
 
-  return Promise.all([
-    !isEmpty(params.campaign) && isEmpty(params.charity)
-      ? fetchCampaignGraphqlLeaderboard(params)
-      : Promise.resolve([]),
-    fetchLegacyLeaderboard(params)
-  ])
-    .then(flatten)
+  return fetchCampaignGraphqlLeaderboard(params)
     .then(items =>
       items.map(original => ({
         original,
