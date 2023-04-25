@@ -20,6 +20,7 @@ import { getMonetaryValue } from '../../utils/totals'
  * @function fetches fundraising pages ranked by funds raised
  */
 export const fetchLeaderboard = (params = required()) => {
+  console.log('params', params)
   if (
     !isEmpty(params.campaign) &&
     (params.allPages || params.q) &&
@@ -115,7 +116,7 @@ export const fetchEventLeaderboard = params => {
 export const fetchCampaignGraphqlLeaderboard = params => {
   const query = `
     query($id: ID!, $limit: Int!, $type: PageLeaderboardType!,) {
-      page(type: CAMPAIGN, id: $id) {
+      page(type: ONE_PAGE, id: $id) {
         leaderboard (first: $limit, type: $type) {
           nodes {
             createDate
