@@ -49,12 +49,12 @@ export const fetchLeaderboard = (params = required()) => {
       )
   }
 
-  // if (params.campaign && params.useGraphql) {
-  //   return fetchCampaignGraphqlLeaderboard(params)
-  // }
-
   if (dataSource(params) === 'event') {
     return fetchEventLeaderboard(params)
+  }
+
+  if (params.campaign && (params.minAmount || params.maxAmount)) {
+    return fetchLegacyLeaderboard(params)
   }
 
   return fetchCampaignGraphqlLeaderboard(params)
