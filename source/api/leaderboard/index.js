@@ -165,17 +165,6 @@ export const fetchCampaignGraphqlLeaderboard = params => {
       orderBy(pages, ['donationSummary.totalAmount.value'], ['desc'])
     )
     .then(results => results.filter(item => item.slug))
-    .then(results =>
-      results.filter(
-        result => {
-          if (params.type.toUpperCase() === 'TEAM') {
-            return result.slug.indexOf('team/')
-          }
-
-          return result.slug.indexOf('fundraising/') || result.slug.indexOf('page/')
-        }
-      )
-    )
     .then(results => removeExcludedPages(results, params.excludePageIds))
 }
 
