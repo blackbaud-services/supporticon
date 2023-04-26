@@ -53,11 +53,13 @@ export const fetchLeaderboard = (params = required()) => {
     return fetchEventLeaderboard(params)
   }
 
-  if (params.campaign && (params.minAmount || params.maxAmount)) {
-    return fetchLegacyLeaderboard(params)
-  }
-
-  return fetchCampaignGraphqlLeaderboard(params)
+  return Promise.all([
+    !isEmpty(params.campaign) && isEmpty(params.charity)
+    ? fetchCampaignGraphqlLeaderboard(params)
+    : Promise.resolve([]),
+    fetchLegacyLeaderboard(params)
+  ])
+    .then(flatten)
     .then(items =>
       items.map(original => ({
         original,
