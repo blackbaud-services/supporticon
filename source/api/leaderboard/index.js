@@ -168,7 +168,7 @@ export const fetchCampaignGraphqlLeaderboard = params => {
     .then(results =>
       results.filter(
         result => {
-          if (params.type === 'team') {
+          if (params.type.toUpperCase() === 'TEAM') {
             return result.slug.indexOf('team/')
           }
 
