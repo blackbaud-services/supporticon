@@ -55,8 +55,8 @@ export const fetchLeaderboard = (params = required()) => {
 
   return Promise.all([
     !isEmpty(params.campaign) && isEmpty(params.charity)
-    ? fetchCampaignGraphqlLeaderboard(params)
-    : Promise.resolve([]),
+      ? fetchCampaignGraphqlLeaderboard(params)
+      : Promise.resolve([]),
     fetchLegacyLeaderboard(params)
   ])
     .then(flatten)
