@@ -415,6 +415,6 @@ export const deserializeLeaderboard = (supporter, index) => {
       lodashGet(supporter, 'amounts[0].value', 0),
     url:
       supporter.url ||
-      [baseUrl(), slug.indexOf('page/') === -1 ? isTeam ? 'team' : 'fundraising' : '', slug].join('/')
+      [baseUrl(), slug.indexOf('page/') === -1 ? isTeam ? 'team' : 'fundraising' : 'page', slug.replace('page/', '')].join('/')
   }
 }
