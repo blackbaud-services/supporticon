@@ -130,27 +130,22 @@ export const fetchTeams = (options = required()) => {
 }
 
 export const fetchTeam = (id = required(), options) => {
+  const query = `query getTeamSlugById ($id: ID) {
+    page(type: TEAM, id: $id) {
+      slug
+    }
+  }`
+
   return client.servicesAPI
-    .get(`/v1/justgiving/proxy/campaigns/v1/teams/${id}/full`)
-    .then(response => response.data)
-    .then(team => {
-      if (options && options.includePages) {
-        const ids = team.membership.members.map(p => p.fundraisingPageGuid)
-
-        return fetchPages({ allPages: true, ids }).then(members => ({
-          ...team,
-          membership: { ...team.membership, members }
-        }))
-      }
-
-      return Promise.resolve(team)
-    })
+    .post('/v1/justgiving/graphql', { query, variables: { id } })
+    .then(res => res.data)
+    .then(response => get(response.data, 'data.page.slug'))
+    .then(slug => fetchTeamBySlug(slug, options))
 }
 
 export const fetchTeamBySlug = (slug = required(), options = {}) => {
-  return client.servicesAPI
-    .get(`/v1/justgiving/proxy/campaigns/v1/teams/by-short-name/${slug}/full`)
-    .then(response => response.data)
+  return client
+    .get(`/v1/teamsv3/${slug}`)
     .then(team => {
       if (options.includeFitness) {
         return fetchTeamFitness(team.teamGuid, options.fitnessParams).then(
@@ -160,14 +155,23 @@ export const fetchTeamBySlug = (slug = required(), options = {}) => {
 
       return team
     })
-    .then(team => {
+    .then(async team => {
       if (options.includePages) {
-        const ids = team.membership.members.map(p => p.fundraisingPageGuid)
+        let currentTeamResponse = { ...team }
+        const members = [...team.membership.members]
 
-        return fetchPages({ allPages: true, ids }).then(members => ({
-          ...team,
-          membership: { ...team.membership, members }
-        }))
+        for (let x = members.length; x < team.membership.numberOfMembers; x++) {
+          currentTeamResponse = await client.get(`/v1/teamsv3/${slug}?nextPageKey=${currentTeamResponse.pagination.endCursor}`)
+          currentTeamResponse.membership.members.forEach(member => members.push(member))
+        }
+
+        const ids = members.map(p => p.fundraisingPageGuid)
+        return fetchPages({ allPages: true, ids }).then(teamMembers => {
+          return {
+            ...team,
+            membership: { ...team.membership, teamMembers }
+          }
+        })
       }
 
       return Promise.resolve(team)
