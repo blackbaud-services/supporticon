@@ -172,7 +172,6 @@ export const fetchTeamBySlug = (slug = required(), options = {}) => {
             membership: { ...team.membership, teamMembers }
           }
         })
-
       }
 
       return Promise.resolve(team)
