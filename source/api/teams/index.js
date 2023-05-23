@@ -152,14 +152,14 @@ export const fetchTeam = (id = required(), options) => {
     .post('/v1/justgiving/graphql', { query, variables: { id } })
     .then(res => res.data)
     .then(data => {
-        const {slug, status, relationships } = data.data.page
-        return newReqBySlug(slug, undefined, {
-          status,
-          campaign: {
-            ...relationships.campaigns.nodes[0]
-          }
-        })
+      const { slug, status, relationships } = data.data.page
+      return fetchTeamBySlug(slug, undefined, {
+        status,
+        campaign: {
+          ...relationships.campaigns.nodes[0]
+        }
       })
+    })
 }
 
 export const fetchTeamBySlug = (slug = required(), options = {}, missingData) => {
