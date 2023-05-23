@@ -137,7 +137,11 @@ export const fetchTeam = (id = required(), options) => {
       relationships {
         campaigns(first: 1) {
           nodes {
-            legacyId
+            campaignGuid: legacyId
+            shortName: slug
+            title
+            summary
+            logo
           }
         }
       }
