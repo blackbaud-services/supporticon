@@ -17,7 +17,7 @@ export const deserializeTeam = team => {
   const membersFitness = get(team, 'fitness.pages', [])
 
   return {
-    active: team.status === 'active',
+    active: team.status.toUpperCase() === 'ACTIVE',
     campaign: get(team, 'campaign.title'),
     campaignId: get(team, 'campaign.campaignGuid'),
     charity: get(team, 'charity.name'),
