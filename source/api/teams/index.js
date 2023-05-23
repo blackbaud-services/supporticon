@@ -40,7 +40,7 @@ export const deserializeTeam = team => {
         fitnessDistanceTotal: pageFitness.TotalValue || 0
       }
     }),
-    name: team.name || team.title,
+    name: team.title || team.name,
     owner: get(team, 'captain.userGuid'),
     pages: members.map(page => page.fundraisingPageGuid || page.pageGuid),
     raised: get(team, 'donationSummary.totalAmount'),
