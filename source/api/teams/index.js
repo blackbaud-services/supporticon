@@ -149,7 +149,7 @@ export const fetchTeam = (id = required(), options) => {
     .then(res => res.data)
     .then(data => {
         const {slug, status, relationships } = data.data.page
-        return newReqBySlug(slug, {
+        return newReqBySlug(slug, undefined, {
           status,
           campaign: {
             ...relationships.campaigns.nodes[0]
@@ -158,7 +158,7 @@ export const fetchTeam = (id = required(), options) => {
       })
 }
 
-export const fetchTeamBySlug = (slug = required(), options = {}) => {
+export const fetchTeamBySlug = (slug = required(), options = {}, missingData) => {
   return client
     .get(`/v1/teamsv3/${slug}`)
     .then(async team => {
