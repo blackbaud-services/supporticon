@@ -133,20 +133,71 @@ export const fetchTeam = (id = required(), options) => {
   const query = `query getTeamSlugById ($id: ID) {
     page(type: TEAM, id: $id) {
       slug
+      status
+      relationships {
+        campaigns(first: 1) {
+          nodes {
+            campaignGuid: legacyId
+            shortName: slug
+            title
+            summary
+            logo
+          }
+        }
+      }
     }
   }`
 
   return client.servicesAPI
     .post('/v1/justgiving/graphql', { query, variables: { id } })
     .then(res => res.data)
-    .then(response => get(response.data, 'data.page.slug'))
-    .then(slug => fetchTeamBySlug(slug, options))
+    .then(data => {
+      const { slug, status, relationships } = data.data.page
+      return fetchTeamBySlug(slug, undefined, {
+        status,
+        campaign: {
+          ...relationships.campaigns.nodes[0]
+        }
+      })
+    })
 }
 
-export const fetchTeamBySlug = (slug = required(), options = {}) => {
+export const fetchTeamBySlug = (slug = required(), options = {}, missingData) => {
   return client
     .get(`/v1/teamsv3/${slug}`)
-    .then(team => {
+    .then(async team => {
+      if (!missingData) {
+        const query = `query getTeamSlugById ($slug: Slug) {
+          page(type: TEAM, slug: $slug) {
+            slug
+            status
+            relationships {
+              campaigns(first: 1) {
+                nodes {
+                  campaignGuid: legacyId
+                  shortName: slug
+                  title
+                  summary
+                  logo
+                }
+              }
+            }
+          }
+        }`
+
+        await client.servicesAPI
+          .post('/v1/justgiving/graphql', { query, variables: { slug } })
+          .then(res => res.data)
+          .then(data => {
+            const { status, relationships } = data.data.page
+            missingData = {
+              status,
+              campaign: {
+                ...relationships.campaigns.nodes[0]
+              }
+            }
+          })
+      }
       if (options.includeFitness) {
         return fetchTeamFitness(team.teamGuid, options.fitnessParams).then(
           fitness => ({ ...team, fitness })
@@ -166,12 +217,11 @@ export const fetchTeamBySlug = (slug = required(), options = {}) => {
         }
 
         const ids = members.map(p => p.fundraisingPageGuid)
-        return fetchPages({ allPages: true, ids }).then(teamMembers => {
-          return {
-            ...team,
-            membership: { ...team.membership, teamMembers }
-          }
-        })
+        return fetchPages({ allPages: true, ids }).then(members => ({
+          ...team,
+          ...missingData,
+          membership: { ...team.membership, members }
+        }))
       }
 
       return Promise.resolve(team)
