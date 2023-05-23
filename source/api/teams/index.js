@@ -40,7 +40,7 @@ export const deserializeTeam = team => {
         fitnessDistanceTotal: pageFitness.TotalValue || 0
       }
     }),
-    name: team.name,
+    name: team.name || team.title,
     owner: get(team, 'captain.userGuid'),
     pages: members.map(page => page.fundraisingPageGuid || page.pageGuid),
     raised: get(team, 'donationSummary.totalAmount'),
@@ -133,6 +133,7 @@ export const fetchTeam = (id = required(), options) => {
   const query = `query getTeamSlugById ($id: ID) {
     page(type: TEAM, id: $id) {
       slug
+      title
       status
       relationships {
         campaigns(first: 1) {
@@ -152,9 +153,10 @@ export const fetchTeam = (id = required(), options) => {
     .post('/v1/justgiving/graphql', { query, variables: { id } })
     .then(res => res.data)
     .then(data => {
-      const { slug, status, relationships } = data.data.page
+      const { slug, status, title, relationships } = data.data.page
       return fetchTeamBySlug(slug, undefined, {
         status,
+        title,
         campaign: {
           ...relationships.campaigns.nodes[0]
         }
@@ -170,6 +172,7 @@ export const fetchTeamBySlug = (slug = required(), options = {}, missingData) =>
         const query = `query getTeamSlugById ($slug: Slug) {
           page(type: TEAM, slug: $slug) {
             slug
+            title
             status
             relationships {
               campaigns(first: 1) {
@@ -189,9 +192,10 @@ export const fetchTeamBySlug = (slug = required(), options = {}, missingData) =>
           .post('/v1/justgiving/graphql', { query, variables: { slug } })
           .then(res => res.data)
           .then(data => {
-            const { status, relationships } = data.data.page
+            const { status, relationships, title } = data.data.page
             missingData = {
               status,
+              title,
               campaign: {
                 ...relationships.campaigns.nodes[0]
               }
