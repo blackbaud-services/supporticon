@@ -195,7 +195,7 @@ const getPaginatedMembers = team => {
   })
 }
 
-const fetchTeamBySlug = (slug, options = {}, missingData) => {
+export const fetchTeamBySlug = (slug, options = {}, missingData) => {
   return client
     .get(`/v1/teamsv3/${slug}`)
     .then(team => {
