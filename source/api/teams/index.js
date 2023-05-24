@@ -164,7 +164,38 @@ export const fetchTeam = (id = required(), options) => {
     })
 }
 
-export const fetchTeamBySlug = (slug = required(), options = {}, missingData) => {
+const getPaginatedMembers = team => {
+  return new Promise(resolve => {
+    if (team.membership.members.length < team.membership.numberOfMembers) {
+      return client
+        .get(
+          `/v1/teamsv3/${team.shortName}?nextPageKey=${team.pagination.endCursor}`
+        )
+        .then(res => {
+          const updatedTeam = {
+            ...team,
+            membership: {
+              ...team.membership,
+              members: [...team.membership.members, ...res.membership.members]
+            }
+          }
+
+          if (
+            updatedTeam.membership.members.length <
+            updatedTeam.membership.numberOfMembers
+          ) {
+            return getPaginatedMembers(updatedTeam)
+          }
+
+          resolve(updatedTeam)
+        })
+    }
+
+    resolve(team)
+  })
+}
+
+const fetchTeamBySlug = (slug, options = {}, missingData) => {
   return client
     .get(`/v1/teamsv3/${slug}`)
     .then(async team => {
@@ -188,7 +219,7 @@ export const fetchTeamBySlug = (slug = required(), options = {}, missingData) =>
           }
         }`
 
-        await client.servicesAPI
+        return client.servicesAPI
           .post('/v1/justgiving/graphql', { query, variables: { slug } })
           .then(res => res.data)
           .then(data => {
@@ -200,32 +231,36 @@ export const fetchTeamBySlug = (slug = required(), options = {}, missingData) =>
                 ...relationships.campaigns.nodes[0]
               }
             }
+
+            return team
           })
       }
+      return team
+    })
+    .then(team => {
       if (options.includeFitness) {
-        return fetchTeamFitness(team.teamGuid, options.fitnessParams).then(
-          fitness => ({ ...team, fitness })
-        )
+        return fetchTeamFitness(
+          team.teamGuid,
+          options.fitnessParams
+        ).then(fitness => ({ ...team, fitness }))
       }
 
       return team
     })
-    .then(async team => {
+    .then(team => {
       if (options.includePages) {
-        let currentTeamResponse = { ...team }
-        const members = [...team.membership.members]
-
-        for (let x = members.length; x < team.membership.numberOfMembers; x++) {
-          currentTeamResponse = await client.get(`/v1/teamsv3/${slug}?nextPageKey=${currentTeamResponse.pagination.endCursor}`)
-          currentTeamResponse.membership.members.forEach(member => members.push(member))
-        }
-
-        const ids = members.map(p => p.fundraisingPageGuid)
-        return fetchPages({ allPages: true, ids }).then(members => ({
-          ...team,
-          ...missingData,
-          membership: { ...team.membership, members }
-        }))
+        return getPaginatedMembers(team).then(updatedTeam => {
+          const ids = updatedTeam.membership.members.map(
+            p => p.fundraisingPageGuid
+          )
+          return fetchPages({ allPages: true, ids }).then(members => {
+            return Promise.resolve({
+              ...updatedTeam,
+              ...missingData,
+              membership: { ...updatedTeam.membership, members }
+            })
+          })
+        })
       }
 
       return Promise.resolve(team)
