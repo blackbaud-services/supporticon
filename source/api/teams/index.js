@@ -198,7 +198,7 @@ const getPaginatedMembers = team => {
 const fetchTeamBySlug = (slug, options = {}, missingData) => {
   return client
     .get(`/v1/teamsv3/${slug}`)
-    .then(async team => {
+    .then(team => {
       if (!missingData) {
         const query = `query getTeamSlugById ($slug: Slug) {
           page(type: TEAM, slug: $slug) {
