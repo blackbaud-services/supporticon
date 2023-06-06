@@ -446,6 +446,7 @@ export const createPage = ({
   eventId,
   eventName,
   expiryDate,
+  forceSlug = false,
   giftAid = true,
   image,
   images = [],
@@ -464,7 +465,11 @@ export const createPage = ({
 }) => {
   const pageTitle = title.replace(/’/g, "'")
 
-  return getPageShortName(pageTitle, slug).then(pageShortName => {
+  return getPageShortName(pageTitle, slug, forceSlug).then(pageShortName => {
+    if (forceSlug && !pageShortName) {
+      return false
+    }
+
     return put(
       '/v1/fundraising/pages',
       {
@@ -526,16 +531,21 @@ export const createPage = ({
   })
 }
 
-export const getPageShortName = (title, slug) => {
+export const getPageShortName = (title, slug, forceSlug) => {
   const preferredName = slug || slugify(title, { lower: true, strict: true })
 
   const params = {
     preferredName: preferredName.substring(0, 45)
   }
 
-  return get('/v1/fundraising/pages/suggest', params).then(
-    result => first(result.Names) || uuid()
-  )
+  return get('/v1/fundraising/pages/suggest', params).then(result => {
+    const firstResult = first(result.Names)
+    if (forceSlug) {
+      return firstResult === slug ? firstResult : false
+    }
+
+    return firstResult || uuid()
+  })
 }
 
 export const updatePage = (
