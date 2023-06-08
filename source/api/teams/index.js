@@ -177,6 +177,9 @@ const getPaginatedMembers = team => {
             membership: {
               ...team.membership,
               members: [...team.membership.members, ...res.membership.members]
+            },
+            pagination: {
+              ...res.pagination
             }
           }
 
