@@ -36,7 +36,7 @@
     "@babel/register": "^7.15.3",
     "babel-loader": "^8.2.2",
     "chai": "^4.3.4",
-    "constructicon": "^4.2.0",
+    "constructicon": "4.4.0",
     "css-loader": "^5.1.1",
     "docsify-cli": "^4.4.3",
     "enzyme": "^3.11.0",

@@ -7,6 +7,7 @@ import InputField from 'constructicon/input-field'
 import InputSearch from 'constructicon/input-search'
 import InputSelect from 'constructicon/input-select'
 import Label from 'constructicon/label'
+import InputSelectImage from 'constructicon/input-select-image'
 
 export const renderInput = type => {
   switch (type) {
@@ -18,6 +19,8 @@ export const renderInput = type => {
       return InputSelect
     case 'label':
       return Label
+    case 'imageSelect':
+      return InputSelectImage
     default:
       return InputField
   }
