@@ -91,12 +91,7 @@ export const fetchEventLeaderboard = params => {
     args.charityIds = params.charity
   }
 
-  return get(
-    '/v1/events/leaderboard',
-    args,
-    {},
-    { paramsSerializer }
-  )
+  return get('/v1/events/leaderboard', args, {}, { paramsSerializer })
     .then(response =>
       response.pages.map(page => ({
         ...page,
@@ -353,8 +348,8 @@ export const deserializeLeaderboard = (supporter, index) => {
     lodashGet(supporter, 'owner.firstName')
       ? [supporter.owner.firstName, supporter.owner.lastName].join(' ')
       : typeof supporter.owner === 'string'
-        ? supporter.owner
-        : null
+      ? supporter.owner
+      : null
 
   return {
     currency:
@@ -414,7 +409,16 @@ export const deserializeLeaderboard = (supporter, index) => {
       lodashGet(supporter, 'donationSummary.donationCount') ||
       lodashGet(supporter, 'amounts[0].value', 0),
     url:
-      supporter.url ||
-      slug ? [baseUrl(), slug.indexOf('page/') === -1 ? isTeam ? 'team' : 'fundraising' : 'page', slug.replace('page/', '')].join('/') : undefined
+      supporter.url || slug
+        ? [
+            baseUrl(),
+            slug.indexOf('page/') === -1
+              ? isTeam
+                ? 'team'
+                : 'fundraising'
+              : 'page',
+            slug.replace('page/', '')
+          ].join('/')
+        : undefined
   }
 }
