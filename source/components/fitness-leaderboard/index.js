@@ -188,7 +188,7 @@ FitnessLeaderboard.propTypes = {
   /**
    * The type of page to include in the leaderboard
    */
-  type: PropTypes.oneOf(['individual', 'team']),
+  type: PropTypes.oneOf(['individual', 'team', 'group']),
 
   /**
    * The activity type of page to include in the leaderboard (walk, run, ride, hike, swim, wheelchair)

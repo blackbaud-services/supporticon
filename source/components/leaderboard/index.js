@@ -202,7 +202,7 @@ Leaderboard.propTypes = {
   /**
    * The type of page to include in the leaderboard
    */
-  type: PropTypes.oneOf(['individual', 'team']),
+  type: PropTypes.oneOf(['individual', 'team', 'group']),
 
   /**
    * Start date filter (ISO Format)
