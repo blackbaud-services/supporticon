@@ -348,8 +348,8 @@ export const deserializeLeaderboard = (supporter, index) => {
     lodashGet(supporter, 'owner.firstName')
       ? [supporter.owner.firstName, supporter.owner.lastName].join(' ')
       : typeof supporter.owner === 'string'
-      ? supporter.owner
-      : null
+        ? supporter.owner
+        : null
 
   return {
     currency:
@@ -414,8 +414,8 @@ export const deserializeLeaderboard = (supporter, index) => {
             baseUrl(),
             slug.indexOf('page/') === -1
               ? isTeam
-                ? 'team'
-                : 'fundraising'
+                  ? 'team'
+                  : 'fundraising'
               : 'page',
             slug.replace('page/', '')
           ].join('/')
