@@ -183,7 +183,7 @@ const getPaginatedMembers = team => {
             }
           }
 
-          return getPaginatedMembers(updatedTeam)
+          return resolve(getPaginatedMembers(updatedTeam))
         })
     }
 
