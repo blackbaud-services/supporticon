@@ -183,18 +183,11 @@ const getPaginatedMembers = team => {
             }
           }
 
-          if (
-            updatedTeam.membership.members.length <
-            updatedTeam.membership.numberOfMembers
-          ) {
-            return getPaginatedMembers(updatedTeam)
-          }
-
-          resolve(updatedTeam)
+          return getPaginatedMembers(updatedTeam)
         })
     }
 
-    resolve(team)
+    return resolve(team)
   })
 }
 
