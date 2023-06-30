@@ -3166,10 +3166,10 @@ constants-browserify@^1.0.0:
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
   integrity sha1-wguW2MYXdIqvHBYCF2DNJ/y4y3U=
 
-constructicon@4.4.1:
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-4.4.1.tgz#09402e6d17bfcc0d962241b57ab0fa7e32b7b59c"
-  integrity sha512-FRtOvg1Gt5e7uzbwR1e/LMgQrRXJvOiwk5PtKUBwWbPGRk7CB09QhOvFHuytgcnRpCPcSejdzqJ8fx2BOf+v3A==
+constructicon@4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/constructicon/-/constructicon-4.4.2.tgz#3d10783e357fd7caf3c744dcaa06cee8a3625492"
+  integrity sha512-hq61Q46K+VuGENJNShHTZVY9wG/B/CxE4fRMgw5x4u89/D3QySyYA16JT2e8oI2RQneMZtLcinMylqK15l7+NQ==
   dependencies:
     "@emotion/css" "^11.1.3"
     "@emotion/server" "^11.4.0"
