@@ -37,7 +37,7 @@ class LoginForm extends Component {
             ...data
           }))
         }
-    
+
         return resolve(signIn({
           authType,
           ...data
