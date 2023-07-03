@@ -22,7 +22,7 @@ class LoginForm extends Component {
   handleSubmit (e) {
     e.preventDefault()
 
-    const { authType, form, onSuccess } = this.props
+    const { authType, form, onSuccess, signInOverride } = this.props
 
     return form.submit().then(data => {
       this.setState({
@@ -30,9 +30,18 @@ class LoginForm extends Component {
         status: 'fetching'
       })
 
-      return signIn({
-        authType,
-        ...data
+      return new Promise(resolve => {
+        if (signInOverride) {
+          return resolve(signInOverride({
+            authType,
+            ...data
+          }))
+        }
+
+        return resolve(signIn({
+          authType,
+          ...data
+        }))
       })
         .then(onSuccess)
         .then(() => this.setState({ status: 'fetched' }))
