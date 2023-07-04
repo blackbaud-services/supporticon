@@ -64,8 +64,8 @@ export const servicesAPI = axios.create({
     : 'https://api.blackbaud.services'
 })
 
-const updateServicesAPIClient = () => {
-  servicesAPI.defaults.baseURL = isStaging()
+export const updateServicesAPIClient = (url) => {
+  servicesAPI.defaults.baseURL = url || isStaging()
     ? 'https://api-staging.blackbaud.services'
     : 'https://api.blackbaud.services'
 }
