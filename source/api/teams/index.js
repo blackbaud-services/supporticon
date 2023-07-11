@@ -224,8 +224,8 @@ export const fetchTeamBySlug = (slug, options = {}, missingData) => {
           .then(res => res.data)
           .then(data => {
             const { status, relationships, title } = data.data.page
-            const parentRelationships = lodashGet(relationships, 'parents')
-            const campaignParentItem = parentRelationships.find(parent => lodashGet(parent, 'page.product.name') === 'campaign')
+            const parentRelationships = get(relationships, 'parents')
+            const campaignParentItem = parentRelationships.find(parent => get(parent, 'page.product.name') === 'campaign')
 
             missingData = {
               status,
