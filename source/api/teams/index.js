@@ -202,13 +202,17 @@ export const fetchTeamBySlug = (slug, options = {}, missingData) => {
             title
             status
             relationships {
-              campaigns(first: 1) {
-                nodes {
+              parents {
+                type
+                page {
                   campaignGuid: legacyId
                   shortName: slug
                   title
                   summary
                   logo
+                  product {
+                    name
+                  }
                 }
               }
             }
@@ -220,15 +224,21 @@ export const fetchTeamBySlug = (slug, options = {}, missingData) => {
           .then(res => res.data)
           .then(data => {
             const { status, relationships, title } = data.data.page
+            const parentRelationships = get(relationships, 'parents')
+            const campaignParentItem = parentRelationships.find(parent => get(parent, 'page.product.name') === 'campaign')
+
             missingData = {
               status,
               title,
               campaign: {
-                ...relationships.campaigns.nodes[0]
+                ...campaignParentItem.page
               }
             }
 
-            return team
+            return {
+              ...team,
+              ...missingData
+            }
           })
       }
       return team
@@ -252,7 +262,6 @@ export const fetchTeamBySlug = (slug, options = {}, missingData) => {
           return fetchPages({ allPages: true, ids }).then(members => {
             return Promise.resolve({
               ...updatedTeam,
-              ...missingData,
               membership: { ...updatedTeam.membership, members }
             })
           })
