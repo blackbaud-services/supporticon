@@ -226,12 +226,13 @@ export const fetchTeamBySlug = (slug, options = {}, missingData) => {
             const { status, relationships, title } = data.data.page
             const parentRelationships = get(relationships, 'parents')
             const campaignParentItem = parentRelationships.find(parent => get(parent, 'page.product.name') === 'campaign')
+            const alternativeCampaignParentItem = parentRelationships.find(parent => get(parent, 'page.campaignGuid'))
 
             missingData = {
               status,
               title,
               campaign: {
-                ...campaignParentItem.page
+                ...(campaignParentItem || alternativeCampaignParentItem).page
               }
             }
 
