@@ -35,12 +35,13 @@ export const deserializeTeam = team => {
       const page = deserializePage(member)
       const pageFitness = find(membersFitness, p => p.ID === page.uuid) || {}
       const teamMember = {
-        donationUrl: `${baseUrl('www')}/${member.fundraisingPageShortName}/donate`,
+        donationUrl: `${baseUrl('www')}/${
+          member.fundraisingPageShortName
+        }/donate`,
         image: member.profileImage,
         name: `${member.fundraisingPageName}`,
         url: `${baseUrl()}/${member.fundraisingPageShortName}`
       }
-
 
       return {
         ...page,
@@ -92,12 +93,13 @@ export const deserializeTeamPage = page => {
   }
 }
 
-const searchTeams = ({ campaign, limit, offset }) => client.servicesAPI
-  .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
-    params: { CampaignGuid: campaign, Take: limit, offset },
-    paramsSerializer
-  })
-  .then(response => response.data)
+const searchTeams = ({ campaign, limit, offset }) =>
+  client.servicesAPI
+    .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
+      params: { CampaignGuid: campaign, Take: limit, offset },
+      paramsSerializer
+    })
+    .then(response => response.data)
 
 const recursivelyFetchTeams = ({
   campaign,
@@ -105,22 +107,21 @@ const recursivelyFetchTeams = ({
   offset = 0,
   results = []
 }) => {
-  return searchTeams({ campaign, limit, offset })
-    .then(data => {
-      const { next } = data
-      const offset = next && next.split('offset=')[1]
-      const updatedResults = [...results, ...data.results]
-      if (offset) {
-        return recursivelyFetchTeams({
-          campaign,
-          limit,
-          offset,
-          results: updatedResults
-        })
-      } else {
-        return updatedResults
-      }
-    })
+  return searchTeams({ campaign, limit, offset }).then(data => {
+    const { next } = data
+    const offset = next && next.split('offset=')[1]
+    const updatedResults = [...results, ...data.results]
+    if (offset) {
+      return recursivelyFetchTeams({
+        campaign,
+        limit,
+        offset,
+        results: updatedResults
+      })
+    } else {
+      return updatedResults
+    }
+  })
 }
 
 export const fetchTeams = (options = required()) => {
@@ -133,8 +134,7 @@ export const fetchTeams = (options = required()) => {
         ? recursivelyFetchTeams({ campaign, limit })
         : searchTeams({ campaign, limit }).then(data => data.results)
     )
-  )
-    .then(flatten)
+  ).then(flatten)
 }
 
 export const fetchTeam = (id = required(), options) => {
@@ -185,10 +185,9 @@ export const fetchTeamBySlug = (slug, options = {}) => {
     .get(`/v1/teamsv3/${slug}`)
     .then(team => {
       if (options.includeFitness) {
-        return fetchTeamFitness(
-          team.teamGuid,
-          options.fitnessParams
-        ).then(fitness => ({ ...team, fitness }))
+        return fetchTeamFitness(team.teamGuid, options.fitnessParams).then(
+          fitness => ({ ...team, fitness })
+        )
       }
 
       return team
@@ -209,7 +208,7 @@ export const fetchTeamBySlug = (slug, options = {}) => {
           }
 
           return Promise.resolve({
-            ...updatedTeam,
+            ...updatedTeam
           })
         })
       }
@@ -403,9 +402,8 @@ export const createTeam = params => {
     .then(teamShortName =>
       client.put('/v2/teams', { ...payload, teamShortName }, options)
     )
-    .then(
-      res =>
-        res.errorMessage ? Promise.reject(new Error(res.errorMessage)) : res
+    .then(res =>
+      res.errorMessage ? Promise.reject(new Error(res.errorMessage)) : res
     )
     .then(res => fetchTeam(res.teamGuid))
 }
