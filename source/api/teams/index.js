@@ -34,9 +34,17 @@ export const deserializeTeam = team => {
     members: members.map(member => {
       const page = deserializePage(member)
       const pageFitness = find(membersFitness, p => p.ID === page.uuid) || {}
+      const teamMember = {
+        donationUrl: `${baseUrl('www')}/${member.fundraisingPageShortName}/donate`,
+        image: member.profileImage,
+        name: `${member.fundraisingPageName}`,
+        url: `${baseUrl()}/${member.fundraisingPageShortName}`
+      }
+
 
       return {
         ...page,
+        ...teamMember,
         fitnessDistanceTotal: pageFitness.TotalValue || 0
       }
     }),
@@ -133,19 +141,6 @@ export const fetchTeam = (id = required(), options) => {
   const query = `query getTeamSlugById ($id: ID) {
     page(type: TEAM, id: $id) {
       slug
-      title
-      status
-      relationships {
-        campaigns(first: 1) {
-          nodes {
-            campaignGuid: legacyId
-            shortName: slug
-            title
-            summary
-            logo
-          }
-        }
-      }
     }
   }`
 
@@ -153,14 +148,8 @@ export const fetchTeam = (id = required(), options) => {
     .post('/v1/justgiving/graphql', { query, variables: { id } })
     .then(res => res.data)
     .then(data => {
-      const { slug, status, title, relationships } = data.data.page
-      return fetchTeamBySlug(slug, undefined, {
-        status,
-        title,
-        campaign: {
-          ...relationships.campaigns.nodes[0]
-        }
-      })
+      const { slug } = data.data.page
+      return fetchTeamBySlug(slug, undefined)
     })
 }
 
@@ -207,14 +196,20 @@ export const fetchTeamBySlug = (slug, options = {}) => {
     .then(team => {
       if (options.includePages) {
         return getPaginatedMembers(team).then(updatedTeam => {
-          const ids = updatedTeam.membership.members.map(
-            p => p.fundraisingPageGuid
-          )
-          return fetchPages({ allPages: true, ids }).then(members => {
-            return Promise.resolve({
-              ...updatedTeam,
-              membership: { ...updatedTeam.membership, members }
+          if (options.includeFullPages) {
+            const ids = updatedTeam.membership.members.map(
+              p => p.fundraisingPageGuid
+            )
+            return fetchPages({ allPages: true, ids }).then(members => {
+              return Promise.resolve({
+                ...updatedTeam,
+                membership: { ...updatedTeam.membership, members }
+              })
             })
+          }
+
+          return Promise.resolve({
+            ...updatedTeam,
           })
         })
       }
@@ -222,88 +217,6 @@ export const fetchTeamBySlug = (slug, options = {}) => {
       return Promise.resolve(team)
     })
 }
-
-// export const fetchTeamBySlug = (slug, options = {}, missingData) => {
-//   return client
-//     .get(`/v1/teamsv3/${slug}`)
-//     .then(team => {
-//       if (!missingData) {
-//         const query = `query getTeamSlugById ($slug: Slug) {
-//           page(type: TEAM, slug: $slug) {
-//             slug
-//             title
-//             status
-//             relationships {
-//               parents {
-//                 type
-//                 page {
-//                   campaignGuid: legacyId
-//                   shortName: slug
-//                   title
-//                   summary
-//                   logo
-//                   product {
-//                     name
-//                   }
-//                 }
-//               }
-//             }
-//           }
-//         }`
-
-//         return client.servicesAPI
-//           .post('/v1/justgiving/graphql', { query, variables: { slug } })
-//           .then(res => res.data)
-//           .then(data => {
-//             const { status, relationships, title } = data.data.page
-//             const parentRelationships = get(relationships, 'parents')
-//             const campaignParentItem = parentRelationships.find(parent => get(parent, 'page.product.name') === 'campaign')
-//             const alternativeCampaignParentItem = parentRelationships.find(parent => get(parent, 'page.campaignGuid'))
-
-//             missingData = {
-//               status,
-//               title,
-//               campaign: {
-//                 ...(campaignParentItem || alternativeCampaignParentItem).page
-//               }
-//             }
-
-//             return {
-//               ...team,
-//               ...missingData
-//             }
-//           })
-//       }
-//       return team
-//     })
-//     .then(team => {
-//       if (options.includeFitness) {
-//         return fetchTeamFitness(
-//           team.teamGuid,
-//           options.fitnessParams
-//         ).then(fitness => ({ ...team, fitness }))
-//       }
-
-//       return team
-//     })
-//     .then(team => {
-//       if (options.includePages) {
-//         return getPaginatedMembers(team).then(updatedTeam => {
-//           const ids = updatedTeam.membership.members.map(
-//             p => p.fundraisingPageGuid
-//           )
-//           return fetchPages({ allPages: true, ids }).then(members => {
-//             return Promise.resolve({
-//               ...updatedTeam,
-//               membership: { ...updatedTeam.membership, members }
-//             })
-//           })
-//         })
-//       }
-
-//       return Promise.resolve(team)
-//     })
-// }
 
 export const fetchTeamFitness = (slug, options = {}) => {
   const params = {
