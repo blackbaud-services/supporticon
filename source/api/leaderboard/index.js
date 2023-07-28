@@ -158,9 +158,9 @@ export const getCampaignLeaderboard = params => {
     .then(result => lodashGet(result, 'data.page.leaderboard.nodes', []))
 }
 
-export const fetchCampaignGraphqlLeaderboard = async params => {
+export const fetchCampaignGraphqlLeaderboard = params => {
   const campaignGuids = params.campaign.split(',')
-  await Promise.all(
+  return Promise.all(
     campaignGuids.map(campaignGuid =>
       getCampaignLeaderboard({
         ...params,
