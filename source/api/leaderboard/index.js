@@ -159,7 +159,7 @@ export const getCampaignLeaderboard = params => {
 }
 
 export const fetchCampaignGraphqlLeaderboard = params => {
-  const campaignGuids = params.campaign.split(',')
+  const campaignGuids = Array.isArray(params.campaign) ? params.campaign : params.campaign.split(',')
   return Promise.all(
     campaignGuids.map(campaignGuid =>
       getCampaignLeaderboard({
