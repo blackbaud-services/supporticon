@@ -164,11 +164,11 @@ export const fetchCampaignGraphqlLeaderboard = async (params) => {
     ...params,
     campaign: campaignGuid
   })))
-  .then(pages => flatMap(pages))
-  .then(pages => pages.filter(item => lodashGet(item, 'donationSummary.totalAmount.value')))
-  .then(pages => orderBy(pages, ['donationSummary.totalAmount.value'], ['desc']))
-  .then(results => results.filter(item => item.slug))
-  .then(results => removeExcludedPage(results, params.excludePageIds))
+    .then(pages => flatMap(pages))
+    .then(pages => pages.filter(item => lodashGet(item, 'donationSummary.totalAmount.value')))
+    .then(pages => orderBy(pages, ['donationSummary.totalAmount.value'], ['desc']))
+    .then(results => results.filter(item => item.slug))
+    .then(results => removeExcludedPages(results, params.excludePageIds))
 }
 
 export const fetchLegacyLeaderboard = params => {
