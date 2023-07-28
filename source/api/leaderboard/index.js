@@ -158,15 +158,23 @@ export const getCampaignLeaderboard = params => {
     .then(result => lodashGet(result, 'data.page.leaderboard.nodes', []))
 }
 
-export const fetchCampaignGraphqlLeaderboard = async (params) => {
+export const fetchCampaignGraphqlLeaderboard = async params => {
   const campaignGuids = params.campaign.split(',')
-  await Promise.all(campaignGuids.map(campaignGuid => getCampaignLeaderboard({
-    ...params,
-    campaign: campaignGuid
-  })))
+  await Promise.all(
+    campaignGuids.map(campaignGuid =>
+      getCampaignLeaderboard({
+        ...params,
+        campaign: campaignGuid
+      })
+    )
+  )
     .then(pages => flatMap(pages))
-    .then(pages => pages.filter(item => lodashGet(item, 'donationSummary.totalAmount.value')))
-    .then(pages => orderBy(pages, ['donationSummary.totalAmount.value'], ['desc']))
+    .then(pages =>
+      pages.filter(item => lodashGet(item, 'donationSummary.totalAmount.value'))
+    )
+    .then(pages =>
+      orderBy(pages, ['donationSummary.totalAmount.value'], ['desc'])
+    )
     .then(results => results.filter(item => item.slug))
     .then(results => removeExcludedPages(results, params.excludePageIds))
 }
@@ -354,8 +362,8 @@ export const deserializeLeaderboard = (supporter, index) => {
     lodashGet(supporter, 'owner.firstName')
       ? [supporter.owner.firstName, supporter.owner.lastName].join(' ')
       : typeof supporter.owner === 'string'
-        ? supporter.owner
-        : null
+      ? supporter.owner
+      : null
 
   return {
     currency:
@@ -420,8 +428,8 @@ export const deserializeLeaderboard = (supporter, index) => {
             baseUrl(),
             slug.indexOf('page/') === -1
               ? isTeam
-                  ? 'team'
-                  : 'fundraising'
+                ? 'team'
+                : 'fundraising'
               : 'page',
             slug.replace('page/', '')
           ].join('/')
