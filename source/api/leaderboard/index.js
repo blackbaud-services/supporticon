@@ -2,6 +2,7 @@ import flatten from 'lodash/flatten'
 import lodashGet from 'lodash/get'
 import orderBy from 'lodash/orderBy'
 import uniqBy from 'lodash/uniqBy'
+import flatMap from 'lodash/flatMap'
 import { get, servicesAPI } from '../../utils/client'
 import { apiImageUrl, baseUrl, imageUrl } from '../../utils/justgiving'
 import {
@@ -104,7 +105,7 @@ export const fetchEventLeaderboard = params => {
     .then(results => removeExcludedPages(results, params.excludePageIds))
 }
 
-export const fetchCampaignGraphqlLeaderboard = params => {
+export const getCampaignLeaderboard = params => {
   const query = `
     query($id: ID!, $limit: Int!, $type: PageLeaderboardType!,) {
       page(type: ONE_PAGE, id: $id) {
@@ -155,6 +156,19 @@ export const fetchCampaignGraphqlLeaderboard = params => {
     })
     .then(response => response.data)
     .then(result => lodashGet(result, 'data.page.leaderboard.nodes', []))
+}
+
+export const fetchCampaignGraphqlLeaderboard = params => {
+  const campaignGuids = params.campaign.split(',')
+  return Promise.all(
+    campaignGuids.map(campaignGuid =>
+      getCampaignLeaderboard({
+        ...params,
+        campaign: campaignGuid
+      })
+    )
+  )
+    .then(pages => flatMap(pages))
     .then(pages =>
       pages.filter(item => lodashGet(item, 'donationSummary.totalAmount.value'))
     )
