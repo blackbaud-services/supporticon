@@ -31,7 +31,7 @@ export const deserializeCampaign = campaign => ({
   raised: campaign.donationSummary.totalAmount,
   raisedOffline: campaign.donationSummary.offlineAmount,
   slug: campaign.shortName,
-  story: parseText(campaign.story),
+  story: campaign.story && parseText(campaign.story),
   summary: campaign.summary,
   target: campaign.targetAmount,
   totalDonations: campaign.donationSummary.totalNumberOfDonations,
