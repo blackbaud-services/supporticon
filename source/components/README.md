@@ -4,4 +4,6 @@ Supporticon provides some React components that handle fetching and displaying d
 
 These components should be easy to drop into your projects, pass in the relevant props, and they should be good to go.
 
+You can test these components on the local development server by dropping them in to `/playground/src/App.js`.
+
 [View on Github](https://github.com/blackbaud-services/supporticon)
