@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './playground/src/index.js',
@@ -7,8 +8,15 @@ module.exports = {
     path: path.resolve(__dirname, 'playground/dist'),
     filename: 'bundle.js',
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify({}),
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+  ],
   devServer: {
     static: './playground',
+    hot: true,
     port: 3001,
   },
   resolve: {
