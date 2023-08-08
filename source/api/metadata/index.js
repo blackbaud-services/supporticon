@@ -30,8 +30,8 @@ export const createMetadata = ({
   id = required(),
   metadata = required(),
   authType = 'Bearer'
-}) => {
-  const headers = { Authorization: [authType, token].join(' ') }
+}, sessionId) => {
+  const headers = { Authorization: [authType, token].join(' '), sessionId }
   const values = keys(metadata).map(key => ({ key, value: metadata[key] }))
 
   return metadataAPI
