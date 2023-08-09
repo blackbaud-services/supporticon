@@ -14,12 +14,16 @@ import {
   jgIdentityClient
 } from '../../source/utils/client'
 import InputSlug from '../../source/components/input-slug';
+import DataProvider from '../../source/utils/data';
 
 const App = () => {
   return (
     <>
       <h1>Supporticon Playground</h1>
       <span>Welcome to the Supporticon playground! Add a component in App.js to get started.</span>
+      {/* <DataProvider> */}
+        {/* Your component here... */}
+      {/* </DataProvider> */}
     </>
     )
 };
