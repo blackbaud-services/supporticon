@@ -26,3 +26,5 @@ Also provides some common data-driven components, using the [Constructicon](http
 - `yarn styleguide:build` will build the styleguide
 - `yarn docs:build` builds the styleguide and gitbook
 - `yarn docs:deploy` deploys the docs (styleguide and gitbook)
+- `yarn playground:build` to build webpack for the local development server
+- `yarn playground:start` to start the local development server

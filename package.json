@@ -17,7 +17,9 @@
     "docs:deploy": "gh-pages -d styleguide -t true",
     "deploy:prepare": "npm run build && gulp npm-prepare",
     "announce": "./bin/announce",
-    "validate:typescript": "tsc --pretty --noEmit"
+    "validate:typescript": "tsc --pretty --noEmit",
+    "playground:start": "yarn webpack serve",
+    "playground:build": "yarn webpack"
   },
   "repository": {
     "type": "git",
@@ -30,9 +32,9 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.15.4",
-    "@babel/core": "^7.15.5",
-    "@babel/preset-env": "^7.15.6",
-    "@babel/preset-react": "^7.14.5",
+    "@babel/core": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-react": "^7.22.5",
     "@babel/register": "^7.15.3",
     "babel-loader": "^8.2.2",
     "chai": "^4.3.4",
@@ -59,7 +61,9 @@
     "source-map-loader": "^1.0.0",
     "standard": "^16.0.3",
     "style-loader": "^2.0.0",
-    "webpack": "^4.44.2"
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
     "axios": "^0.21.4",
