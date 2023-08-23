@@ -93,13 +93,104 @@ export const deserializeTeamPage = page => {
   }
 }
 
-const searchTeams = ({ campaign, limit, offset }) =>
-  client.servicesAPI
-    .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
-      params: { CampaignGuid: campaign, Take: limit, offset },
-      paramsSerializer
+const searchTeams = ({ campaign, limit, offset }) => {
+  const query = `
+  query getTeamsByCampaignId ($id: ID, $after: String) {
+    page(type: CAMPAIGN, id: $id) {
+      id
+      relationships {
+        teams(first: 10, after: $after) {
+          totalCount
+          nodes {
+            id
+            slug
+            title
+            owner {
+              id 
+              name 
+              avatar
+            }
+            targetWithCurrency {
+              value
+              currencyCode
+            }
+            donationSummary {
+              totalAmount {
+                value
+              }
+            }
+            cover {
+              ...on ImageMedia {
+                caption
+              }
+            }
+            supporters(first: 100) {
+              totalCount
+            }
+          }
+        }
+      }
+    }
+  }`
+
+  return client.servicesAPI
+    .post('/v1/justgiving/graphql', {query, variables: {id: campaign}})
+    .then(res => 
+      get(res.data, 'data.page.relationships.teams')
+    ).then(data => {
+      if (data.totalCount > 10) {
+        // The maximum page size supported by this query is 10, so we're
+        // generating a base64 encoded integer for page cursors up to the
+        // total number of pages within the team (or a hard upper limit).
+        // N.B. The cursor is zero-based, hence for 10-20 the cursor is 9.
+        const pageCursors = times(
+          Math.ceil(Math.min(data.totalCount, limit) / 10) - 1,
+          integer => encodeBase64String(integer * 10 + 9)
+        )
+
+        return Promise.all(
+          pageCursors.map(after =>
+            client.servicesAPI
+              .post('/v1/justgiving/graphql', {
+                query,
+                variables: { id: campaign, after }
+              })
+              .then(res =>
+                get(res.data, 'data.page.relationships.teams')
+              )
+              .then(data => data.nodes)
+          )
+        ).then(pages => flatten([data.nodes, ...pages]))
+      }
+
+     const formattedData = data.nodes.map(({id, slug, title, supporters, owner, targetWithCurrency, donationSummary, cover}) => {
+        // format as per previous api structure
+        return {
+        teamGuid: id,
+        shortName: slug,
+        name: title,
+        numberOfSupporters: supporters.totalCount,
+        captain: {
+          userGuid: owner.id,
+          firstName: owner.name.split(' ')[0],
+          secondName: owner.name.split(' ')[1],
+          profileImage: owner.avatar
+        },
+        fundraisingConfiguration: {
+          currencyCode: targetWithCurrency.currencyCode,
+          targetAmount: targetWithCurrency.value
+        },
+        donationSummary: {
+          totalAmount: donationSummary.totalAmount.value
+        },
+        coverImageName: cover.caption
+      }
+
+      })
+
+      return formattedData
     })
-    .then(response => response.data)
+  }
 
 const recursivelyFetchTeams = ({
   campaign,
