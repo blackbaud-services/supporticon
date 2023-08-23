@@ -93,7 +93,7 @@ export const deserializeTeamPage = page => {
   }
 }
 
-const searchTeams = ({ campaign, limit, offset }) => {
+const searchTeams = ({ campaign, limit }) => {
   const query = `
   query getTeamsByCampaignId ($id: ID, $after: String) {
     page(type: CAMPAIGN, id: $id) {
@@ -165,33 +165,30 @@ const searchTeams = ({ campaign, limit, offset }) => {
         ).then(pages => flatten([data.nodes, ...pages]))
       }
 
-     const formattedData = data.nodes.map(({id, slug, title, status, charity, storyWithType, relationships, supporters, owner, targetWithCurrency, donationSummary, cover}) => {
-        // format as per previous api structure
-        return {
-        teamGuid: id,
-        shortName: slug,
-        name: title,
-        status,
-        numberOfSupporters: supporters.totalCount,
-        captain: {
-          userGuid: owner.id,
-          firstName: owner.name.split(' ')[0],
-          secondName: owner.name.split(' ')[1],
-          profileImage: owner.avatar
-        },
-        fundraisingConfiguration: {
-          currencyCode: targetWithCurrency.currencyCode,
-          targetAmount: targetWithCurrency.value
-        },
-        donationSummary: {
-          totalAmount: donationSummary.totalAmount.value
-        },
-        coverPhotoImageId: cover.id,
-        coverPhotoImageName: cover.caption,
-        coverImageName: cover.caption
-      }
-
-      })
+     const formattedData = data.nodes.map(({id, slug, title, status, supporters, owner, targetWithCurrency, donationSummary, cover}) => (
+       {
+       teamGuid: id,
+       shortName: slug,
+       name: title,
+       status,
+       numberOfSupporters: supporters.totalCount,
+       captain: {
+         userGuid: owner.id,
+         firstName: owner.name.split(' ')[0],
+         secondName: owner.name.split(' ')[1],
+         profileImage: owner.avatar
+       },
+       fundraisingConfiguration: {
+         currencyCode: targetWithCurrency.currencyCode,
+         targetAmount: targetWithCurrency.value
+       },
+       donationSummary: {
+         totalAmount: donationSummary.totalAmount.value
+       },
+       coverPhotoImageId: cover.id,
+       coverPhotoImageName: cover.caption,
+       coverImageName: cover.caption
+     }))
 
       return formattedData
     })
@@ -228,7 +225,7 @@ export const fetchTeams = (options = required()) => {
     campaigns.map(campaign =>
       allTeams
         ? recursivelyFetchTeams({ campaign, limit })
-        : searchTeams({ campaign, limit }).then(data => data.results)
+        : searchTeams({ campaign, limit })
     )
   ).then(flatten)
 }
