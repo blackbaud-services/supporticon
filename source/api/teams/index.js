@@ -5,7 +5,7 @@ import times from 'lodash/times'
 import slugify from 'slugify'
 import * as client from '../../utils/client'
 import { fetchPages, deserializePage } from '../pages'
-import { paramsSerializer, required } from '../../utils/params'
+import { required } from '../../utils/params'
 import { baseUrl, imageUrl, parseText } from '../../utils/justgiving'
 import { deserializeTotals, getMonetaryValue } from '../../utils/totals'
 import { encodeBase64String } from '../../utils/base64'
@@ -136,10 +136,9 @@ const searchTeams = ({ campaign, limit }) => {
   }`
 
   return client.servicesAPI
-    .post('/v1/justgiving/graphql', {query, variables: {id: campaign}})
-    .then(res => 
-      get(res.data, 'data.page.relationships.teams')
-    ).then(data => {
+    .post('/v1/justgiving/graphql', { query, variables: { id: campaign } })
+    .then(res => get(res.data, 'data.page.relationships.teams'))
+    .then(data => {
       if (data.totalCount > 10) {
         // The maximum page size supported by this query is 10, so we're
         // generating a base64 encoded integer for page cursors up to the
@@ -157,42 +156,51 @@ const searchTeams = ({ campaign, limit }) => {
                 query,
                 variables: { id: campaign, after }
               })
-              .then(res =>
-                get(res.data, 'data.page.relationships.teams')
-              )
+              .then(res => get(res.data, 'data.page.relationships.teams'))
               .then(data => data.nodes)
           )
         ).then(pages => flatten([data.nodes, ...pages]))
       }
 
-     const formattedData = data.nodes.map(({id, slug, title, status, supporters, owner, targetWithCurrency, donationSummary, cover}) => (
-       {
-       teamGuid: id,
-       shortName: slug,
-       name: title,
-       status,
-       numberOfSupporters: supporters.totalCount,
-       captain: {
-         userGuid: owner.id,
-         firstName: owner.name.split(' ')[0],
-         secondName: owner.name.split(' ')[1],
-         profileImage: owner.avatar
-       },
-       fundraisingConfiguration: {
-         currencyCode: targetWithCurrency.currencyCode,
-         targetAmount: targetWithCurrency.value
-       },
-       donationSummary: {
-         totalAmount: donationSummary.totalAmount.value
-       },
-       coverPhotoImageId: cover.id,
-       coverPhotoImageName: cover.caption,
-       coverImageName: cover.caption
-     }))
+      const formattedData = data.nodes.map(
+        ({
+          id,
+          slug,
+          title,
+          status,
+          supporters,
+          owner,
+          targetWithCurrency,
+          donationSummary,
+          cover
+        }) => ({
+          teamGuid: id,
+          shortName: slug,
+          name: title,
+          status,
+          numberOfSupporters: supporters.totalCount,
+          captain: {
+            userGuid: owner.id,
+            firstName: owner.name.split(' ')[0],
+            secondName: owner.name.split(' ')[1],
+            profileImage: owner.avatar
+          },
+          fundraisingConfiguration: {
+            currencyCode: targetWithCurrency.currencyCode,
+            targetAmount: targetWithCurrency.value
+          },
+          donationSummary: {
+            totalAmount: donationSummary.totalAmount.value
+          },
+          coverPhotoImageId: cover.id,
+          coverPhotoImageName: cover.caption,
+          coverImageName: cover.caption
+        })
+      )
 
       return formattedData
     })
-  }
+}
 
 const recursivelyFetchTeams = ({
   campaign,
