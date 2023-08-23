@@ -105,6 +105,7 @@ const searchTeams = ({ campaign, limit, offset }) => {
             id
             slug
             title
+            status
             owner {
               id 
               name 
@@ -122,6 +123,7 @@ const searchTeams = ({ campaign, limit, offset }) => {
             cover {
               ...on ImageMedia {
                 caption
+                id
               }
             }
             supporters(first: 100) {
@@ -163,12 +165,13 @@ const searchTeams = ({ campaign, limit, offset }) => {
         ).then(pages => flatten([data.nodes, ...pages]))
       }
 
-     const formattedData = data.nodes.map(({id, slug, title, supporters, owner, targetWithCurrency, donationSummary, cover}) => {
+     const formattedData = data.nodes.map(({id, slug, title, status, charity, storyWithType, relationships, supporters, owner, targetWithCurrency, donationSummary, cover}) => {
         // format as per previous api structure
         return {
         teamGuid: id,
         shortName: slug,
         name: title,
+        status,
         numberOfSupporters: supporters.totalCount,
         captain: {
           userGuid: owner.id,
@@ -183,6 +186,8 @@ const searchTeams = ({ campaign, limit, offset }) => {
         donationSummary: {
           totalAmount: donationSummary.totalAmount.value
         },
+        coverPhotoImageId: cover.id,
+        coverPhotoImageName: cover.caption,
         coverImageName: cover.caption
       }
 
