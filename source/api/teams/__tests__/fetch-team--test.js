@@ -17,7 +17,10 @@ describe('Fetch Teams', () => {
       fetchTeams({ campaign: 'abc123' })
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
-        expect(request.url).to.contain('/v1/justgiving/graphql')
+        expect(request.url).to.contain(
+          '/v1/justgiving/proxy/campaigns/v1/teams/search'
+        )
+        expect(request.url).to.contain('CampaignGuid=abc123')
         done()
       })
     })

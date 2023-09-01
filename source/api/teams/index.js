@@ -5,7 +5,7 @@ import times from 'lodash/times'
 import slugify from 'slugify'
 import * as client from '../../utils/client'
 import { fetchPages, deserializePage } from '../pages'
-import { required } from '../../utils/params'
+import { paramsSerializer, required } from '../../utils/params'
 import { baseUrl, imageUrl, parseText } from '../../utils/justgiving'
 import { deserializeTotals, getMonetaryValue } from '../../utils/totals'
 import { encodeBase64String } from '../../utils/base64'
@@ -93,114 +93,13 @@ export const deserializeTeamPage = page => {
   }
 }
 
-const searchTeams = ({ campaign, limit }) => {
-  const query = `
-  query getTeamsByCampaignId ($id: ID, $after: String) {
-    page(type: CAMPAIGN, id: $id) {
-      id
-      relationships {
-        teams(first: 10, after: $after) {
-          totalCount
-          nodes {
-            id
-            slug
-            title
-            status
-            owner {
-              id 
-              name 
-              avatar
-            }
-            targetWithCurrency {
-              value
-              currencyCode
-            }
-            donationSummary {
-              totalAmount {
-                value
-              }
-            }
-            cover {
-              ...on ImageMedia {
-                caption
-                id
-              }
-            }
-            supporters(first: 100) {
-              totalCount
-            }
-          }
-        }
-      }
-    }
-  }`
-
-  return client.servicesAPI
-    .post('/v1/justgiving/graphql', { query, variables: { id: campaign } })
-    .then(res => get(res.data, 'data.page.relationships.teams'))
-    .then(data => {
-      if (data.totalCount > 10) {
-        // The maximum page size supported by this query is 10, so we're
-        // generating a base64 encoded integer for page cursors up to the
-        // total number of pages within the team (or a hard upper limit).
-        // N.B. The cursor is zero-based, hence for 10-20 the cursor is 9.
-        const pageCursors = times(
-          Math.ceil(Math.min(data.totalCount, limit) / 10) - 1,
-          integer => encodeBase64String(integer * 10 + 9)
-        )
-
-        return Promise.all(
-          pageCursors.map(after =>
-            client.servicesAPI
-              .post('/v1/justgiving/graphql', {
-                query,
-                variables: { id: campaign, after }
-              })
-              .then(res => get(res.data, 'data.page.relationships.teams'))
-              .then(data => data.nodes)
-          )
-        ).then(pages => flatten([data.nodes, ...pages]))
-      }
-
-      const formattedData = data.nodes.map(
-        ({
-          id,
-          slug,
-          title,
-          status,
-          supporters,
-          owner,
-          targetWithCurrency,
-          donationSummary,
-          cover
-        }) => ({
-          teamGuid: id,
-          shortName: slug,
-          name: title,
-          status,
-          numberOfSupporters: supporters.totalCount,
-          captain: {
-            userGuid: owner.id,
-            firstName: owner.name.split(' ')[0],
-            secondName: owner.name.split(' ')[1],
-            profileImage: owner.avatar
-          },
-          fundraisingConfiguration: {
-            currencyCode: targetWithCurrency.currencyCode,
-            targetAmount: targetWithCurrency.value
-          },
-          donationSummary: {
-            totalAmount: donationSummary.totalAmount.value
-          },
-          coverPhotoImageId: cover.id,
-          coverPhotoImageName: cover.caption,
-          coverImageName: cover.caption
-        })
-      )
-
-      return formattedData
+const searchTeams = ({ campaign, limit, offset }) =>
+  client.servicesAPI
+    .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
+      params: { CampaignGuid: campaign, Take: limit, offset },
+      paramsSerializer
     })
-}
+    .then(response => response.data)
 
 const recursivelyFetchTeams = ({
   campaign,
@@ -233,7 +132,7 @@ export const fetchTeams = (options = required()) => {
     campaigns.map(campaign =>
       allTeams
         ? recursivelyFetchTeams({ campaign, limit })
-        : searchTeams({ campaign, limit })
+        : searchTeams({ campaign, limit }).then(data => data.results)
     )
   ).then(flatten)
 }
