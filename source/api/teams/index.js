@@ -166,8 +166,8 @@ export const searchTeams = ({ campaign, after, limit }) => {
             numberOfSupporters: supporters.totalCount,
             captain: {
               userGuid: owner.legacyId,
-              firstName: owner.name.split(' ')[0],
-              lastName: owner.name.split(' ')[1],
+              firstName: owner.name?.split(' ')[0],
+              lastName: owner.name?.split(' ')[1],
               profileImage: owner.avatar
             },
             fundraisingConfiguration: {
