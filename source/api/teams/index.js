@@ -56,7 +56,7 @@ export const deserializeTeam = team => {
     slug: team.shortName && team.shortName,
     story: team.story && parseText(team.story),
     target: get(team, 'fundraisingConfiguration.targetAmount'),
-    url: team.shortName && `${baseUrl()}/team/${team.shortName}`,
+    url: team.shortName && `${baseUrl()}/team/${team.shortName.replace('team/', '')}`,
     uuid: team.teamGuid
   }
 }
