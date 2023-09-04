@@ -5,7 +5,7 @@ import times from 'lodash/times'
 import slugify from 'slugify'
 import * as client from '../../utils/client'
 import { fetchPages, deserializePage } from '../pages'
-import { paramsSerializer, required } from '../../utils/params'
+import { required } from '../../utils/params'
 import { baseUrl, imageUrl, parseText } from '../../utils/justgiving'
 import { deserializeTotals, getMonetaryValue } from '../../utils/totals'
 import { encodeBase64String } from '../../utils/base64'
@@ -93,29 +93,107 @@ export const deserializeTeamPage = page => {
   }
 }
 
-const searchTeams = ({ campaign, limit, offset }) =>
-  client.servicesAPI
-    .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
-      params: { CampaignGuid: campaign, Take: limit, offset },
-      paramsSerializer
-    })
-    .then(response => response.data)
+export const searchTeams = ({ campaign, after, limit }) => {
+  const query = `
+  query getTeamsByCampaignId($id: ID, $after: String, $limit: Int!) {
+    page(type: ONE_PAGE, id: $id) {
+        leaderboard(type: TEAMS, after: $after, first: $limit) {
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+          edges {
+            node {
+              id
+              legacyId
+              title
+              slug
+              supporters(first: 100) {
+                totalCount
+              }
+              donationSummary {
+                totalAmount {
+                  value
+                  currencyCode
+                }
+              }
+              cover {
+                ... on ImageMedia {
+                  caption
+                }
+              }
+              owner {
+                id
+                avatar
+                legacyId
+                name
+              }
+              targetWithCurrency {
+                currencyCode
+                value
+              }
+            }
+          }
+        }
+    }
+  }
+  `
 
-const recursivelyFetchTeams = ({
-  campaign,
-  limit,
-  offset = 0,
-  results = []
-}) => {
-  return searchTeams({ campaign, limit, offset }).then(data => {
-    const { next } = data
-    const offset = next && next.split('offset=')[1]
+  return client.servicesAPI
+    .post('/v1/justgiving/graphql', {
+      query,
+      variables: { id: campaign, after, limit }
+    })
+    .then(res => get(res.data, 'data.page.leaderboard'))
+    .then(leaderboard => {
+      const formattedTeams = leaderboard.edges.map(
+        ({
+          node: {
+            legacyId,
+            slug,
+            title,
+            owner,
+            targetWithCurrency,
+            donationSummary,
+            cover,
+            supporters
+          }
+        }) => {
+          return {
+            teamGuid: legacyId,
+            shortName: slug,
+            name: title,
+            numberOfSupporters: supporters.totalCount,
+            captain: {
+              userGuid: owner.legacyId,
+              firstName: owner.name?.split(' ')[0],
+              lastName: owner.name?.split(' ')[1],
+              profileImage: owner.avatar
+            },
+            fundraisingConfiguration: {
+              currencyCode: targetWithCurrency.currencyCode,
+              targetAmount: targetWithCurrency.value
+            },
+            donationSummary: {
+              totalAmount: donationSummary.totalAmount.value
+            },
+            coverImageName: cover?.caption
+          }
+        }
+      )
+      return { results: formattedTeams, pageInfo: leaderboard.pageInfo }
+    })
+}
+
+const recursivelyFetchTeams = ({ campaign, limit, after, results = [] }) => {
+  return searchTeams({ campaign, limit, after }).then(data => {
+    const { hasNextPage, endCursor } = data.pageInfo
     const updatedResults = [...results, ...data.results]
-    if (offset) {
+    if (hasNextPage) {
       return recursivelyFetchTeams({
         campaign,
         limit,
-        offset,
+        after: endCursor,
         results: updatedResults
       })
     } else {
