@@ -40,7 +40,7 @@ class JoinTeamForm extends React.Component {
         teams.map(team => ({
           id: team.id,
           owner: team.owner,
-          slug: team.slug,
+          slug: team.slug.replace('team/', ''),
           label: team.name
         }))
       )
