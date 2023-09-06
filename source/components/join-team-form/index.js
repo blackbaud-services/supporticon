@@ -34,7 +34,7 @@ class JoinTeamForm extends React.Component {
       limit: 1000
     }
 
-    this.setState({status: 'fetching'})
+    this.setState({ status: 'fetching' })
 
     fetchTeams(params)
       .then(teams => teams.map(deserializeTeam))
@@ -58,7 +58,8 @@ class JoinTeamForm extends React.Component {
           }, true)
         )
       })
-      .then(teams => this.setState({ status: 'fetched', teams })).catch(() => this.setState({status: 'failed'}))
+      .then(teams => this.setState({ status: 'fetched', teams }))
+      .catch(() => this.setState({ status: 'failed' }))
   }
 
   handleFilterResults (q) {
@@ -111,7 +112,11 @@ class JoinTeamForm extends React.Component {
             return message
           }
 
-          const message = get(error, 'response.data.message', 'There was an unexpected error')
+          const message = get(
+            error,
+            'response.data.message',
+            'There was an unexpected error'
+          )
           const errors = [{ message: formatMessage(message) }]
           this.setState({ status: 'failed', errors })
           return Promise.reject(error)
