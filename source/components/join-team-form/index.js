@@ -34,6 +34,8 @@ class JoinTeamForm extends React.Component {
       limit: 1000
     }
 
+    this.setState({status: 'fetching'})
+
     fetchTeams(params)
       .then(teams => teams.map(deserializeTeam))
       .then(teams =>
@@ -56,7 +58,7 @@ class JoinTeamForm extends React.Component {
           }, true)
         )
       })
-      .then(teams => this.setState({ status: 'fetched', teams }))
+      .then(teams => this.setState({ status: 'fetched', teams })).catch(() => this.setState({status: 'failed'}))
   }
 
   handleFilterResults (q) {
