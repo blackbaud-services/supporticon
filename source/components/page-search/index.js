@@ -23,7 +23,7 @@ class PageSearch extends Component {
 
     if (!!campaign && type !== 'individual') {
       this.setState({ status: 'fetching' })
-      fetchTeams({ campaign, limit: 1000 })
+      fetchTeams({ campaign, limit: 25, allTeams: true })
         .then(teams => teams.map(deserializeTeam))
         .then(teams =>
           teams.map(team => ({
