@@ -45,9 +45,8 @@ class AddressSearch extends Component {
 
     if (selected && selected.id) {
       Promise.resolve()
-        .then(
-          () =>
-            selected.AddressLine1 ? selected : getAddressDetails(selected.id)
+        .then(() =>
+          selected.AddressLine1 ? selected : getAddressDetails(selected.id)
         )
         .then(address => deserializeAddress(address))
         .then(address => this.props.onChange(address))
@@ -55,62 +54,76 @@ class AddressSearch extends Component {
   }
 
   render () {
-    const { error, inputProps, touched, validations, onCancel, onCancelLabel, showEnterAddressButtonBelowInput } = this.props
+    const {
+      error,
+      inputProps,
+      touched,
+      validations,
+      onCancel,
+      onCancelLabel,
+      showEnterAddressButtonBelowInput
+    } = this.props
     const { country, results, status, value } = this.state
 
     return (
       <>
-      <Grid spacing={{ x: 0.5 }}>
-        {!this.props.country && (
-          <GridColumn md={4}>
-            <InputSelect
-              label='Country'
-              name='address-country'
-              onBlur={country => this.setState({ country })}
-              onChange={country => this.setState({ country })}
-              options={countries}
-              placeholder='Select Country'
-              value={country}
+        <Grid spacing={{ x: 0.5 }}>
+          {!this.props.country && (
+            <GridColumn md={4}>
+              <InputSelect
+                label='Country'
+                name='address-country'
+                onBlur={country => this.setState({ country })}
+                onChange={country => this.setState({ country })}
+                options={countries}
+                placeholder='Select Country'
+                value={country}
+              />
+            </GridColumn>
+          )}
+          <GridColumn md={this.props.country ? 12 : 8}>
+            <InputSearch
+              autoComplete='nope'
+              error={error}
+              invalid={!!error}
+              label={this.renderLabel()}
+              onChange={this.handleSelect}
+              onSearch={this.handleQuery}
+              results={results}
+              showMore
+              status={status}
+              placeholder='Search postcode'
+              touched={touched}
+              validations={validations}
+              value={value}
+              {...inputProps}
             />
           </GridColumn>
-        )}
-        <GridColumn md={this.props.country ? 12 : 8}>
-          <InputSearch
-            autoComplete='nope'
-            error={error}
-            invalid={!!error}
-            label={this.renderLabel()}
-            onChange={this.handleSelect}
-            onSearch={this.handleQuery}
-            results={results}
-            showMore
-            status={status}
-            placeholder='Search postcode'
-            touched={touched}
-            validations={validations}
-            value={value}
-            {...inputProps}
-          />
-        </GridColumn>
-      </Grid>
+        </Grid>
         {onCancel && showEnterAddressButtonBelowInput && (
           <Button
-           background='transparent'
-           borderWidth={0}
-           foreground='inherit'
-           onClick={onCancel}
-           size={-1.5}
-           spacing={0}
-         >
-           {onCancelLabel}
-         </Button>
-      )}
+            background='transparent'
+            borderWidth={0}
+            foreground='inherit'
+            onClick={onCancel}
+            size={-1.5}
+            spacing={0}
+          >
+            {onCancelLabel}
+          </Button>
+        )}
       </>
     )
   }
 
   renderLabel () {
-    const { onCancel, onCancelLabel, label, required, showEnterAddressButtonBelowInput } = this.props
+    const {
+      onCancel,
+      onCancelLabel,
+      label,
+      required,
+      showEnterAddressButtonBelowInput
+    } = this.props
 
     return (
       <Grid spacing={{ x: 0.5 }}>
