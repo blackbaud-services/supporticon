@@ -55,10 +55,11 @@ class AddressSearch extends Component {
   }
 
   render () {
-    const { error, inputProps, touched, validations } = this.props
+    const { error, inputProps, touched, validations, onCancel, onCancelLabel, showEnterAddressButtonBelowInput } = this.props
     const { country, results, status, value } = this.state
 
     return (
+      <>
       <Grid spacing={{ x: 0.5 }}>
         {!this.props.country && (
           <GridColumn md={4}>
@@ -92,11 +93,24 @@ class AddressSearch extends Component {
           />
         </GridColumn>
       </Grid>
+        {onCancel && showEnterAddressButtonBelowInput && (
+          <Button
+           background='transparent'
+           borderWidth={0}
+           foreground='inherit'
+           onClick={onCancel}
+           size={-1.5}
+           spacing={0}
+         >
+           {onCancelLabel}
+         </Button>
+      )}
+      </>
     )
   }
 
   renderLabel () {
-    const { onCancel, onCancelLabel, label, required } = this.props
+    const { onCancel, onCancelLabel, label, required, showEnterAddressButtonBelowInput } = this.props
 
     return (
       <Grid spacing={{ x: 0.5 }}>
@@ -108,7 +122,7 @@ class AddressSearch extends Component {
             </Section>
           )}
         </GridColumn>
-        {onCancel && (
+        {onCancel && !showEnterAddressButtonBelowInput && (
           <GridColumn xs={7} xsAlign='right'>
             <Button
               background='transparent'
