@@ -31,7 +31,8 @@ class JoinTeamForm extends React.Component {
 
     const params = {
       campaign,
-      limit: 1000
+      limit: 25,
+      allTeams: true
     }
 
     this.setState({ status: 'fetching' })
