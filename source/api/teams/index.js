@@ -203,7 +203,7 @@ const recursivelyFetchTeams = ({ campaign, limit, after, results = [] }) => {
 }
 
 export const fetchTeams = (options = required()) => {
-  const { allTeams, campaign = required(), limit = 100 } = options
+  const { allTeams, campaign = required(), limit = 25 } = options
   const campaigns = Array.isArray(campaign) ? campaign : campaign.split(',')
 
   return Promise.all(

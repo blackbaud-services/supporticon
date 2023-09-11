@@ -144,7 +144,7 @@ const FitnessLeaderboard = ({
                     amount={getMetric(item)}
                     amountLabel={getMetric(item, 'full')}
                     href={item.url}
-                    rank={item.position}
+                    rank={index + 1}
                     {...leaderboardItem}
                   />
                 ))}
