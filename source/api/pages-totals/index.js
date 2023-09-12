@@ -14,7 +14,7 @@ const fetchEvent = id =>
 
 const fetchCampaign = id =>
   servicesAPI
-    .get(`/v1/justgiving/campaigns/${id}/leaderboard`)
+    .get(`/v1/justgiving/campaigns/${id}/leaderboard?active=false`)
     .then(({ data }) => data.meta.totalResults)
 
 const fetchCampaignTeams = id =>
