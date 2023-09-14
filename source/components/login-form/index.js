@@ -6,6 +6,7 @@ import withForm from 'constructicon/with-form'
 import * as validators from 'constructicon/lib/validators'
 import { signIn } from '../../api/authentication'
 import { renderInput, renderFormFields } from '../../utils/form'
+import Bugsnag from '@bugsnag/js'
 
 import Form from 'constructicon/form'
 
@@ -38,6 +39,7 @@ class LoginForm extends Component {
         .then(() => this.setState({ status: 'fetched' }))
         .catch(error => {
           const message = get(error, 'data.error.message')
+          Bugsnag.notify(`LOGIN ERROR - ${error.status} -  ${message}`)
 
           switch (error.status) {
             case 400:
