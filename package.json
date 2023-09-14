@@ -1,6 +1,6 @@
 {
   "name": "supporticon",
-  "version": "10.4.24",
+  "version": "10.4.25",
   "description": "A libary to handle fetching data from JustGiving",
   "main": "index.js",
   "scripts": {
@@ -66,6 +66,7 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "@bugsnag/js": "^7.21.0",
     "axios": "^0.21.4",
     "dayjs": "^1.10.6",
     "js-base64": "^3.7.0",
