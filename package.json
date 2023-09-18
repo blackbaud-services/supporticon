@@ -1,6 +1,6 @@
 {
   "name": "supporticon",
-  "version": "10.4.25",
+  "version": "10.4.26",
   "description": "A libary to handle fetching data from JustGiving",
   "main": "index.js",
   "scripts": {
@@ -38,7 +38,7 @@
     "@babel/register": "^7.15.3",
     "babel-loader": "^8.2.2",
     "chai": "^4.3.4",
-    "constructicon": "4.4.12",
+    "constructicon": "4.4.14",
     "css-loader": "^5.1.1",
     "docsify-cli": "^4.4.3",
     "enzyme": "^3.11.0",
