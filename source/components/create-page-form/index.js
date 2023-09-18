@@ -40,6 +40,14 @@ class CreatePageForm extends Component {
     }
   }
 
+  componentDidUpdate () {
+    const { form, onFormUpdate } = this.props
+
+    if (onFormUpdate) {
+      onFormUpdate(form)
+    }
+  }
+
   handleSubmit (e) {
     e.preventDefault()
 
