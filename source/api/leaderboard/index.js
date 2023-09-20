@@ -21,7 +21,6 @@ import { getMonetaryValue } from '../../utils/totals'
  * @function fetches fundraising pages ranked by funds raised
  */
 export const fetchLeaderboard = (params = required()) => {
-  console.log('params', params)
   if (
     !isEmpty(params.campaign) &&
     (params.allPages || params.q) &&
@@ -58,7 +57,6 @@ export const fetchLeaderboard = (params = required()) => {
     !isEmpty(params.campaign) && isEmpty(params.charity)
       ? fetchCampaignGraphqlLeaderboard(params)
       : Promise.resolve([]),
-    fetchLegacyLeaderboard(params)
   ])
     .then(flatten)
     .then(items =>
@@ -105,11 +103,13 @@ export const fetchEventLeaderboard = params => {
     .then(results => removeExcludedPages(results, params.excludePageIds))
 }
 
-export const getCampaignLeaderboard = params => {
+export const getCampaignLeaderboard = (params, data = [], nextPageCursor) => {
+  const nextPage = nextPageCursor ? `, after: "${nextPageCursor}"` : ''
+  const limit = (params.limit - data.length) > 50 ? 50 : (params.limit - data.length)
   const query = `
     query($id: ID!, $limit: Int!, $type: PageLeaderboardType!,) {
       page(type: ONE_PAGE, id: $id) {
-        leaderboard (first: $limit, type: $type) {
+        leaderboard (first: $limit, type: $type${nextPage}) {
           nodes {
             createDate
             legacyId
@@ -150,12 +150,23 @@ export const getCampaignLeaderboard = params => {
       query,
       variables: {
         id: getUID(params.campaign),
-        limit: params.limit || 100,
+        limit,
         type: params.type === 'team' ? 'TEAMS' : 'FUNDRAISERS'
       }
     })
     .then(response => response.data)
-    .then(result => lodashGet(result, 'data.page.leaderboard.nodes', []))
+    .then(result => {
+      const leaderboard = lodashGet(result, 'data.page.leaderboard', undefined)
+      const pageInfo = lodashGet(leaderboard, 'pageInfo', undefined)
+      const pages = lodashGet(leaderboard, 'nodes', [])
+      const updatedData = [ ...data, ...pages ]
+
+      if (updatedData.length < 101 && pageInfo.hasNextPage) {
+        return getCampaignLeaderboard(params, updatedData, pageInfo.endCursor)
+      }
+
+      return updatedData
+    })
 }
 
 export const fetchCampaignGraphqlLeaderboard = params => {
