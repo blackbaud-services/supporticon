@@ -105,7 +105,7 @@ export const fetchEventLeaderboard = params => {
 
 export const getCampaignLeaderboard = (params, data = [], nextPageCursor) => {
   const nextPage = nextPageCursor ? `, after: "${nextPageCursor}"` : ''
-  const limit = (params.limit - data.length) > 50 ? 50 : (params.limit - data.length)
+  const limit = (params.limit - data.length) > 25 ? 25 : (params.limit - data.length)
   const query = `
     query($id: ID!, $limit: Int!, $type: PageLeaderboardType!,) {
       page(type: ONE_PAGE, id: $id) {
