@@ -56,7 +56,7 @@ export const fetchLeaderboard = (params = required()) => {
   return Promise.all([
     !isEmpty(params.campaign) && isEmpty(params.charity)
       ? fetchCampaignGraphqlLeaderboard(params)
-      : Promise.resolve([]),
+      : Promise.resolve([])
   ])
     .then(flatten)
     .then(items =>
@@ -159,7 +159,7 @@ export const getCampaignLeaderboard = (params, data = [], nextPageCursor) => {
       const leaderboard = lodashGet(result, 'data.page.leaderboard', undefined)
       const pageInfo = lodashGet(leaderboard, 'pageInfo', undefined)
       const pages = lodashGet(leaderboard, 'nodes', [])
-      const updatedData = [ ...data, ...pages ]
+      const updatedData = [...data, ...pages]
 
       if (updatedData.length < 101 && pageInfo.hasNextPage) {
         return getCampaignLeaderboard(params, updatedData, pageInfo.endCursor)
