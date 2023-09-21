@@ -146,7 +146,7 @@ export const searchTeams = ({ campaign, after, limit }) => {
     })
     .then(res => get(res.data, 'data.page.leaderboard'))
     .then(leaderboard => {
-      const formattedTeams = leaderboard.edges.map(
+      const formattedTeams = leaderboard ? leaderboard.edges.map(
         ({
           node: {
             legacyId,
@@ -180,8 +180,8 @@ export const searchTeams = ({ campaign, after, limit }) => {
             coverImageName: cover?.caption
           }
         }
-      )
-      return { results: formattedTeams, pageInfo: leaderboard.pageInfo }
+      ) : []
+      return { results: formattedTeams, pageInfo: leaderboard?.pageInfo || { hasNextPage: false } }
     })
 }
 
