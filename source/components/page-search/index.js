@@ -142,7 +142,7 @@ class PageSearch extends Component {
       <SearchResults
         loading={status === 'fetching'}
         error={status === 'failed'}
-        emptyLabel={"No results found" + `${q ? [' for "', q, '"'].join() : ''}`}
+        emptyLabel={'No results found' + `${q ? [' for "', q, '"'].join() : ''}`}
         {...this.props.searchResults}
       >
         {data.map((page, i) => (
