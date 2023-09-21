@@ -161,7 +161,7 @@ export const getCampaignLeaderboard = (params, data = [], nextPageCursor) => {
       const pages = lodashGet(leaderboard, 'nodes', [])
       const updatedData = [...data, ...pages]
 
-      if (updatedData.length < params.limit && pageInfo.hasNextPage) {
+      if (updatedData.length < params.limit && pageInfo?.hasNextPage) {
         return getCampaignLeaderboard(params, updatedData, pageInfo.endCursor)
       }
 
