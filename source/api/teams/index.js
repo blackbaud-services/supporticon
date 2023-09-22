@@ -146,42 +146,44 @@ export const searchTeams = ({ campaign, after, limit }) => {
     })
     .then(res => get(res.data, 'data.page.leaderboard'))
     .then(leaderboard => {
-      const formattedTeams = leaderboard.edges.map(
-        ({
-          node: {
-            legacyId,
-            slug,
-            title,
-            owner,
-            targetWithCurrency,
-            donationSummary,
-            cover,
-            supporters
-          }
-        }) => {
-          return {
-            teamGuid: legacyId,
-            shortName: slug,
-            name: title,
-            numberOfSupporters: supporters.totalCount,
-            captain: {
-              userGuid: owner.legacyId,
-              firstName: owner.name?.split(' ')[0],
-              lastName: owner.name?.split(' ')[1],
-              profileImage: owner.avatar
-            },
-            fundraisingConfiguration: {
-              currencyCode: targetWithCurrency.currencyCode,
-              targetAmount: targetWithCurrency.value
-            },
-            donationSummary: {
-              totalAmount: donationSummary.totalAmount.value
-            },
-            coverImageName: cover?.caption
-          }
-        }
-      )
-      return { results: formattedTeams, pageInfo: leaderboard.pageInfo }
+      const formattedTeams = leaderboard
+        ? leaderboard.edges.map(
+            ({
+              node: {
+                legacyId,
+                slug,
+                title,
+                owner,
+                targetWithCurrency,
+                donationSummary,
+                cover,
+                supporters
+              }
+            }) => {
+              return {
+                teamGuid: legacyId,
+                shortName: slug,
+                name: title,
+                numberOfSupporters: supporters.totalCount,
+                captain: {
+                  userGuid: owner.legacyId,
+                  firstName: owner.name?.split(' ')[0],
+                  lastName: owner.name?.split(' ')[1],
+                  profileImage: owner.avatar
+                },
+                fundraisingConfiguration: {
+                  currencyCode: targetWithCurrency.currencyCode,
+                  targetAmount: targetWithCurrency.value
+                },
+                donationSummary: {
+                  totalAmount: donationSummary.totalAmount.value
+                },
+                coverImageName: cover?.caption
+              }
+            }
+          )
+        : []
+      return { results: formattedTeams, pageInfo: leaderboard?.pageInfo || { hasNextPage: false } }
     })
 }
 
