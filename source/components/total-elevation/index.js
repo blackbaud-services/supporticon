@@ -1,12 +1,12 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { useFitnessTotals } from '../../hooks/use-fitness-totals'
-import { formatElevation } from '../../utils/fitness'
-import { formatNumber } from '../../utils/numbers'
+import Icon from 'constructicon/icon';
+import Loading from 'constructicon/loading';
+import Metric from 'constructicon/metric';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import Icon from 'constructicon/icon'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
+import { useFitnessTotals } from '../../hooks/use-fitness-totals';
+import { formatElevation } from '../../utils/fitness';
+import { formatNumber } from '../../utils/numbers';
 
 const TotalElevation = ({
   campaign,
@@ -23,27 +23,30 @@ const TotalElevation = ({
   startDate,
   tagId,
   tagValue,
-  units
+  units,
 }) => {
-  const { data, status } = useFitnessTotals({
-    campaign,
-    charity,
-    endDate,
-    startDate,
-    tagId,
-    tagValue
-  }, { refetchInterval })
+  const { data, status } = useFitnessTotals(
+    {
+      campaign,
+      charity,
+      endDate,
+      startDate,
+      tagId,
+      tagValue,
+    },
+    { refetchInterval }
+  );
 
-  if (status === 'error') return <Icon name='warning' />
+  if (status === 'error') return <Icon name="warning" />;
 
   if (status === 'success') {
-    const formatAmount = label => {
-      const amount = (offset + data.elevation) * multiplier
+    const formatAmount = (label) => {
+      const amount = (offset + data.elevation) * multiplier;
 
       return units
         ? formatElevation({ amount, miles, label, places })
-        : formatNumber({ amount, places })
-    }
+        : formatNumber({ amount, places });
+    };
 
     return (
       <Metric
@@ -53,11 +56,11 @@ const TotalElevation = ({
         amountLabel={formatAmount('full')}
         {...metric}
       />
-    )
+    );
   }
 
-  return <Loading />
-}
+  return <Loading />;
+};
 
 TotalElevation.propTypes = {
   /**
@@ -117,11 +120,7 @@ TotalElevation.propTypes = {
    * - Array of custom paths
    * - An element to use instead e.g. <i className='fa fa-heart' />
    */
-  icon: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array,
-    PropTypes.element
-  ]),
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.element]),
 
   /**
    * Props to be passed to the Constructicon Metric component
@@ -141,8 +140,8 @@ TotalElevation.propTypes = {
   /**
    * The tag value to filter by
    */
-  tagValue: PropTypes.string
-}
+  tagValue: PropTypes.string,
+};
 
 TotalElevation.defaultProps = {
   label: 'Total Elevation',
@@ -150,7 +149,7 @@ TotalElevation.defaultProps = {
   multiplier: 1,
   offset: 0,
   places: 0,
-  units: true
-}
+  units: true,
+};
 
-export default TotalElevation
+export default TotalElevation;

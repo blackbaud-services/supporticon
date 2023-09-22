@@ -1,12 +1,12 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { useFitnessTotals } from '../../hooks/use-fitness-totals'
-import { formatDistance } from '../../utils/fitness'
-import { formatNumber } from '../../utils/numbers'
+import Icon from 'constructicon/icon';
+import Loading from 'constructicon/loading';
+import Metric from 'constructicon/metric';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import Icon from 'constructicon/icon'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
+import { useFitnessTotals } from '../../hooks/use-fitness-totals';
+import { formatDistance } from '../../utils/fitness';
+import { formatNumber } from '../../utils/numbers';
 
 const TotalDistance = ({
   activity,
@@ -24,27 +24,30 @@ const TotalDistance = ({
   startDate,
   tagId,
   tagValue,
-  units
+  units,
 }) => {
-  const { data, status } = useFitnessTotals({
-    campaign,
-    charity,
-    endDate,
-    startDate,
-    tagId,
-    tagValue
-  }, { refetchInterval })
+  const { data, status } = useFitnessTotals(
+    {
+      campaign,
+      charity,
+      endDate,
+      startDate,
+      tagId,
+      tagValue,
+    },
+    { refetchInterval }
+  );
 
-  if (status === 'error') return <Icon name='warning' />
+  if (status === 'error') return <Icon name="warning" />;
 
   if (status === 'success') {
-    const formatAmount = label => {
-      const amount = (offset + data.distance) * multiplier
+    const formatAmount = (label) => {
+      const amount = (offset + data.distance) * multiplier;
 
       return units
         ? formatDistance({ amount, label, miles, places })
-        : formatNumber({ amount, places })
-    }
+        : formatNumber({ amount, places });
+    };
 
     return (
       <Metric
@@ -54,11 +57,11 @@ const TotalDistance = ({
         amountLabel={formatAmount('full')}
         {...metric}
       />
-    )
+    );
   }
 
-  return <Loading />
-}
+  return <Loading />;
+};
 
 TotalDistance.propTypes = {
   /**
@@ -118,11 +121,7 @@ TotalDistance.propTypes = {
    * - Array of custom paths
    * - An element to use instead e.g. <i className='fa fa-heart' />
    */
-  icon: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array,
-    PropTypes.element
-  ]),
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.element]),
 
   /**
    * Props to be passed to the Constructicon Metric component
@@ -142,8 +141,8 @@ TotalDistance.propTypes = {
   /**
    * The tag value to filter by
    */
-  tagValue: PropTypes.string
-}
+  tagValue: PropTypes.string,
+};
 
 TotalDistance.defaultProps = {
   label: 'Total Distance',
@@ -151,7 +150,7 @@ TotalDistance.defaultProps = {
   multiplier: 1,
   offset: 0,
   places: 2,
-  units: true
-}
+  units: true,
+};
 
-export default TotalDistance
+export default TotalDistance;

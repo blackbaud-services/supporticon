@@ -1,24 +1,24 @@
-import { get, put, jgIdentityClient } from '../../utils/client'
-import { required } from '../../utils/params'
+import { get, jgIdentityClient, put } from '../../utils/client';
+import { required } from '../../utils/params';
 
-const countryCode = country => {
+const countryCode = (country) => {
   switch (country) {
     case 'Australia':
-      return 'AU'
+      return 'AU';
     case 'United States':
-      return 'US'
+      return 'US';
     case 'Ireland':
-      return 'IE'
+      return 'IE';
     case 'New Zealand':
-      return 'NZ'
+      return 'NZ';
     case 'Hong Kong':
-      return 'HK'
+      return 'HK';
     case 'United Kingdom':
-      return 'GB'
+      return 'GB';
     default:
-      return 'GB'
+      return 'GB';
   }
-}
+};
 
 const formattedAddress = ({
   line1,
@@ -26,13 +26,10 @@ const formattedAddress = ({
   townOrCity,
   countyOrState,
   postcodeOrZipcode,
-  country
-}) =>
-  [line1, line2, townOrCity, countyOrState, postcodeOrZipcode, country].join(
-    ', '
-  )
+  country,
+}) => [line1, line2, townOrCity, countyOrState, postcodeOrZipcode, country].join(', ');
 
-export const deserializeUser = user => ({
+export const deserializeUser = (user) => ({
   address: user.address
     ? {
         streetAddress: user.address.line1,
@@ -40,7 +37,7 @@ export const deserializeUser = user => ({
         locality: user.address.townOrCity,
         state: user.address.countyOrState,
         postcode: user.address.postcodeOrZipcode,
-        country: user.address.country
+        country: user.address.country,
       }
     : {},
   birthday: null,
@@ -58,13 +55,10 @@ export const deserializeUser = user => ({
   name: user.name || [user.firstName, user.lastName].join(' '),
   pageCount: user.activePageCount,
   phone: null,
-  uuid: user.userId || user.sub
-})
+  uuid: user.userId || user.sub,
+});
 
-export const fetchCurrentUser = ({
-  token = required(),
-  authType = 'Bearer'
-}) => {
+export const fetchCurrentUser = ({ token = required(), authType = 'Bearer' }) => {
   if (authType === 'Basic' || token.length > 32) {
     return get(
       '/v1/account',
@@ -72,20 +66,19 @@ export const fetchCurrentUser = ({
       {},
       {
         headers: {
-          Authorization: [authType, token].join(' ')
-        }
+          Authorization: [authType, token].join(' '),
+        },
       }
-    )
-  } else {
-    return jgIdentityClient
-      .get('/connect/userinfo', {
-        headers: {
-          Authorization: [authType, token].join(' ')
-        }
-      })
-      .then(response => response.data)
+    );
   }
-}
+  return jgIdentityClient
+    .get('/connect/userinfo', {
+      headers: {
+        Authorization: [authType, token].join(' '),
+      },
+    })
+    .then((response) => response.data);
+};
 
 export const updateCurrentUser = ({
   token = required(),
@@ -94,7 +87,7 @@ export const updateCurrentUser = ({
   authType = 'Bearer',
   firstName,
   lastName,
-  address = {}
+  address = {},
 }) =>
   put(
     `/v1/account/${uuid}`,
@@ -108,12 +101,12 @@ export const updateCurrentUser = ({
         townOrCity: address.townOrCity || address.locality,
         countyOrState: address.countyOrState || address.region,
         postcodeOrZipcode: address.postcodeOrZipcode || address.postCode,
-        country: address.country
-      }
+        country: address.country,
+      },
     },
     {
       headers: {
-        Authorization: [authType, token].join(' ')
-      }
+        Authorization: [authType, token].join(' '),
+      },
     }
-  )
+  );

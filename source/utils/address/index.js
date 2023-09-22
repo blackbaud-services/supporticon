@@ -1,39 +1,39 @@
-export const localityLabel = country => {
+export const localityLabel = (country) => {
   switch (country) {
     case 'au':
-      return 'Town/Suburb'
+      return 'Town/Suburb';
     case 'nz':
-      return 'Suburb'
+      return 'Suburb';
     case 'ie':
-      return 'Town/City'
+      return 'Town/City';
     case 'uk':
     case 'gb':
-      return 'Town'
+      return 'Town';
     default:
-      return 'City'
+      return 'City';
   }
-}
+};
 
-export const regionLabel = country => {
+export const regionLabel = (country) => {
   switch (country) {
     case 'uk':
     case 'gb':
     case 'ie':
-      return 'County'
+      return 'County';
     case 'ca':
-      return 'Province'
+      return 'Province';
     case 'nz':
-      return 'City'
+      return 'City';
     default:
-      return 'State'
+      return 'State';
   }
-}
+};
 
-export const postCodeLabel = country => {
+export const postCodeLabel = (country) => {
   switch (country) {
     case 'us':
-      return 'Zip Code'
+      return 'Zip Code';
     default:
-      return 'Postcode'
+      return 'Postcode';
   }
-}
+};

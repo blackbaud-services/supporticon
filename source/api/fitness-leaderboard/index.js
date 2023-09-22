@@ -1,24 +1,23 @@
-import get from 'lodash/get'
-import { fetchPages } from '../pages'
-import * as client from '../../utils/client'
-import { getUID, paramsSerializer, required } from '../../utils/params'
-import { baseUrl, imageUrl } from '../../utils/justgiving'
-import { fetchLeaderboard } from '../../utils/leaderboards'
-import { getMonetaryValue } from '../../utils/totals'
+import get from 'lodash/get';
 
-const fetchActivePages = pages => {
-  const pageGuids = pages.map(page => page.ID).filter(Boolean)
+import * as client from '../../utils/client';
+import { baseUrl, imageUrl } from '../../utils/justgiving';
+import { fetchLeaderboard } from '../../utils/leaderboards';
+import { getUID, paramsSerializer, required } from '../../utils/params';
+import { getMonetaryValue } from '../../utils/totals';
+import { fetchPages } from '../pages';
+
+const fetchActivePages = (pages) => {
+  const pageGuids = pages.map((page) => page.ID).filter(Boolean);
 
   if (!pageGuids.length) {
-    return pages
+    return pages;
   }
 
   return fetchPages({ ids: pageGuids, allPages: true })
-    .then(results => results.map(page => page.pageGuid))
-    .then(activePageIds =>
-      pages.filter(page => activePageIds.indexOf(page.ID) > -1)
-    )
-}
+    .then((results) => results.map((page) => page.pageGuid))
+    .then((activePageIds) => pages.filter((page) => activePageIds.indexOf(page.ID) > -1));
+};
 
 export const fetchFitnessLeaderboard = ({
   campaign = required(),
@@ -32,7 +31,7 @@ export const fetchFitnessLeaderboard = ({
   tagId,
   tagValue,
   type,
-  useLegacy = true
+  useLegacy = true,
 }) => {
   if (tagId || tagValue || sortBy !== 'distance') {
     return fetchLeaderboard({
@@ -42,8 +41,8 @@ export const fetchFitnessLeaderboard = ({
       sortBy,
       tagId,
       tagValue,
-      type: 'campaign'
-    })
+      type: 'campaign',
+    });
   }
 
   if (useLegacy || type === 'teams') {
@@ -52,33 +51,28 @@ export const fetchFitnessLeaderboard = ({
       limit: Math.max(limit, 200),
       offset: offset || 0,
       start: startDate,
-      end: endDate
-    }
+      end: endDate,
+    };
 
     return client
       .get('/v1/fitness/campaign', params, {}, { paramsSerializer })
-      .then(result => (type === 'team' ? result.teams : result.pages))
-      .then(items => items.slice(0, limit || 100))
-      .then(
-        items =>
-          activeOnly && type !== 'team' ? fetchActivePages(items) : items
-      )
-      .then(items => items.filter(item => item.Details))
-      .then(items =>
-        items.map(item => ({ ...item, type: type || 'individual' }))
-      )
+      .then((result) => (type === 'team' ? result.teams : result.pages))
+      .then((items) => items.slice(0, limit || 100))
+      .then((items) => (activeOnly && type !== 'team' ? fetchActivePages(items) : items))
+      .then((items) => items.filter((item) => item.Details))
+      .then((items) => items.map((item) => ({ ...item, type: type || 'individual' })));
   }
 
   return fetchLeaderboard({
     activityType,
     id: getUID(campaign),
     sortBy,
-    type: 'campaign'
-  })
-}
+    type: 'campaign',
+  });
+};
 
 export const deserializeFitnessLeaderboard = (item, index) => {
-  const slug = get(item, 'Details.Url') || item.slug
+  const slug = get(item, 'Details.Url') || item.slug;
 
   return {
     charity: item.charity_name,
@@ -98,12 +92,10 @@ export const deserializeFitnessLeaderboard = (item, index) => {
     totals: get(item, 'amounts', []).reduce(
       (totals, amount) => ({
         ...totals,
-        [amount.unit]: amount.value
+        [amount.unit]: amount.value,
       }),
       {}
     ),
-    url:
-      item.url ||
-      [baseUrl(), item.type === 'team' ? 'team' : 'fundraising', slug].join('/')
-  }
-}
+    url: item.url || [baseUrl(), item.type === 'team' ? 'team' : 'fundraising', slug].join('/'),
+  };
+};

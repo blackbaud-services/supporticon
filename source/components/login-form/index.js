@@ -1,45 +1,45 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import get from 'lodash/get'
-import merge from 'lodash/merge'
-import withForm from 'constructicon/with-form'
-import * as validators from 'constructicon/lib/validators'
-import { signIn } from '../../api/authentication'
-import { renderInput, renderFormFields } from '../../utils/form'
-import Bugsnag from '@bugsnag/js'
+import Bugsnag from '@bugsnag/js';
+import Form from 'constructicon/form';
+import * as validators from 'constructicon/lib/validators';
+import withForm from 'constructicon/with-form';
+import get from 'lodash/get';
+import merge from 'lodash/merge';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
-import Form from 'constructicon/form'
+import { signIn } from '../../api/authentication';
+import { renderFormFields, renderInput } from '../../utils/form';
 
 class LoginForm extends Component {
-  constructor () {
-    super()
-    this.handleSubmit = this.handleSubmit.bind(this)
+  constructor() {
+    super();
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
       status: 'empty',
-      errors: []
-    }
+      errors: [],
+    };
   }
 
-  handleSubmit (e) {
-    e.preventDefault()
+  handleSubmit(e) {
+    e.preventDefault();
 
-    const { authType, form, onSuccess } = this.props
+    const { authType, form, onSuccess } = this.props;
 
-    return form.submit().then(data => {
+    return form.submit().then((data) => {
       this.setState({
         errors: [],
-        status: 'fetching'
-      })
+        status: 'fetching',
+      });
 
       return signIn({
         authType,
-        ...data
+        ...data,
       })
         .then(onSuccess)
         .then(() => this.setState({ status: 'fetched' }))
-        .catch(error => {
-          const message = get(error, 'data.error.message')
-          Bugsnag.notify(`LOGIN ERROR - ${error.status} -  ${message}`)
+        .catch((error) => {
+          const message = get(error, 'data.error.message');
+          Bugsnag.notify(`LOGIN ERROR - ${error.status} -  ${message}`);
 
           switch (error.status) {
             case 400:
@@ -47,28 +47,22 @@ class LoginForm extends Component {
             case 404:
               return this.setState({
                 status: 'failed',
-                errors: [{ message: 'Invalid Email or Password.' }]
-              })
+                errors: [{ message: 'Invalid Email or Password.' }],
+              });
             default:
               return this.setState({
                 status: 'failed',
-                errors: message ? [{ message }] : []
-              })
+                errors: message ? [{ message }] : [],
+              });
           }
-        })
-    })
+        });
+    });
   }
 
-  render () {
-    const {
-      disableInvalidForm,
-      form,
-      formComponent,
-      inputField,
-      submit
-    } = this.props
+  render() {
+    const { disableInvalidForm, form, formComponent, inputField, submit } = this.props;
 
-    const { status, errors } = this.state
+    const { status, errors } = this.state;
 
     return (
       <Form
@@ -77,20 +71,16 @@ class LoginForm extends Component {
         isLoading={status === 'fetching'}
         noValidate
         onSubmit={this.handleSubmit}
-        icon={
-          status === 'fetching'
-            ? { name: 'loading', spin: true }
-            : { name: 'lock' }
-        }
+        icon={status === 'fetching' ? { name: 'loading', spin: true } : { name: 'lock' }}
         submit={submit}
         {...formComponent}
       >
-        {renderFormFields(form.fields).map(field => {
-          const Tag = renderInput(field.type)
-          return <Tag key={field.name} {...field} {...inputField} />
+        {renderFormFields(form.fields).map((field) => {
+          const Tag = renderInput(field.type);
+          return <Tag key={field.name} {...field} {...inputField} />;
         })}
       </Form>
-    )
+    );
   }
 }
 
@@ -123,8 +113,8 @@ LoginForm.propTypes = {
   /**
    * The label for the form submit button
    */
-  submit: PropTypes.string
-}
+  submit: PropTypes.string,
+};
 
 LoginForm.defaultProps = {
   authType: 'Bearer',
@@ -133,13 +123,13 @@ LoginForm.defaultProps = {
   formComponent: {
     submitProps: {
       background: 'justgiving',
-      foreground: 'light'
-    }
+      foreground: 'light',
+    },
   },
-  submit: 'Log in to JustGiving'
-}
+  submit: 'Log in to JustGiving',
+};
 
-const form = props => ({
+const form = (props) => ({
   fields: merge(
     {
       email: {
@@ -149,21 +139,19 @@ const form = props => ({
         required: true,
         validators: [
           validators.required('Email is a required field'),
-          validators.email('Must be a valid email')
-        ]
+          validators.email('Must be a valid email'),
+        ],
       },
       password: {
         label: 'Password',
         type: 'password',
         order: 2,
         required: true,
-        validators: [
-          validators.required('Password is a required field')
-        ]
-      }
+        validators: [validators.required('Password is a required field')],
+      },
     },
     props.fields
-  )
-})
+  ),
+});
 
-export default withForm(form)(LoginForm)
+export default withForm(form)(LoginForm);

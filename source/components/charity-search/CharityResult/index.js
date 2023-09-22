@@ -1,19 +1,19 @@
-import React from 'react'
-import Grid from 'constructicon/grid'
-import GridColumn from 'constructicon/grid-column'
-import Heading from 'constructicon/heading'
-import Image from 'constructicon/image'
-import InputSearchResult from 'constructicon/input-search-result'
+import Grid from 'constructicon/grid';
+import GridColumn from 'constructicon/grid-column';
+import Heading from 'constructicon/heading';
+import Image from 'constructicon/image';
+import InputSearchResult from 'constructicon/input-search-result';
+import React from 'react';
 
 const CharityResult = ({ isActive, result }) => (
   <InputSearchResult isActive={isActive} spacing={{ x: 1, y: 0.25 }}>
-    <Grid align='center' spacing={0.25}>
+    <Grid align="center" spacing={0.25}>
       <GridColumn xs={10}>
         <Heading size={0} spacing={{ y: 0.375 }}>
           {result.name}
         </Heading>
       </GridColumn>
-      <GridColumn xs={2} xsAlign='right'>
+      <GridColumn xs={2} xsAlign="right">
         {result.logo && (
           <Image
             alt={result.name}
@@ -25,6 +25,6 @@ const CharityResult = ({ isActive, result }) => (
       </GridColumn>
     </Grid>
   </InputSearchResult>
-)
+);
 
-export default CharityResult
+export default CharityResult;

@@ -1,11 +1,11 @@
-import { get } from '../../utils/client'
-import { getUID, required, paramsSerializer, isURL } from '../../utils/params'
-import { baseUrl } from '../../utils/justgiving'
+import { get } from '../../utils/client';
+import { baseUrl } from '../../utils/justgiving';
+import { getUID, isURL, paramsSerializer, required } from '../../utils/params';
 
-export const fetchCharity = (id = required()) => get(`/v1/charity/${id}`)
+export const fetchCharity = (id = required()) => get(`/v1/charity/${id}`);
 
 export const searchCharities = (params = required()) => {
-  const campaign = getUID(params.campaign)
+  const campaign = getUID(params.campaign);
 
   if (campaign) {
     const finalParams = {
@@ -13,35 +13,29 @@ export const searchCharities = (params = required()) => {
       field: 'charityNameSuggest',
       includeFuzzySearch: true,
       maxResults: params.limit,
-      campaignGuid: campaign
-    }
+      campaignGuid: campaign,
+    };
 
-    return get(
-      '/v1/campaign/autocomplete',
-      finalParams,
-      {},
-      { paramsSerializer }
-    )
-  } else {
-    const finalParams = {
-      ...params,
-      country: params.country === 'uk' ? 'gb' : params.country,
-      filterCountry: !!params.country,
-      i: 'Charity'
-    }
-
-    return get('/v1/onesearch', finalParams).then(
-      response =>
-        (response.GroupedResults &&
-          response.GroupedResults.length &&
-          response.GroupedResults[0].Results) ||
-        []
-    )
+    return get('/v1/campaign/autocomplete', finalParams, {}, { paramsSerializer });
   }
-}
+  const finalParams = {
+    ...params,
+    country: params.country === 'uk' ? 'gb' : params.country,
+    filterCountry: !!params.country,
+    i: 'Charity',
+  };
 
-export const deserializeCharity = charity => {
-  const id = charity.id || charity.Id
+  return get('/v1/onesearch', finalParams).then(
+    (response) =>
+      (response.GroupedResults &&
+        response.GroupedResults.length &&
+        response.GroupedResults[0].Results) ||
+      []
+  );
+};
+
+export const deserializeCharity = (charity) => {
+  const id = charity.id || charity.Id;
 
   return {
     active: true,
@@ -55,13 +49,10 @@ export const deserializeCharity = charity => {
     id,
     logo:
       charity.logoAbsoluteUrl ||
-      (isURL(charity.Logo)
-        ? charity.Logo
-        : `${baseUrl('images')}/image/${charity.Logo}`),
+      (isURL(charity.Logo) ? charity.Logo : `${baseUrl('images')}/image/${charity.Logo}`),
     name: charity.displayName || charity.name || charity.Name,
     registrationNumber: charity.registrationNumber,
-    slug:
-      charity.pageShortName || (charity.Link && charity.Link.split('/').pop()),
-    url: charity.profilePageUrl
-  }
-}
+    slug: charity.pageShortName || (charity.Link && charity.Link.split('/').pop()),
+    url: charity.profilePageUrl,
+  };
+};

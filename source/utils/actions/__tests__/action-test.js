@@ -1,168 +1,169 @@
-import { createAction } from '..'
+import { createAction } from '..';
 
 describe('Utils | Action Creator', () => {
-  let dispatch, spy
+  let dispatch;
+  let spy;
 
   before(() => {
     // mimic redux-thunk
-    dispatch = action => {
-      spy = sinon.spy()
-      return action(spy)
-    }
-  })
+    dispatch = (action) => {
+      spy = sinon.spy();
+      return action(spy);
+    };
+  });
 
   it('throws if no fetcher is passed in', () => {
     const test = () =>
       createAction({
-        namespace: 'app/test'
-      })
-    expect(test).to.throw
-  })
+        namespace: 'app/test',
+      });
+    expect(test).to.throw;
+  });
 
   it('throws if no namespace is passed in', () => {
     const test = () =>
       createAction({
-        fetcher: Promise.resolve({})
-      })
-    expect(test).to.throw
-  })
+        fetcher: Promise.resolve({}),
+      });
+    expect(test).to.throw;
+  });
 
   it('returns a thunk', () => {
     const action = createAction({
       fetcher: Promise.resolve({}),
-      namespace: 'app/test'
-    })
-    expect(typeof action).to.eql('function')
-  })
+      namespace: 'app/test',
+    });
+    expect(typeof action).to.eql('function');
+  });
 
-  it('resolves to the fetched data', done => {
+  it('resolves to the fetched data', (done) => {
     dispatch(
       createAction({
         fetcher: Promise.resolve({ foo: 'bar' }),
-        namespace: 'app/test'
+        namespace: 'app/test',
       })
-    ).then(data => {
-      expect(data.foo).to.eql('bar')
-      done()
-    })
-  })
+    ).then((data) => {
+      expect(data.foo).to.eql('bar');
+      done();
+    });
+  });
 
-  it('rejects with an error response', done => {
+  it('rejects with an error response', (done) => {
     dispatch(
       createAction({
         fetcher: Promise.reject({ status: 404 }),
-        namespace: 'app/test'
+        namespace: 'app/test',
       })
-    ).catch(error => {
-      expect(error.status).to.eql(404)
-      done()
-    })
-  })
+    ).catch((error) => {
+      expect(error.status).to.eql(404);
+      done();
+    });
+  });
 
-  it('dispatches two actions', done => {
+  it('dispatches two actions', (done) => {
     dispatch(
       createAction({
         fetcher: Promise.resolve({ foo: 'bar' }),
-        namespace: 'app/test'
+        namespace: 'app/test',
       })
     ).then(() => {
-      expect(spy.callCount).to.eql(2)
-      done()
-    })
-  })
+      expect(spy.callCount).to.eql(2);
+      done();
+    });
+  });
 
-  it('dispatches a fetching action', done => {
+  it('dispatches a fetching action', (done) => {
     dispatch(
       createAction({
         fetcher: Promise.resolve({ foo: 'bar' }),
-        namespace: 'app/test'
+        namespace: 'app/test',
       })
-    ).then(data => {
-      const action = spy.firstCall.args[0]
-      expect(action.type).to.eql('app/test/FETCH')
-      done()
-    })
-  })
+    ).then((data) => {
+      const action = spy.firstCall.args[0];
+      expect(action.type).to.eql('app/test/FETCH');
+      done();
+    });
+  });
 
-  it('dispatches a fetched action', done => {
+  it('dispatches a fetched action', (done) => {
     dispatch(
       createAction({
         fetcher: Promise.resolve({ foo: 'bar' }),
-        namespace: 'app/test'
+        namespace: 'app/test',
       })
-    ).then(data => {
-      const action = spy.secondCall.args[0]
-      expect(action.type).to.eql('app/test/FETCH_SUCCESS')
-      expect(action.payload.data).to.eql({ foo: 'bar' })
-      done()
-    })
-  })
+    ).then((data) => {
+      const action = spy.secondCall.args[0];
+      expect(action.type).to.eql('app/test/FETCH_SUCCESS');
+      expect(action.payload.data).to.eql({ foo: 'bar' });
+      done();
+    });
+  });
 
-  it('dispatches a failure action', done => {
+  it('dispatches a failure action', (done) => {
     dispatch(
       createAction({
         fetcher: Promise.reject({ status: 404 }),
-        namespace: 'app/test'
+        namespace: 'app/test',
       })
-    ).catch(error => {
-      const action = spy.secondCall.args[0]
-      expect(action.type).to.eql('app/test/FETCH_FAILURE')
-      expect(action.payload.error.status).to.eql(404)
-      done()
-    })
-  })
+    ).catch((error) => {
+      const action = spy.secondCall.args[0];
+      expect(action.type).to.eql('app/test/FETCH_FAILURE');
+      expect(action.payload.error.status).to.eql(404);
+      done();
+    });
+  });
 
-  it('allows an override of the fetch function', done => {
+  it('allows an override of the fetch function', (done) => {
     dispatch(
       createAction({
         fetcher: Promise.resolve({ foo: 'bar' }),
         namespace: 'app/test',
         actionDispatchers: {
           fetch: (c, params) => ({
-            type: 'test'
-          })
-        }
+            type: 'test',
+          }),
+        },
       })
-    ).then(data => {
-      const action = spy.firstCall.args[0]
-      expect(action.type).to.eql('test')
-      done()
-    })
-  })
+    ).then((data) => {
+      const action = spy.firstCall.args[0];
+      expect(action.type).to.eql('test');
+      done();
+    });
+  });
 
-  it('allows an override of the fetch success function', done => {
+  it('allows an override of the fetch success function', (done) => {
     dispatch(
       createAction({
         fetcher: Promise.resolve({ foo: 'bar' }),
         namespace: 'app/test',
         actionDispatchers: {
           fetchSuccess: (c, params) => ({
-            type: 'test/success'
-          })
-        }
+            type: 'test/success',
+          }),
+        },
       })
-    ).then(data => {
-      const action = spy.secondCall.args[0]
-      expect(action.type).to.eql('test/success')
-      done()
-    })
-  })
+    ).then((data) => {
+      const action = spy.secondCall.args[0];
+      expect(action.type).to.eql('test/success');
+      done();
+    });
+  });
 
-  it('allows an override of the fetch failure function', done => {
+  it('allows an override of the fetch failure function', (done) => {
     dispatch(
       createAction({
         fetcher: Promise.reject({ status: 404 }),
         namespace: 'app/test',
         actionDispatchers: {
           fetchFailure: (c, params) => ({
-            type: 'test/failure'
-          })
-        }
+            type: 'test/failure',
+          }),
+        },
       })
-    ).catch(error => {
-      const action = spy.secondCall.args[0]
-      expect(action.type).to.eql('test/failure')
-      done()
-    })
-  })
-})
+    ).catch((error) => {
+      const action = spy.secondCall.args[0];
+      expect(action.type).to.eql('test/failure');
+      done();
+    });
+  });
+});

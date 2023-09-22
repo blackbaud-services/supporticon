@@ -1,63 +1,63 @@
-import { createTeam } from '..'
-import { instance, servicesAPI } from '../../../utils/client'
+import { instance, servicesAPI } from '../../../utils/client';
+import { createTeam } from '..';
 
 describe('Create a Team', () => {
   beforeEach(() => {
-    moxios.install(instance)
-    moxios.install(servicesAPI)
-  })
+    moxios.install(instance);
+    moxios.install(servicesAPI);
+  });
 
   afterEach(() => {
-    moxios.uninstall(instance)
-    moxios.uninstall(servicesAPI)
-  })
+    moxios.uninstall(instance);
+    moxios.uninstall(servicesAPI);
+  });
 
   it('throws if no token is passed', () => {
-    const test = () => createTeam({ bogus: 'data' })
-    expect(test).to.throw
-  })
+    const test = () => createTeam({ bogus: 'data' });
+    expect(test).to.throw;
+  });
 
-  it('hits the JG api with the correct url and data', done => {
+  it('hits the JG api with the correct url and data', (done) => {
     createTeam({
       token: '012345abcdef',
       name: 'My Team',
       story: 'Lorem ipsum',
       target: 1000,
       campaignId: 'abc123',
-      captainSlug: 'captain'
-    })
+      captainSlug: 'captain',
+    });
 
     moxios.wait(() => {
-      const shortNameRequest = moxios.requests.mostRecent()
+      const shortNameRequest = moxios.requests.mostRecent();
 
       shortNameRequest.respondWith({
         status: 200,
-        response: { isAvailable: true }
-      })
+        response: { isAvailable: true },
+      });
 
       // expect(shortNameRequest.config.baseURL).to.eql('https://api.blackbaud.services')
-      expect(['https://api.blackbaud.services', 'https://api-staging.blackbaud.services']).to.include(shortNameRequest.config.baseURL)
+      expect([
+        'https://api.blackbaud.services',
+        'https://api-staging.blackbaud.services',
+      ]).to.include(shortNameRequest.config.baseURL);
       expect(shortNameRequest.url).to.contain(
         '/v1/justgiving/proxy/campaigns/v1/teams/shortNames/my-team/isAvailable'
-      )
+      );
 
       moxios.wait(() => {
-        const request = moxios.requests.mostRecent()
-        const data = JSON.parse(request.config.data)
+        const request = moxios.requests.mostRecent();
+        const data = JSON.parse(request.config.data);
 
-
-        expect(request.config.baseURL).to.eql('https://api.justgiving.com')
-        expect(request.url).to.contain('/v2/teams')
-        expect(request.config.headers['Authorization']).to.eql(
-          'Bearer 012345abcdef'
-        )
-        expect(data.name).to.eql('My Team')
-        expect(data.teamShortName).to.eql('my-team')
-        expect(data.campaignGuid).to.eql('abc123')
-        expect(data.captainPageShortName).to.eql('captain')
-        expect(data.teamTarget).to.eql(1000)
-        done()
-      })
-    })
-  })
-})
+        expect(request.config.baseURL).to.eql('https://api.justgiving.com');
+        expect(request.url).to.contain('/v2/teams');
+        expect(request.config.headers.Authorization).to.eql('Bearer 012345abcdef');
+        expect(data.name).to.eql('My Team');
+        expect(data.teamShortName).to.eql('my-team');
+        expect(data.campaignGuid).to.eql('abc123');
+        expect(data.captainPageShortName).to.eql('captain');
+        expect(data.teamTarget).to.eql(1000);
+        done();
+      });
+    });
+  });
+});

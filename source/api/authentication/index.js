@@ -1,40 +1,31 @@
-import merge from 'lodash/merge'
-import {
-  get,
-  put,
-  post,
-  jgIdentityClient,
-  servicesAPI
-} from '../../utils/client'
-import { required } from '../../utils/params'
-import { encodeBase64String } from '../../utils/base64'
+import merge from 'lodash/merge';
 
-const deserializeIamResponse = data => ({
+import { encodeBase64String } from '../../utils/base64';
+import { get, jgIdentityClient, post, put, servicesAPI } from '../../utils/client';
+import { required } from '../../utils/params';
+
+const deserializeIamResponse = (data) => ({
   ...data.user,
   expiresAt: data.expires_at,
   refreshToken: data.refresh_token,
   token: data.access_token,
-  userId: data.id
-})
+  userId: data.id,
+});
 
 export const resetPassword = ({ email = required() }) =>
   servicesAPI
     .post('/v1/justgiving/iam/reset-password', { email })
-    .catch(error => Promise.reject(error.response))
+    .catch((error) => Promise.reject(error.response));
 
 export const validateToken = (token = required()) =>
   jgIdentityClient
     .get(`/connect/accesstokenvalidation?token=${token}`)
-    .then(response => ({ ...response.data, valid: true }))
-    .catch(({ response }) => ({ ...response.data, valid: false }))
+    .then((response) => ({ ...response.data, valid: true }))
+    .catch(({ response }) => ({ ...response.data, valid: false }));
 
-export const signIn = ({
-  email = required(),
-  password = required(),
-  authType = 'Bearer'
-}) => {
+export const signIn = ({ email = required(), password = required(), authType = 'Bearer' }) => {
   if (authType === 'Basic') {
-    const token = encodeBase64String(`${email}:${password}`)
+    const token = encodeBase64String(`${email}:${password}`);
 
     return get(
       '/v1/account',
@@ -42,23 +33,23 @@ export const signIn = ({
       {},
       {
         headers: {
-          Authorization: `Basic ${token}`
-        }
+          Authorization: `Basic ${token}`,
+        },
       }
-    ).then(data => ({
+    ).then((data) => ({
       address: data.address,
       email: data.email,
       name: [data.firstName, data.lastName].join(' '),
       token,
-      userId: data.userId
-    }))
+      userId: data.userId,
+    }));
   }
 
   return servicesAPI
     .post('/v1/justgiving/iam/login', { email, password })
-    .then(response => deserializeIamResponse(response.data))
-    .catch(error => Promise.reject(error.response))
-}
+    .then((response) => deserializeIamResponse(response.data))
+    .catch((error) => Promise.reject(error.response));
+};
 
 export const signUp = ({
   firstName = required(),
@@ -70,7 +61,7 @@ export const signUp = ({
   cause,
   phone,
   reference,
-  authType = 'Bearer'
+  authType = 'Bearer',
 }) => {
   if (authType === 'Basic') {
     const payload = {
@@ -82,22 +73,20 @@ export const signUp = ({
       title,
       address,
       reference,
-      causeId: cause
-    }
+      causeId: cause,
+    };
 
-    const request = address
-      ? put('/v1/account', payload)
-      : post('/v1/account/lite', payload)
+    const request = address ? put('/v1/account', payload) : post('/v1/account/lite', payload);
 
-    return request.then(data => ({
+    return request.then((data) => ({
       address,
       country: data.country,
       email,
       firstName,
       lastName,
       name: [firstName, lastName].join(' '),
-      token: encodeBase64String(`${email}:${password}`)
-    }))
+      token: encodeBase64String(`${email}:${password}`),
+    }));
   }
 
   return servicesAPI
@@ -109,7 +98,7 @@ export const signUp = ({
           lastName,
           email,
           password,
-          phone
+          phone,
         },
         address
           ? {
@@ -118,31 +107,31 @@ export const signUp = ({
               locality: address.townOrCity || address.locality,
               region: address.countyOrState || address.region,
               country: address.country || address.country,
-              postCode: address.postcodeOrZipcode || address.postCode
+              postCode: address.postcodeOrZipcode || address.postCode,
             }
           : {}
       )
     )
-    .then(response => deserializeIamResponse(response.data))
-    .catch(error => Promise.reject(error.response))
-}
+    .then((response) => deserializeIamResponse(response.data))
+    .catch((error) => Promise.reject(error.response));
+};
 
-export const checkAccountAvailability = email => {
+export const checkAccountAvailability = (email) => {
   return get(`/v1/account/${email}`)
     .then(() => true)
-    .catch(() => false)
-}
+    .catch(() => false);
+};
 
-export const connectToken = data => {
+export const connectToken = (data) => {
   return servicesAPI
     .post('/v1/justgiving/oauth/connect', data)
-    .then(response => deserializeIamResponse(response.data))
-    .catch(error => Promise.reject(error.response))
-}
+    .then((response) => deserializeIamResponse(response.data))
+    .catch((error) => Promise.reject(error.response));
+};
 
-export const refreshToken = data => {
+export const refreshToken = (data) => {
   return servicesAPI
     .post('/v1/justgiving/token/refresh', data)
-    .then(response => deserializeIamResponse(response.data))
-    .catch(error => Promise.reject(error.response))
-}
+    .then((response) => deserializeIamResponse(response.data))
+    .catch((error) => Promise.reject(error.response));
+};

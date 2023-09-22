@@ -1,19 +1,15 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import dayjs from 'dayjs'
-import { useDonationTotals } from '../../hooks/use-donation-totals'
-import {
-  formatCurrency,
-  formatNumber,
-  setLocaleFromCountry
-} from '../../utils/numbers'
+import Grid from 'constructicon/grid';
+import GridColumn from 'constructicon/grid-column';
+import Heading from 'constructicon/heading';
+import Loading from 'constructicon/loading';
+import Metric from 'constructicon/metric';
+import Progress from 'constructicon/progress-bar';
+import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import Grid from 'constructicon/grid'
-import GridColumn from 'constructicon/grid-column'
-import Heading from 'constructicon/heading'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
-import Progress from 'constructicon/progress-bar'
+import { useDonationTotals } from '../../hooks/use-donation-totals';
+import { formatCurrency, formatNumber, setLocaleFromCountry } from '../../utils/numbers';
 
 const ProgressBar = ({
   campaign,
@@ -37,41 +33,44 @@ const ProgressBar = ({
   startDate,
   target,
   targetLabel,
-  useDonationCount
+  useDonationCount,
 }) => {
-  const { data, status } = useDonationTotals({
-    campaign,
-    charity,
-    donationRef,
-    country,
-    endDate,
-    event,
-    includeOffline: !excludeOffline,
-    startDate
-  }, { refetchInterval })
+  const { data, status } = useDonationTotals(
+    {
+      campaign,
+      charity,
+      donationRef,
+      country,
+      endDate,
+      event,
+      includeOffline: !excludeOffline,
+      startDate,
+    },
+    { refetchInterval }
+  );
 
-  const calculateDaysRemaining = eventDate => {
-    const today = dayjs()
-    const eventDateObj = dayjs(eventDate)
-    const daysDiff = Math.ceil(eventDateObj.diff(today, 'days', true)) // we want to round up
-    return Math.max(0, daysDiff)
-  }
+  const calculateDaysRemaining = (eventDate) => {
+    const today = dayjs();
+    const eventDateObj = dayjs(eventDate);
+    const daysDiff = Math.ceil(eventDateObj.diff(today, 'days', true)); // we want to round up
+    return Math.max(0, daysDiff);
+  };
 
   const calculatePercentage = () => {
-    const amount = useDonationCount ? data.donations : data.raised
-    return Math.min(100, Math.floor(((amount + offset) / target) * 100))
-  }
+    const amount = useDonationCount ? data.donations : data.raised;
+    return Math.min(100, Math.floor(((amount + offset) / target) * 100));
+  };
 
-  const locale = setLocaleFromCountry(country)
+  const locale = setLocaleFromCountry(country);
 
   if (status === 'success') {
-    const progress = calculatePercentage()
+    const progress = calculatePercentage();
 
     return (
       <Grid spacing={0.25} {...grid}>
         <GridColumn xs={6}>
           <Metric
-            align='left'
+            align="left"
             label={raisedLabel}
             amount={
               useDonationCount
@@ -81,9 +80,9 @@ const ProgressBar = ({
             {...metric}
           />
         </GridColumn>
-        <GridColumn xs={6} xsAlign='right'>
+        <GridColumn xs={6} xsAlign="right">
           <Metric
-            align='right'
+            align="right"
             label={targetLabel}
             amount={
               useDonationCount
@@ -94,16 +93,12 @@ const ProgressBar = ({
           />
         </GridColumn>
         <GridColumn>
-          <Progress
-            alt={`${progress}% there`}
-            progress={progress}
-            {...progressBar}
-          />
+          <Progress alt={`${progress}% there`} progress={progress} {...progressBar} />
         </GridColumn>
         <GridColumn xs={6}>
           {fundedLabel && (
             <>
-              <Heading size={0} tag='strong' {...heading}>
+              <Heading size={0} tag="strong" {...heading}>
                 {progress}%
               </Heading>{' '}
               {fundedLabel}
@@ -111,38 +106,30 @@ const ProgressBar = ({
           )}
         </GridColumn>
         {remainingLabel && eventDate && (
-          <GridColumn xs={6} xsAlign='right'>
-            <Heading size={0} tag='strong' {...heading}>
+          <GridColumn xs={6} xsAlign="right">
+            <Heading size={0} tag="strong" {...heading}>
               {calculateDaysRemaining(eventDate)}
             </Heading>{' '}
             {remainingLabel}
           </GridColumn>
         )}
       </Grid>
-    )
+    );
   }
 
-  return <Loading />
-}
+  return <Loading />;
+};
 
 ProgressBar.propTypes = {
   /**
    * The campaign uid to fetch totals for
    */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array,
-    PropTypes.object
-  ]),
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
 
   /**
    * The charity uid to fetch totals for
    */
-  charity: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array,
-    PropTypes.object
-  ]),
+  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
 
   /**
    * The donation ref to fetch totals for
@@ -152,27 +139,12 @@ ProgressBar.propTypes = {
   /**
    * The event uid to fetch totals for
    */
-  event: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  event: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]),
 
   /**
    * Country code for API
    */
-  country: PropTypes.oneOf([
-    'au',
-    'ca',
-    'gb',
-    'hk',
-    'ie',
-    'nz',
-    'sg',
-    'uk',
-    'us',
-    'za'
-  ]),
+  country: PropTypes.oneOf(['au', 'ca', 'gb', 'hk', 'ie', 'nz', 'sg', 'uk', 'us', 'za']),
 
   /**
    * Exclude offline donations?
@@ -252,14 +224,14 @@ ProgressBar.propTypes = {
   /**
    * use number of donations instead of amount raised
    */
-  useDonationCount: PropTypes.bool
-}
+  useDonationCount: PropTypes.bool,
+};
 
 ProgressBar.defaultProps = {
   country: 'gb',
   excludeOffline: false,
   offset: 0,
-  places: 0
-}
+  places: 0,
+};
 
-export default ProgressBar
+export default ProgressBar;

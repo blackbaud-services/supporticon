@@ -1,68 +1,62 @@
-import { get, servicesAPI } from '../../utils/client'
+import { get, servicesAPI } from '../../utils/client';
+import { currencyCode } from '../../utils/currencies';
 import {
-  getUID,
-  required,
   dataSource,
+  getUID,
   paramsSerializer,
-  splitOnDelimiter
-} from '../../utils/params'
-import { currencyCode } from '../../utils/currencies'
-import { fetchPagesByTag } from '../pages'
+  required,
+  splitOnDelimiter,
+} from '../../utils/params';
+import { fetchPagesByTag } from '../pages';
 
-const fetchEvent = id =>
-  get(`/v1/event/${id}/pages`).then(response => response.totalFundraisingPages)
+const fetchEvent = (id) =>
+  get(`/v1/event/${id}/pages`).then((response) => response.totalFundraisingPages);
 
-const fetchCampaign = id =>
+const fetchCampaign = (id) =>
   servicesAPI
     .get(`/v1/justgiving/campaigns/${id}/leaderboard?active=false`)
-    .then(({ data }) => data.meta.totalResults)
+    .then(({ data }) => data.meta.totalResults);
 
-const fetchCampaignTeams = id =>
+const fetchCampaignTeams = (id) =>
   servicesAPI
     .get('/v1/justgiving/proxy/campaigns/v1/teams/search', {
       params: { CampaignGuid: id },
-      paramsSerializer
+      paramsSerializer,
     })
-    .then(response => response.data.totalResults)
+    .then((response) => response.data.totalResults);
 
 export const fetchPagesTotals = (params = required()) => {
   if (params.tagId && params.tagValue) {
-    return fetchPagesByTag(params).then(res => res.numberOfHits)
+    return fetchPagesByTag(params).then((res) => res.numberOfHits);
   }
 
-  const eventIds = Array.isArray(params.event)
-    ? params.event
-    : [params.event]
+  const eventIds = Array.isArray(params.event) ? params.event : [params.event];
 
   switch (dataSource(params)) {
     case 'event':
-      return Promise.all(eventIds.map(getUID).map(fetchEvent)).then(events =>
+      return Promise.all(eventIds.map(getUID).map(fetchEvent)).then((events) =>
         events.reduce((acc, total) => acc + total, 0)
-      )
+      );
     case 'campaign':
       if (params.type === 'team') {
-        const campaignIds = Array.isArray(params.campaign)
-          ? params.campaign
-          : [params.campaign]
+        const campaignIds = Array.isArray(params.campaign) ? params.campaign : [params.campaign];
 
-        return Promise.all(
-          campaignIds.map(getUID).map(fetchCampaignTeams)
-        ).then(campaigns => campaigns.reduce((acc, total) => acc + total, 0))
-      } else {
-        const campaignIds = Array.isArray(params.campaign)
-          ? params.campaign
-          : [params.campaign]
-
-        return Promise.all(campaignIds.map(getUID).map(fetchCampaign)).then(
-          campaigns => campaigns.reduce((acc, total) => acc + total, 0)
-        )
+        return Promise.all(campaignIds.map(getUID).map(fetchCampaignTeams)).then((campaigns) =>
+          campaigns.reduce((acc, total) => acc + total, 0)
+        );
       }
+      const campaignIds = Array.isArray(params.campaign) ? params.campaign : [params.campaign];
+
+      return Promise.all(campaignIds.map(getUID).map(fetchCampaign)).then((campaigns) =>
+        campaigns.reduce((acc, total) => acc + total, 0)
+      );
+
     default:
       return get(
         '/donationsleaderboards/v1/leaderboard',
         {
           ...params,
-          currencyCode: currencyCode(params.country)
+          currencyCode: currencyCode(params.country),
         },
         {
           mappings: {
@@ -70,15 +64,15 @@ export const fetchPagesTotals = (params = required()) => {
             charity: 'charityIds',
             page: 'pageGuids',
             excludePageIds: 'excludePageGuids',
-            limit: 'take'
+            limit: 'take',
           },
           transforms: {
             campaign: splitOnDelimiter,
             charity: splitOnDelimiter,
-            excludePageIds: splitOnDelimiter
-          }
+            excludePageIds: splitOnDelimiter,
+          },
         },
         { paramsSerializer }
-      ).then(data => data.totalResults)
+      ).then((data) => data.totalResults);
   }
-}
+};

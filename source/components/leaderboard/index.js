@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
-import { useLeaderboard } from '../../hooks/use-leaderboard'
-import { formatCurrency, formatNumber, setLocaleFromCountry } from '../../utils/numbers'
-import { currencyCode } from '../../utils/currencies'
-import { formatMeasurementDomain } from '../../utils/tags'
+import Filter from 'constructicon/filter';
+import Grid from 'constructicon/grid';
+import LeaderboardWrapper from 'constructicon/leaderboard';
+import LeaderboardItem from 'constructicon/leaderboard-item';
+import Pagination from 'constructicon/pagination';
+import PaginationLink from 'constructicon/pagination-link';
+import RichText from 'constructicon/rich-text';
+import Section from 'constructicon/section';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 
-import Filter from 'constructicon/filter'
-import Grid from 'constructicon/grid'
-import LeaderboardItem from 'constructicon/leaderboard-item'
-import LeaderboardWrapper from 'constructicon/leaderboard'
-import Pagination from 'constructicon/pagination'
-import PaginationLink from 'constructicon/pagination-link'
-import RichText from 'constructicon/rich-text'
-import Section from 'constructicon/section'
+import { useLeaderboard } from '../../hooks/use-leaderboard';
+import { currencyCode } from '../../utils/currencies';
+import { formatCurrency, formatNumber, setLocaleFromCountry } from '../../utils/numbers';
+import { formatMeasurementDomain } from '../../utils/tags';
 
 const Leaderboard = ({
   allPages,
@@ -44,9 +44,9 @@ const Leaderboard = ({
   tagId,
   tagValue,
   type,
-  useOwnerImage
+  useOwnerImage,
 }) => {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState('');
   const { data = [], status } = useLeaderboard(
     {
       allPages,
@@ -66,17 +66,17 @@ const Leaderboard = ({
       startDate,
       tagId,
       tagValue,
-      type
+      type,
     },
     {
       refetchInterval,
-      deserializeMethod
+      deserializeMethod,
     }
-  )
+  );
 
   const leaderboardData = data
     .map((item, index) => ({ ...item, position: index + 1 }))
-    .slice(0, limit)
+    .slice(0, limit);
 
   return (
     <div>
@@ -88,24 +88,14 @@ const Leaderboard = ({
       )}
       {status === 'success' && (
         <Pagination max={pageSize} toPaginate={leaderboardData}>
-          {({
-            currentPage,
-            isPaginated,
-            prev,
-            next,
-            canPrev,
-            canNext,
-            pageOf
-          }) => (
+          {({ currentPage, isPaginated, prev, next, canPrev, canNext, pageOf }) => (
             <>
               <LeaderboardWrapper {...leaderboard}>
                 {currentPage.map((leader, index) => {
-                  const metric = sortBy === 'donations'
-                    ? leader.totalDonations
-                    : leader.raised
-                  const amount = (offset + metric) * multiplier
-                  const locale = setLocaleFromCountry(country)
-                  const showCurrency = currency && sortBy !== 'donations'
+                  const metric = sortBy === 'donations' ? leader.totalDonations : leader.raised;
+                  const amount = (offset + metric) * multiplier;
+                  const locale = setLocaleFromCountry(country);
+                  const showCurrency = currency && sortBy !== 'donations';
 
                   return (
                     <LeaderboardItem
@@ -119,7 +109,7 @@ const Leaderboard = ({
                               amount,
                               currencyCode: leader.currency || currencyCode(country),
                               locale,
-                              places
+                              places,
                             })
                           : formatNumber({ amount, locale, places })
                       }
@@ -127,23 +117,15 @@ const Leaderboard = ({
                       rank={leader.position}
                       {...leaderboardItem}
                     />
-                  )
+                  );
                 })}
               </LeaderboardWrapper>
               {pageSize && isPaginated && (
                 <Section spacing={{ t: 0.5 }}>
-                  <Grid align='center' justify='center'>
-                    <PaginationLink
-                      onClick={prev}
-                      direction='prev'
-                      disabled={!canPrev}
-                    />
+                  <Grid align="center" justify="center">
+                    <PaginationLink onClick={prev} direction="prev" disabled={!canPrev} />
                     {showPage && <RichText size={-1}>{pageOf}</RichText>}
-                    <PaginationLink
-                      onClick={next}
-                      direction='next'
-                      disabled={!canNext}
-                    />
+                    <PaginationLink onClick={next} direction="next" disabled={!canNext} />
                   </Grid>
                 </Section>
               )}
@@ -152,52 +134,29 @@ const Leaderboard = ({
         </Pagination>
       )}
     </div>
-  )
-}
+  );
+};
 
 Leaderboard.propTypes = {
   /**
    * The campaign uid to fetch pages for
    */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]),
 
   /**
    * The charity uid to fetch pages for
    */
-  charity: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]),
 
   /**
    * The event uid to fetch pages for (JG only)
    */
-  event: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  event: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]),
 
   /**
    * Country code
    */
-  country: PropTypes.oneOf([
-    'au',
-    'ca',
-    'gb',
-    'hk',
-    'ie',
-    'nz',
-    'sg',
-    'uk',
-    'us',
-    'za'
-  ]),
+  country: PropTypes.oneOf(['au', 'ca', 'gb', 'hk', 'ie', 'nz', 'sg', 'uk', 'us', 'za']),
 
   /**
    * The type of page to include in the leaderboard
@@ -297,8 +256,8 @@ Leaderboard.propTypes = {
   /**
    * The field to show as a subtitle
    */
-  subtitleMethod: PropTypes.func
-}
+  subtitleMethod: PropTypes.func,
+};
 
 Leaderboard.defaultProps = {
   country: 'gb',
@@ -310,7 +269,7 @@ Leaderboard.defaultProps = {
   page: 1,
   places: 0,
   showPage: false,
-  subtitleMethod: item => item.subtitle
-}
+  subtitleMethod: (item) => item.subtitle,
+};
 
-export default Leaderboard
+export default Leaderboard;

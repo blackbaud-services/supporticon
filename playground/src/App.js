@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 // import {
 //   instance,
 //   get,
@@ -20,15 +20,12 @@ const App = () => {
   return (
     <>
       <h1>Supporticon Playground</h1>
-      <span>
-        Welcome to the Supporticon playground! Add a component in App.js to get
-        started.
-      </span>
+      <span>Welcome to the Supporticon playground! Add a component in App.js to get started.</span>
       {/* <DataProvider> */}
       {/* Your component here... */}
       {/* </DataProvider> */}
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

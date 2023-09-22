@@ -1,12 +1,13 @@
-import lodashGet from 'lodash/get'
-import { servicesAPI } from '../../utils/client'
-import { required } from '../../utils/params'
-import { videoRegex } from 'constructicon/lib/oembed'
+import { videoRegex } from 'constructicon/lib/oembed';
+import lodashGet from 'lodash/get';
+
+import { servicesAPI } from '../../utils/client';
+import { required } from '../../utils/params';
 
 const getMedia = (post, filterMethod) =>
-  lodashGet(lodashGet(post, 'media', []).filter(filterMethod), '[0].url')
+  lodashGet(lodashGet(post, 'media', []).filter(filterMethod), '[0].url');
 
-export const deserializePost = post => ({
+export const deserializePost = (post) => ({
   id: post.id,
   createdAt: post.createdAt,
   message: post.message,
@@ -14,20 +15,15 @@ export const deserializePost = post => ({
   media: post.media,
   image: getMedia(
     post,
-    media => media.__typename === 'ImageMedia' && !videoRegex.test(media.url)
+    (media) => media.__typename === 'ImageMedia' && !videoRegex.test(media.url)
   ),
   type: post.type,
   video:
-    getMedia(post, media => media.__typename === 'VideoMedia') ||
-    getMedia(post, media => videoRegex.test(media.url))
-})
+    getMedia(post, (media) => media.__typename === 'VideoMedia') ||
+    getMedia(post, (media) => videoRegex.test(media.url)),
+});
 
-export const fetchPosts = ({
-  slug = required(),
-  allPosts = false,
-  after,
-  results = []
-}) => {
+export const fetchPosts = ({ slug = required(), allPosts = false, after, results = [] }) => {
   const query = `
     query getPosts($slug: Slug, $after: String) {
       page(type: FUNDRAISING, slug: $slug) {
@@ -52,28 +48,27 @@ export const fetchPosts = ({
         }
       }
     }
-  `
+  `;
 
   return servicesAPI
     .post('/v1/justgiving/graphql', { query, variables: { slug, after } })
-    .then(response => response.data)
-    .then(result => {
-      const data = lodashGet(result, 'data.page.timeline', {})
-      const { pageInfo = {}, nodes = [] } = data
-      const updatedResults = [...results, ...nodes]
+    .then((response) => response.data)
+    .then((result) => {
+      const data = lodashGet(result, 'data.page.timeline', {});
+      const { pageInfo = {}, nodes = [] } = data;
+      const updatedResults = [...results, ...nodes];
 
       if (allPosts && pageInfo.hasNextPage) {
         return fetchPosts({
           slug,
           after: pageInfo.endCursor,
           results: updatedResults,
-          allPosts: true
-        })
-      } else {
-        return updatedResults.filter(post => !post.fitnessActivity)
+          allPosts: true,
+        });
       }
-    })
-}
+      return updatedResults.filter((post) => !post.fitnessActivity);
+    });
+};
 
 export const createPost = ({
   pageId = required(),
@@ -81,15 +76,15 @@ export const createPost = ({
   token = required(),
   image,
   message,
-  video
+  video,
 }) => {
   const headers = {
-    Authorization: `Bearer ${token}`
-  }
+    Authorization: `Bearer ${token}`,
+  };
 
-  const imageMedia = image ? `imageMedia: { url: "${image}" }` : ''
-  const videoMedia = video ? `videoMedia: { url: "${video}" }` : ''
-  const media = image || video ? `media: { ${imageMedia} ${videoMedia} }` : ''
+  const imageMedia = image ? `imageMedia: { url: "${image}" }` : '';
+  const videoMedia = video ? `videoMedia: { url: "${video}" }` : '';
+  const media = image || video ? `media: { ${imageMedia} ${videoMedia} }` : '';
 
   const query = `
     mutation {
@@ -112,13 +107,13 @@ export const createPost = ({
         }
       }
     }
-  `
+  `;
 
   return servicesAPI
     .post('/v1/justgiving/graphql', { query }, { headers })
-    .then(response => response.data)
-    .then(result => lodashGet(result, 'data.createTimelineEntry'))
-}
+    .then((response) => response.data)
+    .then((result) => lodashGet(result, 'data.createTimelineEntry'));
+};
 
 export const deletePost = ({ id = required(), token = required() }) => {
   const query = `
@@ -129,12 +124,12 @@ export const deletePost = ({ id = required(), token = required() }) => {
         }
       )
     }
-  `
+  `;
 
-  const headers = { Authorization: `Bearer ${token}` }
+  const headers = { Authorization: `Bearer ${token}` };
 
   return servicesAPI
     .post('/v1/justgiving/graphql', { query }, { headers })
-    .then(response => response.data)
-    .then(result => lodashGet(result, 'data.deleteTimelineEntry'))
-}
+    .then((response) => response.data)
+    .then((result) => lodashGet(result, 'data.deleteTimelineEntry'));
+};

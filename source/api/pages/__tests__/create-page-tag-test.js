@@ -1,16 +1,16 @@
-import { instance } from '../../../utils/client'
-import { createPageTag } from '..'
+import { instance } from '../../../utils/client';
+import { createPageTag } from '..';
 
 describe('Create Page', () => {
   beforeEach(() => {
-    moxios.install(instance)
-  })
+    moxios.install(instance);
+  });
 
   afterEach(() => {
-    moxios.uninstall(instance)
-  })
+    moxios.uninstall(instance);
+  });
 
-  it('uses the correct url to fetch pages', done => {
+  it('uses the correct url to fetch pages', (done) => {
     createPageTag({
       slug: 'my-page',
       label: 'State',
@@ -19,22 +19,20 @@ describe('Create Page', () => {
       aggregation: [
         {
           segment: 'page:campaign:1234-5678-abcd-0123',
-          measurementDomains: ['all']
-        }
-      ]
-    })
+          measurementDomains: ['all'],
+        },
+      ],
+    });
 
     moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
-      expect(request.url).to.contain(
-        '/v1/tags/my-page'
-      )
-      done()
-    })
-  })
+      const request = moxios.requests.mostRecent();
+      expect(request.url).to.contain('/v1/tags/my-page');
+      done();
+    });
+  });
 
   it('throws if no slug is passed', () => {
-    const test = () => createPageTag({ bogus: 'data' })
-    expect(test).to.throw
-  })
-})
+    const test = () => createPageTag({ bogus: 'data' });
+    expect(test).to.throw;
+  });
+});

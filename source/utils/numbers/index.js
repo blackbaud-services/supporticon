@@ -1,38 +1,39 @@
-import merge from 'lodash/merge'
-import { currencyCode } from '../currencies'
+import merge from 'lodash/merge';
 
-export const setLocaleFromCurrency = currency => {
-  if (typeof currency !== 'string') return 'en-GB'
+import { currencyCode } from '../currencies';
 
-  const code = currency.toLowerCase()
+export const setLocaleFromCurrency = (currency) => {
+  if (typeof currency !== 'string') return 'en-GB';
+
+  const code = currency.toLowerCase();
 
   switch (code) {
     case 'aud':
-      return 'en-AU'
+      return 'en-AU';
     case 'ca':
-      return 'en-CA'
+      return 'en-CA';
     case 'hk':
-      return 'en-HK'
+      return 'en-HK';
     case 'ie':
     case 'eur':
-      return 'en-IE'
+      return 'en-IE';
     case 'nzd':
-      return 'en-NZ'
+      return 'en-NZ';
     case 'sgd':
-      return 'en-SG'
+      return 'en-SG';
     case 'usd':
-      return 'en-US'
+      return 'en-US';
     case 'zar':
-      return 'en-ZA'
+      return 'en-ZA';
     default:
-      return 'en-GB'
+      return 'en-GB';
   }
-}
+};
 
-export const setLocaleFromCountry = country => {
-  if (typeof country !== 'string') return 'en-GB'
-  return `en-${country.toUpperCase()}`
-}
+export const setLocaleFromCountry = (country) => {
+  if (typeof country !== 'string') return 'en-GB';
+  return `en-${country.toUpperCase()}`;
+};
 
 export const formatNumber = ({
   amount,
@@ -42,15 +43,19 @@ export const formatNumber = ({
   style = 'decimal',
   ...options
 }) => {
-  const config = merge({}, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: Math.min(places, 20),
-    notation,
-    style
-  }, options)
+  const config = merge(
+    {},
+    {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: Math.min(places, 20),
+      notation,
+      style,
+    },
+    options
+  );
 
-  return Intl.NumberFormat(locale, config).format(amount)
-}
+  return Intl.NumberFormat(locale, config).format(amount);
+};
 
 export const formatCurrency = ({
   amount,
@@ -58,10 +63,10 @@ export const formatCurrency = ({
   currencyDisplay = 'symbol',
   locale: baseLocale,
   notation,
-  places
+  places,
 }) => {
-  const locale = baseLocale || setLocaleFromCurrency(currency)
-  const isWholeNumber = amount % 1 === 0
+  const locale = baseLocale || setLocaleFromCurrency(currency);
+  const isWholeNumber = amount % 1 === 0;
 
   return formatNumber({
     amount,
@@ -72,6 +77,6 @@ export const formatCurrency = ({
     maximumFractionDigits: places ? 2 : 0,
     notation,
     places,
-    style: 'currency'
-  })
-}
+    style: 'currency',
+  });
+};

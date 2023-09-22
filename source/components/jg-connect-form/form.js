@@ -1,4 +1,4 @@
-import * as validators from 'constructicon/lib/validators'
+import * as validators from 'constructicon/lib/validators';
 
 export default () => ({
   fields: {
@@ -7,8 +7,8 @@ export default () => ({
       placeholder: 'Enter your email address',
       validators: [
         validators.required('Please enter your email address'),
-        validators.email('Please enter a valid email address')
-      ]
-    }
-  }
-})
+        validators.email('Please enter a valid email address'),
+      ],
+    },
+  },
+});

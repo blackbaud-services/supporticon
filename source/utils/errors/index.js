@@ -1,7 +1,7 @@
-import get from 'lodash/get'
+import get from 'lodash/get';
 
-export const getErrorMessage = error =>
+export const getErrorMessage = (error) =>
   get(error, 'data.error.message') ||
   get(error, 'data.errorMessage') ||
   get(error, 'message') ||
-  'There was an unexpected error'
+  'There was an unexpected error';

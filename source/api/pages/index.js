@@ -1,27 +1,25 @@
-import dayjs from 'dayjs'
-import chunk from 'lodash/chunk'
-import first from 'lodash/first'
-import flattenDeep from 'lodash/flattenDeep'
-import lodashGet from 'lodash/get'
-import lodashFilter from 'lodash/filter'
-import slugify from 'slugify'
-import { v4 as uuid } from 'uuid'
-import { destroy, get, post, put, servicesAPI } from '../../utils/client'
-import { apiUrl, apiImageUrl, baseUrl, imageUrl } from '../../utils/justgiving'
-import { getUID, isEmpty, isInArray, isUuid, required } from '../../utils/params'
-import { defaultPageTags } from '../../utils/tags'
-import { deserializeFitnessActivity } from '../fitness-activities'
-import { fetchTotals, deserializeTotals } from '../../utils/totals'
-import jsonDate from '../../utils/jsonDate'
+import dayjs from 'dayjs';
+import chunk from 'lodash/chunk';
+import lodashFilter from 'lodash/filter';
+import first from 'lodash/first';
+import flattenDeep from 'lodash/flattenDeep';
+import lodashGet from 'lodash/get';
+import slugify from 'slugify';
+import { v4 as uuid } from 'uuid';
 
-export const pageNameRegex = /[^\w\s',-]/gi
+import { destroy, get, post, put, servicesAPI } from '../../utils/client';
+import jsonDate from '../../utils/jsonDate';
+import { apiImageUrl, apiUrl, baseUrl, imageUrl } from '../../utils/justgiving';
+import { getUID, isEmpty, isInArray, isUuid, required } from '../../utils/params';
+import { defaultPageTags } from '../../utils/tags';
+import { deserializeTotals, fetchTotals } from '../../utils/totals';
+import { deserializeFitnessActivity } from '../fitness-activities';
 
-export const deserializePage = page => {
+export const pageNameRegex = /[^\w\s',-]/gi;
+
+export const deserializePage = (page) => {
   const shortName =
-    page.shortName ||
-    page.pageShortName ||
-    (page.LinkPath || '').substring(1) ||
-    page.PageUrl
+    page.shortName || page.pageShortName || (page.LinkPath || '').substring(1) || page.PageUrl;
 
   const getImage = () => {
     return (
@@ -33,27 +31,25 @@ export const deserializePage = page => {
       lodashGet(page, 'image.url') ||
       lodashGet(page, 'images[0].url') ||
       apiImageUrl(shortName)
-    )
-  }
+    );
+  };
 
-  const getQrCodes = page => {
-    const images = lodashGet(page, 'media.images', [])
-    return lodashFilter(images, image => image.caption === 'qrcode')
-  }
+  const getQrCodes = (page) => {
+    const images = lodashGet(page, 'media.images', []);
+    return lodashFilter(images, (image) => image.caption === 'qrcode');
+  };
 
-  const isOnlinePresent = typeof page.totalRaisedOnline !== 'undefined'
+  const isOnlinePresent = typeof page.totalRaisedOnline !== 'undefined';
   const onlineAmount = isOnlinePresent
     ? parseFloat(page.totalRaisedOnline)
-    : parseFloat(page.Amount || page.raisedAmount || page.amountRaised || 0)
+    : parseFloat(page.Amount || page.raisedAmount || page.amountRaised || 0);
 
-  const offlineAmount = parseFloat(page.totalRaisedOffline || 0)
-  const status = page.status || page.pageStatus
-  const id = page.pageId || page.Id
+  const offlineAmount = parseFloat(page.totalRaisedOffline || 0);
+  const status = page.status || page.pageStatus;
+  const id = page.pageId || page.Id;
 
   return {
-    active: status
-      ? ['Inactive', 'Cancelled', 'Offline'].indexOf(status) === -1
-      : true,
+    active: status ? ['Inactive', 'Cancelled', 'Offline'].indexOf(status) === -1 : true,
     campaign: page.campaignGuid || page.Subtext || page.eventId || page.EventId,
     campaignDate: jsonDate(page.eventDate) || page.EventDate,
     charity: page.charity || page.CharityId || page.charityId,
@@ -69,28 +65,19 @@ export const deserializePage = page => {
     event: page.Subtext || page.eventId || page.EventId || page.eventName,
     expired: jsonDate(page.expiryDate) && dayjs(page.expiryDate).isBefore(),
     fitness: page.fitness || {},
-    fitnessActivities: lodashGet(page, 'fitness.activities', []).map(
-      deserializeFitnessActivity
-    ),
+    fitnessActivities: lodashGet(page, 'fitness.activities', []).map(deserializeFitnessActivity),
     fitnessGoal: parseInt(page.pageSummaryWhat) || 0,
     fitnessDistanceTotal:
-      lodashGet(page, 'fitness.totalAmount', 0) ||
-      lodashGet(page, 'fitness.distance', 0),
+      lodashGet(page, 'fitness.totalAmount', 0) || lodashGet(page, 'fitness.distance', 0),
     fitnessDurationTotal:
-      lodashGet(page, 'fitness.totalAmountTaken', 0) ||
-      lodashGet(page, 'fitness.duration', 0),
+      lodashGet(page, 'fitness.totalAmountTaken', 0) || lodashGet(page, 'fitness.duration', 0),
     fitnessElevationTotal:
-      lodashGet(page, 'fitness.totalAmountElevation', 0) ||
-      lodashGet(page, 'fitness.elevation', 0),
+      lodashGet(page, 'fitness.totalAmountElevation', 0) || lodashGet(page, 'fitness.elevation', 0),
     fitnessSettings: lodashGet(page, 'fitness.pageFitnessSettings'),
     groups: null,
-    hasUpdatedImage:
-      page.imageCount &&
-      parseInt(page.imageCount - getQrCodes(page).length) > 1,
+    hasUpdatedImage: page.imageCount && parseInt(page.imageCount - getQrCodes(page).length) > 1,
     id,
-    image:
-      getImage() &&
-      getImage().split('?')[0] + '?template=CrowdfundingOwnerAvatar',
+    image: getImage() && `${getImage().split('?')[0]}?template=CrowdfundingOwnerAvatar`,
     name:
       page.title ||
       page.pageTitle ||
@@ -100,10 +87,8 @@ export const deserializePage = page => {
       lodashGet(page, 'pageOwner.fullName'),
     owner: page.owner
       ? !lodashGet(page, 'owner.firstName')
-          ? page.owner
-          : lodashGet(page, 'owner.firstName') +
-          ' ' +
-          lodashGet(page, 'owner.lastName')
+        ? page.owner
+        : `${lodashGet(page, 'owner.firstName')} ${lodashGet(page, 'owner.lastName')}`
       : page.OwnerFullName ||
         page.PageOwner ||
         page.pageOwner ||
@@ -122,69 +107,56 @@ export const deserializePage = page => {
     story: page.story || page.ProfileWhat || page.ProfileWhy,
     tags: page.tags || [],
     target: parseFloat(
-      page.fundraisingTarget ||
-        page.TargetAmount ||
-        page.targetAmount ||
-        page.target ||
-        0
+      page.fundraisingTarget || page.TargetAmount || page.targetAmount || page.target || 0
     ),
-    teamPageId:
-      page.teams && page.teams.length > 0 ? page.teams[0].teamGuid : null,
-    teamShortName:
-      page.teams && page.teams.length > 0 ? page.teams[0].teamShortName : null,
+    teamPageId: page.teams && page.teams.length > 0 ? page.teams[0].teamGuid : null,
+    teamShortName: page.teams && page.teams.length > 0 ? page.teams[0].teamShortName : null,
     type: page.type || 'individual',
     url: page.Link || page.PageUrl || `${baseUrl()}/fundraising/${shortName}`,
-    uuid: page.pageGuid || page.fundraisingPageGuid || page.FundraiserPageGuid
-  }
-}
+    uuid: page.pageGuid || page.fundraisingPageGuid || page.FundraiserPageGuid,
+  };
+};
 
 const deserializeSegmentation = (tags = []) => {
   return tags.reduce((segments, tag) => {
-    const key = lodashGet(tag, 'tagDefinition.id')
-    const value = lodashGet(tag, 'value')
+    const key = lodashGet(tag, 'tagDefinition.id');
+    const value = lodashGet(tag, 'value');
 
     return {
       ...segments,
-      [key]: value
-    }
-  }, {})
-}
+      [key]: value,
+    };
+  }, {});
+};
 
-const recursivelyFetchJGPages = ({
-  campaign,
-  q,
-  limit = 10,
-  results = [],
-  page = 1
-}) => {
+const recursivelyFetchJGPages = ({ campaign, q, limit = 10, results = [], page = 1 }) => {
   const options = {
-    params: { page, q }
-  }
+    params: { page, q },
+  };
   return servicesAPI
     .get(`/v1/justgiving/campaigns/${campaign}/pages`, options)
-    .then(response => response.data)
-    .then(data => {
-      const { currentPage, totalPages } = data.meta
-      const updatedResults = [...results, ...data.results]
+    .then((response) => response.data)
+    .then((data) => {
+      const { currentPage, totalPages } = data.meta;
+      const updatedResults = [...results, ...data.results];
 
       if (
         Number(currentPage) === totalPages ||
         updatedResults.length >= limit ||
         totalPages === 0
       ) {
-        return updatedResults
-      } else {
-        page++
-        return recursivelyFetchJGPages({
-          campaign,
-          q,
-          limit,
-          results: updatedResults,
-          page
-        })
+        return updatedResults;
       }
-    })
-}
+      page++;
+      return recursivelyFetchJGPages({
+        campaign,
+        q,
+        limit,
+        results: updatedResults,
+        page,
+      });
+    });
+};
 
 export const fetchPages = (params = required()) => {
   const {
@@ -197,7 +169,7 @@ export const fetchPages = (params = required()) => {
     token,
     userPages,
     ...args
-  } = params
+  } = params;
 
   if (userPages && token) {
     return get(
@@ -206,47 +178,47 @@ export const fetchPages = (params = required()) => {
       {},
       {
         headers: {
-          Authorization: [authType, token].join(' ')
-        }
+          Authorization: [authType, token].join(' '),
+        },
       }
-    )
+    );
   }
 
   if (allPages && ids) {
-    const pageIds = Array.isArray(ids) ? ids : ids.split(',')
+    const pageIds = Array.isArray(ids) ? ids : ids.split(',');
 
     if (pageIds.filter(isUuid).length === pageIds.length) {
       return Promise.all(
-        chunk(pageIds, 20).map(guids =>
+        chunk(pageIds, 20).map((guids) =>
           servicesAPI
             .get('/v1/justgiving/proxy/fundraising/v2/pages/bulk', {
-              params: { pageGuids: guids.join(',') }
+              params: { pageGuids: guids.join(',') },
             })
-            .then(response => response.data.results)
+            .then((response) => response.data.results)
         )
       )
-        .then(results => flattenDeep(results))
-        .then(results => results.filter(page => page.status === 'Active'))
+        .then((results) => flattenDeep(results))
+        .then((results) => results.filter((page) => page.status === 'Active'));
     }
 
-    return Promise.all(pageIds.map(fetchPage))
+    return Promise.all(pageIds.map(fetchPage));
   }
 
   if (allPages && event) {
-    const mappings = { limit: 'pageSize' }
+    const mappings = { limit: 'pageSize' };
 
     return get(`/v1/event/${getUID(event)}/pages`, args, { mappings })
-      .then(response => response.fundraisingPages)
-      .then(pages =>
-        pages.map(page => ({
+      .then((response) => response.fundraisingPages)
+      .then((pages) =>
+        pages.map((page) => ({
           ...page,
-          totalRaisedOffline: page.raisedAmount - page.totalRaisedOnline
+          totalRaisedOffline: page.raisedAmount - page.totalRaisedOnline,
         }))
-      )
+      );
   }
 
   if (!isEmpty(campaign) && !event) {
-    return recursivelyFetchJGPages({ campaign: getUID(campaign), ...args })
+    return recursivelyFetchJGPages({ campaign: getUID(campaign), ...args });
   }
 
   return get('/v1/onesearch', {
@@ -254,137 +226,123 @@ export const fetchPages = (params = required()) => {
     charityId: getUID(charity),
     eventId: getUID(event),
     i: 'Fundraiser',
-    ...args
+    ...args,
   }).then(
-    response =>
+    (response) =>
       (response.GroupedResults &&
         response.GroupedResults.length &&
         response.GroupedResults[0].Results) ||
       []
-  )
-}
+  );
+};
 
 export const fetchPage = (page = required(), slug, options = {}) => {
-  const endpoint = slug ? 'pages' : isNaN(page) ? 'pages' : 'pagebyid'
+  const endpoint = slug ? 'pages' : isNaN(page) ? 'pages' : 'pagebyid';
 
   const fetchers = [
-    new Promise(resolve =>
-      get(`/v1/fundraising/${endpoint}/${page}`).then(
-        page =>
-          options.includeFitness
-            ? fetchPageFitness(page, options.fitnessParams).then(fitness =>
-                resolve({ ...page, fitness })
-              )
-            : resolve(page)
+    new Promise((resolve) =>
+      get(`/v1/fundraising/${endpoint}/${page}`).then((page) =>
+        options.includeFitness
+          ? fetchPageFitness(page, options.fitnessParams).then((fitness) =>
+              resolve({ ...page, fitness })
+            )
+          : resolve(page)
       )
     ),
-    options.includeTags && fetchPageTags(page)
-  ]
+    options.includeTags && fetchPageTags(page),
+  ];
 
   return Promise.all(fetchers).then(([page, tags]) => ({
     ...page,
-    ...tags
-  }))
-}
+    ...tags,
+  }));
+};
 
 export const fetchUserPages = ({
   authType = 'Bearer',
   campaign,
   charity,
   event,
-  token = required()
+  token = required(),
 }) => {
   const headers = {
-    Authorization: [authType, token].join(' ')
-  }
+    Authorization: [authType, token].join(' '),
+  };
 
-  const campaignGuids = Array.isArray(campaign)
-    ? campaign.map(getUID)
-    : [getUID(campaign)]
+  const campaignGuids = Array.isArray(campaign) ? campaign.map(getUID) : [getUID(campaign)];
 
-  const charityIds = Array.isArray(charity)
-    ? charity.map(getUID)
-    : [getUID(charity)]
+  const charityIds = Array.isArray(charity) ? charity.map(getUID) : [getUID(charity)];
 
-  const eventIds = Array.isArray(event) ? event.map(getUID) : [getUID(event)]
+  const eventIds = Array.isArray(event) ? event.map(getUID) : [getUID(event)];
 
-  const filterByCampaign = pages =>
-    isEmpty(campaign)
-      ? pages
-      : pages.filter(page => isInArray(campaignGuids, page.campaignGuid))
+  const filterByCampaign = (pages) =>
+    isEmpty(campaign) ? pages : pages.filter((page) => isInArray(campaignGuids, page.campaignGuid));
 
-  const filterByCharity = pages =>
-    isEmpty(charity)
-      ? pages
-      : pages.filter(page => isInArray(charityIds, page.charityId))
+  const filterByCharity = (pages) =>
+    isEmpty(charity) ? pages : pages.filter((page) => isInArray(charityIds, page.charityId));
 
-  const filterByEvent = pages =>
-    isEmpty(event)
-      ? pages
-      : pages.filter(page => isInArray(eventIds, page.eventId))
+  const filterByEvent = (pages) =>
+    isEmpty(event) ? pages : pages.filter((page) => isInArray(eventIds, page.eventId));
 
   return get('/v1/fundraising/pages', {}, {}, { headers })
     .then(filterByCampaign)
     .then(filterByCharity)
-    .then(filterByEvent)
-}
+    .then(filterByEvent);
+};
 
 export const fetchPagesByTag = ({
   tagId = required(),
   tagValue = required(),
   limit = 100,
-  offset = 0
-}) =>
-  get(
-    `v1/tags/search?tagsQuery=tags.${tagId}=${tagValue}&maxValue=${limit}&offset=${offset}`
-  )
+  offset = 0,
+}) => get(`v1/tags/search?tagsQuery=tags.${tagId}=${tagValue}&maxValue=${limit}&offset=${offset}`);
 
-export const fetchPageTags = page => {
-  return get(`v1/tags/${page}`)
-}
+export const fetchPageTags = (page) => {
+  return get(`v1/tags/${page}`);
+};
 
 const fetchPageFitness = (
   page,
   { limit = 100, offset = 0, startDate, endDate, useLegacy = true } = {}
 ) => {
-  const slug = typeof page === 'object' ? page.pageShortName : page
+  const slug = typeof page === 'object' ? page.pageShortName : page;
 
   if (useLegacy) {
-    const params = { limit, offset, start: startDate, end: endDate }
-    return get(`/v1/fitness/fundraising/${slug}`, params)
+    const params = { limit, offset, start: startDate, end: endDate };
+    return get(`/v1/fitness/fundraising/${slug}`, params);
   }
 
   return fetchTotals({
     segment: 'page:totals',
     tagId: 'page:totals',
-    tagValue: `page:fundraising:${page.pageGuid}`
-  }).then(deserializeTotals)
-}
+    tagValue: `page:fundraising:${page.pageGuid}`,
+  }).then(deserializeTotals);
+};
 
 export const fetchPageDonationCount = (page = required()) => {
   return get(`/v1/fundraising/pages/${page}/donations`).then(
-    data => data.pagination.totalResults
-  )
-}
+    (data) => data.pagination.totalResults
+  );
+};
 
 const truncate = (string, length = 50) => {
   if (string) {
     return String(string).length > length
-      ? String(string)
+      ? `${String(string)
           .substring(0, length - 3)
-          .trim() + '...'
-      : String(string)
+          .trim()}...`
+      : String(string);
   }
 
-  return undefined
-}
+  return undefined;
+};
 
 export const createPageTag = ({
   id = required(),
   label = required(),
   slug = required(),
   value = required(),
-  aggregation = []
+  aggregation = [],
 }) => {
   const request = () =>
     post(
@@ -393,36 +351,36 @@ export const createPageTag = ({
         aggregation,
         id,
         label,
-        value
+        value,
       },
       {
-        timeout: 5000
+        timeout: 5000,
       }
-    )
+    );
 
-  return request().catch(() => request()) // Retry if request fails
-}
+  return request().catch(() => request()); // Retry if request fails
+};
 
-export const createPageTags = ({
-  slug = required(),
-  tagValues = required()
-}) => {
+export const createPageTags = ({ slug = required(), tagValues = required() }) => {
   const request = () =>
     post(
       `/v1/tags/${slug}/multiple`,
       {
-        tagValues
+        tagValues,
       },
       {
-        timeout: 5000
+        timeout: 5000,
       }
-    )
+    );
 
-  return request().catch(() => request()) // Retry if request fails
-}
+  return request().catch(() => request()); // Retry if request fails
+};
 
 const createDefaultPageTags = (page, timeBox, campaignGuidOverride) =>
-  createPageTags({ slug: page.slug, tagValues: defaultPageTags(page, timeBox, campaignGuidOverride) })
+  createPageTags({
+    slug: page.slug,
+    tagValues: defaultPageTags(page, timeBox, campaignGuidOverride),
+  });
 
 export const createPage = ({
   charityId = required(),
@@ -461,13 +419,13 @@ export const createPage = ({
   teamId,
   theme,
   timeBox,
-  videos
+  videos,
 }) => {
-  const pageTitle = title.replace(/’/g, "'")
+  const pageTitle = title.replace(/’/g, "'");
 
-  return getPageShortName(pageTitle, slug, forceSlug).then(pageShortName => {
+  return getPageShortName(pageTitle, slug, forceSlug).then((pageShortName) => {
     if (forceSlug && !pageShortName) {
-      return false
+      return false;
     }
 
     return put(
@@ -475,12 +433,12 @@ export const createPage = ({
       {
         ...(eventId
           ? {
-              eventId
+              eventId,
             }
           : {
               activityType,
               eventDate,
-              eventName: eventName || pageTitle
+              eventName: eventName || pageTitle,
             }),
         attribution,
         campaignGuid: campaignGuid || campaignId,
@@ -493,11 +451,7 @@ export const createPage = ({
         currency,
         customCodes,
         expiryDate,
-        images: images.length
-          ? images
-          : image
-            ? [{ url: image, isDefault: true }]
-            : undefined,
+        images: images.length ? images : image ? [{ url: image, isDefault: true }] : undefined,
         isGiftAidable: giftAid,
         pageShortName,
         pageStory: story,
@@ -510,43 +464,43 @@ export const createPage = ({
         targetAmount: target,
         teamId,
         theme,
-        videos
+        videos,
       },
       {
         headers: {
-          Authorization: [authType, token].join(' ')
-        }
+          Authorization: [authType, token].join(' '),
+        },
       }
     )
-      .then(result => fetchPage(result.pageId))
-      .then(page => {
-        createDefaultPageTags(deserializePage(page), timeBox, campaignGuidOverride).then(tags => {
+      .then((result) => fetchPage(result.pageId))
+      .then((page) => {
+        createDefaultPageTags(deserializePage(page), timeBox, campaignGuidOverride).then((tags) => {
           if (typeof tagsCallback === 'function') {
-            tagsCallback(tags, page)
+            tagsCallback(tags, page);
           }
-        })
+        });
 
-        return page
-      })
-  })
-}
+        return page;
+      });
+  });
+};
 
 export const getPageShortName = (title, slug, forceSlug) => {
-  const preferredName = slug || slugify(title, { lower: true, strict: true })
+  const preferredName = slug || slugify(title, { lower: true, strict: true });
 
   const params = {
-    preferredName: preferredName.substring(0, 45)
-  }
+    preferredName: preferredName.substring(0, 45),
+  };
 
-  return get('/v1/fundraising/pages/suggest', params).then(result => {
-    const firstResult = first(result.Names)
+  return get('/v1/fundraising/pages/suggest', params).then((result) => {
+    const firstResult = first(result.Names);
     if (forceSlug) {
-      return firstResult === slug ? firstResult : false
+      return firstResult === slug ? firstResult : false;
     }
 
-    return firstResult || uuid()
-  })
-}
+    return firstResult || uuid();
+  });
+};
 
 export const updatePage = (
   slug = required(),
@@ -560,60 +514,39 @@ export const updatePage = (
     story,
     summaryWhat,
     summaryWhy,
-    target
+    target,
   }
 ) => {
-  const config = { headers: { Authorization: [authType, token].join(' ') } }
+  const config = { headers: { Authorization: [authType, token].join(' ') } };
 
   return Promise.all(
     [
-      attribution &&
-        put(
-          `/v1/fundraising/pages/${slug}/attribution`,
-          { attribution },
-          config
-        ),
-      image &&
-        put(
-          `/v1/fundraising/pages/${slug}/images`,
-          { url: image, isDefault: true },
-          config
-        ),
+      attribution && put(`/v1/fundraising/pages/${slug}/attribution`, { attribution }, config),
+      image && put(`/v1/fundraising/pages/${slug}/images`, { url: image, isDefault: true }, config),
       name &&
         put(
           `/v1/fundraising/pages/${slug}/pagetitle`,
           { pageTitle: name.replace(/’/g, "'").replace(pageNameRegex, '') },
           config
         ),
-      offline &&
-        put(
-          `/v1/fundraising/pages/${slug}/offline`,
-          { amount: offline },
-          config
-        ),
-      story &&
-        put(`/v1/fundraising/pages/${slug}/pagestory`, { story }, config),
-      target &&
-        put(`/v1/fundraising/pages/${slug}/target`, { amount: target }, config),
+      offline && put(`/v1/fundraising/pages/${slug}/offline`, { amount: offline }, config),
+      story && put(`/v1/fundraising/pages/${slug}/pagestory`, { story }, config),
+      target && put(`/v1/fundraising/pages/${slug}/target`, { amount: target }, config),
       (summaryWhat || summaryWhy) &&
         put(
           `/v1/fundraising/pages/${slug}/summary`,
           {
             pageSummaryWhat: summaryWhat,
-            pageSummaryWhy: summaryWhy
+            pageSummaryWhy: summaryWhy,
           },
           config
-        )
-    ].filter(promise => promise)
-  )
-}
+        ),
+    ].filter((promise) => promise)
+  );
+};
 
-export const cancelPage = ({
-  authType = 'Bearer',
-  slug = required(),
-  token = required()
-}) => {
-  const headers = { Authorization: [authType, token].join(' ') }
+export const cancelPage = ({ authType = 'Bearer', slug = required(), token = required() }) => {
+  const headers = { Authorization: [authType, token].join(' ') };
 
-  return destroy(`/v1/fundraising/pages/${slug}`, { headers })
-}
+  return destroy(`/v1/fundraising/pages/${slug}`, { headers });
+};

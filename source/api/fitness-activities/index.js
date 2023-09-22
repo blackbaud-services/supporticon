@@ -1,89 +1,79 @@
-import dayjs from 'dayjs'
-import lodashGet from 'lodash/get'
-import { post, destroy, servicesAPI } from '../../utils/client'
-import { required } from '../../utils/params'
-import { convertToMeters, convertToSeconds } from '../../utils/units'
-import { extractData } from '../../utils/graphql'
-import { encodeBase64String } from '../../utils/base64'
-import jsonDate from '../../utils/jsonDate'
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import lodashGet from 'lodash/get';
 
-import customParseFormat from 'dayjs/plugin/customParseFormat'
-dayjs.extend(customParseFormat)
+import { encodeBase64String } from '../../utils/base64';
+import { destroy, post, servicesAPI } from '../../utils/client';
+import { extractData } from '../../utils/graphql';
+import jsonDate from '../../utils/jsonDate';
+import { required } from '../../utils/params';
+import { convertToMeters, convertToSeconds } from '../../utils/units';
+
+dayjs.extend(customParseFormat);
 
 const getFitnessId = (source, activity) => {
-  if (activity.id) return activity.id
+  if (activity.id) return activity.id;
 
   switch (source) {
     case 'fitness':
       return encodeBase64String(
-        [
-          'Timeline:FUNDRAISING',
-          activity.PageGuid,
-          'FITNESS:STRAVA',
-          activity.ExternalId
-        ].join(':')
-      )
+        ['Timeline:FUNDRAISING', activity.PageGuid, 'FITNESS:STRAVA', activity.ExternalId].join(':')
+      );
     case 'manual':
       // legacy activity created via Consumer API
-      if (!activity.ExternalId) return null
+      if (!activity.ExternalId) return null;
 
       return encodeBase64String(
-        ['Timeline:FUNDRAISING', activity.PageGuid, activity.ExternalId].join(
-          ':'
-        )
-      )
+        ['Timeline:FUNDRAISING', activity.PageGuid, activity.ExternalId].join(':')
+      );
     default:
-      return null
+      return null;
   }
-}
+};
 
 const getExternalId = (source, activity) => {
   switch (source) {
     case 'fitness':
-      return activity.ExternalId || activity.activityId
+      return activity.ExternalId || activity.activityId;
     default:
-      return null
+      return null;
   }
-}
+};
 
 const getFitnessApp = (sourceId, externalId) => {
   if (sourceId.indexOf('STRAVA') !== -1) {
     return {
       product: 'strava',
-      sourceUrl: `https://www.strava.com/activities/${externalId}`
-    }
-  } else if (sourceId.indexOf('FITBIT') !== -1) {
+      sourceUrl: `https://www.strava.com/activities/${externalId}`,
+    };
+  }
+  if (sourceId.indexOf('FITBIT') !== -1) {
     return {
       product: 'fitbit',
-      sourceUrl: `https://www.fitbit.com/activities/exercise/${externalId}`
-    }
-  } else {
-    return {
-      product: null,
-      sourceUrl: null
-    }
+      sourceUrl: `https://www.fitbit.com/activities/exercise/${externalId}`,
+    };
   }
-}
+  return {
+    product: null,
+    sourceUrl: null,
+  };
+};
 
-const getMetricValue = metric => {
+const getMetricValue = (metric) => {
   switch (typeof metric) {
     case 'object':
-      return lodashGet(metric, 'value', 0)
+      return lodashGet(metric, 'value', 0);
     default:
-      return metric
+      return metric;
   }
-}
+};
 
 export const deserializeFitnessActivity = (activity = required()) => {
-  const activityType = (
-    activity.activityType ||
-    activity.Type ||
-    ''
-  ).toLowerCase()
+  const activityType = (activity.activityType || activity.Type || '').toLowerCase();
 
-  const sourceId = activity.ExternalId || activity.legacyId || ''
-  const source = sourceId.indexOf('JG:MANUAL') === 0 ? 'manual' : 'fitness'
-  const fitnessApp = getFitnessApp(sourceId, getExternalId(source, activity))
+  const sourceId = activity.ExternalId || activity.legacyId || '';
+  const source = sourceId.indexOf('JG:MANUAL') === 0 ? 'manual' : 'fitness';
+  const fitnessApp = getFitnessApp(sourceId, getExternalId(source, activity));
 
   return {
     campaign: activity.CampaignGuid,
@@ -107,9 +97,9 @@ export const deserializeFitnessActivity = (activity = required()) => {
     steps: activity.steps,
     teamId: activity.TeamGuid,
     title: activity.Title || activity.title,
-    type: activityType
-  }
-}
+    type: activityType,
+  };
+};
 
 export const fetchFitnessActivities = (params = required()) => {
   if (params.page) {
@@ -118,10 +108,10 @@ export const fetchFitnessActivities = (params = required()) => {
         new Error(
           'Legacy method no longer supported since it does not return individual activities'
         )
-      )
+      );
     }
 
-    const { page, after, allActivities, results = [] } = params
+    const { page, after, allActivities, results = [] } = params;
 
     const query = `
       query getFitness($slug: Slug, $after: String) {
@@ -150,72 +140,67 @@ export const fetchFitnessActivities = (params = required()) => {
           }
         }
       }
-    `
+    `;
 
     return servicesAPI
       .post('/v1/justgiving/graphql', {
         query,
-        variables: { slug: page, after }
+        variables: { slug: page, after },
       })
-      .then(response => response.data)
-      .then(result => {
-        const data = lodashGet(result, 'data.page.timeline', {})
-        const { pageInfo = {}, nodes = [] } = data
-        const updatedResults = [...results, ...nodes]
+      .then((response) => response.data)
+      .then((result) => {
+        const data = lodashGet(result, 'data.page.timeline', {});
+        const { pageInfo = {}, nodes = [] } = data;
+        const updatedResults = [...results, ...nodes];
 
         if (allActivities && pageInfo.hasNextPage) {
           return fetchFitnessActivities({
             page,
             after: pageInfo.endCursor,
             results: updatedResults,
-            allActivities: true
-          })
-        } else {
-          return updatedResults
-            .filter(activity => activity.fitnessActivity)
-            .map(activity => ({
-              ...activity,
-              ...lodashGet(activity, 'fitnessActivity', {})
-            }))
+            allActivities: true,
+          });
         }
-      })
+        return updatedResults
+          .filter((activity) => activity.fitnessActivity)
+          .map((activity) => ({
+            ...activity,
+            ...lodashGet(activity, 'fitnessActivity', {}),
+          }));
+      });
   }
 
   if (params.team) {
     return Promise.reject(
-      new Error(
-        "Fetching list of a team's individual activities is not supported"
-      )
-    )
+      new Error("Fetching list of a team's individual activities is not supported")
+    );
   }
 
   if (params.campaign) {
     return Promise.reject(
-      new Error(
-        "Fetching list of a campaign's individual activities is not supported"
-      )
-    )
+      new Error("Fetching list of a campaign's individual activities is not supported")
+    );
   }
 
-  return required()
-}
+  return required();
+};
 
-const activityType = type => {
+const activityType = (type) => {
   switch (type) {
     case 'ride':
-      return 'RIDE'
+      return 'RIDE';
     case 'swim':
-      return 'SWIM'
+      return 'SWIM';
     case 'run':
-      return 'RUN'
+      return 'RUN';
     case 'hike':
-      return 'HIKE'
+      return 'HIKE';
     case 'wheelchair':
-      return 'WHEELCHAIR'
+      return 'WHEELCHAIR';
     default:
-      return 'WALK'
+      return 'WALK';
   }
-}
+};
 
 export const createFitnessActivity = ({
   caption,
@@ -234,20 +219,18 @@ export const createFitnessActivity = ({
   token = required(),
   unit,
   userId,
-  useLegacy
+  useLegacy,
 }) => {
-  const headers = { Authorization: `Bearer ${token}` }
+  const headers = { Authorization: `Bearer ${token}` };
 
   if (!useLegacy) {
     if (!pageId || !userId) {
-      return required()
+      return required();
     }
 
-    const createdDate = startedAt
-      ? `createdDate: "${dayjs(startedAt).format()}"`
-      : ''
+    const createdDate = startedAt ? `createdDate: "${dayjs(startedAt).format()}"` : '';
 
-    const message = description ? `message: "${description}"` : ''
+    const message = description ? `message: "${description}"` : '';
 
     const query = `
       mutation {
@@ -281,45 +264,40 @@ export const createFitnessActivity = ({
           }
         }
       }
-    `
+    `;
 
     return servicesAPI
       .post('/v1/justgiving/graphql', { query }, { headers })
-      .then(response => extractData(response))
-      .then(result => ({
+      .then((response) => extractData(response))
+      .then((result) => ({
         ...lodashGet(result, 'data.createTimelineEntry', {}),
-        ...lodashGet(result, 'data.createTimelineEntry.fitnessActivity', {})
-      }))
+        ...lodashGet(result, 'data.createTimelineEntry.fitnessActivity', {}),
+      }));
   }
 
   if (!pageSlug) {
-    return required()
+    return required();
   }
 
   const params = {
     dateCreated: dayjs(startedAt).isBefore(dayjs(), 'day')
       ? dayjs(startedAt).format('DD/MM/YYYY')
       : null,
-    description: description,
+    description,
     distance: convertToMeters(distance, unit),
     duration: convertToSeconds(duration, durationUnit),
     elevation: convertToMeters(elevation, elevationUnit || unit),
     shortName: pageSlug,
     title: title || caption,
-    type
-  }
+    type,
+  };
 
-  return post('/v1/fitness', params, { headers })
-}
+  return post('/v1/fitness', params, { headers });
+};
 
-export const deleteFitnessActivity = ({
-  id = required(),
-  page,
-  token = required(),
-  useLegacy
-}) => {
+export const deleteFitnessActivity = ({ id = required(), page, token = required(), useLegacy }) => {
   if (useLegacy) {
-    return deleteLegacyFitnessActivity({ id, page, token })
+    return deleteLegacyFitnessActivity({ id, page, token });
   }
 
   const query = `
@@ -330,21 +308,21 @@ export const deleteFitnessActivity = ({
         }
       )
     }
-  `
+  `;
 
-  const headers = { Authorization: `Bearer ${token}` }
+  const headers = { Authorization: `Bearer ${token}` };
 
   return servicesAPI
     .post('/v1/justgiving/graphql', { query }, { headers })
-    .then(response => extractData(response))
-    .then(result => lodashGet(result, 'data.deleteTimelineEntry'))
-}
+    .then((response) => extractData(response))
+    .then((result) => lodashGet(result, 'data.deleteTimelineEntry'));
+};
 
 export const deleteLegacyFitnessActivity = ({
   id = required(),
   page = required(),
-  token = required()
+  token = required(),
 }) =>
   destroy(`/v1/fitness/fundraising/${page}/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  })
+    headers: { Authorization: `Bearer ${token}` },
+  });

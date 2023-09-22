@@ -1,33 +1,29 @@
-import omit from 'lodash/omit'
-import sortBy from 'lodash/sortBy'
-import values from 'lodash/values'
+import InputDate from 'constructicon/input-date';
+import InputField from 'constructicon/input-field';
+import InputSearch from 'constructicon/input-search';
+import InputSelect from 'constructicon/input-select';
+import InputSelectImage from 'constructicon/input-select-image';
+import Label from 'constructicon/label';
+import omit from 'lodash/omit';
+import sortBy from 'lodash/sortBy';
+import values from 'lodash/values';
 
-import InputDate from 'constructicon/input-date'
-import InputField from 'constructicon/input-field'
-import InputSearch from 'constructicon/input-search'
-import InputSelect from 'constructicon/input-select'
-import Label from 'constructicon/label'
-import InputSelectImage from 'constructicon/input-select-image'
-
-export const renderInput = type => {
+export const renderInput = (type) => {
   switch (type) {
     case 'date':
-      return InputDate
+      return InputDate;
     case 'search':
-      return InputSearch
+      return InputSearch;
     case 'select':
-      return InputSelect
+      return InputSelect;
     case 'label':
-      return Label
+      return Label;
     case 'imageSelect':
-      return InputSelectImage
+      return InputSelectImage;
     default:
-      return InputField
+      return InputField;
   }
-}
+};
 
-export const renderFormFields = (
-  fields,
-  fieldsToOmit = [],
-  sortKey = 'order'
-) => sortBy(values(omit(fields, fieldsToOmit)), [sortKey])
+export const renderFormFields = (fields, fieldsToOmit = [], sortKey = 'order') =>
+  sortBy(values(omit(fields, fieldsToOmit)), [sortKey]);

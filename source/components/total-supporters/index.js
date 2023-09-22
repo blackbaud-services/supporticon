@@ -1,11 +1,11 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { usePagesTotals } from '../../hooks/use-pages-totals'
-import { formatNumber, setLocaleFromCountry } from '../../utils/numbers'
+import Icon from 'constructicon/icon';
+import Loading from 'constructicon/loading';
+import Metric from 'constructicon/metric';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import Icon from 'constructicon/icon'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
+import { usePagesTotals } from '../../hooks/use-pages-totals';
+import { formatNumber, setLocaleFromCountry } from '../../utils/numbers';
 
 const TotalSupporters = ({
   active,
@@ -24,77 +24,54 @@ const TotalSupporters = ({
   tagId,
   tagValue,
   type,
-  startDate
+  startDate,
 }) => {
-  const { data, status } = usePagesTotals({
-    active,
-    campaign,
-    charity,
-    event,
-    country,
-    type,
-    startDate,
-    endDate,
-    tagId,
-    tagValue
-  }, { refetchInterval })
+  const { data, status } = usePagesTotals(
+    {
+      active,
+      campaign,
+      charity,
+      event,
+      country,
+      type,
+      startDate,
+      endDate,
+      tagId,
+      tagValue,
+    },
+    { refetchInterval }
+  );
 
-  if (status === 'error') return <Icon name='warning' />
+  if (status === 'error') return <Icon name="warning" />;
 
   if (status === 'success') {
     const formattedAmount = formatNumber({
       amount: (offset + data) * multiplier,
       locale: setLocaleFromCountry(country),
-      places
-    })
+      places,
+    });
 
-    return (
-      <Metric
-        icon={icon}
-        label={label}
-        amount={formattedAmount}
-        {...metric}
-      />
-    )
+    return <Metric icon={icon} label={label} amount={formattedAmount} {...metric} />;
   }
 
-  return <Loading />
-}
+  return <Loading />;
+};
 
 TotalSupporters.propTypes = {
   /**
    * The campaign uid to fetch totals for
    */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]),
 
   /**
    * The charity uid to fetch totals for
    */
-  activity: PropTypes.oneOf([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  activity: PropTypes.oneOf([PropTypes.string, PropTypes.object, PropTypes.array]),
 
   /**
    * Country code for API (JG only)
    */
-  country: PropTypes.oneOf([
-    'au',
-    'ca',
-    'gb',
-    'hk',
-    'ie',
-    'nz',
-    'sg',
-    'uk',
-    'us',
-    'za'
-  ]),
+  country: PropTypes.oneOf(['au', 'ca', 'gb', 'hk', 'ie', 'nz', 'sg', 'uk', 'us', 'za']),
 
   /**
    * The type of page to include in the leaderboard
@@ -142,11 +119,7 @@ TotalSupporters.propTypes = {
    * - Array of custom paths
    * - An element to use instead e.g. <i className='fa fa-heart' />
    */
-  icon: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array,
-    PropTypes.element
-  ]),
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.element]),
 
   /**
    * Props to be passed to the Constructicon Metric component
@@ -166,8 +139,8 @@ TotalSupporters.propTypes = {
   /**
    * The tag value to filter by
    */
-  tagValue: PropTypes.string
-}
+  tagValue: PropTypes.string,
+};
 
 TotalSupporters.defaultProps = {
   country: 'gb',
@@ -175,7 +148,7 @@ TotalSupporters.defaultProps = {
   offset: 0,
   multiplier: 1,
   places: 0,
-  type: 'individual'
-}
+  type: 'individual',
+};
 
-export default TotalSupporters
+export default TotalSupporters;

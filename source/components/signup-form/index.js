@@ -1,39 +1,39 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import capitalize from 'lodash/capitalize'
-import get from 'lodash/get'
-import merge from 'lodash/merge'
-import withForm from 'constructicon/with-form'
-import * as validators from 'constructicon/lib/validators'
-import { signUp } from '../../api/authentication'
-import { isStaging } from '../../utils/client'
-import { renderInput, renderFormFields } from '../../utils/form'
+import Form from 'constructicon/form';
+import Grid from 'constructicon/grid';
+import GridColumn from 'constructicon/grid-column';
+import Heading from 'constructicon/heading';
+import Icon from 'constructicon/icon';
+import InputField from 'constructicon/input-field';
+import InputSelect from 'constructicon/input-select';
+import * as validators from 'constructicon/lib/validators';
+import Modal from 'constructicon/modal';
+import RichText from 'constructicon/rich-text';
+import Section from 'constructicon/section';
+import withForm from 'constructicon/with-form';
+import capitalize from 'lodash/capitalize';
+import get from 'lodash/get';
+import merge from 'lodash/merge';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
-import Form from 'constructicon/form'
-import Grid from 'constructicon/grid'
-import GridColumn from 'constructicon/grid-column'
-import Heading from 'constructicon/heading'
-import Icon from 'constructicon/icon'
-import InputField from 'constructicon/input-field'
-import InputSelect from 'constructicon/input-select'
-import Modal from 'constructicon/modal'
-import PasswordValidations from './PasswordValidations'
-import RichText from 'constructicon/rich-text'
-import Section from 'constructicon/section'
+import { signUp } from '../../api/authentication';
+import { isStaging } from '../../utils/client';
+import { renderFormFields, renderInput } from '../../utils/form';
+import PasswordValidations from './PasswordValidations';
 
 class SignupForm extends Component {
-  constructor () {
-    super()
-    this.handleSubmit = this.handleSubmit.bind(this)
+  constructor() {
+    super();
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
       status: 'empty',
       showModal: false,
-      errors: []
-    }
+      errors: [],
+    };
   }
 
-  handleSubmit (e) {
-    e.preventDefault()
+  handleSubmit(e) {
+    e.preventDefault();
 
     const {
       authType,
@@ -43,24 +43,24 @@ class SignupForm extends Component {
       loginUrl,
       loginTarget,
       resetPasswordUrl,
-      resetPasswordTarget
-    } = this.props
+      resetPasswordTarget,
+    } = this.props;
 
-    const subdomain = isStaging() ? 'www.staging' : 'www'
-    const defaultLoginUrl = `https://${subdomain}.justgiving.com/sso`
-    const defaultResetPasswordUrl = `https://${subdomain}.justgiving.com/sso/resetpassword?ReturnUrl=https%3A%2F%2F${subdomain}.justgiving.com%2F&Context=consumer&ActionType=set_profile`
+    const subdomain = isStaging() ? 'www.staging' : 'www';
+    const defaultLoginUrl = `https://${subdomain}.justgiving.com/sso`;
+    const defaultResetPasswordUrl = `https://${subdomain}.justgiving.com/sso/resetpassword?ReturnUrl=https%3A%2F%2F${subdomain}.justgiving.com%2F&Context=consumer&ActionType=set_profile`;
 
-    return form.submit().then(data => {
+    return form.submit().then((data) => {
       this.setState({
         errors: [],
-        status: 'fetching'
-      })
+        status: 'fetching',
+      });
 
       const dataPayload = merge(
         {
           authType,
           title: data.title || 'Other',
-          ...data
+          ...data,
         },
         includeAddress && {
           address: {
@@ -69,27 +69,25 @@ class SignupForm extends Component {
             townOrCity: data.townOrCity,
             countyOrState: data.countyOrState,
             country: data.country,
-            postcodeOrZipcode: data.postcodeOrZipcode
-          }
+            postcodeOrZipcode: data.postcodeOrZipcode,
+          },
         }
-      )
+      );
 
       return signUp(dataPayload)
         .then(onSuccess)
         .then(() => this.setState({ status: 'fetched' }))
-        .catch(error => {
-          let errors = []
-          const message =
-            get(error, 'data.error.message') ||
-            get(error, 'data.errorMessage')
+        .catch((error) => {
+          let errors = [];
+          const message = get(error, 'data.error.message') || get(error, 'data.errorMessage');
 
-          const errorStatus = error ? error.status : 500
+          const errorStatus = error ? error.status : 500;
 
           switch (errorStatus) {
             case 400:
             case 406:
             case 409:
-              errors = get(error, 'data.Errors') || []
+              errors = get(error, 'data.Errors') || [];
 
               return this.setState({
                 status: 'failed',
@@ -98,62 +96,56 @@ class SignupForm extends Component {
                     case 'Password must not include email, name, or a commonly used word':
                       return {
                         code: errorStatus,
-                        message:
-                          'Your password must not include your name or email address'
-                      }
+                        message: 'Your password must not include your name or email address',
+                      };
                     case 'Sorry something went wrong RALJGU':
                       return {
                         code: errorStatus,
-                        message: 'The email domain you have used is not allowed. Please change your email address.'
-                      }
+                        message:
+                          'The email domain you have used is not allowed. Please change your email address.',
+                      };
                     case 'EmailAddress is in use.':
-                      this.setState({ showModal: true })
+                      this.setState({ showModal: true });
 
                       return {
                         field: 'email',
                         message: (
                           <div key={key}>
                             <p>
-                              An account already exists for{' '}
-                              <strong>{data.email}</strong>.
+                              An account already exists for <strong>{data.email}</strong>.
                             </p>
                             <p>
                               <a
                                 href={loginUrl || defaultLoginUrl}
                                 target={loginTarget || '_blank'}
-                                rel='noreferrer'
+                                rel="noreferrer"
                               >
                                 Log in here
                               </a>
                               {' or '}
                               <a
-                                href={
-                                  resetPasswordUrl || defaultResetPasswordUrl
-                                }
+                                href={resetPasswordUrl || defaultResetPasswordUrl}
                                 target={resetPasswordTarget || '_blank'}
-                                rel='noreferrer'
+                                rel="noreferrer"
                               >
                                 reset your JustGiving password here.
                               </a>
                             </p>
                           </div>
-                        )
-                      }
+                        ),
+                      };
                     default:
-                      return { message: error.ErrorMessage, code: errorStatus }
+                      return { message: error.ErrorMessage, code: errorStatus };
                   }
-                })
-              })
+                }),
+              });
             case 422:
-              errors = get(error, 'data.error.errors') || []
+              errors = get(error, 'data.error.errors') || [];
 
               return this.setState({
                 status: 'failed',
                 errors: errors.map(({ field, message }, key) => {
-                  if (
-                    field === 'email' &&
-                    message === 'has already been taken'
-                  ) {
+                  if (field === 'email' && message === 'has already been taken') {
                     return {
                       message: (
                         <div key={key}>
@@ -163,37 +155,42 @@ class SignupForm extends Component {
                             <a
                               href={resetPasswordUrl || defaultResetPasswordUrl}
                               target={resetPasswordTarget || '_blank'}
-                              rel='noreferrer'
+                              rel="noreferrer"
                             >
                               reset your JustGiving password here.
                             </a>
                           </p>
                         </div>
-                      )
-                    }
+                      ),
+                    };
                   }
 
-                  return { message: [capitalize(field), message].join(' ') }
-                })
-              })
+                  return { message: [capitalize(field), message].join(' ') };
+                }),
+              });
             default:
               if (error && error.data.Errors && Array.isArray(error.data.Errors)) {
                 return this.setState({
                   status: 'failed',
-                  errors: error.data.Errors.map(error => ({ message: error.ErrorMessage, code: errorStatus }))
-                })
+                  errors: error.data.Errors.map((error) => ({
+                    message: error.ErrorMessage,
+                    code: errorStatus,
+                  })),
+                });
               }
 
               return this.setState({
                 status: 'failed',
-                errors: message ? [{ message }] : [{ message: 'Sorry something went wrong. Please try again' }]
-              })
+                errors: message
+                  ? [{ message }]
+                  : [{ message: 'Sorry something went wrong. Please try again' }],
+              });
           }
-        })
-    })
+        });
+    });
   }
 
-  customFields (fields) {
+  customFields(fields) {
     return renderFormFields(fields, [
       'firstName',
       'lastName',
@@ -206,11 +203,11 @@ class SignupForm extends Component {
       'countyOrState',
       'country',
       'postcodeOrZipcode',
-      'terms'
-    ])
+      'terms',
+    ]);
   }
 
-  render () {
+  render() {
     const {
       disableInvalidForm,
       form,
@@ -223,57 +220,74 @@ class SignupForm extends Component {
       legend,
       showPasswordValidations,
       submit,
-      externalValidationMessages
-    } = this.props
+      externalValidationMessages,
+    } = this.props;
 
-    const { status, errors } = this.state
-    const externalValidationStyles = { marginTop: '-1.5rem', marginBottom: '1.5rem', display: 'block', fontWeight: 'bold', fontStyle: 'italic' }
+    const { status, errors } = this.state;
+    const externalValidationStyles = {
+      marginTop: '-1.5rem',
+      marginBottom: '1.5rem',
+      display: 'block',
+      fontWeight: 'bold',
+      fontStyle: 'italic',
+    };
 
     return (
       <Form
         errors={this.state.showModal ? [] : errors}
-        icon={
-          status === 'fetching'
-            ? { name: 'loading', spin: true }
-            : { name: 'lock' }
-        }
+        icon={status === 'fetching' ? { name: 'loading', spin: true } : { name: 'lock' }}
         isDisabled={disableInvalidForm && form.invalid}
         isLoading={status === 'fetching'}
         noValidate
         onSubmit={this.handleSubmit}
         submit={submit}
-        autoComplete='off'
+        autoComplete="off"
         {...formComponent}
       >
         <Grid spacing={{ x: 0.5 }} {...grid}>
           <GridColumn sm={6} {...gridColumn}>
             <InputField {...form.fields.firstName} {...inputField} />
-            {externalValidationMessages && externalValidationMessages.firstname ? <span style={externalValidationStyles}>{externalValidationMessages.firstname}</span> : <></>}
+            {externalValidationMessages && externalValidationMessages.firstname ? (
+              <span style={externalValidationStyles}>{externalValidationMessages.firstname}</span>
+            ) : (
+              <></>
+            )}
           </GridColumn>
           <GridColumn sm={6} {...gridColumn}>
             <InputField {...form.fields.lastName} {...inputField} />
-            {externalValidationMessages && externalValidationMessages.lastname ? <span style={externalValidationStyles}>{externalValidationMessages.lastname}</span> : <></>}
+            {externalValidationMessages && externalValidationMessages.lastname ? (
+              <span style={externalValidationStyles}>{externalValidationMessages.lastname}</span>
+            ) : (
+              <></>
+            )}
           </GridColumn>
         </Grid>
 
         <InputField
           {...form.fields.email}
           {...inputField}
-          onFocus={() => this.setState(oldState => ({ ...oldState, errors: oldState.errors.filter(error => error.code !== 409) }))}
+          onFocus={() =>
+            this.setState((oldState) => ({
+              ...oldState,
+              errors: oldState.errors.filter((error) => error.code !== 409),
+            }))
+          }
         />
-        {externalValidationMessages && externalValidationMessages.email ? <span style={externalValidationStyles}>{externalValidationMessages.email}</span> : <></>}
+        {externalValidationMessages && externalValidationMessages.email ? (
+          <span style={externalValidationStyles}>{externalValidationMessages.email}</span>
+        ) : (
+          <></>
+        )}
         <InputField
           {...form.fields.password}
-          validations={
-            showPasswordValidations ? [] : form.fields.password.validations
-          }
+          validations={showPasswordValidations ? [] : form.fields.password.validations}
           {...inputField}
         />
         {showPasswordValidations && <PasswordValidations form={form} />}
 
         {includeAddress && (
           <fieldset>
-            <Heading tag='legend' {...legend}>
+            <Heading tag="legend" {...legend}>
               Address
             </Heading>
             <InputField {...form.fields.line1} {...inputField} />
@@ -291,10 +305,7 @@ class SignupForm extends Component {
                 <InputSelect {...form.fields.country} {...inputField} />
               </GridColumn>
               <GridColumn sm={4} {...gridColumn}>
-                <InputField
-                  {...form.fields.postcodeOrZipcode}
-                  {...inputField}
-                />
+                <InputField {...form.fields.postcodeOrZipcode} {...inputField} />
               </GridColumn>
             </Grid>
           </fieldset>
@@ -302,27 +313,29 @@ class SignupForm extends Component {
 
         {includeTerms && <InputField {...form.fields.terms} {...inputField} />}
 
-        {this.customFields(form.fields).map(field => {
-          const Tag = renderInput(field.type)
-          return <Tag key={field.name} {...field} {...inputField} />
+        {this.customFields(form.fields).map((field) => {
+          const Tag = renderInput(field.type);
+          return <Tag key={field.name} {...field} {...inputField} />;
         })}
 
         <Modal
           isOpen={this.state.showModal}
-          contentLabel='Errors'
+          contentLabel="Errors"
           onRequestClose={() => this.setState({ errors: [], showModal: false })}
           width={20}
           styles={{ container: { textAlign: 'center' } }}
         >
           <Section>
-            <Icon name='warning' size={3} color='danger' />
+            <Icon name="warning" size={3} color="danger" />
           </Section>
-          {errors.filter(error => error.field === 'email').map((error, i) => (
-            <RichText key={i}>{error.message}</RichText>
-          ))}
+          {errors
+            .filter((error) => error.field === 'email')
+            .map((error, i) => (
+              <RichText key={i}>{error.message}</RichText>
+            ))}
         </Modal>
       </Form>
-    )
+    );
   }
 }
 
@@ -415,8 +428,8 @@ SignupForm.propTypes = {
   /**
    * Validation messages generated from external sources
    */
-  externalValidationMessages: PropTypes.object
-}
+  externalValidationMessages: PropTypes.object,
+};
 
 SignupForm.defaultProps = {
   authType: 'Bearer',
@@ -425,20 +438,20 @@ SignupForm.defaultProps = {
   formComponent: {
     submitProps: {
       background: 'justgiving',
-      foreground: 'light'
-    }
+      foreground: 'light',
+    },
   },
   showPasswordValidations: true,
   submit: 'Sign Up',
   legend: {
     size: 0.5,
-    color: 'primary'
-  }
-}
+    color: 'primary',
+  },
+};
 
-const form = props => {
-  const includeAddress = props.includeAddress
-  const includeTerms = props.includeTerms
+const form = (props) => {
+  const { includeAddress } = props;
+  const { includeTerms } = props;
 
   const fields = merge(
     {
@@ -450,8 +463,8 @@ const form = props => {
         initial: props.initialValues ? props.initialValues.firstname : undefined,
         validators: [
           validators.required('Please enter a first name'),
-          validators.alphaNumericSpecial('Please enter a valid first name')
-        ]
+          validators.alphaNumericSpecial('Please enter a valid first name'),
+        ],
       },
       lastName: {
         label: 'Last name',
@@ -461,8 +474,8 @@ const form = props => {
         initial: props.initialValues ? props.initialValues.lastname : undefined,
         validators: [
           validators.required('Please enter a last name'),
-          validators.alphaNumericSpecial('Please enter a valid last name')
-        ]
+          validators.alphaNumericSpecial('Please enter a valid last name'),
+        ],
       },
       email: {
         label: 'Email address',
@@ -472,8 +485,8 @@ const form = props => {
         initial: props.initialValues ? props.initialValues.email : undefined,
         validators: [
           validators.required('Email is a required field'),
-          validators.email('Must be a valid email')
-        ]
+          validators.email('Must be a valid email'),
+        ],
       },
       password: {
         label: 'Password',
@@ -495,32 +508,30 @@ const form = props => {
           validators.doesNotContainField(
             'email',
             'Your password must not include your email address'
-          )
-        ]
-      }
+          ),
+        ],
+      },
     },
     includeAddress && {
       line1: {
         label: 'Street address',
         type: 'text',
         required: true,
-        validators: [validators.required('Please enter your street address')]
+        validators: [validators.required('Please enter your street address')],
       },
       line2: {
         label: 'Unit / Townhouse / Level',
-        type: 'text'
+        type: 'text',
       },
       townOrCity: {
         label: 'Town / City',
         type: 'text',
         required: true,
-        validators: [
-          validators.required('Please enter your town, city or locality')
-        ]
+        validators: [validators.required('Please enter your town, city or locality')],
       },
       countyOrState: {
         label: 'County / State',
-        type: 'text'
+        type: 'text',
       },
       country: {
         label: 'Country',
@@ -531,55 +542,51 @@ const form = props => {
           {
             label: 'Select a country',
             value: '',
-            disabled: true
+            disabled: true,
           },
           {
             label: 'United Kingdom',
-            value: 'GB'
+            value: 'GB',
           },
           {
             label: 'Ireland',
-            value: 'IE'
+            value: 'IE',
           },
           {
             label: 'Hong Kong',
-            value: 'HK'
+            value: 'HK',
           },
           {
             label: 'Australia',
-            value: 'AU'
+            value: 'AU',
           },
           {
             label: 'United States',
-            value: 'US'
-          }
-        ]
+            value: 'US',
+          },
+        ],
       },
       postcodeOrZipcode: {
         label: 'Postcode',
         type: 'text',
         maxLength: 8,
         required: true,
-        validators: [validators.required('Please enter your postcode / zip')]
-      }
+        validators: [validators.required('Please enter your postcode / zip')],
+      },
     },
     includeTerms && {
       terms: {
         label: (
           <span>
             I agree to JustGiving's{' '}
-            <a
-              target='_blank'
-              href='https://www.justgiving.com/info/privacy/'
-              rel='noreferrer'
-            >
+            <a target="_blank" href="https://www.justgiving.com/info/privacy/" rel="noreferrer">
               Privacy Policy
             </a>{' '}
             and{' '}
             <a
-              target='_blank'
-              href='https://www.justgiving.com/info/terms-of-service/'
-              rel='noreferrer'
+              target="_blank"
+              href="https://www.justgiving.com/info/terms-of-service/"
+              rel="noreferrer"
             >
               Terms of Service
             </a>
@@ -587,15 +594,13 @@ const form = props => {
         ),
         type: 'checkbox',
         required: true,
-        validators: [
-          validators.required('You must agree to the terms to continue')
-        ]
-      }
+        validators: [validators.required('You must agree to the terms to continue')],
+      },
     },
     props.fields
-  )
+  );
 
-  return { fields }
-}
+  return { fields };
+};
 
-export default withForm(form)(SignupForm)
+export default withForm(form)(SignupForm);

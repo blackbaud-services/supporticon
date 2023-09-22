@@ -1,72 +1,70 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import capitalize from 'lodash/capitalize'
-import get from 'lodash/get'
-import merge from 'lodash/merge'
-import dayjs from 'dayjs'
-import withForm from 'constructicon/with-form'
-import * as validators from 'constructicon/lib/validators'
-import { createFitnessActivity } from '../../api/fitness-activities'
+import Form from 'constructicon/form';
+import Grid from 'constructicon/grid';
+import GridColumn from 'constructicon/grid-column';
+import InputField from 'constructicon/input-field';
+import InputSelect from 'constructicon/input-select';
+import * as validators from 'constructicon/lib/validators';
+import withForm from 'constructicon/with-form';
+import dayjs from 'dayjs';
+import capitalize from 'lodash/capitalize';
+import get from 'lodash/get';
+import merge from 'lodash/merge';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
-import Form from 'constructicon/form'
-import Grid from 'constructicon/grid'
-import GridColumn from 'constructicon/grid-column'
-import InputField from 'constructicon/input-field'
-import InputSelect from 'constructicon/input-select'
+import { createFitnessActivity } from '../../api/fitness-activities';
 
 class CreateFitnessForm extends Component {
-  constructor (props) {
-    super(props)
-    this.handleSubmit = this.handleSubmit.bind(this)
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
       status: 'empty',
-      errors: []
-    }
+      errors: [],
+    };
   }
 
-  handleSubmit (e) {
-    e.preventDefault()
+  handleSubmit(e) {
+    e.preventDefault();
 
-    const { pageSlug, pageId, form, onSuccess, token, userId } = this.props
+    const { pageSlug, pageId, form, onSuccess, token, userId } = this.props;
 
-    return form.submit().then(data => {
-      this.setState({ errors: [], status: 'fetching' })
+    return form.submit().then((data) => {
+      this.setState({ errors: [], status: 'fetching' });
 
       const dataPayload = merge(data, {
         pageId,
         pageSlug,
         token,
         userId,
-        startedAt: dayjs(data.startedAt).isSame(dayjs(), 'day')
-          ? dayjs().format()
-          : data.startedAt,
-        type: data.type
-      })
+        startedAt: dayjs(data.startedAt).isSame(dayjs(), 'day') ? dayjs().format() : data.startedAt,
+        type: data.type,
+      });
 
       return Promise.resolve()
         .then(() => createFitnessActivity(dataPayload))
-        .then(result => {
-          this.setState({ status: 'fetched' })
-          return onSuccess(result, dataPayload)
+        .then((result) => {
+          this.setState({ status: 'fetched' });
+          return onSuccess(result, dataPayload);
         })
-        .catch(error => {
+        .catch((error) => {
           const message =
             get(error, 'data.error.message') ||
             get(error, 'data.errorMessage') ||
             get(error, 'message') ||
-            'There was an unexpected error'
+            'There was an unexpected error';
 
           this.setState({
             status: 'failed',
-            errors: message ? [{ message }] : []
-          })
+            errors: message ? [{ message }] : [],
+          });
 
-          return Promise.reject(error)
-        })
-    })
+          return Promise.reject(error);
+        });
+    });
   }
 
-  render () {
+  render() {
     const {
       disableInvalidForm,
       form,
@@ -79,10 +77,10 @@ class CreateFitnessForm extends Component {
       includeType,
       includeUnit,
       inputField,
-      submit
-    } = this.props
+      submit,
+    } = this.props;
 
-    const { status, errors } = this.state
+    const { status, errors } = this.state;
 
     return (
       <Form
@@ -92,28 +90,26 @@ class CreateFitnessForm extends Component {
         noValidate
         onSubmit={this.handleSubmit}
         submit={submit}
-        autoComplete='off'
+        autoComplete="off"
         {...formComponent}
       >
         <Grid spacing={{ x: 0.5 }}>
-          {includeUnit
-            ? (
-              <GridColumn>
-                <Grid spacing={{ x: 0.25 }}>
-                  <GridColumn xs={7} sm={7.5} md={8} lg={9}>
-                    <InputField {...form.fields.distance} {...inputField} />
-                  </GridColumn>
-                  <GridColumn xs={5} sm={4.5} md={4} lg={3}>
-                    <InputSelect {...form.fields.unit} {...inputField} />
-                  </GridColumn>
-                </Grid>
-              </GridColumn>
-              )
-            : (
-              <GridColumn>
-                <InputField {...form.fields.distance} {...inputField} />
-              </GridColumn>
-              )}
+          {includeUnit ? (
+            <GridColumn>
+              <Grid spacing={{ x: 0.25 }}>
+                <GridColumn xs={7} sm={7.5} md={8} lg={9}>
+                  <InputField {...form.fields.distance} {...inputField} />
+                </GridColumn>
+                <GridColumn xs={5} sm={4.5} md={4} lg={3}>
+                  <InputSelect {...form.fields.unit} {...inputField} />
+                </GridColumn>
+              </Grid>
+            </GridColumn>
+          ) : (
+            <GridColumn>
+              <InputField {...form.fields.distance} {...inputField} />
+            </GridColumn>
+          )}
 
           {includeDuration && (
             <GridColumn lg={includeElevation ? 6 : 12}>
@@ -161,16 +157,12 @@ class CreateFitnessForm extends Component {
 
           {includeDescription && (
             <GridColumn>
-              <InputField
-                {...form.fields.description}
-                {...inputField}
-                maxLength={600}
-              />
+              <InputField {...form.fields.description} {...inputField} maxLength={600} />
             </GridColumn>
           )}
         </Grid>
       </Form>
-    )
+    );
   }
 }
 
@@ -278,8 +270,8 @@ CreateFitnessForm.propTypes = {
   /**
    * Only allow fitness on or before this date
    */
-  endDate: PropTypes.string
-}
+  endDate: PropTypes.string,
+};
 
 CreateFitnessForm.defaultProps = {
   disableInvalidForm: false,
@@ -294,10 +286,10 @@ CreateFitnessForm.defaultProps = {
   submit: 'Log fitness activity',
   type: 'walk',
   types: ['walk', 'run', 'ride', 'swim', 'wheelchair'],
-  uom: 'km'
-}
+  uom: 'km',
+};
 
-const form = props => {
+const form = (props) => {
   return {
     fields: merge(
       {
@@ -308,35 +300,31 @@ const form = props => {
           initial: '0',
           min: 0,
           required: true,
-          validators: [
-            validators.required(
-              `Please enter a ${props.distanceLabel.toLowerCase()}`
-            )
-          ]
+          validators: [validators.required(`Please enter a ${props.distanceLabel.toLowerCase()}`)],
         },
         type: {
           label: 'Activity Type',
           type: 'select',
           initial: props.type,
-          options: props.types.map(value => ({
+          options: props.types.map((value) => ({
             value,
-            label: capitalize(value)
-          }))
-        }
+            label: capitalize(value),
+          })),
+        },
       },
       {
         ...(props.includeTitle && {
           description: {
             label: 'Title',
-            placeholder: 'Morning Exercise'
-          }
+            placeholder: 'Morning Exercise',
+          },
         }),
         ...(props.includeDescription && {
           description: {
             label: 'Description',
             type: 'contenteditable',
-            placeholder: 'Describe your activity...'
-          }
+            placeholder: 'Describe your activity...',
+          },
         }),
         ...(props.includeDate && {
           startedAt: {
@@ -344,39 +332,34 @@ const form = props => {
             initial: dayjs().format('YYYY-MM-DD'),
             type: 'date',
             validators: [
-              val =>
-                val && dayjs(val).isAfter() && "Date can't be in the future",
-              val =>
+              (val) => val && dayjs(val).isAfter() && "Date can't be in the future",
+              (val) =>
                 val &&
                 props.startDate &&
                 dayjs(val).isBefore(dayjs(props.startDate)) &&
-                `Date can't be before ${dayjs(props.startDate).format(
-                  'MMMM Do'
-                )}`,
-              val =>
+                `Date can't be before ${dayjs(props.startDate).format('MMMM Do')}`,
+              (val) =>
                 val &&
                 props.endDate &&
                 dayjs(val).isAfter(dayjs(props.endDate)) &&
-                `Date can't be after ${dayjs(props.startDate).format(
-                  'MMMM Do'
-                )}`
-            ]
-          }
+                `Date can't be after ${dayjs(props.startDate).format('MMMM Do')}`,
+            ],
+          },
         }),
         ...(props.includeUnit && {
           unit: {
             type: 'select',
             label: '​',
             initial: props.uom,
-            options: ['km', 'mi'].map(value => ({ value, label: value }))
-          }
+            options: ['km', 'mi'].map((value) => ({ value, label: value })),
+          },
         }),
         ...(props.includeDuration && {
           duration: {
             type: 'number',
             label: 'Time',
             initial: '0',
-            min: 0
+            min: 0,
           },
           durationUnit: {
             type: 'select',
@@ -384,27 +367,27 @@ const form = props => {
             initial: 'minutes',
             options: [
               { value: 'minutes', label: 'mins' },
-              { value: 'hours', label: 'hrs' }
-            ]
-          }
+              { value: 'hours', label: 'hrs' },
+            ],
+          },
         }),
         ...(props.includeElevation && {
           elevation: {
             type: 'number',
             label: 'Elevation',
             initial: '0',
-            min: 0
+            min: 0,
           },
           elevationUnit: {
             type: 'select',
             label: '​',
             initial: props.uom === 'mi' ? 'ft' : 'm',
-            options: ['m', 'ft'].map(value => ({ value, label: value }))
-          }
-        })
+            options: ['m', 'ft'].map((value) => ({ value, label: value })),
+          },
+        }),
       }
-    )
-  }
-}
+    ),
+  };
+};
 
-export default withForm(form)(CreateFitnessForm)
+export default withForm(form)(CreateFitnessForm);

@@ -1,16 +1,16 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import dayjs from 'dayjs'
-import { formatNumber } from '../../utils/numbers'
-import { convertMetersToUnit } from '../../utils/units'
-import { useFitnessTotals } from '../../hooks/use-fitness-totals'
+import Grid from 'constructicon/grid';
+import GridColumn from 'constructicon/grid-column';
+import Heading from 'constructicon/heading';
+import Loading from 'constructicon/loading';
+import Metric from 'constructicon/metric';
+import Progress from 'constructicon/progress-bar';
+import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import Grid from 'constructicon/grid'
-import GridColumn from 'constructicon/grid-column'
-import Heading from 'constructicon/heading'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
-import Progress from 'constructicon/progress-bar'
+import { useFitnessTotals } from '../../hooks/use-fitness-totals';
+import { formatNumber } from '../../utils/numbers';
+import { convertMetersToUnit } from '../../utils/units';
 
 const FitnessProgressBar = ({
   campaign,
@@ -29,60 +29,59 @@ const FitnessProgressBar = ({
   target,
   targetLabel,
   travelledLabel,
-  unit
+  unit,
 }) => {
-  const { data, status } = useFitnessTotals({
-    campaign,
-    startDate,
-    endDate
-  }, { refetchInterval })
+  const { data, status } = useFitnessTotals(
+    {
+      campaign,
+      startDate,
+      endDate,
+    },
+    { refetchInterval }
+  );
 
-  const calculateDaysRemaining = eventDate => {
-    const today = dayjs()
-    const eventDateObj = dayjs(eventDate)
-    const daysDiff = Math.ceil(eventDateObj.diff(today, 'days', true)) // we want to round up
-    return Math.max(0, daysDiff)
-  }
+  const calculateDaysRemaining = (eventDate) => {
+    const today = dayjs();
+    const eventDateObj = dayjs(eventDate);
+    const daysDiff = Math.ceil(eventDateObj.diff(today, 'days', true)); // we want to round up
+    return Math.max(0, daysDiff);
+  };
 
   const calculatePercentage = () =>
-    Math.min(100, Math.floor(((data.distance / 1000 + offset) / target) * 100))
+    Math.min(100, Math.floor(((data.distance / 1000 + offset) / target) * 100));
 
   if (status === 'success') {
-    const distance = convertMetersToUnit(data.distance, unit)
-    const progress = calculatePercentage()
+    const distance = convertMetersToUnit(data.distance, unit);
+    const progress = calculatePercentage();
 
     return (
       <Grid spacing={0.25} {...grid}>
         <GridColumn xs={6}>
           <Metric
-            align='left'
+            align="left"
             label={distanceLabel}
             amount={`${formatNumber({
               amount: distance + offset,
-              places
+              places,
             })}${unit}`}
             {...metric}
           />
         </GridColumn>
-        <GridColumn xs={6} xsAlign='right'>
+        <GridColumn xs={6} xsAlign="right">
           <Metric
-            align='right'
+            align="right"
             label={targetLabel}
             amount={`${formatNumber({ amount: target, places })}${unit}`}
             {...metric}
           />
         </GridColumn>
         <GridColumn>
-          <Progress
-            alt={`${progress}% there`}
-            progress={progress}
-            {...progressBar}
-          />
+          <Progress alt={`${progress}% there`} progress={progress} {...progressBar} />
         </GridColumn>
         <GridColumn xs={6}>
           {travelledLabel && (
             <>
-              <Heading size={0} tag='strong' {...heading}>
+              <Heading size={0} tag="strong" {...heading}>
                 {progress}%
               </Heading>{' '}
               {travelledLabel}
@@ -90,19 +89,19 @@ const FitnessProgressBar = ({
           )}
         </GridColumn>
         {remainingLabel && eventDate && (
-          <GridColumn xs={6} xsAlign='right'>
-            <Heading size={0} tag='strong' {...heading}>
+          <GridColumn xs={6} xsAlign="right">
+            <Heading size={0} tag="strong" {...heading}>
               {calculateDaysRemaining(eventDate)}
             </Heading>{' '}
             {remainingLabel}
           </GridColumn>
         )}
       </Grid>
-    )
+    );
   }
 
-  return <Loading />
-}
+  return <Loading />;
+};
 
 FitnessProgressBar.propTypes = {
   /**
@@ -183,13 +182,13 @@ FitnessProgressBar.propTypes = {
   /**
    * Interval (in milliseconds) to refresh data from API
    */
-  refreshInterval: PropTypes.number
-}
+  refreshInterval: PropTypes.number,
+};
 
 FitnessProgressBar.defaultProps = {
   places: 0,
   unit: 'km',
-  offset: 0
-}
+  offset: 0,
+};
 
-export default FitnessProgressBar
+export default FitnessProgressBar;

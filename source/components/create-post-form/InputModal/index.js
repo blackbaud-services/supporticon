@@ -1,11 +1,10 @@
-import React, { Fragment } from 'react'
-import withToggle from 'constructicon/with-toggle'
-import { formatFileSize } from 'constructicon/lib/files'
-
-import Button from 'constructicon/button'
-import Card from 'constructicon/leaderboard-item'
-import Icon from 'constructicon/icon'
-import Modal from 'constructicon/modal'
+import Button from 'constructicon/button';
+import Icon from 'constructicon/icon';
+import Card from 'constructicon/leaderboard-item';
+import { formatFileSize } from 'constructicon/lib/files';
+import Modal from 'constructicon/modal';
+import withToggle from 'constructicon/with-toggle';
+import React, { Fragment } from 'react';
 
 const InputModal = ({
   buttonProps,
@@ -16,7 +15,7 @@ const InputModal = ({
   onToggleOff,
   toggled,
   type,
-  width
+  width,
 }) => {
   const cardData = () => {
     switch (type) {
@@ -24,43 +23,41 @@ const InputModal = ({
         return {
           image: data.thumbnail_url,
           subtitle: [data.author_name, data.provider_name].join(' - '),
-          title: data.title
-        }
+          title: data.title,
+        };
       default:
         return {
           image: data.preview,
           subtitle: formatFileSize(data.image.size),
-          title: data.image.name
-        }
+          title: data.image.name,
+        };
     }
-  }
+  };
 
-  const label = `Add ${type === 'image' ? 'an' : 'a'} ${type}`
+  const label = `Add ${type === 'image' ? 'an' : 'a'} ${type}`;
 
   return (
     <>
-      {data
-        ? (
-          <Button {...buttonProps} block spacing={0.25} onClick={onToggle}>
-            <Card {...cardProps} {...cardData()} />
-          </Button>
-          )
-        : (
-          <Button
-            {...buttonProps}
-            aria-label={label}
-            block
-            spacing={0.5}
-            onClick={onToggle}
-            background='transparent'
-            borderColor='primary'
-            borderWidth={2}
-            foreground='primary'
-          >
-            <Icon name={type} />
-            <span>{label}</span>
-          </Button>
-          )}
+      {data ? (
+        <Button {...buttonProps} block spacing={0.25} onClick={onToggle}>
+          <Card {...cardProps} {...cardData()} />
+        </Button>
+      ) : (
+        <Button
+          {...buttonProps}
+          aria-label={label}
+          block
+          spacing={0.5}
+          onClick={onToggle}
+          background="transparent"
+          borderColor="primary"
+          borderWidth={2}
+          foreground="primary"
+        >
+          <Icon name={type} />
+          <span>{label}</span>
+        </Button>
+      )}
       <Modal
         width={width}
         isOpen={toggled}
@@ -73,8 +70,8 @@ const InputModal = ({
         </Button>
       </Modal>
     </>
-  )
-}
+  );
+};
 
 InputModal.defaultProps = {
   cardProps: {
@@ -82,9 +79,9 @@ InputModal.defaultProps = {
     linkTag: 'div',
     tag: 'div',
     margin: 0,
-    spacing: 0
+    spacing: 0,
   },
-  width: 16
-}
+  width: 16,
+};
 
-export default withToggle(InputModal)
+export default withToggle(InputModal);

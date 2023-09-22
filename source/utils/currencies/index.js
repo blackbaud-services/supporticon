@@ -1,39 +1,39 @@
 export const currencyCode = (country = 'UK') => {
-  const countryCode = country.toLowerCase().replace(/(en|cy|fr|ga)-/, '')
+  const countryCode = country.toLowerCase().replace(/(en|cy|fr|ga)-/, '');
 
   switch (countryCode) {
     case 'au':
-      return 'AUD'
+      return 'AUD';
     case 'us':
-      return 'USD'
+      return 'USD';
     case 'ie':
-      return 'EUR'
+      return 'EUR';
     case 'nz':
-      return 'NZD'
+      return 'NZD';
     case 'sg':
-      return 'SGD'
+      return 'SGD';
     case 'hk':
-      return 'HKD'
+      return 'HKD';
     case 'ca':
-      return 'CAD'
+      return 'CAD';
     case 'za':
-      return 'ZAR'
+      return 'ZAR';
     default:
-      return 'GBP'
+      return 'GBP';
   }
-}
+};
 
 export const currencySymbol = (code = 'GBP') => {
   switch (code.toLowerCase()) {
     case 'gbp':
-      return '£'
+      return '£';
     case 'hkd':
-      return 'HK$'
+      return 'HK$';
     case 'aed':
-      return 'د.إ'
+      return 'د.إ';
     case 'eur':
-      return '€'
+      return '€';
     default:
-      return '$'
+      return '$';
   }
-}
+};

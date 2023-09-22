@@ -1,83 +1,83 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { fetchPages, deserializePage } from '../../api/pages'
-import { fetchTeams, deserializeTeam } from '../../api/teams'
+import SearchForm from 'constructicon/search-form';
+import SearchResult from 'constructicon/search-result';
+import SearchResults from 'constructicon/search-results';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
-import SearchForm from 'constructicon/search-form'
-import SearchResult from 'constructicon/search-result'
-import SearchResults from 'constructicon/search-results'
+import { deserializePage, fetchPages } from '../../api/pages';
+import { deserializeTeam, fetchTeams } from '../../api/teams';
 
 class PageSearch extends Component {
-  constructor () {
-    super()
-    this.handleSendQuery = this.handleSendQuery.bind(this)
+  constructor() {
+    super();
+    this.handleSendQuery = this.handleSendQuery.bind(this);
     this.state = {
       status: 'inactive',
       data: [],
-      teams: []
-    }
+      teams: [],
+    };
   }
 
-  componentDidMount () {
-    const { campaign, type } = this.props
+  componentDidMount() {
+    const { campaign, type } = this.props;
 
     if (!!campaign && type !== 'individual') {
-      this.setState({ status: 'fetching' })
+      this.setState({ status: 'fetching' });
       fetchTeams({ campaign, limit: 25, allTeams: true })
-        .then(teams => teams.map(deserializeTeam))
-        .then(teams =>
-          teams.map(team => ({
+        .then((teams) => teams.map(deserializeTeam))
+        .then((teams) =>
+          teams.map((team) => ({
             ...team,
             defaultImage:
-              team.image ||
-              'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
+              team.image || 'https://assets.blackbaud-sites.com/images/supporticon/user.svg',
             Link: team.url,
             owner: team.leader,
             pageId: team.id,
             pageShortName: team.slug,
             raisedAmount: team.raised,
             title: team.name,
-            type: 'team'
+            type: 'team',
           }))
         )
-        .then(teams => this.setState({ teams, status: 'fetched' }))
-        .catch(() => this.setState({ status: 'failed' }))
+        .then((teams) => this.setState({ teams, status: 'fetched' }))
+        .catch(() => this.setState({ status: 'failed' }));
     }
   }
 
-  handleFetch (params) {
+  handleFetch(params) {
     const handleFetchTeams = () =>
       Promise.resolve(
         this.state.teams.filter(
-          team => team.name.toLowerCase().indexOf(params.q.toLowerCase()) !== -1
+          (team) => team.name.toLowerCase().indexOf(params.q.toLowerCase()) !== -1
         )
-      )
+      );
 
     switch (params.type) {
       case 'team':
-        return handleFetchTeams()
+        return handleFetchTeams();
       case 'all':
-        return Promise.all([fetchPages(params), handleFetchTeams()]).then(
-          ([pages, teams]) => [...pages, ...teams]
-        )
+        return Promise.all([fetchPages(params), handleFetchTeams()]).then(([pages, teams]) => [
+          ...pages,
+          ...teams,
+        ]);
       default:
-        return fetchPages(params)
+        return fetchPages(params);
     }
   }
 
-  handleSendQuery (query) {
+  handleSendQuery(query) {
     if (!query) {
       return this.setState({
         q: null,
         status: 'inactive',
-        data: []
-      })
+        data: [],
+      });
     }
 
     this.setState({
       q: query,
-      status: 'fetching'
-    })
+      status: 'fetching',
+    });
 
     return this.handleFetch({
       q: query,
@@ -87,42 +87,40 @@ class PageSearch extends Component {
       country: this.props.country,
       type: this.props.type,
       limit: this.props.limit,
-      page: this.props.page
+      page: this.props.page,
     })
-      .then(data => data.map(this.props.deserializeMethod || deserializePage))
-      .then(data => this.filterResults(data, this.props.excludePageIds))
-      .then(data => this.setState({ data, status: 'fetched' }))
-      .catch(error => {
+      .then((data) => data.map(this.props.deserializeMethod || deserializePage))
+      .then((data) => this.filterResults(data, this.props.excludePageIds))
+      .then((data) => this.setState({ data, status: 'fetched' }))
+      .catch((error) => {
         this.setState({
-          status: 'failed'
-        })
-        return Promise.reject(error)
-      })
+          status: 'failed',
+        });
+        return Promise.reject(error);
+      });
   }
 
-  filterResults (results, excludePageIds) {
-    if (!excludePageIds) return results
+  filterResults(results, excludePageIds) {
+    if (!excludePageIds) return results;
 
-    return results.filter(result =>
+    return results.filter((result) =>
       ['id', 'slug', 'uuid'].reduce((current, key) => {
-        if (!result[key]) return current
-        return current
-          ? excludePageIds.indexOf(result[key].toString()) < 0
-          : false
+        if (!result[key]) return current;
+        return current ? excludePageIds.indexOf(result[key].toString()) < 0 : false;
       }, true)
-    )
+    );
   }
 
-  getSubtitle (subtitle, page) {
+  getSubtitle(subtitle, page) {
     switch (typeof subtitle) {
       case 'function':
-        return subtitle(page)
+        return subtitle(page);
       default:
-        return page[subtitle] ? page[subtitle] : null
+        return page[subtitle] ? page[subtitle] : null;
     }
   }
 
-  render () {
+  render() {
     return (
       <SearchForm
         onChange={this.handleSendQuery}
@@ -131,12 +129,12 @@ class PageSearch extends Component {
       >
         {this.state.status !== 'inactive' && this.renderResults()}
       </SearchForm>
-    )
+    );
   }
 
-  renderResults () {
-    const { status, q, data = [] } = this.state
-    const { subtitle } = this.props
+  renderResults() {
+    const { status, q, data = [] } = this.state;
+    const { subtitle } = this.props;
 
     return (
       <SearchResults
@@ -157,7 +155,7 @@ class PageSearch extends Component {
           />
         ))}
       </SearchResults>
-    )
+    );
   }
 }
 
@@ -165,20 +163,12 @@ PageSearch.propTypes = {
   /**
    * The campaign uid to fetch pages for
    */
-  campaign: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  campaign: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]),
 
   /**
    * The charity uid to fetch pages for
    */
-  charity: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.array
-  ]),
+  charity: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]),
 
   /**
    * The event id
@@ -233,13 +223,13 @@ PageSearch.propTypes = {
   /**
    * Props to be passed to the Button components
    */
-  button: PropTypes.object
-}
+  button: PropTypes.object,
+};
 
 PageSearch.defaultProps = {
   limit: 10,
   type: 'individual',
-  subtitle: 'charity'
-}
+  subtitle: 'charity',
+};
 
-export default PageSearch
+export default PageSearch;
