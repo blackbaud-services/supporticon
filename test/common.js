@@ -7,7 +7,7 @@ global.mocha = require('mocha');
 global.describe = mocha.describe;
 global.after = mocha.after;
 global.it = mocha.it;
-global.beforeEach = mocha.beforeEach;
+global.beforeEach = mocha.beforeEach
 
 
 
