@@ -6,10 +6,9 @@
   "scripts": {
     "start": "styleguidist server",
     "build": "babel source -d dist",
-    "test:lint": "standard -d source",
+    "lint:fix": "eslint . --fix",
     "test:unit": "mocha source/**/**/__tests__/*.js --require @babel/register --require test/common.js",
     "test": "npm run test:lint && npm run test:unit",
-    "format": "prettier-standard 'source/**/*.js'",
     "precommit": "yarn lint-staged",
     "docsify:watch": "docsify serve ./source",
     "styleguide:build": "styleguidist build",
@@ -106,9 +105,6 @@
     ]
   },
   "lint-staged": {
-    "source/**/*.js": [
-      "prettier-standard",
-      "git add"
-    ]
+    "*.{js,jsx,ts,tsx}": "yarn lint:fix"
   }
 }
