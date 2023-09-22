@@ -18,7 +18,8 @@
     "announce": "./bin/announce",
     "validate:typescript": "tsc --pretty --noEmit",
     "playground:start": "yarn webpack serve",
-    "playground:build": "yarn webpack"
+    "playground:build": "yarn webpack",
+    "pre-commit": "lint-staged"
   },
   "repository": {
     "type": "git",
@@ -45,7 +46,7 @@
     "eslint": "^8.49.0",
     "gh-pages": "^3.2.3",
     "gulp": "^4.0.2",
-    "husky": "^7.0.2",
+    "husky": "^7.0.4",
     "jsdom": "^17.0.0",
     "lint-staged": "^11.2.6",
     "lodash": "^4.17.21",
@@ -104,7 +105,14 @@
       "eslint-config-justgiving"
     ]
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "lint-staged": {
-    "*": "eslint . --fix"
+    "*.js": [
+      "eslint --fix"
+    ]
   }
 }
