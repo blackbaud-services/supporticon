@@ -14,7 +14,6 @@ import lodashSum from 'lodash/sum'
 const fetchEvent = id =>
   get(`/v1/event/${id}/pages`).then(response => response.totalFundraisingPages)
 
-
 const fetchCampaign = ({ campaign, after, limit, runningCount }) => {
   const query = `
   query getTotalsWithLeaderboard($id: ID, $after: String, $limit: Int!) {
@@ -41,13 +40,29 @@ const fetchCampaign = ({ campaign, after, limit, runningCount }) => {
     })
     .then(response => response.data)
     .then(result => {
-      const supporterCount = lodashGet(result, 'data.page.leaderboard.edges', [])
-      const pageInfo = lodashGet(result, 'data.page.leaderboard.pageInfo', undefined)
-      return {totalCount: supporterCount?.length || 0 + runningCount, pageInfo }
+      const supporterCount = lodashGet(
+        result,
+        'data.page.leaderboard.edges',
+        []
+      )
+      const pageInfo = lodashGet(
+        result,
+        'data.page.leaderboard.pageInfo',
+        undefined
+      )
+      return {
+        totalCount: supporterCount?.length || 0 + runningCount,
+        pageInfo
+      }
     })
 }
 
-const recursivelyFetchCampaign = ({ campaign, limit = 10, after, runningCount = 0 }) => {
+const recursivelyFetchCampaign = ({
+  campaign,
+  limit = 10,
+  after,
+  runningCount = 0
+}) => {
   return fetchCampaign({ campaign, limit, after, runningCount }).then(data => {
     const { hasNextPage, endCursor } = data.pageInfo
     if (hasNextPage) {
@@ -76,9 +91,7 @@ export const fetchPagesTotals = (params = required()) => {
     return fetchPagesByTag(params).then(res => res.numberOfHits)
   }
 
-  const eventIds = Array.isArray(params.event)
-    ? params.event
-    : [params.event]
+  const eventIds = Array.isArray(params.event) ? params.event : [params.event]
 
   switch (dataSource(params)) {
     case 'event':
@@ -93,13 +106,17 @@ export const fetchPagesTotals = (params = required()) => {
 
         return Promise.all(
           campaignIds.map(getUID).map(fetchCampaignTeams)
-          ).then(campaigns => campaigns.reduce((acc, total) => acc + total, 0))
+        ).then(campaigns => campaigns.reduce((acc, total) => acc + total, 0))
       } else {
         const campaignIds = Array.isArray(params.campaign)
           ? params.campaign
           : [params.campaign]
 
-        return Promise.all(campaignIds.map(id => recursivelyFetchCampaign({campaign: getUID(id)}))).then(total => lodashSum(total))
+        return Promise.all(
+          campaignIds.map(id =>
+            recursivelyFetchCampaign({ campaign: getUID(id) })
+          )
+        ).then(total => lodashSum(total))
       }
     default:
       return get(
