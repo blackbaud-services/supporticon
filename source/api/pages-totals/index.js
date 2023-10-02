@@ -14,20 +14,12 @@ import lodashSum from 'lodash/sum'
 const fetchEvent = id =>
   get(`/v1/event/${id}/pages`).then(response => response.totalFundraisingPages)
 
-const fetchCampaign = ({ campaign, after, limit, runningCount }) => {
+const fetchCampaign = ({ campaign }) => {
   const query = `
-  query getTotalsWithLeaderboard($id: ID, $after: String, $limit: Int!) {
+  query getTotalsWithLeaderboard($id: ID) {
     page(type: ONE_PAGE, id: $id) {
-        leaderboard(type: FUNDRAISERS, after: $after, first: $limit) {
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
-          edges {
-            node {
-              id
-            }
-          }
+        leaderboard(type: FUNDRAISERS, first: 1) {
+          totalCount
         }
       }
     }
@@ -36,46 +28,14 @@ const fetchCampaign = ({ campaign, after, limit, runningCount }) => {
   return servicesAPI
     .post('/v1/justgiving/graphql', {
       query,
-      variables: { id: campaign, after, limit }
+      variables: { id: campaign }
     })
     .then(response => response.data)
-    .then(result => {
-      const supporterCount = lodashGet(
+    .then(result => lodashGet(
         result,
-        'data.page.leaderboard.edges',
-        []
-      )
-      const pageInfo = lodashGet(
-        result,
-        'data.page.leaderboard.pageInfo',
-        undefined
-      )
-      return {
-        totalCount: supporterCount?.length || 0 + runningCount,
-        pageInfo
-      }
-    })
-}
-
-const recursivelyFetchCampaign = ({
-  campaign,
-  limit = 10,
-  after,
-  runningCount = 0
-}) => {
-  return fetchCampaign({ campaign, limit, after, runningCount }).then(data => {
-    const { hasNextPage, endCursor } = data.pageInfo
-    if (hasNextPage) {
-      return recursivelyFetchCampaign({
-        campaign,
-        limit,
-        after: endCursor,
-        runningCount: data.totalCount
-      })
-    } else {
-      return data.totalCount
-    }
-  })
+        'data.page.leaderboard.totalCount',
+        0
+      ))
 }
 
 const fetchCampaignTeams = id =>
@@ -114,9 +74,9 @@ export const fetchPagesTotals = (params = required()) => {
 
         return Promise.all(
           campaignIds.map(id =>
-            recursivelyFetchCampaign({ campaign: getUID(id) })
-          )
-        ).then(total => lodashSum(total))
+            fetchCampaign({ campaign: getUID(id) })
+          ).then(total => lodashSum(total))
+        )
       }
     default:
       return get(
