@@ -31,11 +31,7 @@ const fetchCampaign = ({ campaign }) => {
       variables: { id: campaign }
     })
     .then(response => response.data)
-    .then(result => lodashGet(
-        result,
-        'data.page.leaderboard.totalCount',
-        0
-      ))
+    .then(result => lodashGet(result, 'data.page.leaderboard.totalCount', 0))
 }
 
 const fetchCampaignTeams = id =>
@@ -73,10 +69,9 @@ export const fetchPagesTotals = (params = required()) => {
           : [params.campaign]
 
         return Promise.all(
-          campaignIds.map(id =>
-            fetchCampaign({ campaign: getUID(id) })
-          ).then(total => lodashSum(total))
-        )
+          campaignIds
+            .map(id => fetchCampaign({ campaign: getUID(id) }))
+        ).then(total => lodashSum(total))
       }
     default:
       return get(
