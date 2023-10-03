@@ -8,14 +8,31 @@ import {
 } from '../../utils/params'
 import { currencyCode } from '../../utils/currencies'
 import { fetchPagesByTag } from '../pages'
+import lodashGet from 'lodash/get'
+import lodashSum from 'lodash/sum'
 
 const fetchEvent = id =>
   get(`/v1/event/${id}/pages`).then(response => response.totalFundraisingPages)
 
-const fetchCampaign = id =>
-  servicesAPI
-    .get(`/v1/justgiving/campaigns/${id}/leaderboard?active=false`)
-    .then(({ data }) => data.meta.totalResults)
+const fetchCampaign = ({ campaign }) => {
+  const query = `
+  query getTotalsWithLeaderboard($id: ID) {
+    page(type: ONE_PAGE, id: $id) {
+        leaderboard(type: FUNDRAISERS, first: 1) {
+          totalCount
+        }
+      }
+    }
+  `
+
+  return servicesAPI
+    .post('/v1/justgiving/graphql', {
+      query,
+      variables: { id: campaign }
+    })
+    .then(response => response.data)
+    .then(result => lodashGet(result, 'data.page.leaderboard.totalCount', 0))
+}
 
 const fetchCampaignTeams = id =>
   servicesAPI
@@ -30,9 +47,7 @@ export const fetchPagesTotals = (params = required()) => {
     return fetchPagesByTag(params).then(res => res.numberOfHits)
   }
 
-  const eventIds = Array.isArray(params.event)
-    ? params.event
-    : [params.event]
+  const eventIds = Array.isArray(params.event) ? params.event : [params.event]
 
   switch (dataSource(params)) {
     case 'event':
@@ -53,9 +68,10 @@ export const fetchPagesTotals = (params = required()) => {
           ? params.campaign
           : [params.campaign]
 
-        return Promise.all(campaignIds.map(getUID).map(fetchCampaign)).then(
-          campaigns => campaigns.reduce((acc, total) => acc + total, 0)
-        )
+        return Promise.all(
+          campaignIds
+            .map(id => fetchCampaign({ campaign: getUID(id) }))
+        ).then(total => lodashSum(total))
       }
     default:
       return get(

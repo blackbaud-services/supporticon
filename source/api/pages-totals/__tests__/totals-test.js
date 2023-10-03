@@ -21,9 +21,7 @@ describe('Fetch Pages Totals', () => {
     fetchPagesTotals({ event: 12345 })
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.equal(
-        '/v1/event/12345/pages'
-      )
+      expect(request.url).to.equal('/v1/event/12345/pages')
       done()
     })
   })
@@ -33,7 +31,7 @@ describe('Fetch Pages Totals', () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent()
       expect(request.url).to.include(
-        '/v1/justgiving/campaigns/12345/leaderboard'
+        '/v1/justgiving/graphql'
       )
       done()
     })
