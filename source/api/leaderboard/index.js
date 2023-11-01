@@ -44,8 +44,7 @@ export const fetchLeaderboard = (params = required()) => {
       type: 'campaign'
     })
       .then(results => removeExcludedPages(results, params.excludePageIds))
-      .then(results =>
-        results.filter(item => lodashGet(item, 'amounts[0].value', 0) > 0)
+      .then(results => params.includeZeroAmountPages ? results : results.filter(item => lodashGet(item, 'amounts[0].value', 0) > 0)
       )
   }
 
@@ -181,7 +180,7 @@ export const fetchCampaignGraphqlLeaderboard = params => {
   )
     .then(pages => flatMap(pages))
     .then(pages =>
-      pages.filter(item => lodashGet(item, 'donationSummary.totalAmount.value'))
+      params.includeZeroAmountPages ? pages : pages.filter(item => lodashGet(item, 'donationSummary.totalAmount.value'))
     )
     .then(pages =>
       orderBy(pages, ['donationSummary.totalAmount.value'], ['desc'])
