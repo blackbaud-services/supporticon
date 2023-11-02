@@ -404,24 +404,21 @@ export const fetchTeamPages = (slug, options = {}) => {
 }
 
 export const checkTeamSlugAvailable = (
-  slug = required(),
-  { authType = 'Bearer', token = required() }
+  slug = required()
 ) => {
-  const options = {
-    headers: {
-      Authorization: `${authType} ${token}`,
-      'x-api-key': client.instance.defaults.headers['x-api-key']
+  const query = `
+  query fetchTeamPageBySlug ($slug: Slug) {
+    page(type: TEAM, slug: $slug) {
+      id
     }
-  }
+  }`
 
   return client.servicesAPI
-    .get(
-      `/v1/justgiving/proxy/campaigns/v1/teams/shortNames/${slug}/isAvailable`,
-      options
-    )
-    .then(response => response.data.isAvailable)
-    .then(isAvailable => (isAvailable ? slug : appendIdToSlug(slug)))
-    .catch(() => appendIdToSlug(slug))
+    .post('/v1/justgiving/graphql', { query, variables: { slug } })
+    .then(response => get(response.data, 'data.page'))
+    // if page is null, slug is available
+    .then(page => page === null ? slug : appendIdToSlug(slug))
+    .catch(()=> appendIdToSlug(slug))
 }
 
 // Take an existing slug
@@ -478,7 +475,7 @@ export const createTeam = params => {
     }
   }
 
-  return checkTeamSlugAvailable(payload.teamShortName, { authType, token })
+  return checkTeamSlugAvailable(payload.teamShortName)
     .then(teamShortName =>
       client.put('/v2/teams', { ...payload, teamShortName }, options)
     )

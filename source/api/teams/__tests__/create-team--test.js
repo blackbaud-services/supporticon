@@ -38,7 +38,7 @@ describe('Create a Team', () => {
       // expect(shortNameRequest.config.baseURL).to.eql('https://api.blackbaud.services')
       expect(['https://api.blackbaud.services', 'https://api-staging.blackbaud.services']).to.include(shortNameRequest.config.baseURL)
       expect(shortNameRequest.url).to.contain(
-        '/v1/justgiving/proxy/campaigns/v1/teams/shortNames/my-team/isAvailable'
+        '/v1/justgiving/graphql'
       )
 
       moxios.wait(() => {
