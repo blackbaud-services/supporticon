@@ -404,23 +404,21 @@ export const fetchTeamPages = (slug, options = {}) => {
 
 export const checkTeamSlugAvailable = (
   slug = required(),
-  { authType = 'Bearer', token = required() }
 ) => {
   const options = {
     headers: {
-      Authorization: `${authType} ${token}`,
       'x-api-key': client.instance.defaults.headers['x-api-key']
     }
   }
 
-  return client.servicesAPI
-    .get(
-      `/v1/justgiving/proxy/campaigns/v1/teams/shortNames/${slug}/isAvailable`,
+  return client
+    .head(
+      '/v1/teams/duk-swimmers-7pihuns',
       options
     )
-    .then(response => response.data.isAvailable)
-    .then(isAvailable => (isAvailable ? slug : appendIdToSlug(slug)))
-    .catch(() => appendIdToSlug(slug))
+    .then((res) => {
+      if (res.status === 200) return appendIdToSlug(slug)
+    }).catch(err => { if (err.status === 404) return slug })
 }
 
 // Take an existing slug
