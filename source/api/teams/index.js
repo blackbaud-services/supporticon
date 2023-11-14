@@ -35,9 +35,8 @@ export const deserializeTeam = team => {
       const page = deserializePage(member)
       const pageFitness = find(membersFitness, p => p.ID === page.uuid) || {}
       const teamMember = {
-        donationUrl: `${baseUrl('www')}/${
-          member.fundraisingPageShortName
-        }/donate`,
+        donationUrl: `${baseUrl('www')}/${member.fundraisingPageShortName
+          }/donate`,
         image: member.profileImage,
         name: `${member.fundraisingPageName}`,
         url: `${baseUrl()}/${member.fundraisingPageShortName}`
@@ -148,40 +147,40 @@ export const searchTeams = ({ campaign, after, limit }) => {
     .then(leaderboard => {
       const formattedTeams = leaderboard
         ? leaderboard.edges.map(
-            ({
-              node: {
-                legacyId,
-                slug,
-                title,
-                owner,
-                targetWithCurrency,
-                donationSummary,
-                cover,
-                supporters
-              }
-            }) => {
-              return {
-                teamGuid: legacyId,
-                shortName: slug,
-                name: title,
-                numberOfSupporters: supporters.totalCount,
-                captain: {
-                  userGuid: owner.legacyId,
-                  firstName: owner.name?.split(' ')[0],
-                  lastName: owner.name?.split(' ')[1],
-                  profileImage: owner.avatar
-                },
-                fundraisingConfiguration: {
-                  currencyCode: targetWithCurrency.currencyCode,
-                  targetAmount: targetWithCurrency.value
-                },
-                donationSummary: {
-                  totalAmount: donationSummary.totalAmount.value
-                },
-                coverImageName: cover?.caption
-              }
+          ({
+            node: {
+              legacyId,
+              slug,
+              title,
+              owner,
+              targetWithCurrency,
+              donationSummary,
+              cover,
+              supporters
             }
-          )
+          }) => {
+            return {
+              teamGuid: legacyId,
+              shortName: slug,
+              name: title,
+              numberOfSupporters: supporters.totalCount,
+              captain: {
+                userGuid: owner.legacyId,
+                firstName: owner.name?.split(' ')[0],
+                lastName: owner.name?.split(' ')[1],
+                profileImage: owner.avatar
+              },
+              fundraisingConfiguration: {
+                currencyCode: targetWithCurrency.currencyCode,
+                targetAmount: targetWithCurrency.value
+              },
+              donationSummary: {
+                totalAmount: donationSummary.totalAmount.value
+              },
+              coverImageName: cover?.caption
+            }
+          }
+        )
         : []
       return { results: formattedTeams, pageInfo: leaderboard?.pageInfo || { hasNextPage: false } }
     })
@@ -446,7 +445,6 @@ export const createTeam = params => {
     coverPhotoId,
     slug,
     target = 1000,
-    targetType = 'Fixed',
     targetCurrency = 'GBP',
     teamType = 'Open',
     token = required()
@@ -457,19 +455,18 @@ export const createTeam = params => {
   }
 
   const payload = {
-    campaignGuid: campaignId,
-    captainPageShortName: captainSlug,
-    coverPhotoId,
-    name: name
+    Name: name
       .replace(/’/g, "'")
       .replace(teamNameRegex, '')
       .substring(0, 255),
-    story,
-    targetCurrency,
-    targetType,
-    teamShortName: slug || slugify(params.name, { lower: true, strict: true }),
-    teamTarget: target,
-    teamType
+    Story: story,
+    TargetCurrency: targetCurrency,
+    TeamShortName: slug || slugify(params.name, { lower: true, strict: true }),
+    TeamTarget: target,
+    TeamType: teamType,
+    CampaignGuid: campaignId,
+    CaptainPageShortName: captainSlug,
+    CoverPhotoId: coverPhotoId
   }
 
   const options = {
@@ -478,10 +475,8 @@ export const createTeam = params => {
     }
   }
 
-  return checkTeamSlugAvailable(payload.teamShortName, { authType, token })
-    .then(teamShortName =>
-      client.put('/v2/teams', { ...payload, teamShortName }, options)
-    )
+  return checkTeamSlugAvailable(payload.TeamShortName, { authType, token })
+    .then(cleanShortName => client.put('/v1/teams', { ...payload, TeamShortName: cleanShortName }, options))
     .then(res =>
       res.errorMessage ? Promise.reject(new Error(res.errorMessage)) : res
     )
