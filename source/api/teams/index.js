@@ -336,7 +336,7 @@ export const checkTeamSlugAvailable = (
 
   return client
     .head(
-      '/v1/teams/duk-swimmers-7pihuns',
+      `/v1/teams/${slug}`,
       options
     )
     .then((res) => {
