@@ -35,8 +35,9 @@ export const deserializeTeam = team => {
       const page = deserializePage(member)
       const pageFitness = find(membersFitness, p => p.ID === page.uuid) || {}
       const teamMember = {
-        donationUrl: `${baseUrl('www')}/${member.fundraisingPageShortName
-          }/donate`,
+        donationUrl: `${baseUrl('www')}/${
+          member.fundraisingPageShortName
+        }/donate`,
         image: member.profileImage,
         name: `${member.fundraisingPageName}`,
         url: `${baseUrl()}/${member.fundraisingPageShortName}`
@@ -55,7 +56,9 @@ export const deserializeTeam = team => {
     slug: team.shortName && team.shortName,
     story: team.story && parseText(team.story),
     target: get(team, 'fundraisingConfiguration.targetAmount'),
-    url: team.shortName && `${baseUrl()}/team/${team.shortName.replace('team/', '')}`,
+    url:
+      team.shortName &&
+      `${baseUrl()}/team/${team.shortName.replace('team/', '')}`,
     uuid: team.teamGuid
   }
 }
@@ -100,17 +103,27 @@ export const searchTeams = ({ campaign, endCursor, limit }) => {
   }
 
   const payload = {
-    take: limit, 
+    take: limit,
     nextPageToken: endCursor
   }
 
- return client.get(`/v1/campaigns/${campaign}/teams`, payload, options).then(res => {
-  const formattedTeams = res.results.map(team => ({...team, shortName: team.slug}))
-  return {results: formattedTeams, pageInfo: res.pagination}
- })
+  return client
+    .get(`/v1/campaigns/${campaign}/teams`, payload, options)
+    .then(res => {
+      const formattedTeams = res.results.map(team => ({
+        ...team,
+        shortName: team.slug
+      }))
+      return { results: formattedTeams, pageInfo: res.pagination }
+    })
 }
 
-const recursivelyFetchTeams = ({ campaign, limit, endCursor, results = [] }) => {
+const recursivelyFetchTeams = ({
+  campaign,
+  limit,
+  endCursor,
+  results = []
+}) => {
   return searchTeams({ campaign, endCursor, limit }).then(data => {
     const updatedResults = [...results, ...data.results]
     if (data.pageInfo.hasNextPage) {
@@ -325,9 +338,7 @@ export const fetchTeamPages = (slug, options = {}) => {
     })
 }
 
-export const checkTeamSlugAvailable = (
-  slug = required(),
-) => {
+export const checkTeamSlugAvailable = (slug = required()) => {
   const options = {
     headers: {
       'x-api-key': client.instance.defaults.headers['x-api-key']
@@ -335,13 +346,13 @@ export const checkTeamSlugAvailable = (
   }
 
   return client
-    .head(
-      `/v1/teams/${slug}`,
-      options
-    )
-    .then((res) => {
+    .head(`/v1/teams/${slug}`, options)
+    .then(res => {
       if (res.status === 200) return appendIdToSlug(slug)
-    }).catch(err => { if (err.status === 404) return slug })
+    })
+    .catch(err => {
+      if (err.status === 404) return slug
+    })
 }
 
 // Take an existing slug
@@ -397,7 +408,13 @@ export const createTeam = params => {
   }
 
   return checkTeamSlugAvailable(payload.TeamShortName, { authType, token })
-    .then(cleanShortName => client.put('/v1/teams', { ...payload, TeamShortName: cleanShortName }, options))
+    .then(cleanShortName =>
+      client.put(
+        '/v1/teams',
+        { ...payload, TeamShortName: cleanShortName },
+        options
+      )
+    )
     .then(res =>
       res.errorMessage ? Promise.reject(new Error(res.errorMessage)) : res
     )
