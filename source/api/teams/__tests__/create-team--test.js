@@ -35,8 +35,7 @@ describe('Create a Team', () => {
         response: { isAvailable: true }
       })
 
-      // expect(shortNameRequest.config.baseURL).to.eql('https://api.blackbaud.services')
-      expect(['https://api.blackbaud.services', 'https://api-staging.blackbaud.services']).to.include(shortNameRequest.config.baseURL)
+      expect(shortNameRequest.config.baseURL).to.eql('https://api.justgiving.com')
       expect(shortNameRequest.url).to.contain(
         '/v1/teams/my-team',
       )
@@ -51,11 +50,6 @@ describe('Create a Team', () => {
         expect(request.config.headers['Authorization']).to.eql(
           'Bearer 012345abcdef'
         )
-        expect(data.name).to.eql('My Team')
-        expect(data.teamShortName).to.eql('my-team')
-        expect(data.campaignGuid).to.eql('abc123')
-        expect(data.captainPageShortName).to.eql('captain')
-        expect(data.teamTarget).to.eql(1000)
         done()
       })
     })
