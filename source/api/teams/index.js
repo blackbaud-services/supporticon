@@ -92,109 +92,32 @@ export const deserializeTeamPage = page => {
   }
 }
 
-export const searchTeams = ({ campaign, after, limit }) => {
-  const query = `
-  query getTeamsByCampaignId($id: ID, $after: String, $limit: Int!) {
-    page(type: ONE_PAGE, id: $id) {
-        leaderboard(type: TEAMS, after: $after, first: $limit) {
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
-          edges {
-            node {
-              id
-              legacyId
-              title
-              slug
-              supporters(first: 100) {
-                totalCount
-              }
-              donationSummary {
-                totalAmount {
-                  value
-                  currencyCode
-                }
-              }
-              cover {
-                ... on ImageMedia {
-                  caption
-                }
-              }
-              owner {
-                id
-                avatar
-                legacyId
-                name
-              }
-              targetWithCurrency {
-                currencyCode
-                value
-              }
-            }
-          }
-        }
+export const searchTeams = ({ campaign, endCursor, limit }) => {
+  const options = {
+    headers: {
+      'x-api-key': client.instance.defaults.headers['x-api-key']
     }
   }
-  `
 
-  return client.servicesAPI
-    .post('/v1/justgiving/graphql', {
-      query,
-      variables: { id: campaign, after, limit }
-    })
-    .then(res => get(res.data, 'data.page.leaderboard'))
-    .then(leaderboard => {
-      const formattedTeams = leaderboard
-        ? leaderboard.edges.map(
-          ({
-            node: {
-              legacyId,
-              slug,
-              title,
-              owner,
-              targetWithCurrency,
-              donationSummary,
-              cover,
-              supporters
-            }
-          }) => {
-            return {
-              teamGuid: legacyId,
-              shortName: slug,
-              name: title,
-              numberOfSupporters: supporters.totalCount,
-              captain: {
-                userGuid: owner.legacyId,
-                firstName: owner.name?.split(' ')[0],
-                lastName: owner.name?.split(' ')[1],
-                profileImage: owner.avatar
-              },
-              fundraisingConfiguration: {
-                currencyCode: targetWithCurrency.currencyCode,
-                targetAmount: targetWithCurrency.value
-              },
-              donationSummary: {
-                totalAmount: donationSummary.totalAmount.value
-              },
-              coverImageName: cover?.caption
-            }
-          }
-        )
-        : []
-      return { results: formattedTeams, pageInfo: leaderboard?.pageInfo || { hasNextPage: false } }
-    })
+  const payload = {
+    take: limit, 
+    nextPageToken: endCursor
+  }
+
+ return client.get(`/v1/campaigns/${campaign}/teams`, payload, options).then(res => {
+  const formattedTeams = res.results.map(team => ({...team, shortName: team.slug}))
+  return {results: formattedTeams, pageInfo: res.pagination}
+ })
 }
 
-const recursivelyFetchTeams = ({ campaign, limit, after, results = [] }) => {
-  return searchTeams({ campaign, limit, after }).then(data => {
-    const { hasNextPage, endCursor } = data.pageInfo
+const recursivelyFetchTeams = ({ campaign, limit, endCursor, results = [] }) => {
+  return searchTeams({ campaign, endCursor, limit }).then(data => {
     const updatedResults = [...results, ...data.results]
-    if (hasNextPage) {
+    if (data.pageInfo.hasNextPage) {
       return recursivelyFetchTeams({
         campaign,
         limit,
-        after: endCursor,
+        endCursor: data.pageInfo.endCursor,
         results: updatedResults
       })
     } else {
