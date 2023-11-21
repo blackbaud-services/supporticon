@@ -20,7 +20,7 @@ describe('Create a Team', () => {
   it('hits the JG api with the correct url and data', done => {
     createTeam({
       token: '012345abcdef',
-      name: 'My Team',
+      name: 'My JG Test Team',
       story: 'Lorem ipsum',
       target: 1000,
       campaignId: 'abc123',
@@ -31,13 +31,12 @@ describe('Create a Team', () => {
       const shortNameRequest = moxios.requests.mostRecent()
 
       shortNameRequest.respondWith({
-        status: 200,
-        response: { isAvailable: true }
+        status: 404,
       })
 
       expect(shortNameRequest.config.baseURL).to.eql('https://api.justgiving.com')
       expect(shortNameRequest.url).to.contain(
-        '/v1/teams/my-team',
+        '/v1/teams/my-jg-test-team',
       )
 
       moxios.wait(() => {
@@ -50,6 +49,11 @@ describe('Create a Team', () => {
         expect(request.config.headers['Authorization']).to.eql(
           'Bearer 012345abcdef'
         )
+        expect(data.Name).to.eql('My JG Test Team')
+        expect(data.TeamShortName).to.eql('my-jg-test-team')
+        expect(data.CampaignGuid).to.eql('abc123')
+        expect(data.CaptainPageShortName).to.eql('captain')
+        expect(data.TeamTarget).to.eql(1000)
         done()
       })
     })
