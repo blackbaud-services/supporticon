@@ -16,6 +16,11 @@ if (process.env.SUPPORTICON_API_CLIENT_SECRET) {
 
 export const instance = axios.create(defaults)
 
+export const head = (endpoint = required(), params, options = {}, config = {}) =>
+  instance
+    .head(endpoint, { params: map(params, options), ...config })
+    .catch(error => Promise.reject(error.response))
+
 export const get = (endpoint = required(), params, options = {}, config = {}) =>
   instance
     .get(endpoint, { params: map(params, options), ...config })

@@ -56,7 +56,9 @@ export const deserializeTeam = team => {
     slug: team.shortName && team.shortName,
     story: team.story && parseText(team.story),
     target: get(team, 'fundraisingConfiguration.targetAmount'),
-    url: team.shortName && `${baseUrl()}/team/${team.shortName.replace('team/', '')}`,
+    url:
+      team.shortName &&
+      `${baseUrl()}/team/${team.shortName.replace('team/', '')}`,
     uuid: team.teamGuid
   }
 }
@@ -93,109 +95,42 @@ export const deserializeTeamPage = page => {
   }
 }
 
-export const searchTeams = ({ campaign, after, limit }) => {
-  const query = `
-  query getTeamsByCampaignId($id: ID, $after: String, $limit: Int!) {
-    page(type: ONE_PAGE, id: $id) {
-        leaderboard(type: TEAMS, after: $after, first: $limit) {
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
-          edges {
-            node {
-              id
-              legacyId
-              title
-              slug
-              supporters(first: 100) {
-                totalCount
-              }
-              donationSummary {
-                totalAmount {
-                  value
-                  currencyCode
-                }
-              }
-              cover {
-                ... on ImageMedia {
-                  caption
-                }
-              }
-              owner {
-                id
-                avatar
-                legacyId
-                name
-              }
-              targetWithCurrency {
-                currencyCode
-                value
-              }
-            }
-          }
-        }
+export const searchTeams = ({ campaign, endCursor, limit }) => {
+  const options = {
+    headers: {
+      'x-api-key': client.instance.defaults.headers['x-api-key']
     }
   }
-  `
 
-  return client.servicesAPI
-    .post('/v1/justgiving/graphql', {
-      query,
-      variables: { id: campaign, after, limit }
-    })
-    .then(res => get(res.data, 'data.page.leaderboard'))
-    .then(leaderboard => {
-      const formattedTeams = leaderboard
-        ? leaderboard.edges.map(
-            ({
-              node: {
-                legacyId,
-                slug,
-                title,
-                owner,
-                targetWithCurrency,
-                donationSummary,
-                cover,
-                supporters
-              }
-            }) => {
-              return {
-                teamGuid: legacyId,
-                shortName: slug,
-                name: title,
-                numberOfSupporters: supporters.totalCount,
-                captain: {
-                  userGuid: owner.legacyId,
-                  firstName: owner.name?.split(' ')[0],
-                  lastName: owner.name?.split(' ')[1],
-                  profileImage: owner.avatar
-                },
-                fundraisingConfiguration: {
-                  currencyCode: targetWithCurrency.currencyCode,
-                  targetAmount: targetWithCurrency.value
-                },
-                donationSummary: {
-                  totalAmount: donationSummary.totalAmount.value
-                },
-                coverImageName: cover?.caption
-              }
-            }
-          )
-        : []
-      return { results: formattedTeams, pageInfo: leaderboard?.pageInfo || { hasNextPage: false } }
+  const payload = {
+    take: limit,
+    nextPageToken: endCursor
+  }
+
+  return client
+    .get(`/v1/campaigns/${campaign}/teams`, payload, options)
+    .then(res => {
+      const formattedTeams = res.results.map(team => ({
+        ...team,
+        shortName: team.slug
+      }))
+      return { results: formattedTeams, pageInfo: res.pagination }
     })
 }
 
-const recursivelyFetchTeams = ({ campaign, limit, after, results = [] }) => {
-  return searchTeams({ campaign, limit, after }).then(data => {
-    const { hasNextPage, endCursor } = data.pageInfo
+const recursivelyFetchTeams = ({
+  campaign,
+  limit,
+  endCursor,
+  results = []
+}) => {
+  return searchTeams({ campaign, endCursor, limit }).then(data => {
     const updatedResults = [...results, ...data.results]
-    if (hasNextPage) {
+    if (data.pageInfo.hasNextPage) {
       return recursivelyFetchTeams({
         campaign,
         limit,
-        after: endCursor,
+        endCursor: data.pageInfo.endCursor,
         results: updatedResults
       })
     } else {
@@ -403,25 +338,21 @@ export const fetchTeamPages = (slug, options = {}) => {
     })
 }
 
-export const checkTeamSlugAvailable = (
-  slug = required(),
-  { authType = 'Bearer', token = required() }
-) => {
+export const checkTeamSlugAvailable = (slug = required()) => {
   const options = {
     headers: {
-      Authorization: `${authType} ${token}`,
       'x-api-key': client.instance.defaults.headers['x-api-key']
     }
   }
 
-  return client.servicesAPI
-    .get(
-      `/v1/justgiving/proxy/campaigns/v1/teams/shortNames/${slug}/isAvailable`,
-      options
-    )
-    .then(response => response.data.isAvailable)
-    .then(isAvailable => (isAvailable ? slug : appendIdToSlug(slug)))
-    .catch(() => appendIdToSlug(slug))
+  return client
+    .head(`/v1/teams/${slug}`, options)
+    .then(res => {
+      if (res.status === 200) return appendIdToSlug(slug)
+    })
+    .catch(err => {
+      if (err.status === 404) return slug
+    })
 }
 
 // Take an existing slug
@@ -446,7 +377,6 @@ export const createTeam = params => {
     coverPhotoId,
     slug,
     target = 1000,
-    targetType = 'Fixed',
     targetCurrency = 'GBP',
     teamType = 'Open',
     token = required()
@@ -457,19 +387,18 @@ export const createTeam = params => {
   }
 
   const payload = {
-    campaignGuid: campaignId,
-    captainPageShortName: captainSlug,
-    coverPhotoId,
-    name: name
+    Name: name
       .replace(/’/g, "'")
       .replace(teamNameRegex, '')
       .substring(0, 255),
-    story,
-    targetCurrency,
-    targetType,
-    teamShortName: slug || slugify(params.name, { lower: true, strict: true }),
-    teamTarget: target,
-    teamType
+    Story: story,
+    TargetCurrency: targetCurrency,
+    TeamShortName: slug || slugify(params.name, { lower: true, strict: true }),
+    TeamTarget: target,
+    TeamType: teamType,
+    CampaignGuid: campaignId,
+    CaptainPageShortName: captainSlug,
+    CoverPhotoId: coverPhotoId
   }
 
   const options = {
@@ -478,9 +407,13 @@ export const createTeam = params => {
     }
   }
 
-  return checkTeamSlugAvailable(payload.teamShortName, { authType, token })
-    .then(teamShortName =>
-      client.put('/v2/teams', { ...payload, teamShortName }, options)
+  return checkTeamSlugAvailable(payload.TeamShortName, { authType, token })
+    .then(cleanShortName =>
+      client.put(
+        '/v1/teams',
+        { ...payload, TeamShortName: cleanShortName },
+        options
+      )
     )
     .then(res =>
       res.errorMessage ? Promise.reject(new Error(res.errorMessage)) : res
@@ -555,35 +488,6 @@ export const updateTeam = (
   }
 ) => {
   const headers = { Authorization: `Bearer ${token}` }
-  const prepareStory = story =>
-    `[{"type":"paragraph","nodes":[{"type":"text","ranges":[{"text":"${story}"}]}]}]`
-  const update = (url, data) =>
-    client.servicesAPI.put(
-      `/v1/justgiving/proxy/campaigns/v1/teams/${id}/${url}`,
-      data,
-      { headers }
-    )
-
-  if (token.length > 32) {
-    return Promise.all(
-      [
-        update('details/name', {
-          name: name.replace(teamNameRegex, '').substring(0, 255),
-          teamGuid: id
-        }),
-        (story || image) &&
-          update('details', {
-            coverPhotoImageId: image,
-            story: prepareStory(story)
-          }),
-        target &&
-          update('fundraising', {
-            targetAmount: target,
-            currencyCode: currency
-          })
-      ].filter(Boolean)
-    )
-  }
 
   const payload = {
     teamGuid: id,

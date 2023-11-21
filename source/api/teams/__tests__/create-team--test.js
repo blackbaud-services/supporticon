@@ -20,7 +20,7 @@ describe('Create a Team', () => {
   it('hits the JG api with the correct url and data', done => {
     createTeam({
       token: '012345abcdef',
-      name: 'My Team',
+      name: 'My JG Test Team',
       story: 'Lorem ipsum',
       target: 1000,
       campaignId: 'abc123',
@@ -31,14 +31,12 @@ describe('Create a Team', () => {
       const shortNameRequest = moxios.requests.mostRecent()
 
       shortNameRequest.respondWith({
-        status: 200,
-        response: { isAvailable: true }
+        status: 404,
       })
 
-      // expect(shortNameRequest.config.baseURL).to.eql('https://api.blackbaud.services')
-      expect(['https://api.blackbaud.services', 'https://api-staging.blackbaud.services']).to.include(shortNameRequest.config.baseURL)
+      expect(shortNameRequest.config.baseURL).to.eql('https://api.justgiving.com')
       expect(shortNameRequest.url).to.contain(
-        '/v1/justgiving/proxy/campaigns/v1/teams/shortNames/my-team/isAvailable'
+        '/v1/teams/my-jg-test-team',
       )
 
       moxios.wait(() => {
@@ -47,15 +45,15 @@ describe('Create a Team', () => {
 
 
         expect(request.config.baseURL).to.eql('https://api.justgiving.com')
-        expect(request.url).to.contain('/v2/teams')
+        expect(request.url).to.contain('/v1/teams')
         expect(request.config.headers['Authorization']).to.eql(
           'Bearer 012345abcdef'
         )
-        expect(data.name).to.eql('My Team')
-        expect(data.teamShortName).to.eql('my-team')
-        expect(data.campaignGuid).to.eql('abc123')
-        expect(data.captainPageShortName).to.eql('captain')
-        expect(data.teamTarget).to.eql(1000)
+        expect(data.Name).to.eql('My JG Test Team')
+        expect(data.TeamShortName).to.eql('my-jg-test-team')
+        expect(data.CampaignGuid).to.eql('abc123')
+        expect(data.CaptainPageShortName).to.eql('captain')
+        expect(data.TeamTarget).to.eql(1000)
         done()
       })
     })

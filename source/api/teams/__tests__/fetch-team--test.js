@@ -18,7 +18,7 @@ describe('Fetch Teams', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          '/v1/justgiving/graphql'
+          '/v1/campaigns/abc123/teams'
         )
         done()
       })
