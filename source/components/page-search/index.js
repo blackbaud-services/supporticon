@@ -22,7 +22,6 @@ class PageSearch extends Component {
     const { campaign, type } = this.props
 
     if (!!campaign && type !== 'individual') {
-      this.setState({ status: 'fetching' })
       fetchTeams({ campaign, limit: 25, allTeams: true })
         .then(teams => teams.map(deserializeTeam))
         .then(teams =>
@@ -40,7 +39,7 @@ class PageSearch extends Component {
             type: 'team'
           }))
         )
-        .then(teams => this.setState({ teams, status: 'fetched' }))
+        .then(teams => this.setState({ teams }))
         .catch(() => this.setState({ status: 'failed' }))
     }
   }
