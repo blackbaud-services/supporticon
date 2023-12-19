@@ -57,8 +57,8 @@ const PasswordValidations = ({ form }) => {
         !containsSubstring(form.values.password, form.values.lastName) &&
         passwordCommonWordIsValid,
       loading: isCommonWordCheckLoading
-      }
-    ]
+    }
+  ]
 
   return (
     <Section spacing={0} margin={{ t: -0.5, b: 0.75 }}>
@@ -80,9 +80,9 @@ const PasswordValidations = ({ form }) => {
               validation.loading
                 ? <Icon name='loading' spin />
                 : <Icon
-                  name={validation.passes ? 'check' : 'close'}
-                  color={validation.passes ? 'success' : 'danger'}
-                />
+                    name={validation.passes ? 'check' : 'close'}
+                    color={validation.passes ? 'success' : 'danger'}
+                  />
             }
             <Section
               spacing={{ l: 0.5 }}
