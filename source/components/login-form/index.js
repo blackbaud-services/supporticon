@@ -39,11 +39,19 @@ class LoginForm extends Component {
         .then(() => this.setState({ status: 'fetched' }))
         .catch(error => {
           const message = get(error, 'data.error.message')
+          const code = get(error, 'data.Code')
           Bugsnag.notify(`LOGIN ERROR - ${error.status} -  ${message}`)
 
           switch (error.status) {
             case 400:
             case 401:
+            case 403:
+              if (code && code.toUpperCase() === 'AJG6') {
+                return this.setState({
+                  status: 'failed',
+                  errors: [{ message: 'Users linked to a charity are not allowed to login this way. Please login with a standalone JustGiving account.' }]
+                })
+              }
             case 404:
               return this.setState({
                 status: 'failed',
