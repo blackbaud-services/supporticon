@@ -17,7 +17,7 @@ import Icon from 'constructicon/icon'
 import InputField from 'constructicon/input-field'
 import InputSelect from 'constructicon/input-select'
 import Modal from 'constructicon/modal'
-import PasswordValidations from './PasswordValidations'
+import PasswordValidations from '../password-validations'
 import RichText from 'constructicon/rich-text'
 import Section from 'constructicon/section'
 

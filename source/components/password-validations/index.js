@@ -4,7 +4,7 @@ import { regularExpressions } from 'constructicon/lib/validators'
 import ButtonGroup from 'constructicon/button-group'
 import Icon from 'constructicon/icon'
 import Section from 'constructicon/section'
-import { servicesAPI } from '../../../utils/client'
+import { servicesAPI } from '../../utils/client'
 
 const containsSubstring = (valueA, valueB) => {
   if (!valueA || !valueB) return false

@@ -9,6 +9,7 @@ import { renderInput, renderFormFields } from '../../utils/form'
 import Bugsnag from '@bugsnag/js'
 
 import Form from 'constructicon/form'
+import ResetPasswordIam from '../reset-password-iam';
 
 class LoginForm extends Component {
   constructor () {
@@ -52,6 +53,14 @@ class LoginForm extends Component {
                   errors: [{ message: 'Users linked to a charity are not allowed to login this way. Please login with a standalone JustGiving account.' }]
                 })
               }
+
+              if (code && code.toUpperCase() === 'PW001') {
+                form.resetForm()
+
+                return this.setState({
+                  status: 'password_complexity'
+                })
+              }
             case 404:
               return this.setState({
                 status: 'failed',
@@ -77,6 +86,14 @@ class LoginForm extends Component {
     } = this.props
 
     const { status, errors } = this.state
+
+    if (status === 'password_complexity') {
+      return <ResetPasswordIam
+        formComponent={formComponent}
+        emailAddress={form.fields.email.value}
+        onSuccess={() => this.setState({ status: 'empty' })}
+      />
+    }
 
     return (
       <Form
