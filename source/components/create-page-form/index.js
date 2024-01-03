@@ -465,9 +465,9 @@ CreatePageForm.propTypes = {
   /**
    * Additional user data to pass to update user method
    */
-  user: PropTypes.object, 
+  user: PropTypes.object,
 
-    /**
+  /**
    * Excluded fields based on conditional logic
    */
   omittedFieldKeys: PropTypes.array
