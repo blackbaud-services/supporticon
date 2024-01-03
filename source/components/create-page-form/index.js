@@ -241,7 +241,8 @@ class CreatePageForm extends Component {
       'localityAddress',
       'regionAddress',
       'postCodeAddress',
-      'countryAddress'
+      'countryAddress',
+      ...this.props.omittedFieldKeys
     ])
   }
 
@@ -464,7 +465,12 @@ CreatePageForm.propTypes = {
   /**
    * Additional user data to pass to update user method
    */
-  user: PropTypes.object
+  user: PropTypes.object,
+
+  /**
+   * Excluded fields based on conditional logic
+   */
+  omittedFieldKeys: PropTypes.array
 }
 
 CreatePageForm.defaultProps = {
@@ -475,7 +481,8 @@ CreatePageForm.defaultProps = {
   initialValues: {},
   onSubmitError: () => {},
   submit: 'Create Page',
-  user: {}
+  user: {},
+  omittedFieldKeys: []
 }
 
 const form = props => {
