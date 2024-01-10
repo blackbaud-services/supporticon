@@ -9,7 +9,7 @@ import { renderInput, renderFormFields } from '../../utils/form'
 import Bugsnag from '@bugsnag/js'
 
 import Form from 'constructicon/form'
-import ResetPasswordIam from '../reset-password-iam';
+import ResetPasswordIam from '../reset-password-iam'
 
 class LoginForm extends Component {
   constructor () {
@@ -61,6 +61,8 @@ class LoginForm extends Component {
                   status: 'password_complexity'
                 })
               }
+
+              break
             case 404:
               return this.setState({
                 status: 'failed',
@@ -88,11 +90,13 @@ class LoginForm extends Component {
     const { status, errors } = this.state
 
     if (status === 'password_complexity') {
-      return <ResetPasswordIam
-        formComponent={formComponent}
-        emailAddress={form.fields.email.value}
-        onSuccess={() => this.setState({ status: 'empty' })}
-      />
+      return (
+        <ResetPasswordIam
+          formComponent={formComponent}
+          emailAddress={form.fields.email.value}
+          onSuccess={() => this.setState({ status: 'empty' })}
+        />
+      )
     }
 
     return (

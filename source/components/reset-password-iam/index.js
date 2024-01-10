@@ -15,7 +15,7 @@ const ResetPasswordIam = ({ form, formComponent, onSuccess }) => {
     setErrors([])
 
     return form.submit().then(data => {
-      const { email: emailAddress, password: newPassword, oldPassword  } = data
+      const { email: emailAddress, password: newPassword, oldPassword } = data
       setStatus('fetching')
       servicesAPI
         .post('/v1/justgiving/iam/reset-password-token', { emailAddress, password: oldPassword })
@@ -55,7 +55,7 @@ const ResetPasswordIam = ({ form, formComponent, onSuccess }) => {
             ? { name: 'loading', spin: true }
             : { name: '' }
         }
-        submit="Reset Password"
+        submit='Reset Password'
         {...formComponent}
       >
         {renderFormFields(form.fields).map(field => {
@@ -105,4 +105,4 @@ const form = props => ({
   )
 })
 
-export default withForm(form)(ResetPasswordIam);
+export default withForm(form)(ResetPasswordIam)
