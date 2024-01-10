@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { regularExpressions } from 'constructicon/lib/validators'
 
 import ButtonGroup from 'constructicon/button-group'
 import Icon from 'constructicon/icon'
 import Section from 'constructicon/section'
+import { servicesAPI } from '../../utils/client'
 
 const containsSubstring = (valueA, valueB) => {
   if (!valueA || !valueB) return false
@@ -16,22 +17,46 @@ const containsSubstring = (valueA, valueB) => {
 }
 
 const PasswordValidations = ({ form }) => {
+  const [passwordCommonWordIsValid, setPasswordCommonWordIsValid] = useState(false)
+  const [isCommonWordCheckLoading, setIsCommonWordCheckLoading] = useState(false)
+
+  useEffect(() => {
+    const { password } = form.values
+    if (password && password.length > 11) {
+      setIsCommonWordCheckLoading(true)
+      servicesAPI
+        .post('/v1/justgiving/iam/common-words', { password })
+        .then(({ data }) => {
+          setPasswordCommonWordIsValid(data.isValid)
+          setIsCommonWordCheckLoading(false)
+        })
+        .catch(error => {
+          setIsCommonWordCheckLoading(false)
+          return Promise.reject(error.response)
+        })
+    }
+  }, [form.values.password])
+
   const passwordValidations = [
     {
       label: 'Must be at least 12 characters',
-      passes: form.values.password.length > 11
+      passes: form.values.password.length > 11,
+      loading: false
     },
     {
       label:
         'Must include at least one number, letter and special character (#,$,%,&,@ etc.)',
-      passes: regularExpressions.passwordComplexity.test(form.values.password)
+      passes: regularExpressions.passwordComplexity.test(form.values.password),
+      loading: false
     },
     {
-      label: 'Must not include your name or email address',
+      label: 'Must not include your name, email address or a commonly used word',
       passes:
         !containsSubstring(form.values.password, form.values.email) &&
         !containsSubstring(form.values.password, form.values.firstName) &&
-        !containsSubstring(form.values.password, form.values.lastName)
+        !containsSubstring(form.values.password, form.values.lastName) &&
+        passwordCommonWordIsValid,
+      loading: isCommonWordCheckLoading
     }
   ]
 
@@ -51,10 +76,14 @@ const PasswordValidations = ({ form }) => {
           tag='div'
         >
           <ButtonGroup align='left' spacing={0}>
-            <Icon
-              name={validation.passes ? 'check' : 'close'}
-              color={validation.passes ? 'success' : 'danger'}
-            />
+            {
+              validation.loading
+                ? <Icon name='loading' spin />
+                : <Icon
+                    name={validation.passes ? 'check' : 'close'}
+                    color={validation.passes ? 'success' : 'danger'}
+                  />
+            }
             <Section
               spacing={{ l: 0.5 }}
               styles={{ maxWidth: 'calc(100% - 3em)', verticalAlign: 'middle' }}
