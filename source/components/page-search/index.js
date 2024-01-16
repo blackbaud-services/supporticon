@@ -117,7 +117,7 @@ class PageSearch extends Component {
       case 'function':
         return subtitle(page)
       default:
-        const data = page[subtitle] ? page[subtitle] : null
+        const data = page[subtitle] ?? null
         if (subtitle === 'owner') {
           if (typeof data === 'string') {
             return data
