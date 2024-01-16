@@ -245,12 +245,8 @@ export const fetchPages = (params = required()) => {
       )
   }
 
-  if (!isEmpty(campaign) && !event) {
-    return recursivelyFetchJGPages({ campaign: getUID(campaign), ...args })
-  }
-
   return get('/v1/onesearch', {
-    campaignId: getUID(campaign),
+    campaignGuid: getUID(campaign),
     charityId: getUID(charity),
     eventId: getUID(event),
     i: 'Fundraiser',
