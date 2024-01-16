@@ -116,7 +116,7 @@ class PageSearch extends Component {
     switch (typeof subtitle) {
       case 'function':
         return subtitle(page)
-      default:
+      default: {
         const data = page[subtitle] ?? null
         if (subtitle === 'owner') {
           if (typeof data === 'string') {
@@ -126,6 +126,7 @@ class PageSearch extends Component {
           return data ? `${data.firstName || ''} ${data.lastName || ''}` : null
         }
         return data
+      }
     }
   }
 
