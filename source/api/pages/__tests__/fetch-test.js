@@ -35,7 +35,7 @@ describe('Fetch Pages', () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent()
         expect(request.url).to.contain(
-          '/v1/justgiving/campaigns'
+         '/v1/onesearch'
         )
         expect(request.url).to.contain('UID')
         done()

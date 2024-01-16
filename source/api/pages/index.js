@@ -150,42 +150,6 @@ const deserializeSegmentation = (tags = []) => {
   }, {})
 }
 
-const recursivelyFetchJGPages = ({
-  campaign,
-  q,
-  limit = 10,
-  results = [],
-  page = 1
-}) => {
-  const options = {
-    params: { page, q }
-  }
-  return servicesAPI
-    .get(`/v1/justgiving/campaigns/${campaign}/pages`, options)
-    .then(response => response.data)
-    .then(data => {
-      const { currentPage, totalPages } = data.meta
-      const updatedResults = [...results, ...data.results]
-
-      if (
-        Number(currentPage) === totalPages ||
-        updatedResults.length >= limit ||
-        totalPages === 0
-      ) {
-        return updatedResults
-      } else {
-        page++
-        return recursivelyFetchJGPages({
-          campaign,
-          q,
-          limit,
-          results: updatedResults,
-          page
-        })
-      }
-    })
-}
-
 export const fetchPages = (params = required()) => {
   const {
     allPages,
