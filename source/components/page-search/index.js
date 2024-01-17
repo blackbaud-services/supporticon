@@ -146,10 +146,12 @@ class PageSearch extends Component {
     const { status, q, data = [] } = this.state
     const { subtitle } = this.props
 
+    const shortQuery = q.length < 3
+
     return (
       <SearchResults
-        loading={status === 'fetching'}
-        error={status === 'failed'}
+        loading={shortQuery || status === 'fetching'}
+        error={!shortQuery && status === 'failed'}
         emptyLabel={'No results found' + `${q ? [' for "', q, '"'].join() : ''}`}
         {...this.props.searchResults}
       >
