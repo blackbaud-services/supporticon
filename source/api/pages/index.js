@@ -340,7 +340,7 @@ export const fetchPageDonations = (
 
     return pageNum >= Math.min(data.pagination.totalPages, 10)
       ? updatedResults
-      : fetchDonations(pageShortName, updatedResults, pageNum + 1)
+      : fetchPageDonations(pageShortName, updatedResults, pageNum + 1)
   })
 
 const truncate = (string, length = 50) => {
