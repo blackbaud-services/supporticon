@@ -327,6 +327,22 @@ export const fetchPageDonationCount = (page = required()) => {
   )
 }
 
+export const fetchPageDonations = (
+  pageShortName,
+  donations = [],
+  pageNum = 1
+) =>
+  get(`v1/fundraising/pages/${pageShortName}/donations`, {
+    pageSize: 150,
+    pageNum
+  }).then(data => {
+    const updatedResults = [...donations, ...data.donations]
+
+    return pageNum >= Math.min(data.pagination.totalPages, 10)
+      ? updatedResults
+      : fetchPageDonations(pageShortName, updatedResults, pageNum + 1)
+  })
+
 const truncate = (string, length = 50) => {
   if (string) {
     return String(string).length > length
