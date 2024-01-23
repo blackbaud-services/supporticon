@@ -214,7 +214,8 @@ export const fetchPages = (params = required()) => {
     charityId: getUID(charity),
     eventId: getUID(event),
     i: 'Fundraiser',
-    ...args
+    ...args,
+    q: `${args.q}*`
   }).then(
     response =>
       (response.GroupedResults &&

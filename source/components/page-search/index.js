@@ -73,6 +73,10 @@ class PageSearch extends Component {
       })
     }
 
+    if (query.length < 3) {
+      return
+    }
+
     this.setState({
       q: query,
       status: 'fetching'
