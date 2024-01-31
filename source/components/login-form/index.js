@@ -62,7 +62,10 @@ class LoginForm extends Component {
                 })
               }
 
-              break
+              return this.setState({
+                status: 'failed',
+                errors: [{ message: 'Invalid Email or Password.' }]
+              })
             case 404:
               return this.setState({
                 status: 'failed',
