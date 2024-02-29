@@ -37,4 +37,5 @@ export const createEvent = ({
     startDate: dayjs(startDate).format('YYYY-MM-DD')
   })
 
-export const fetchEventTotalRaised = ({ id = required() }) => get(`v1/event/${id}/pages`).then(data => data.totalRaised)
+export const fetchEventTotalRaised = ({ id = required() }) =>
+  get(`v1/event/${id}/pages`).then(data => data.totalRaised)
