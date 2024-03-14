@@ -4,7 +4,10 @@ export default () => ({
   fields: {
     name: {
       label: 'Team name',
-      placeholder: 'Enter your team name'
+      placeholder: 'Enter your team name', 
+      validators: [validators.alphaNumericSpecial(
+        'Team name must be only letters or numbers'
+      )]
     },
     target: {
       type: 'number',
