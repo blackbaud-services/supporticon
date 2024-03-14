@@ -1,7 +1,4 @@
-import find from 'lodash/find'
-import flatten from 'lodash/flatten'
-import get from 'lodash/get'
-import times from 'lodash/times'
+import { replace, times, get, flatten, find } from 'lodash'
 import slugify from 'slugify'
 import * as client from '../../utils/client'
 import { fetchPages, deserializePage } from '../pages'
@@ -35,9 +32,8 @@ export const deserializeTeam = team => {
       const page = deserializePage(member)
       const pageFitness = find(membersFitness, p => p.ID === page.uuid) || {}
       const teamMember = {
-        donationUrl: `${baseUrl('www')}/${
-          member.fundraisingPageShortName
-        }/donate`,
+        donationUrl: `${baseUrl('www')}/${member.fundraisingPageShortName
+          }/donate`,
         image: member.profileImage,
         name: `${member.fundraisingPageName}`,
         url: `${baseUrl()}/${member.fundraisingPageShortName}`
@@ -173,7 +169,7 @@ const getPaginatedMembers = team => {
     if (team.membership.members.length < team.membership.numberOfMembers) {
       return client
         .get(
-          `/v1/teamsv3/${team.shortName}?nextPageKey=${team.pagination.endCursor}`
+          `/v1/teamsv3/${replace(team.shortName, 'team/', '')}?nextPageKey=${team.pagination.endCursor}`
         )
         .then(res => {
           const updatedTeam = {
@@ -197,7 +193,7 @@ const getPaginatedMembers = team => {
 
 export const fetchTeamBySlug = (slug, options = {}) => {
   return client
-    .get(`/v1/teamsv3/${slug}`)
+    .get(`/v1/teamsv3/${replace(slug, 'team/', '')}`)
     .then(team => {
       if (options.includeFitness) {
         return fetchTeamFitness(team.teamGuid, options.fitnessParams).then(
