@@ -1,5 +1,5 @@
 import React from 'react'
-import {get, replace} from 'lodash'
+import { get, replace } from 'lodash'
 import PropTypes from 'prop-types'
 import withForm from 'constructicon/with-form'
 import form from './form'
