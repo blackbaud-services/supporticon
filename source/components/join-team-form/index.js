@@ -1,5 +1,5 @@
 import React from 'react'
-import get from 'lodash/get'
+import { get, replace } from 'lodash'
 import PropTypes from 'prop-types'
 import withForm from 'constructicon/with-form'
 import form from './form'
@@ -84,7 +84,7 @@ class JoinTeamForm extends React.Component {
         pageId,
         pageSlug: pageSlug,
         teamId: data.team.id,
-        teamSlug: data.team.slug,
+        teamSlug: replace(data.team.slug, 'team/', ''),
         token
       }
 
