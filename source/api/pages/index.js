@@ -209,8 +209,7 @@ export const fetchPages = (params = required()) => {
       )
   }
 
-  return get('/v1/onesearch', {
-    campaignGuid: getUIDForOnepageCampaign(campaign),
+  return get(`/v1/onesearch${!!campaign && '?campaignGuid=' + getUIDForOnepageCampaign(campaign)}`, {
     charityId: getUID(charity),
     eventId: getUID(event),
     i: 'Fundraiser',
