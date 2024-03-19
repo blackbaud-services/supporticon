@@ -71,14 +71,14 @@ commands:
 jobs:
   test:
     docker:
-      - image: circleci/node:14
+      - image: cimg/node:18.17.0
     steps:
       - install
       - lint
 
   deploy:
     docker:
-      - image: circleci/node:14
+      - image: cimg/node:18.17.0
     steps:
       - install
       - lint
