@@ -57,7 +57,6 @@
     "react-styleguidist": "^11.1.7",
     "sinon": "^11.1.2",
     "source-map-loader": "^1.0.0",
-    "standard": "^16.0.3",
     "style-loader": "^2.0.0",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
