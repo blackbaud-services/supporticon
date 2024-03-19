@@ -8,14 +8,7 @@ import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
 import { destroy, get, post, put, servicesAPI } from '../../utils/client'
 import { apiUrl, apiImageUrl, baseUrl, imageUrl } from '../../utils/justgiving'
-import {
-  getUID,
-  getUIDForOnepageCampaign,
-  isEmpty,
-  isInArray,
-  isUuid,
-  required
-} from '../../utils/params'
+import { getUID, isEmpty, isInArray, isUuid, required, getUIDForOnepageCampaign } from '../../utils/params'
 import { defaultPageTags } from '../../utils/tags'
 import { deserializeFitnessActivity } from '../fitness-activities'
 import { fetchTotals, deserializeTotals } from '../../utils/totals'
@@ -107,8 +100,8 @@ export const deserializePage = page => {
       lodashGet(page, 'pageOwner.fullName'),
     owner: page.owner
       ? !lodashGet(page, 'owner.firstName')
-        ? page.owner
-        : lodashGet(page, 'owner.firstName') +
+          ? page.owner
+          : lodashGet(page, 'owner.firstName') +
           ' ' +
           lodashGet(page, 'owner.lastName')
       : page.OwnerFullName ||
@@ -237,12 +230,13 @@ export const fetchPage = (page = required(), slug, options = {}) => {
 
   const fetchers = [
     new Promise(resolve =>
-      get(`/v1/fundraising/${endpoint}/${page}`).then(page =>
-        options.includeFitness
-          ? fetchPageFitness(page, options.fitnessParams).then(fitness =>
-              resolve({ ...page, fitness })
-            )
-          : resolve(page)
+      get(`/v1/fundraising/${endpoint}/${page}`).then(
+        page =>
+          options.includeFitness
+            ? fetchPageFitness(page, options.fitnessParams).then(fitness =>
+                resolve({ ...page, fitness })
+              )
+            : resolve(page)
       )
     ),
     options.includeTags && fetchPageTags(page)
@@ -405,10 +399,7 @@ export const createPageTags = ({
 }
 
 const createDefaultPageTags = (page, timeBox, campaignGuidOverride) =>
-  createPageTags({
-    slug: page.slug,
-    tagValues: defaultPageTags(page, timeBox, campaignGuidOverride)
-  })
+  createPageTags({ slug: page.slug, tagValues: defaultPageTags(page, timeBox, campaignGuidOverride) })
 
 export const createPage = ({
   charityId = required(),
@@ -482,8 +473,8 @@ export const createPage = ({
         images: images.length
           ? images
           : image
-          ? [{ url: image, isDefault: true }]
-          : undefined,
+            ? [{ url: image, isDefault: true }]
+            : undefined,
         isGiftAidable: giftAid,
         pageShortName,
         pageStory: story,
@@ -506,11 +497,7 @@ export const createPage = ({
     )
       .then(result => fetchPage(result.pageId))
       .then(page => {
-        createDefaultPageTags(
-          deserializePage(page),
-          timeBox,
-          campaignGuidOverride
-        ).then(tags => {
+        createDefaultPageTags(deserializePage(page), timeBox, campaignGuidOverride).then(tags => {
           if (typeof tagsCallback === 'function') {
             tagsCallback(tags, page)
           }
