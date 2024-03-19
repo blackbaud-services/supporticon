@@ -8,7 +8,7 @@ import slugify from 'slugify'
 import { v4 as uuid } from 'uuid'
 import { destroy, get, post, put, servicesAPI } from '../../utils/client'
 import { apiUrl, apiImageUrl, baseUrl, imageUrl } from '../../utils/justgiving'
-import { getUID, isEmpty, isInArray, isUuid, required } from '../../utils/params'
+import { getUID, isEmpty, isInArray, isUuid, required, getUIDForOnepageCampaign } from '../../utils/params'
 import { defaultPageTags } from '../../utils/tags'
 import { deserializeFitnessActivity } from '../fitness-activities'
 import { fetchTotals, deserializeTotals } from '../../utils/totals'
@@ -210,7 +210,7 @@ export const fetchPages = (params = required()) => {
   }
 
   return get('/v1/onesearch', {
-    campaignGuid: getUID(campaign),
+    campaignGuid: getUIDForOnepageCampaign(campaign),
     charityId: getUID(charity),
     eventId: getUID(event),
     i: 'Fundraiser',
