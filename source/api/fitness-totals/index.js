@@ -1,11 +1,11 @@
-import * as client from '../../utils/client'
-import { isEmpty, paramsSerializer, required } from '../../utils/params'
-import { fetchTotals, deserializeTotals } from '../../utils/totals'
+import * as client from "../../utils/client";
+import { isEmpty, paramsSerializer, required } from "../../utils/params";
+import { fetchTotals, deserializeTotals } from "../../utils/totals";
 
 export const fetchFitnessSummary = (campaign = required(), types) =>
-  Promise.reject(new Error('This method is not supported for JustGiving'))
+  Promise.reject(new Error("This method is not supported for JustGiving"));
 
-export function fetchFitnessTotals ({
+export function fetchFitnessTotals({
   campaign = required(),
   charity,
   limit = 100,
@@ -14,34 +14,34 @@ export function fetchFitnessTotals ({
   startDate,
   endDate,
   tagId,
-  tagValue
+  tagValue,
 }) {
   if (!isEmpty(charity)) {
     return fetchTotals({
       segment: `page:campaign:${campaign}:charity:${charity}`,
-      tagId: 'page:campaign:charity',
-      tagValue: `page:campaign:${campaign}:charity:${charity}`
+      tagId: "page:campaign:charity",
+      tagValue: `page:campaign:${campaign}:charity:${charity}`,
     })
       .then(deserializeTotals)
-      .then(result => ({
+      .then((result) => ({
         distance: result.fitnessDistanceTotal,
         duration: result.fitnessDurationTotal,
-        elevation: result.fitnessElevationTotal
-      }))
+        elevation: result.fitnessElevationTotal,
+      }));
   }
 
   if ((tagId && tagValue) || !useLegacy) {
     return fetchTotals({
       segment: `page:campaign:${campaign}`,
-      tagId: tagId || 'page:campaign',
-      tagValue: tagValue || `page:campaign:${campaign}`
+      tagId: tagId || "page:campaign",
+      tagValue: tagValue || `page:campaign:${campaign}`,
     })
       .then(deserializeTotals)
-      .then(result => ({
+      .then((result) => ({
         distance: result.fitnessDistanceTotal,
         duration: result.fitnessDurationTotal,
-        elevation: result.fitnessElevationTotal
-      }))
+        elevation: result.fitnessElevationTotal,
+      }));
   }
 
   const params = {
@@ -49,14 +49,14 @@ export function fetchFitnessTotals ({
     limit,
     offset,
     start: startDate,
-    end: endDate
-  }
+    end: endDate,
+  };
 
   return client
-    .get('/v1/fitness/campaign', params, {}, { paramsSerializer })
-    .then(result => ({
+    .get("/v1/fitness/campaign", params, {}, { paramsSerializer })
+    .then((result) => ({
       distance: result.totalAmount,
       duration: result.totalAmountTaken,
-      elevation: result.totalAmountElevation
-    }))
+      elevation: result.totalAmountElevation,
+    }));
 }

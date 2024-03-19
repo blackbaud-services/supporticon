@@ -1,22 +1,23 @@
-import { useQuery } from 'react-query'
+import { useQuery } from "react-query";
 import {
   fetchFitnessActivities,
-  deserializeFitnessActivity
-} from '../../api/fitness-activities'
+  deserializeFitnessActivity,
+} from "../../api/fitness-activities";
 
 export const useFitnessFeed = (params, options = {}) => {
-  const { refetchInterval, staleTime = 30000 } = options
+  const { refetchInterval, staleTime = 30000 } = options;
 
   return useQuery(
-    ['fitnessFeeds', params],
+    ["fitnessFeeds", params],
     () =>
-      fetchFitnessActivities(params)
-        .then(data => data.map(deserializeFitnessActivity)),
+      fetchFitnessActivities(params).then((data) =>
+        data.map(deserializeFitnessActivity)
+      ),
     {
       refetchInterval,
-      staleTime
+      staleTime,
     }
-  )
-}
+  );
+};
 
-export default useFitnessFeed
+export default useFitnessFeed;

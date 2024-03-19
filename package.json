@@ -6,10 +6,10 @@
   "scripts": {
     "start": "styleguidist server",
     "build": "babel source -d dist",
-    "test:lint": "standard -d source",
+    "test:lint": "prettier 'source/**/*.js' --check",
     "test:unit": "mocha source/**/**/__tests__/*.js --require @babel/register --require test/common.js",
     "test": "npm run test:lint && npm run test:unit",
-    "format": "prettier-standard 'source/**/*.js'",
+    "format": "prettier 'source/**/*.js' --write",
     "precommit": "yarn lint-staged",
     "docsify:watch": "docsify serve ./source",
     "styleguide:build": "styleguidist build",
@@ -52,7 +52,6 @@
     "mocha": "^9.1.1",
     "moxios": "^0.4.0",
     "prettier": "^2.4.0",
-    "prettier-standard": "^16.4.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-styleguidist": "^11.1.7",
@@ -83,15 +82,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "standard": {
-    "ignore": [
-      "**/__tests__/",
-      "/test/",
-      "/dist/",
-      "styleguide.config.js",
-      "gulpfile.js"
-    ]
-  },
   "babel": {
     "presets": [
       "@babel/preset-env",
@@ -100,7 +90,7 @@
   },
   "lint-staged": {
     "source/**/*.js": [
-      "prettier-standard",
+      "prettier --check",
       "git add"
     ]
   }

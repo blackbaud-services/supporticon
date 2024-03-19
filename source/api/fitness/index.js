@@ -1,56 +1,56 @@
-import capitalize from 'lodash/capitalize'
-import { get, servicesAPI } from '../../utils/client'
-import { encodeBase64String } from '../../utils/base64'
-import { required } from '../../utils/params'
+import capitalize from "lodash/capitalize";
+import { get, servicesAPI } from "../../utils/client";
+import { encodeBase64String } from "../../utils/base64";
+import { required } from "../../utils/params";
 
 export const allowedActivityTypes = [
-  'hike',
-  'ride',
-  'run',
-  'swim',
-  'walk',
-  'wheelchair'
-]
+  "hike",
+  "ride",
+  "run",
+  "swim",
+  "walk",
+  "wheelchair",
+];
 
 export const fetchPageFitness = ({
   slug = required(),
   limit = 100,
   offset = 0,
   startDate,
-  endDate
+  endDate,
 }) => {
-  const params = { limit, offset, start: startDate, end: endDate }
-  return get(`/v1/fitness/fundraising/${slug}`, params)
-}
+  const params = { limit, offset, start: startDate, end: endDate };
+  return get(`/v1/fitness/fundraising/${slug}`, params);
+};
 
 export const connectFitness = ({
   code = required(),
   token = required(),
-  scope = 'read,activity:read',
-  provider = 'strava'
+  scope = "read,activity:read",
+  provider = "strava",
 }) => {
   const query = `
     mutation {
-      ${provider === 'fitbit' ? 'connectFitbit' : 'connectFitness'} (
+      ${provider === "fitbit" ? "connectFitbit" : "connectFitness"} (
         input: {
           code: "${code}"
           scope: "${scope}"
         }
       )
     }
-  `
+  `;
 
-  const headers = { Authorization: `Bearer ${token}` }
+  const headers = { Authorization: `Bearer ${token}` };
 
   return servicesAPI
-    .post('/v1/justgiving/graphql', { query }, { headers })
-    .then(response => response.data)
-}
+    .post("/v1/justgiving/graphql", { query }, { headers })
+    .then((response) => response.data);
+};
 
 export const disconnectFitness = ({
   pageId = required(),
   token = required(),
-  provider = 'Strava'
+  provider = "Strava",
 }) => {
   const query = `
     mutation {
@@ -64,31 +64,31 @@ export const disconnectFitness = ({
         subscribedActivities
       }
     }
-  `
+  `;
 
-  const headers = { Authorization: `Bearer ${token}` }
+  const headers = { Authorization: `Bearer ${token}` };
 
   return servicesAPI
-    .post('/v1/justgiving/graphql', { query }, { headers })
-    .then(response => response.data)
-}
+    .post("/v1/justgiving/graphql", { query }, { headers })
+    .then((response) => response.data);
+};
 
 export const updateFitnessSettings = ({
   pageId = required(),
   token = required(),
-  provider = 'Strava',
-  measurementSystem = 'METRIC',
+  provider = "Strava",
+  measurementSystem = "METRIC",
   subscribedActivities = allowedActivityTypes,
   showDistance = true,
   showDuration = true,
   showElevation = true,
   showPhotos = false,
   showMap = false,
-  showTotaliser = true
+  showTotaliser = true,
 }) => {
   const filteredActivityTypes = subscribedActivities
-    .filter(type => allowedActivityTypes.indexOf(type.toLowerCase()) > -1)
-    .map(type => type.toUpperCase())
+    .filter((type) => allowedActivityTypes.indexOf(type.toLowerCase()) > -1)
+    .map((type) => type.toUpperCase());
 
   const query = `
     mutation {
@@ -116,11 +116,11 @@ export const updateFitnessSettings = ({
         showTotaliser
       }
     }
-  `
+  `;
 
-  const headers = { Authorization: `Bearer ${token}` }
+  const headers = { Authorization: `Bearer ${token}` };
 
   return servicesAPI
-    .post('/v1/justgiving/graphql', { query }, { headers })
-    .then(response => response.data)
-}
+    .post("/v1/justgiving/graphql", { query }, { headers })
+    .then((response) => response.data);
+};

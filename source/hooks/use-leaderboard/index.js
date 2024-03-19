@@ -1,20 +1,24 @@
-import pickBy from 'lodash/pickBy'
-import { useQuery } from 'react-query'
-import { fetchLeaderboard, deserializeLeaderboard } from '../../api/leaderboard'
+import pickBy from "lodash/pickBy";
+import { useQuery } from "react-query";
+import {
+  fetchLeaderboard,
+  deserializeLeaderboard,
+} from "../../api/leaderboard";
 
 export const useLeaderboard = (params, options) => {
-  const { deserializeMethod, refetchInterval, staleTime = 30000 } = options
+  const { deserializeMethod, refetchInterval, staleTime = 30000 } = options;
 
   return useQuery(
-    ['fundraisingLeaderboard', pickBy(params)],
+    ["fundraisingLeaderboard", pickBy(params)],
     () =>
-      fetchLeaderboard(params)
-        .then(results => results.map(deserializeMethod || deserializeLeaderboard)),
+      fetchLeaderboard(params).then((results) =>
+        results.map(deserializeMethod || deserializeLeaderboard)
+      ),
     {
       refetchInterval,
-      staleTime
+      staleTime,
     }
-  )
-}
+  );
+};
 
-export default useLeaderboard
+export default useLeaderboard;
