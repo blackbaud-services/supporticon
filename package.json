@@ -60,7 +60,7 @@
     "axios": "^0.21.4",
     "constructicon": "^5.0.0",
     "dayjs": "^1.10.6",
-    "js-base64": "^3.7.0",
+    "js-base64": "3.7.7",
     "prop-types": "^15.7.2",
     "slugify": "^1.6.0",
     "spark-md5": "^3.0.2",
