@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import PropTypes from "prop-types";
 import orderBy from "lodash/orderBy";
 import { deserializeTeamPage, fetchTeamPages } from "../../api/teams";
@@ -42,18 +42,16 @@ const TeamLeaderboard = ({
   team,
   units,
 }) => {
-  const { data = [], status } = useQuery(
-    ["teamLeaderboard", team],
-    () =>
+  const { data = [], status } = useQuery({
+    queryKey: ["teamLeaderboard", team],
+    queryFn: () =>
       fetchTeamPages(team)
         .then((data) => data.map(deserializeMethod || deserializeTeamPage))
         .then((pages) =>
           activeOnly ? pages.filter((page) => page.active) : pages
         ),
-    {
-      refetchInterval,
-    }
-  );
+    options: { refetchInterval },
+  });
 
   const sortKeys = {
     activities: "fitnessCount",

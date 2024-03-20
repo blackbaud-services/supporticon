@@ -1,5 +1,5 @@
 import pickBy from "lodash/pickBy";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   fetchLeaderboard,
   deserializeLeaderboard,
@@ -8,17 +8,14 @@ import {
 export const useLeaderboard = (params, options) => {
   const { deserializeMethod, refetchInterval, staleTime = 30000 } = options;
 
-  return useQuery(
-    ["fundraisingLeaderboard", pickBy(params)],
-    () =>
+  return useQuery({
+    queryKey: ["fundraisingLeaderboard", pickBy(params)],
+    queryFn: () =>
       fetchLeaderboard(params).then((results) =>
         results.map(deserializeMethod || deserializeLeaderboard)
       ),
-    {
-      refetchInterval,
-      staleTime,
-    }
-  );
+    options: { refetchInterval, staleTime },
+  });
 };
 
 export default useLeaderboard;
