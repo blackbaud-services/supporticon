@@ -1,18 +1,25 @@
-import dayjs from 'dayjs'
-import chunk from 'lodash/chunk'
-import first from 'lodash/first'
-import flattenDeep from 'lodash/flattenDeep'
-import lodashGet from 'lodash/get'
-import lodashFilter from 'lodash/filter'
-import slugify from 'slugify'
-import { v4 as uuid } from 'uuid'
-import { destroy, get, post, put, servicesAPI } from '../../utils/client'
-import { apiUrl, apiImageUrl, baseUrl, imageUrl } from '../../utils/justgiving'
-import { getUID, isEmpty, isInArray, isUuid, required, getUIDForOnepageCampaign } from '../../utils/params'
-import { defaultPageTags } from '../../utils/tags'
-import { deserializeFitnessActivity } from '../fitness-activities'
-import { fetchTotals, deserializeTotals } from '../../utils/totals'
-import jsonDate from '../../utils/jsonDate'
+import dayjs from "dayjs";
+import chunk from "lodash/chunk";
+import first from "lodash/first";
+import flattenDeep from "lodash/flattenDeep";
+import lodashGet from "lodash/get";
+import lodashFilter from "lodash/filter";
+import slugify from "slugify";
+import { v4 as uuid } from "uuid";
+import { destroy, get, post, put, servicesAPI } from "../../utils/client";
+import { apiUrl, apiImageUrl, baseUrl, imageUrl } from "../../utils/justgiving";
+import {
+  getUID,
+  isEmpty,
+  isInArray,
+  isUuid,
+  required,
+  getUIDForOnepageCampaign,
+} from "../../utils/params";
+import { defaultPageTags } from "../../utils/tags";
+import { deserializeFitnessActivity } from "../fitness-activities";
+import { fetchTotals, deserializeTotals } from "../../utils/totals";
+import jsonDate from "../../utils/jsonDate";
 
 export const pageNameRegex = /[^\w\s',-]/gi;
 
@@ -209,13 +216,18 @@ export const fetchPages = (params = required()) => {
       );
   }
 
-  return get(`/v1/onesearch${!!campaign && '?campaignGuid=' + getUIDForOnepageCampaign(campaign)}`, {
-    charityId: getUID(charity),
-    eventId: getUID(event),
-    i: "Fundraiser",
-    ...args,
-    q: `${args.q}*`,
-  }).then(
+  return get(
+    `/v1/onesearch${
+      !!campaign && "?campaignGuid=" + getUIDForOnepageCampaign(campaign)
+    }`,
+    {
+      charityId: getUID(charity),
+      eventId: getUID(event),
+      i: "Fundraiser",
+      ...args,
+      q: `${args.q}*`,
+    }
+  ).then(
     (response) =>
       (response.GroupedResults &&
         response.GroupedResults.length &&

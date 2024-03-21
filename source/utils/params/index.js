@@ -31,16 +31,16 @@ export const dataSource = ({ event, charity, campaign, donationRef }) => {
   }
 };
 
-export const getUIDForOnepageCampaign = data => {
+export const getUIDForOnepageCampaign = (data) => {
   switch (typeof data) {
-    case 'object':
-      return Array.isArray(data) ? data.join('&campaignGuid=') : data.uid
+    case "object":
+      return Array.isArray(data) ? data.join("&campaignGuid=") : data.uid;
     default:
-      return data
+      return data;
   }
-}
+};
 
-export const getUID = data => {
+export const getUID = (data) => {
   switch (typeof data) {
     case "object":
       return Array.isArray(data) ? getUID(data[0]) : data.uid;
