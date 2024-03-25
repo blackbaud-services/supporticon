@@ -1,16 +1,16 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { useDonationTotals } from "../../hooks/use-donation-totals";
+import React from 'react'
+import PropTypes from 'prop-types'
+import { useDonationTotals } from '../../hooks/use-donation-totals'
 import {
   formatCurrency,
   formatNumber,
-  setLocaleFromCountry,
-} from "../../utils/numbers";
-import { currencyCode } from "../../utils/currencies";
+  setLocaleFromCountry
+} from '../../utils/numbers'
+import { currencyCode } from '../../utils/currencies'
 
-import Icon from "constructicon/icon";
-import Loading from "constructicon/loading";
-import Metric from "constructicon/metric";
+import Icon from 'constructicon/icon'
+import Loading from 'constructicon/loading'
+import Metric from 'constructicon/metric'
 
 const TotalFundsRaised = ({
   campaign,
@@ -30,30 +30,27 @@ const TotalFundsRaised = ({
   refreshInterval: refetchInterval,
   startDate,
   tagId,
-  tagValue,
+  tagValue
 }) => {
-  const { data, status } = useDonationTotals(
-    {
-      campaign,
-      charity,
-      donationRef,
-      event,
-      country,
-      includeOffline: !excludeOffline,
-      startDate,
-      endDate,
-      tagId,
-      tagValue,
-    },
-    { refetchInterval }
-  );
+  const { data, status } = useDonationTotals({
+    campaign,
+    charity,
+    donationRef,
+    event,
+    country,
+    includeOffline: !excludeOffline,
+    startDate,
+    endDate,
+    tagId,
+    tagValue
+  }, { refetchInterval })
 
-  const locale = setLocaleFromCountry(country);
+  const locale = setLocaleFromCountry(country)
 
-  if (status === "error") return <Icon name="warning" />;
+  if (status === 'error') return <Icon name='warning' />
 
-  if (status === "success") {
-    const amount = (offset + data.raised) * multiplier;
+  if (status === 'success') {
+    const amount = (offset + data.raised) * multiplier
 
     return (
       <Metric
@@ -64,17 +61,17 @@ const TotalFundsRaised = ({
             ? formatCurrency({
                 amount,
                 currencyCode: currencyCode(country),
-                locale,
+                locale
               })
             : formatNumber({ amount, locale, places })
         }
         {...metric}
       />
-    );
+    )
   }
 
-  return <Loading />;
-};
+  return <Loading />
+}
 
 TotalFundsRaised.propTypes = {
   /**
@@ -83,7 +80,7 @@ TotalFundsRaised.propTypes = {
   campaign: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
-    PropTypes.array,
+    PropTypes.array
   ]),
 
   /**
@@ -92,7 +89,7 @@ TotalFundsRaised.propTypes = {
   event: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
-    PropTypes.array,
+    PropTypes.array
   ]),
 
   /**
@@ -101,7 +98,7 @@ TotalFundsRaised.propTypes = {
   charity: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
-    PropTypes.array,
+    PropTypes.array
   ]),
 
   /**
@@ -113,16 +110,16 @@ TotalFundsRaised.propTypes = {
    * Country code for API
    */
   country: PropTypes.oneOf([
-    "au",
-    "ca",
-    "gb",
-    "hk",
-    "ie",
-    "nz",
-    "sg",
-    "uk",
-    "us",
-    "za",
+    'au',
+    'ca',
+    'gb',
+    'hk',
+    'ie',
+    'nz',
+    'sg',
+    'uk',
+    'us',
+    'za'
   ]),
 
   /**
@@ -174,7 +171,7 @@ TotalFundsRaised.propTypes = {
   icon: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
-    PropTypes.element,
+    PropTypes.element
   ]),
 
   /**
@@ -195,17 +192,17 @@ TotalFundsRaised.propTypes = {
   /**
    * The tag value to filter by
    */
-  tagValue: PropTypes.string,
-};
+  tagValue: PropTypes.string
+}
 
 TotalFundsRaised.defaultProps = {
-  country: "gb",
+  country: 'gb',
   currency: true,
   excludeOffline: false,
-  label: "Funds Raised",
+  label: 'Funds Raised',
   multiplier: 1,
   offset: 0,
-  places: 0,
-};
+  places: 0
+}
 
-export default TotalFundsRaised;
+export default TotalFundsRaised
