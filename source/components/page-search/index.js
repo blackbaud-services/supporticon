@@ -73,7 +73,7 @@ class PageSearch extends Component {
       })
     }
 
-    if (query.length < 3) {
+    if (query?.length < 3) {
       return
     }
 
@@ -150,7 +150,7 @@ class PageSearch extends Component {
     const { status, q, data = [] } = this.state
     const { subtitle } = this.props
 
-    const shortQuery = q.length < 3
+    const shortQuery = q?.length < 3
 
     return (
       <SearchResults
