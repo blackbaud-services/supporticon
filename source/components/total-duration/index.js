@@ -1,12 +1,12 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { useFitnessTotals } from '../../hooks/use-fitness-totals'
-import { formatDuration } from '../../utils/fitness'
-import { formatNumber } from '../../utils/numbers'
+import React from "react";
+import PropTypes from "prop-types";
+import { useFitnessTotals } from "../../hooks/use-fitness-totals";
+import { formatDuration } from "../../utils/fitness";
+import { formatNumber } from "../../utils/numbers";
 
-import Icon from 'constructicon/icon'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
+import Icon from "constructicon/icon";
+import Loading from "constructicon/loading";
+import Metric from "constructicon/metric";
 
 const TotalDuration = ({
   activity,
@@ -23,41 +23,44 @@ const TotalDuration = ({
   startDate,
   tagId,
   tagValue,
-  units
+  units,
 }) => {
-  const { data, status } = useFitnessTotals({
-    campaign,
-    charity,
-    endDate,
-    startDate,
-    tagId,
-    tagValue
-  }, { refetchInterval })
+  const { data, status } = useFitnessTotals(
+    {
+      campaign,
+      charity,
+      endDate,
+      startDate,
+      tagId,
+      tagValue,
+    },
+    { refetchInterval }
+  );
 
-  if (status === 'error') return <Icon name='warning' />
+  if (status === "error") return <Icon name="warning" />;
 
-  if (status === 'success') {
-    const formatAmount = label => {
-      const amount = (offset + data.duration) * multiplier
+  if (status === "success") {
+    const formatAmount = (label) => {
+      const amount = (offset + data.duration) * multiplier;
 
       return units
         ? formatDuration({ amount, label })
-        : formatNumber({ amount, places })
-    }
+        : formatNumber({ amount, places });
+    };
 
     return (
       <Metric
         icon={icon}
         label={label}
         amount={formatAmount()}
-        amountLabel={formatAmount('full')}
+        amountLabel={formatAmount("full")}
         {...metric}
       />
-    )
+    );
   }
 
-  return <Loading />
-}
+  return <Loading />;
+};
 
 TotalDuration.propTypes = {
   /**
@@ -100,7 +103,7 @@ TotalDuration.propTypes = {
   icon: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
-    PropTypes.element
+    PropTypes.element,
   ]),
 
   /**
@@ -136,15 +139,15 @@ TotalDuration.propTypes = {
   /**
    * The tag value to filter by
    */
-  tagValue: PropTypes.string
-}
+  tagValue: PropTypes.string,
+};
 
 TotalDuration.defaultProps = {
-  label: 'Total Duration',
+  label: "Total Duration",
   multiplier: 1,
   places: 0,
   offset: 0,
-  units: true
-}
+  units: true,
+};
 
-export default TotalDuration
+export default TotalDuration;

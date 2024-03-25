@@ -1,36 +1,36 @@
-import { instance } from '../../../utils/client'
-import { fetchEvent } from '..'
+import { instance } from "../../../utils/client";
+import { fetchEvent } from "..";
 
-describe('Fetch Event', () => {
+describe("Fetch Event", () => {
   beforeEach(() => {
-    return moxios.install(instance)
-  })
+    return moxios.install(instance);
+  });
 
   afterEach(() => {
-    moxios.uninstall(instance)
-  })
+    moxios.uninstall(instance);
+  });
 
-  it('throws if event is requested', () => {
-    const test = () => fetchEvent({ id: '12345' })
-    expect(test).to.throw
-  })
+  it("throws if event is requested", () => {
+    const test = () => fetchEvent({ id: "12345" });
+    expect(test).to.throw;
+  });
 
-  it('fetches a single event', done => {
-    fetchEvent({ id: '12345' })
+  it("fetches a single event", (done) => {
+    fetchEvent({ id: "12345" });
     moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
-      expect(request.url).to.equal('/v1/event/12345')
-      done()
-    })
-  })
+      const request = moxios.requests.mostRecent();
+      expect(request.url).to.equal("/v1/event/12345");
+      done();
+    });
+  });
 
-  it('throws with incorrect params', () => {
-    const test = () => fetchEvent({ charity: 'charity' })
-    expect(test).to.throw
-  })
+  it("throws with incorrect params", () => {
+    const test = () => fetchEvent({ charity: "charity" });
+    expect(test).to.throw;
+  });
 
-  it('throws if a event is requested, but no id is supplied', () => {
-    const test = () => fetchEvent()
-    expect(test).to.throw
-  })
-})
+  it("throws if a event is requested, but no id is supplied", () => {
+    const test = () => fetchEvent();
+    expect(test).to.throw;
+  });
+});

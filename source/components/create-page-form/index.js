@@ -1,55 +1,55 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import capitalize from 'lodash/capitalize'
-import get from 'lodash/get'
-import merge from 'lodash/merge'
-import pickBy from 'lodash/pickBy'
-import withForm from 'constructicon/with-form'
-import * as validators from 'constructicon/lib/validators'
-import { createPage } from '../../api/pages'
-import { updateCurrentUser } from '../../api/me'
-import { currencyCode } from '../../utils/currencies'
-import { renderInput, renderFormFields } from '../../utils/form'
-import countries from '../../utils/countries'
-import * as addressHelpers from '../../utils/address'
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import capitalize from "lodash/capitalize";
+import get from "lodash/get";
+import merge from "lodash/merge";
+import pickBy from "lodash/pickBy";
+import withForm from "constructicon/with-form";
+import * as validators from "constructicon/lib/validators";
+import { createPage } from "../../api/pages";
+import { updateCurrentUser } from "../../api/me";
+import { currencyCode } from "../../utils/currencies";
+import { renderInput, renderFormFields } from "../../utils/form";
+import countries from "../../utils/countries";
+import * as addressHelpers from "../../utils/address";
 
-import AddressSearch from '../address-search'
-import CharitySearch from '../charity-search'
-import Form from 'constructicon/form'
-import Grid from 'constructicon/grid'
-import GridColumn from 'constructicon/grid-column'
-import InputField from 'constructicon/input-field'
-import InputSelect from 'constructicon/input-select'
-import RichText from 'constructicon/rich-text'
+import AddressSearch from "../address-search";
+import CharitySearch from "../charity-search";
+import Form from "constructicon/form";
+import Grid from "constructicon/grid";
+import GridColumn from "constructicon/grid-column";
+import InputField from "constructicon/input-field";
+import InputSelect from "constructicon/input-select";
+import RichText from "constructicon/rich-text";
 
 class CreatePageForm extends Component {
-  constructor () {
-    super()
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleAddressLookup = this.handleAddressLookup.bind(this)
+  constructor() {
+    super();
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleAddressLookup = this.handleAddressLookup.bind(this);
     this.state = {
       manualAddress: false,
-      status: 'empty',
-      errors: []
+      status: "empty",
+      errors: [],
+    };
+  }
+
+  componentDidMount() {
+    if (this.props.country !== "uk") {
+      this.setState({ manualAddress: true });
     }
   }
 
-  componentDidMount () {
-    if (this.props.country !== 'uk') {
-      this.setState({ manualAddress: true })
-    }
-  }
-
-  componentDidUpdate () {
-    const { form, onFormUpdate } = this.props
+  componentDidUpdate() {
+    const { form, onFormUpdate } = this.props;
 
     if (onFormUpdate) {
-      onFormUpdate(form)
+      onFormUpdate(form);
     }
   }
 
-  handleSubmit (e) {
-    e.preventDefault()
+  handleSubmit(e) {
+    e.preventDefault();
 
     const {
       authType,
@@ -64,16 +64,16 @@ class CreatePageForm extends Component {
       onSuccess,
       showValidationErrorMessage,
       timeBox,
-      token
-    } = this.props
+      token,
+    } = this.props;
 
     return form
       .submit()
-      .then(data => {
+      .then((data) => {
         this.setState({
           errors: [],
-          status: 'fetching'
-        })
+          status: "fetching",
+        });
 
         const addressFields = {
           streetAddress: data.streetAddress,
@@ -81,8 +81,8 @@ class CreatePageForm extends Component {
           locality: data.localityAddress,
           region: data.regionAddress,
           postCode: data.postCodeAddress,
-          country: data.countryAddress
-        }
+          country: data.countryAddress,
+        };
 
         const dataPayload = merge(
           {
@@ -95,101 +95,101 @@ class CreatePageForm extends Component {
             eventId,
             token,
             timeBox,
-            currency: currencyCode(country)
+            currency: currencyCode(country),
           },
           data
-        )
+        );
 
         return Promise.resolve()
           .then(() => this.handleSubmitAddress(token, addressFields))
           .then(() => createPage(dataPayload))
-          .then(result => {
-            this.setState({ status: 'fetched' })
-            return onSuccess(result, dataPayload)
+          .then((result) => {
+            this.setState({ status: "fetched" });
+            return onSuccess(result, dataPayload);
           })
-          .catch(error => {
+          .catch((error) => {
             const getErrorMessage = () => {
-              const errorId = get(error, 'data.error.id')
+              const errorId = get(error, "data.error.id");
 
               switch (errorId) {
-                case 'CampaignNotFound':
-                  return 'Campaign not found'
-                case 'CampaignExpired':
-                  return 'Campaign has expired'
-                case 'CampaignFundraisingDisabled':
-                  return 'Campaign has not enabled fundraising'
-                case 'CampaignInvalidCharityId':
-                  return 'Charity is not part of the campaign'
-                case 'CampaignMismatchEventId':
-                  return 'Event and Campaign do not match'
+                case "CampaignNotFound":
+                  return "Campaign not found";
+                case "CampaignExpired":
+                  return "Campaign has expired";
+                case "CampaignFundraisingDisabled":
+                  return "Campaign has not enabled fundraising";
+                case "CampaignInvalidCharityId":
+                  return "Charity is not part of the campaign";
+                case "CampaignMismatchEventId":
+                  return "Event and Campaign do not match";
                 default:
                   return (
-                    get(error, 'data.error.message') ||
-                    get(error, 'data.errorMessage') ||
-                    'There was an unexpected error'
-                  )
+                    get(error, "data.error.message") ||
+                    get(error, "data.errorMessage") ||
+                    "There was an unexpected error"
+                  );
               }
-            }
+            };
 
-            const message = getErrorMessage()
+            const message = getErrorMessage();
 
             switch (error.status) {
               case 422:
                 return this.setState({
-                  status: 'failed',
-                  errors: get(error, 'data.error.errors', []).map(
+                  status: "failed",
+                  errors: get(error, "data.error.errors", []).map(
                     ({ field, message }) => ({
                       message: [
-                        capitalize(field.split('_').join(' ')),
-                        message
-                      ].join(' ')
+                        capitalize(field.split("_").join(" ")),
+                        message,
+                      ].join(" "),
                     })
-                  )
-                })
+                  ),
+                });
               case 400:
                 return this.setState({
-                  status: 'failed',
-                  errors: get(error, 'data', []).map(({ desc }) => ({
-                    message: capitalize(desc)
-                  }))
-                })
+                  status: "failed",
+                  errors: get(error, "data", []).map(({ desc }) => ({
+                    message: capitalize(desc),
+                  })),
+                });
               default:
                 return this.setState({
-                  status: 'failed',
-                  errors: message ? [{ message }] : []
-                })
+                  status: "failed",
+                  errors: message ? [{ message }] : [],
+                });
             }
-          })
+          });
       })
-      .catch(error => {
-        onSubmitError(error)
+      .catch((error) => {
+        onSubmitError(error);
 
         if (showValidationErrorMessage && form.invalid) {
-          this.handleValidationErrors(error)
+          this.handleValidationErrors(error);
         }
-      })
+      });
   }
 
-  handleValidationErrors (errors) {
+  handleValidationErrors(errors) {
     const fieldErrors = Object.keys(errors)
-      .map(key => ({
+      .map((key) => ({
         key,
-        message: Array.isArray(errors[key]) ? errors[key].join(' ') : null
+        message: Array.isArray(errors[key]) ? errors[key].join(" ") : null,
       }))
-      .filter(field => !!field.message)
-      .filter(field => field.message !== 'This field is required')
+      .filter((field) => !!field.message)
+      .filter((field) => field.message !== "This field is required");
 
-    const handleErrorClick = id => {
-      const el = document.querySelector(`form [name="${id}"]`)
+    const handleErrorClick = (id) => {
+      const el = document.querySelector(`form [name="${id}"]`);
 
       if (el) {
-        el.focus()
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        el.focus();
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
       }
-    }
+    };
 
     this.setState({
-      status: 'failed',
+      status: "failed",
       errors: [
         {
           message: (
@@ -205,48 +205,48 @@ class CreatePageForm extends Component {
                 ))}
               </ul>
             </RichText>
-          )
-        }
-      ]
-    })
+          ),
+        },
+      ],
+    });
   }
 
-  handleSubmitAddress (token, address) {
-    const { authType, includeAddress, user } = this.props
-    const { uuid, email } = user
+  handleSubmitAddress(token, address) {
+    const { authType, includeAddress, user } = this.props;
+    const { uuid, email } = user;
 
     return includeAddress
       ? updateCurrentUser({ uuid, email, authType, token, address })
-      : Promise.resolve()
+      : Promise.resolve();
   }
 
-  handleAddressLookup (address) {
+  handleAddressLookup(address) {
     const addressFields = pickBy({
       streetAddress: address.streetAddress,
       extendedAddress: address.extendedAddress,
       localityAddress: address.locality,
       regionAddress: address.region,
       postCodeAddress: address.postCode,
-      countryAddress: address.country
-    })
+      countryAddress: address.country,
+    });
 
-    this.props.form.updateValues(addressFields)
-    this.setState({ manualAddress: true })
+    this.props.form.updateValues(addressFields);
+    this.setState({ manualAddress: true });
   }
 
-  getAutoRenderedFields (fields) {
+  getAutoRenderedFields(fields) {
     return renderFormFields(fields, [
-      'streetAddress',
-      'extendedAddress',
-      'localityAddress',
-      'regionAddress',
-      'postCodeAddress',
-      'countryAddress',
-      ...this.props.omittedFieldKeys
-    ])
+      "streetAddress",
+      "extendedAddress",
+      "localityAddress",
+      "regionAddress",
+      "postCodeAddress",
+      "countryAddress",
+      ...this.props.omittedFieldKeys,
+    ]);
   }
 
-  render () {
+  render() {
     const {
       campaignId,
       disableInvalidForm,
@@ -254,55 +254,55 @@ class CreatePageForm extends Component {
       formComponent,
       includeAddress,
       inputField,
-      submit
-    } = this.props
+      submit,
+    } = this.props;
 
-    const { status, errors } = this.state
+    const { status, errors } = this.state;
 
     return (
       <Form
         errors={errors}
         isDisabled={disableInvalidForm && form.invalid}
-        isLoading={status === 'fetching'}
+        isLoading={status === "fetching"}
         noValidate
         onSubmit={this.handleSubmit}
         submit={submit}
-        autoComplete='off'
+        autoComplete="off"
         {...formComponent}
       >
-        {this.getAutoRenderedFields(form.fields).map(field => {
-          const Tag = renderInput(field.type)
+        {this.getAutoRenderedFields(form.fields).map((field) => {
+          const Tag = renderInput(field.type);
 
           switch (field.name) {
-            case 'charityId':
+            case "charityId":
               return (
                 <CharitySearch
                   key={field.name}
                   campaign={campaignId}
-                  onChange={charity => field.onChange(charity.id)}
+                  onChange={(charity) => field.onChange(charity.id)}
                   inputProps={{ ...field, ...inputField }}
                 />
-              )
+              );
             default:
-              return <Tag key={field.name} {...field} {...inputField} />
+              return <Tag key={field.name} {...field} {...inputField} />;
           }
         })}
 
         {includeAddress && this.renderAddress()}
       </Form>
-    )
+    );
   }
 
-  renderAddress () {
-    const { manualAddress } = this.state
+  renderAddress() {
+    const { manualAddress } = this.state;
     const {
       addressSearchLabel,
       addressSearchProps,
       form,
       inputField,
-      country
-    } = this.props
-    const selectedCountry = form.values.country || country
+      country,
+    } = this.props;
+    const selectedCountry = form.values.country || country;
 
     if (!manualAddress) {
       return (
@@ -318,7 +318,7 @@ class CreatePageForm extends Component {
           validations={form.fields.streetAddress.validations}
           {...addressSearchProps}
         />
-      )
+      );
     }
 
     return (
@@ -333,7 +333,7 @@ class CreatePageForm extends Component {
           <InputField
             {...form.fields.localityAddress}
             {...inputField}
-            required={selectedCountry !== 'nz'}
+            required={selectedCountry !== "nz"}
             label={addressHelpers.localityLabel(selectedCountry)}
           />
         </GridColumn>
@@ -357,7 +357,7 @@ class CreatePageForm extends Component {
           />
         </GridColumn>
       </Grid>
-    )
+    );
   }
 }
 
@@ -390,7 +390,7 @@ CreatePageForm.propTypes = {
   /**
    * Country for new page
    */
-  country: PropTypes.oneOf(['au', 'nz', 'uk', 'us', 'ie']),
+  country: PropTypes.oneOf(["au", "nz", "uk", "us", "ie"]),
 
   /**
    * Disable form submission when invalid
@@ -470,70 +470,70 @@ CreatePageForm.propTypes = {
   /**
    * Excluded fields based on conditional logic
    */
-  omittedFieldKeys: PropTypes.array
-}
+  omittedFieldKeys: PropTypes.array,
+};
 
 CreatePageForm.defaultProps = {
-  authType: 'Bearer',
+  authType: "Bearer",
   charityFunded: false,
   disableInvalidForm: false,
   fields: {},
   initialValues: {},
   onSubmitError: () => {},
-  submit: 'Create Page',
+  submit: "Create Page",
   user: {},
-  omittedFieldKeys: []
-}
+  omittedFieldKeys: [],
+};
 
-const form = props => {
+const form = (props) => {
   const defaultFields = {
     title: {
-      label: 'Page title',
-      type: 'text',
+      label: "Page title",
+      type: "text",
       order: 1,
       required: true,
       maxLength: 75,
-      placeholder: 'Title of your fundraising page',
-      validators: [validators.required('Please enter a page title')]
-    }
-  }
+      placeholder: "Title of your fundraising page",
+      validators: [validators.required("Please enter a page title")],
+    },
+  };
 
   const optionalFields = {
     ...(props.includeCharitySearch && {
       charityId: {
-        label: 'Charity',
-        type: 'search',
+        label: "Charity",
+        type: "search",
         order: 2,
         required: true,
-        validators: [validators.required('Please select your charity')]
-      }
+        validators: [validators.required("Please select your charity")],
+      },
     }),
     ...(props.includeAddress && {
       countryAddress: {
-        label: 'Country',
+        label: "Country",
         initial: props.country,
         options: countries,
         required: true,
-        placeholder: 'Select Country',
-        validators: [validators.required('Please select a country')]
+        placeholder: "Select Country",
+        validators: [validators.required("Please select a country")],
       },
       streetAddress: {
-        label: 'Street Address',
+        label: "Street Address",
         required: true,
-        validators: [validators.required('Please enter a street address')]
+        validators: [validators.required("Please enter a street address")],
       },
       extendedAddress: {},
       localityAddress: {
         required: true,
         validators: [
           (val, { country }) =>
-            country !== 'nz' &&
+            country !== "nz" &&
             validators.required(
               `Please enter a ${addressHelpers
                 .localityLabel(country)
                 .toLowerCase()}`
-            )(val)
-        ]
+            )(val),
+        ],
       },
       regionAddress: {
         required: true,
@@ -543,8 +543,8 @@ const form = props => {
               `Please enter a ${addressHelpers
                 .regionLabel(country)
                 .toLowerCase()}`
-            )(val)
-        ]
+            )(val),
+        ],
       },
       postCodeAddress: {
         required: true,
@@ -554,32 +554,32 @@ const form = props => {
               `Please enter a ${addressHelpers
                 .postCodeLabel(country)
                 .toLowerCase()}`
-            )(val)
-        ]
-      }
-    })
-  }
+            )(val),
+        ],
+      },
+    }),
+  };
 
-  const allFields = merge(defaultFields, optionalFields, props.fields)
+  const allFields = merge(defaultFields, optionalFields, props.fields);
 
   const allFieldsWithValues = Object.keys(props.initialValues).reduce(
     (fields, key) => {
-      if (!fields[key]) return fields
+      if (!fields[key]) return fields;
 
       return {
         ...fields,
         [key]: {
           ...fields[key],
-          initial: props.initialValues[key]
-        }
-      }
+          initial: props.initialValues[key],
+        },
+      };
     },
     allFields
-  )
+  );
 
   return {
-    fields: allFieldsWithValues
-  }
-}
+    fields: allFieldsWithValues,
+  };
+};
 
-export default withForm(form)(CreatePageForm)
+export default withForm(form)(CreatePageForm);

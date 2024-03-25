@@ -1,22 +1,20 @@
-import { useQuery } from 'react-query'
+import { useQuery } from "@tanstack/react-query";
 import {
   fetchFitnessActivities,
-  deserializeFitnessActivity
-} from '../../api/fitness-activities'
+  deserializeFitnessActivity,
+} from "../../api/fitness-activities";
 
 export const useFitnessFeed = (params, options = {}) => {
-  const { refetchInterval, staleTime = 30000 } = options
+  const { refetchInterval, staleTime = 30000 } = options;
 
-  return useQuery(
-    ['fitnessFeeds', params],
-    () =>
-      fetchFitnessActivities(params)
-        .then(data => data.map(deserializeFitnessActivity)),
-    {
-      refetchInterval,
-      staleTime
-    }
-  )
-}
+  return useQuery({
+    queryKey: ["fitnessFeeds", params],
+    queryFn: () =>
+      fetchFitnessActivities(params).then((data) =>
+        data.map(deserializeFitnessActivity)
+      ),
+    options: { refetchInterval, staleTime },
+  });
+};
 
-export default useFitnessFeed
+export default useFitnessFeed;
