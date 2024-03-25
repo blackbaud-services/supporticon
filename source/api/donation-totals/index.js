@@ -1,116 +1,117 @@
-import client, { servicesAPI } from '../../utils/client'
-import get from 'lodash/get'
+import client, { servicesAPI } from "../../utils/client";
+import get from "lodash/get";
 import {
   getUID,
   required,
   dataSource,
-  paramsSerializer
-} from '../../utils/params'
-import { fetchDonations } from '../feeds'
-import { currencyCode } from '../../utils/currencies'
-import { fetchTotals, deserializeTotals } from '../../utils/totals'
+  paramsSerializer,
+} from "../../utils/params";
+import { fetchDonations } from "../feeds";
+import { currencyCode } from "../../utils/currencies";
+import { fetchTotals, deserializeTotals } from "../../utils/totals";
 
 const fetchCampaignTotals = (id, currency) =>
   Promise.all([
     servicesAPI
       .get(`/v1/justgiving/campaigns/${id}`)
-      .then(response => response.data.donationSummary),
+      .then((response) => response.data.donationSummary),
     servicesAPI
       .get(`/v1/justgiving/campaigns/${id}/pages`, { params: { currency } })
-      .then(response => response.data.meta.totalAmount)
+      .then((response) => response.data.meta.totalAmount),
   ]).then(
     ([
       {
         directDonationAmount,
         fundraiserRaisedAmount,
         offlineAmount,
-        totalNumberOfDonations
+        totalNumberOfDonations,
       },
-      totalAmount
+      totalAmount,
     ]) => ({
       totalRaised:
-        fundraiserRaisedAmount +
-        directDonationAmount +
-        offlineAmount,
-      totalResults: totalNumberOfDonations
+        fundraiserRaisedAmount + directDonationAmount + offlineAmount,
+      totalResults: totalNumberOfDonations,
     })
-  )
+  );
 
 const fetchAllCampaignTotals = (campaignIds, currency) =>
-  Promise.all(campaignIds.map(id => fetchCampaignTotals(id, currency))).then(
-    campaigns =>
+  Promise.all(campaignIds.map((id) => fetchCampaignTotals(id, currency))).then(
+    (campaigns) =>
       campaigns.reduce(
         (acc, { totalRaised, totalResults }) => ({
           totalRaised: acc.totalRaised + totalRaised,
-          totalResults: acc.totalResults + totalResults
+          totalResults: acc.totalResults + totalResults,
         }),
         { totalRaised: 0, totalResults: 0 }
       )
-  )
+  );
 
 export const fetchDonationTotals = (params = required()) => {
   const campaignGuids = Array.isArray(params.campaign)
     ? params.campaign.map(getUID)
-    : [getUID(params.campaign)]
+    : [getUID(params.campaign)];
 
   if (campaignGuids.length && params.tagId && params.tagValue) {
     return fetchTotals({
       segment: `page:campaign:${campaignGuids[0]}`,
       tagId: params.tagId,
-      tagValue: params.tagValue
-    }).then(totals => deserializeTotals(totals, currencyCode(params.country)))
+      tagValue: params.tagValue,
+    }).then((totals) =>
+      deserializeTotals(totals, currencyCode(params.country))
+    );
   }
 
   const eventArgs = {
     eventid: Array.isArray(params.event)
       ? params.event.map(getUID)
       : getUID(params.event),
-    currency: currencyCode(params.country)
-  }
+    currency: currencyCode(params.country),
+  };
 
   if (params.charity) {
-    eventArgs.charityIds = params.charity
+    eventArgs.charityIds = params.charity;
   }
 
   switch (dataSource(params)) {
-    case 'donationRef':
+    case "donationRef":
       return client.get(`/v1/donationtotal/ref/${params.donationRef}`, {
-        currencyCode: currencyCode(params.country)
-      })
-    case 'event':
+        currencyCode: currencyCode(params.country),
+      });
+    case "event":
       if (params.charity && params.charity.length) {
         // no support for donations count for event & charity combination
         return client.get(
-          '/v1/events/leaderboard',
+          "/v1/events/leaderboard",
           eventArgs,
           {},
-          { paramsSerializer })
+          { paramsSerializer }
+        );
       }
       return Promise.all([
         fetchDonations(params),
         client.get(
-          '/v1/events/leaderboard',
+          "/v1/events/leaderboard",
           eventArgs,
           {},
           { paramsSerializer }
-        )
+        ),
       ]).then(([feed, totals]) => ({
         ...feed.meta,
-        ...totals
-      }))
-    case 'charity':
+        ...totals,
+      }));
+    case "charity":
       return client.get(
-        '/donationsleaderboards/v1/totals',
+        "/donationsleaderboards/v1/totals",
         {
           campaignGuids,
           charityIds: Array.isArray(params.charity)
             ? params.charity.map(getUID)
             : getUID(params.charity),
-          currencyCode: currencyCode(params.country)
+          currencyCode: currencyCode(params.country),
         },
         {},
         { paramsSerializer }
-      )
+      );
     default:
       return params.includeOffline
         ? fetchAllCampaignTotals(
@@ -118,26 +119,26 @@ export const fetchDonationTotals = (params = required()) => {
             params.country && currencyCode(params.country)
           )
         : client.get(
-          '/donationsleaderboards/v1/totals',
-          {
-            campaignGuids,
-            currencyCode: currencyCode(params.country)
-          },
-          {},
-          { paramsSerializer }
-        )
+            "/donationsleaderboards/v1/totals",
+            {
+              campaignGuids,
+              currencyCode: currencyCode(params.country),
+            },
+            {},
+            { paramsSerializer }
+          );
   }
-}
+};
 
-export const deserializeDonationTotals = totals => ({
+export const deserializeDonationTotals = (totals) => ({
   raised:
     totals.raised ||
     totals.totalRaised ||
     totals.raisedAmount ||
     totals.DonationsTotal ||
-    get(totals, 'meta.totalAmount') ||
-    get(totals, 'donationSummary.totalAmount') ||
-    get(totals, 'totals.donationTotalAmount') ||
+    get(totals, "meta.totalAmount") ||
+    get(totals, "donationSummary.totalAmount") ||
+    get(totals, "totals.donationTotalAmount") ||
     0,
   offline: totals.offlineAmount || totals.raisedAmountOfflineInGBP || 0,
   donations:
@@ -145,7 +146,7 @@ export const deserializeDonationTotals = totals => ({
     totals.totalResults ||
     totals.numberOfDirectDonations ||
     totals.NumberOfDonations ||
-    get(totals, 'donationSummary.totalNumberOfDonations') ||
-    get(totals, 'totals.donationCount') ||
-    0
-})
+    get(totals, "donationSummary.totalNumberOfDonations") ||
+    get(totals, "totals.donationCount") ||
+    0,
+});

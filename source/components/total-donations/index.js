@@ -1,11 +1,11 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { useDonationTotals } from '../../hooks/use-donation-totals'
-import { formatNumber } from '../../utils/numbers'
+import React from "react";
+import PropTypes from "prop-types";
+import { useDonationTotals } from "../../hooks/use-donation-totals";
+import { formatNumber } from "../../utils/numbers";
 
-import Icon from 'constructicon/icon'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
+import Icon from "constructicon/icon";
+import Loading from "constructicon/loading";
+import Metric from "constructicon/metric";
 
 const TotalDonations = ({
   campaign,
@@ -23,38 +23,44 @@ const TotalDonations = ({
   refreshInterval: refetchInterval,
   startDate,
   tagId,
-  tagValue
+  tagValue,
 }) => {
-  const { data, status } = useDonationTotals({
-    campaign,
-    charity,
-    donationRef,
-    event,
-    country,
-    includeOffline: !excludeOffline,
-    startDate,
-    endDate,
-    tagId,
-    tagValue
-  }, { refetchInterval })
+  const { data, status } = useDonationTotals(
+    {
+      campaign,
+      charity,
+      donationRef,
+      event,
+      country,
+      includeOffline: !excludeOffline,
+      startDate,
+      endDate,
+      tagId,
+      tagValue,
+    },
+    { refetchInterval }
+  );
 
-  if (charity && event && charity.length && event.length) return <Icon name='warning' />
+  if (charity && event && charity.length && event.length)
+    return <Icon name="warning" />;
 
-  if (status === 'error') return <Icon name='warning' />
+  if (status === "error") return <Icon name="warning" />;
 
-  if (status === 'success') {
+  if (status === "success") {
     return (
       <Metric
         icon={icon}
         label={label}
-        amount={formatNumber({ amount: (offset + data.donations) * multiplier })}
+        amount={formatNumber({
+          amount: (offset + data.donations) * multiplier,
+        })}
         {...metric}
       />
-    )
+    );
   }
 
-  return <Loading />
-}
+  return <Loading />;
+};
 
 TotalDonations.propTypes = {
   /**
@@ -63,7 +69,7 @@ TotalDonations.propTypes = {
   campaign: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
 
   /**
@@ -72,7 +78,7 @@ TotalDonations.propTypes = {
   event: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
 
   /**
@@ -81,7 +87,7 @@ TotalDonations.propTypes = {
   charity: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
 
   /**
@@ -93,16 +99,16 @@ TotalDonations.propTypes = {
    * Country code for API
    */
   country: PropTypes.oneOf([
-    'au',
-    'ca',
-    'gb',
-    'hk',
-    'ie',
-    'nz',
-    'sg',
-    'uk',
-    'us',
-    'za'
+    "au",
+    "ca",
+    "gb",
+    "hk",
+    "ie",
+    "nz",
+    "sg",
+    "uk",
+    "us",
+    "za",
   ]),
 
   /**
@@ -144,7 +150,7 @@ TotalDonations.propTypes = {
   icon: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
-    PropTypes.element
+    PropTypes.element,
   ]),
 
   /**
@@ -165,14 +171,14 @@ TotalDonations.propTypes = {
   /**
    * The tag value to filter by
    */
-  tagValue: PropTypes.string
-}
+  tagValue: PropTypes.string,
+};
 
 TotalDonations.defaultProps = {
   excludeOffline: false,
-  label: 'Donations',
+  label: "Donations",
   multiplier: 1,
-  offset: 0
-}
+  offset: 0,
+};
 
-export default TotalDonations
+export default TotalDonations;

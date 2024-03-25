@@ -1,12 +1,12 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { useFitnessTotals } from '../../hooks/use-fitness-totals'
-import { formatElevation } from '../../utils/fitness'
-import { formatNumber } from '../../utils/numbers'
+import React from "react";
+import PropTypes from "prop-types";
+import { useFitnessTotals } from "../../hooks/use-fitness-totals";
+import { formatElevation } from "../../utils/fitness";
+import { formatNumber } from "../../utils/numbers";
 
-import Icon from 'constructicon/icon'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
+import Icon from "constructicon/icon";
+import Loading from "constructicon/loading";
+import Metric from "constructicon/metric";
 
 const TotalElevation = ({
   campaign,
@@ -23,41 +23,44 @@ const TotalElevation = ({
   startDate,
   tagId,
   tagValue,
-  units
+  units,
 }) => {
-  const { data, status } = useFitnessTotals({
-    campaign,
-    charity,
-    endDate,
-    startDate,
-    tagId,
-    tagValue
-  }, { refetchInterval })
+  const { data, status } = useFitnessTotals(
+    {
+      campaign,
+      charity,
+      endDate,
+      startDate,
+      tagId,
+      tagValue,
+    },
+    { refetchInterval }
+  );
 
-  if (status === 'error') return <Icon name='warning' />
+  if (status === "error") return <Icon name="warning" />;
 
-  if (status === 'success') {
-    const formatAmount = label => {
-      const amount = (offset + data.elevation) * multiplier
+  if (status === "success") {
+    const formatAmount = (label) => {
+      const amount = (offset + data.elevation) * multiplier;
 
       return units
         ? formatElevation({ amount, miles, label, places })
-        : formatNumber({ amount, places })
-    }
+        : formatNumber({ amount, places });
+    };
 
     return (
       <Metric
         icon={icon}
         label={label}
         amount={formatAmount()}
-        amountLabel={formatAmount('full')}
+        amountLabel={formatAmount("full")}
         {...metric}
       />
-    )
+    );
   }
 
-  return <Loading />
-}
+  return <Loading />;
+};
 
 TotalElevation.propTypes = {
   /**
@@ -120,7 +123,7 @@ TotalElevation.propTypes = {
   icon: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
-    PropTypes.element
+    PropTypes.element,
   ]),
 
   /**
@@ -141,16 +144,16 @@ TotalElevation.propTypes = {
   /**
    * The tag value to filter by
    */
-  tagValue: PropTypes.string
-}
+  tagValue: PropTypes.string,
+};
 
 TotalElevation.defaultProps = {
-  label: 'Total Elevation',
+  label: "Total Elevation",
   miles: false,
   multiplier: 1,
   offset: 0,
   places: 0,
-  units: true
-}
+  units: true,
+};
 
-export default TotalElevation
+export default TotalElevation;
