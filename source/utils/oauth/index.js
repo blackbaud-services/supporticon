@@ -1,7 +1,7 @@
-import omit from "lodash/omit";
-import URL from "url-parse";
-import { getBaseURL } from "../client";
-import { base64EncodeParams, formatUrlParams } from "../params";
+import omit from 'lodash/omit'
+import URL from 'url-parse'
+import { getBaseURL } from '../client'
+import { base64EncodeParams, formatUrlParams } from '../params'
 
 export const getConnectUrl = ({
   clientId,
@@ -9,63 +9,63 @@ export const getConnectUrl = ({
   forceSignUp,
   homeUrl,
   redirectUri,
-  oauthParams,
+  oauthParams
 }) => {
-  const hasParams = email || oauthParams;
-  const optionsKey = forceSignUp ? "encodedOptionsignup" : "encodedOptions";
+  const hasParams = email || oauthParams
+  const optionsKey = forceSignUp ? 'encodedOptionsignup' : 'encodedOptions'
   const encodedParams = {
     client_id: clientId,
     redirect_uri: redirectUri,
-    state: homeUrl && `home=${homeUrl}`,
-  };
+    state: homeUrl && `home=${homeUrl}`
+  }
 
   const params = {
     acr_values: hasParams
       ? `${optionsKey}:${base64EncodeParams({
-          EmailValue: email,
-          ...omit(oauthParams, forceSignUp ? "SignInTitle" : "SignUpTitle"),
-        })}`
-      : forceSignUp && "signup:true",
-    response_type: "code",
-    scope: "openid+profile+email+account+fundraise+offline_access",
-  };
+        EmailValue: email,
+        ...omit(oauthParams, forceSignUp ? 'SignInTitle' : 'SignUpTitle')
+      })}`
+      : forceSignUp && 'signup:true',
+    response_type: 'code',
+    scope: 'openid+profile+email+account+fundraise+offline_access'
+  }
 
-  const encodedUrlParams = formatUrlParams(encodedParams, true);
-  const urlParams = formatUrlParams(params);
-  const baseURL = getBaseURL().replace("api", "identity");
+  const encodedUrlParams = formatUrlParams(encodedParams, true)
+  const urlParams = formatUrlParams(params)
+  const baseURL = getBaseURL().replace('api', 'identity')
 
-  return `${baseURL}/connect/authorize?${encodedUrlParams}&${urlParams}`;
-};
+  return `${baseURL}/connect/authorize?${encodedUrlParams}&${urlParams}`
+}
 
 export const showPopup = ({
   onClose = () => {},
-  name = "Authentication",
-  popupWindowFeatures = "width=600,height=900,status=1",
-  url,
+  name = 'Authentication',
+  popupWindowFeatures = 'width=600,height=900,status=1',
+  url
 }) => {
-  const popupWindow = window.open(url, name, popupWindowFeatures);
+  const popupWindow = window.open(url, name, popupWindowFeatures)
 
   const popupInterval = setInterval(() => {
-    popupWindow.postMessage("ready", "*");
+    popupWindow.postMessage('ready', '*')
 
     if (popupWindow.closed) {
-      clearInterval(popupInterval);
-      onClose(popupWindow);
+      clearInterval(popupInterval)
+      onClose(popupWindow)
     }
-  }, 500);
-};
+  }, 500)
+}
 
 export const listenForPostMessage = ({ onSuccess = () => {}, redirectUri }) => {
-  const validSourceOrigin = redirectUri && new URL(redirectUri).origin;
+  const validSourceOrigin = redirectUri && new URL(redirectUri).origin
 
-  const listener = (e) => {
-    const data = e.data;
-    const isValid = e.origin === validSourceOrigin;
+  const listener = e => {
+    const data = e.data
+    const isValid = e.origin === validSourceOrigin
 
     if (isValid) {
-      onSuccess(data);
+      onSuccess(data)
     }
-  };
+  }
 
-  window.addEventListener("message", listener, false);
-};
+  window.addEventListener('message', listener, false)
+}

@@ -1,28 +1,28 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import PropTypes from "prop-types";
-import orderBy from "lodash/orderBy";
-import { deserializeTeamPage, fetchTeamPages } from "../../api/teams";
+import React from 'react'
+import { useQuery } from 'react-query'
+import PropTypes from 'prop-types'
+import orderBy from 'lodash/orderBy'
+import { deserializeTeamPage, fetchTeamPages } from '../../api/teams'
 import {
   formatActivities,
   formatDistance,
   formatDuration,
-  formatElevation,
-} from "../../utils/fitness";
+  formatElevation
+} from '../../utils/fitness'
 import {
   formatCurrency,
   formatNumber,
-  setLocaleFromCountry,
-} from "../../utils/numbers";
-import { currencyCode } from "../../utils/currencies";
+  setLocaleFromCountry
+} from '../../utils/numbers'
+import { currencyCode } from '../../utils/currencies'
 
-import Grid from "constructicon/grid";
-import LeaderboardItem from "constructicon/leaderboard-item";
-import Leaderboard from "constructicon/leaderboard";
-import Pagination from "constructicon/pagination";
-import PaginationLink from "constructicon/pagination-link";
-import RichText from "constructicon/rich-text";
-import Section from "constructicon/section";
+import Grid from 'constructicon/grid'
+import LeaderboardItem from 'constructicon/leaderboard-item'
+import Leaderboard from 'constructicon/leaderboard'
+import Pagination from 'constructicon/pagination'
+import PaginationLink from 'constructicon/pagination-link'
+import RichText from 'constructicon/rich-text'
+import Section from 'constructicon/section'
 
 const TeamLeaderboard = ({
   activeOnly,
@@ -40,69 +40,69 @@ const TeamLeaderboard = ({
   sortBy,
   subtitleMethod,
   team,
-  units,
+  units
 }) => {
-  const { data = [], status } = useQuery({
-    queryKey: ["teamLeaderboard", team],
-    queryFn: () =>
+  const { data = [], status } = useQuery(
+    ['teamLeaderboard', team],
+    () =>
       fetchTeamPages(team)
-        .then((data) => data.map(deserializeMethod || deserializeTeamPage))
-        .then((pages) =>
-          activeOnly ? pages.filter((page) => page.active) : pages
-        ),
-    options: { refetchInterval },
-  });
+        .then(data => data.map(deserializeMethod || deserializeTeamPage))
+        .then(pages => activeOnly ? pages.filter(page => page.active) : pages),
+    {
+      refetchInterval
+    }
+  )
 
   const sortKeys = {
-    activities: "fitnessCount",
-    distance: "fitnessDistanceTotal",
-    duration: "fitnessDurationTotal",
-    elevation: "fitnessElevationTotal",
-  };
+    activities: 'fitnessCount',
+    distance: 'fitnessDistanceTotal',
+    duration: 'fitnessDurationTotal',
+    elevation: 'fitnessElevationTotal'
+  }
 
-  const sortKey = sortKeys[sortBy] || "raised";
+  const sortKey = sortKeys[sortBy] || 'raised'
 
-  const sortedPages = orderBy(data, [sortKey], ["desc"])
+  const sortedPages = orderBy(data, [sortKey], ['desc'])
     .map((page, index) => ({ ...page, position: index + 1 }))
-    .slice(0, limit);
+    .slice(0, limit)
 
   const renderAmount = (page, label) => {
-    const amount = (offset + page[sortKey]) * multiplier;
-    const locale = setLocaleFromCountry(country);
+    const amount = (offset + page[sortKey]) * multiplier
+    const locale = setLocaleFromCountry(country)
 
     if (units) {
       switch (sortBy) {
-        case "activities":
-          return formatActivities(amount);
-        case "distance":
-          return formatDistance({ amount, miles, label });
-        case "duration":
-          return formatDuration({ amount, label });
-        case "elevation":
-          return formatElevation({ amount, label, locale, miles });
+        case 'activities':
+          return formatActivities(amount)
+        case 'distance':
+          return formatDistance({ amount, miles, label })
+        case 'duration':
+          return formatDuration({ amount, label })
+        case 'elevation':
+          return formatElevation({ amount, label, locale, miles })
         default:
           return formatCurrency({
             amount,
             locale,
-            currencyCode: currencyCode(country),
-          });
+            currencyCode: currencyCode(country)
+          })
       }
     }
 
-    return formatNumber({ amount, locale });
-  };
+    return formatNumber({ amount, locale })
+  }
 
-  if (status === "loading" || status === "error") {
+  if (status === 'loading' || status === 'error') {
     return (
       <Leaderboard
         {...leaderboard}
-        loading={status === "loading"}
-        error={status === "error"}
+        loading={status === 'loading'}
+        error={status === 'error'}
       />
-    );
+    )
   }
 
-  if (!sortedPages.length) return <Leaderboard {...leaderboard} empty />;
+  if (!sortedPages.length) return <Leaderboard {...leaderboard} empty />
 
   return (
     <Pagination max={pageSize} toPaginate={sortedPages}>
@@ -116,7 +116,7 @@ const TeamLeaderboard = ({
                 title={page.name}
                 image={page.image}
                 amount={renderAmount(page)}
-                amountLabel={renderAmount(page, "full")}
+                amountLabel={renderAmount(page, 'full')}
                 href={page.url}
                 rank={page.position}
                 subtitle={subtitleMethod(page)}
@@ -125,16 +125,16 @@ const TeamLeaderboard = ({
           </Leaderboard>
           {pageSize && isPaginated && (
             <Section spacing={{ t: 0.5 }}>
-              <Grid align="center" justify="center">
+              <Grid align='center' justify='center'>
                 <PaginationLink
                   onClick={prev}
-                  direction="prev"
+                  direction='prev'
                   disabled={!canPrev}
                 />
                 {showPage && <RichText size={-1}>{pageOf}</RichText>}
                 <PaginationLink
                   onClick={next}
-                  direction="next"
+                  direction='next'
                   disabled={!canNext}
                 />
               </Grid>
@@ -143,8 +143,8 @@ const TeamLeaderboard = ({
         </>
       )}
     </Pagination>
-  );
-};
+  )
+}
 
 TeamLeaderboard.propTypes = {
   /**
@@ -176,11 +176,11 @@ TeamLeaderboard.propTypes = {
    * The type of measurement to sort by
    */
   sortBy: PropTypes.oneOf([
-    "distance",
-    "duration",
-    "elevation",
-    "activities",
-    "raised",
+    'distance',
+    'duration',
+    'elevation',
+    'activities',
+    'raised'
   ]),
 
   /**
@@ -221,20 +221,20 @@ TeamLeaderboard.propTypes = {
   /**
    * A function to determine which subtitle to show
    */
-  subtitleMethod: PropTypes.func,
-};
+  subtitleMethod: PropTypes.func
+}
 
 TeamLeaderboard.defaultProps = {
   activeOnly: true,
-  country: "gb",
+  country: 'gb',
   limit: 250,
   multiplier: 1,
   offset: 0,
   pageSize: 10,
   showPage: true,
-  sortBy: "raised",
-  subtitleMethod: (item) => item.subtitle,
-  units: true,
-};
+  sortBy: 'raised',
+  subtitleMethod: item => item.subtitle,
+  units: true
+}
 
-export default TeamLeaderboard;
+export default TeamLeaderboard

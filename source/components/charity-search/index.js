@@ -1,71 +1,71 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
   deserializeCharity,
   fetchCharity,
-  searchCharities,
-} from "../../api/charities";
+  searchCharities
+} from '../../api/charities'
 
-import CharityResult from "./CharityResult";
-import InputSearch from "constructicon/input-search";
+import CharityResult from './CharityResult'
+import InputSearch from 'constructicon/input-search'
 
 class CharitySearch extends Component {
-  constructor(props) {
-    super(props);
-    this.handleQuery = this.handleQuery.bind(this);
-    this.handleSelect = this.handleSelect.bind(this);
+  constructor (props) {
+    super(props)
+    this.handleQuery = this.handleQuery.bind(this)
+    this.handleSelect = this.handleSelect.bind(this)
 
     this.state = {
       results: [],
       status: null,
-      value: null,
-    };
+      value: null
+    }
   }
 
-  componentDidMount() {
-    const initial = this.props.initial;
+  componentDidMount () {
+    const initial = this.props.initial
 
     if (initial) {
       Promise.resolve()
         .then(() => fetchCharity(initial))
-        .then((data) => this.setState({ value: data.name }))
-        .catch((error) => {
-          this.setState({ value: null });
-          return Promise.reject(error);
-        });
+        .then(data => this.setState({ value: data.name }))
+        .catch(error => {
+          this.setState({ value: null })
+          return Promise.reject(error)
+        })
     }
   }
 
-  handleQuery(q) {
-    const { campaign, country } = this.props;
+  handleQuery (q) {
+    const { campaign, country } = this.props
 
     Promise.resolve()
-      .then(() => this.setState({ status: "fetching" }))
+      .then(() => this.setState({ status: 'fetching' }))
       .then(() => searchCharities({ campaign, country, q, limit: 25 }))
-      .then((results) => results.map(deserializeCharity))
-      .then((results) => this.setState({ results, status: "fetched" }))
-      .catch((error) => {
-        this.setState({ status: "failed" });
-        return Promise.reject(error);
-      });
+      .then(results => results.map(deserializeCharity))
+      .then(results => this.setState({ results, status: 'fetched' }))
+      .catch(error => {
+        this.setState({ status: 'failed' })
+        return Promise.reject(error)
+      })
   }
 
-  handleSelect(selected = {}) {
-    this.setState({ value: selected.name });
+  handleSelect (selected = {}) {
+    this.setState({ value: selected.name })
 
     if (selected.id) {
-      this.props.onChange(selected);
+      this.props.onChange(selected)
     }
   }
 
-  render() {
-    const { inputProps, ResultComponent } = this.props;
-    const { results, status, value } = this.state;
+  render () {
+    const { inputProps, ResultComponent } = this.props
+    const { results, status, value } = this.state
 
     return (
       <InputSearch
         {...inputProps}
-        autoComplete="off"
+        autoComplete='off'
         onChange={this.handleSelect}
         onSearch={this.handleQuery}
         ResultComponent={ResultComponent}
@@ -74,7 +74,7 @@ class CharitySearch extends Component {
         status={status}
         value={value}
       />
-    );
+    )
   }
 }
 
@@ -82,7 +82,7 @@ CharitySearch.propTypes = {
   /**
    * Only show charities in this country
    */
-  country: PropTypes.oneOf(["au", "nz", "uk", "us", "ie"]),
+  country: PropTypes.oneOf(['au', 'nz', 'uk', 'us', 'ie']),
 
   /**
    * Only show charities in this campaign
@@ -107,11 +107,11 @@ CharitySearch.propTypes = {
   /**
    * The component to render the search results
    */
-  ResultComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-};
+  ResultComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func])
+}
 
 CharitySearch.defaultProps = {
-  ResultComponent: CharityResult,
-};
+  ResultComponent: CharityResult
+}
 
-export default CharitySearch;
+export default CharitySearch

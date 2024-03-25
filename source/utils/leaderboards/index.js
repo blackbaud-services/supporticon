@@ -1,80 +1,80 @@
-import flatten from "lodash/flatten";
-import get from "lodash/get";
-import kebabCase from "lodash/kebabCase";
-import orderBy from "lodash/orderBy";
-import * as client from "../client";
-import { required } from "../params";
-import { getPrimaryUnit, measurementDomains } from "../tags";
-import { hash } from "spark-md5";
+import flatten from 'lodash/flatten'
+import get from 'lodash/get'
+import kebabCase from 'lodash/kebabCase'
+import orderBy from 'lodash/orderBy'
+import * as client from '../client'
+import { required } from '../params'
+import { getPrimaryUnit, measurementDomains } from '../tags'
+import { hash } from 'spark-md5'
 
-export const getShortMeasurementDomain = (domain = "any:distance") => {
+export const getShortMeasurementDomain = (domain = 'any:distance') => {
   switch (domain) {
-    case "fundraising:donations_made":
-      return "fc";
-    case "any:elapsed_time":
-    case "hike:elapsed_time":
-    case "ride:elapsed_time":
-    case "swim:elapsed_time":
-    case "walk:elapsed_time":
-      return [domain.charAt(0), "t"].join("");
+    case 'fundraising:donations_made':
+      return 'fc'
+    case 'any:elapsed_time':
+    case 'hike:elapsed_time':
+    case 'ride:elapsed_time':
+    case 'swim:elapsed_time':
+    case 'walk:elapsed_time':
+      return [domain.charAt(0), 't'].join('')
     default:
       return domain
-        .split(":")
-        .map((substring) => substring.charAt(0))
-        .join("");
+        .split(':')
+        .map(substring => substring.charAt(0))
+        .join('')
   }
-};
+}
 
 const genId = ({
   id = required(),
-  measurementDomain = "any:distance",
+  measurementDomain = 'any:distance',
   name,
   tagId,
-  type = "campaign",
+  type = 'campaign'
 }) => {
   return hash(
     [type, getShortMeasurementDomain(measurementDomain), id, tagId, name]
       .filter(Boolean)
       .map(kebabCase)
-      .join("-")
-  );
-};
+      .join('-')
+  )
+}
 
-export const generateLeaderboardId = genId;
+export const generateLeaderboardId = genId
 
 export const fetchLeaderboardDefinition = ({
   id = required(),
-  measurementDomain = "any:distance",
+  measurementDomain = 'any:distance',
   name,
   tagId,
-  type = "campaign",
+  type = 'campaign'
 }) => {
-  const definitionId = genId({ id, measurementDomain, name, tagId, type });
+  const definitionId = genId({ id, measurementDomain, name, tagId, type })
 
   return client
     .get(`/v1/tags/leaderboard/definition/${definitionId}`)
-    .then((data) => data.definition);
-};
+    .then(data => data.definition)
+}
 
-export const fetchLeaderboardDefinitions = (params) =>
+export const fetchLeaderboardDefinitions = params =>
   Promise.all(
-    measurementDomains.map((measurementDomain) =>
+    measurementDomains.map(measurementDomain =>
       fetchLeaderboardDefinition({ ...params, measurementDomain })
     )
-  );
+  )
 
 export const createLeaderboardDefinition = ({
   id = required(),
   conditions = [],
-  label = "Page Campaign Link",
-  measurementDomain = "any:distance",
+  label = 'Page Campaign Link',
+  measurementDomain = 'any:distance',
   name,
   tagId,
-  type = "campaign",
+  type = 'campaign'
 }) => {
-  const segment = ["page", type, id].join(":");
-  const primaryUnit = getPrimaryUnit(measurementDomain);
-  const definitionId = genId({ id, measurementDomain, name, tagId, type });
+  const segment = ['page', type, id].join(':')
+  const primaryUnit = getPrimaryUnit(measurementDomain)
+  const definitionId = genId({ id, measurementDomain, name, tagId, type })
 
   const payload = {
     conditions,
@@ -84,65 +84,65 @@ export const createLeaderboardDefinition = ({
     segment,
     tagDefinition: {
       id: tagId || segment,
-      label,
-    },
-  };
+      label
+    }
+  }
 
   return client
     .post(`/v1/tags/leaderboard/definition/${definitionId}`, payload)
-    .then((data) => ({ ...data.definition, updated: true }))
+    .then(data => ({ ...data.definition, updated: true }))
     .catch(({ data = {} }) => {
-      const errorMessage = data.errorMessage;
+      const errorMessage = data.errorMessage
 
-      if (errorMessage && errorMessage.indexOf("already has totals") > -1) {
+      if (errorMessage && errorMessage.indexOf('already has totals') > -1) {
         return Promise.resolve({
           ...payload,
-          updated: false,
-        });
+          updated: false
+        })
       }
 
-      return Promise.reject(data);
-    });
-};
+      return Promise.reject(data)
+    })
+}
 
-export const createLeaderboardDefinitions = (params) =>
+export const createLeaderboardDefinitions = params =>
   Promise.all(
-    measurementDomains.map((measurementDomain) =>
+    measurementDomains.map(measurementDomain =>
       createLeaderboardDefinition({ ...params, measurementDomain })
     )
-  );
+  )
 
 export const deleteLeaderboardDefinition = ({
   id = required(),
-  measurementDomain = "any:distance",
+  measurementDomain = 'any:distance',
   name,
   tagId,
-  type = "campaign",
+  type = 'campaign'
 }) => {
-  const definitionId = genId({ id, measurementDomain, name, tagId, type });
+  const definitionId = genId({ id, measurementDomain, name, tagId, type })
 
-  return client.destroy(`/v1/tags/leaderboard/definition/${definitionId}`);
-};
+  return client.destroy(`/v1/tags/leaderboard/definition/${definitionId}`)
+}
 
-export const deleteLeaderboardDefinitions = (params) =>
+export const deleteLeaderboardDefinitions = params =>
   Promise.all(
-    measurementDomains.map((measurementDomain) =>
+    measurementDomains.map(measurementDomain =>
       deleteLeaderboardDefinition({ ...params, measurementDomain })
     )
-  );
+  )
 
 export const fetchLeaderboard = ({
   id = required(),
-  activityType = "fundraising",
+  activityType = 'fundraising',
   limit = 10,
-  sortBy = "donations_received",
+  sortBy = 'donations_received',
   tagId,
   tagValue,
-  type = "campaign",
+  type = 'campaign'
 }) => {
-  if (id.split(",").length > 1) {
+  if (id.split(',').length > 1) {
     return Promise.all(
-      id.split(",").map((idx) =>
+      id.split(',').map(idx =>
         fetchLeaderboard({
           id: idx,
           activityType,
@@ -150,23 +150,23 @@ export const fetchLeaderboard = ({
           sortBy,
           tagId,
           tagValue,
-          type,
+          type
         })
       )
     )
       .then(flatten)
-      .then((results) =>
-        orderBy(results, [(item) => get(item, "amounts[0].value", 0)], ["desc"])
-      );
+      .then(results =>
+        orderBy(results, [item => get(item, 'amounts[0].value', 0)], ['desc'])
+      )
   }
 
   const leaderboardId = genId({
     id,
-    measurementDomain: [activityType, sortBy].join(":"),
+    measurementDomain: [activityType, sortBy].join(':'),
     name: tagValue,
     tagId,
-    type,
-  });
+    type
+  })
 
   const query = `
     {
@@ -218,13 +218,11 @@ export const fetchLeaderboard = ({
         }
       }
     }
-  `;
+  `
 
   return client.servicesAPI
-    .post("/v1/justgiving/graphql", { query })
-    .then((response) => response.data)
-    .then((result) => get(result, "data.leaderboard.totals", []))
-    .then((results) =>
-      results.map((item) => ({ ...item, ...item.tagValueAsNode }))
-    );
-};
+    .post('/v1/justgiving/graphql', { query })
+    .then(response => response.data)
+    .then(result => get(result, 'data.leaderboard.totals', []))
+    .then(results => results.map(item => ({ ...item, ...item.tagValueAsNode })))
+}

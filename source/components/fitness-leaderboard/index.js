@@ -1,23 +1,23 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { useFitnessLeaderboard } from "../../hooks/use-fitness-leaderboard";
-import { formatNumber, setLocaleFromCountry } from "../../utils/numbers";
-import { formatMeasurementDomain } from "../../utils/tags";
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
+import { useFitnessLeaderboard } from '../../hooks/use-fitness-leaderboard'
+import { formatNumber, setLocaleFromCountry } from '../../utils/numbers'
+import { formatMeasurementDomain } from '../../utils/tags'
 import {
   formatActivities,
   formatDistance,
   formatDuration,
-  formatElevation,
-} from "../../utils/fitness";
+  formatElevation
+} from '../../utils/fitness'
 
-import Filter from "constructicon/filter";
-import Grid from "constructicon/grid";
-import LeaderboardItem from "constructicon/leaderboard-item";
-import LeaderboardWrapper from "constructicon/leaderboard";
-import Pagination from "constructicon/pagination";
-import PaginationLink from "constructicon/pagination-link";
-import RichText from "constructicon/rich-text";
-import Section from "constructicon/section";
+import Filter from 'constructicon/filter'
+import Grid from 'constructicon/grid'
+import LeaderboardItem from 'constructicon/leaderboard-item'
+import LeaderboardWrapper from 'constructicon/leaderboard'
+import Pagination from 'constructicon/pagination'
+import PaginationLink from 'constructicon/pagination-link'
+import RichText from 'constructicon/rich-text'
+import Section from 'constructicon/section'
 
 const FitnessLeaderboard = ({
   activeOnly,
@@ -46,9 +46,9 @@ const FitnessLeaderboard = ({
   tagId,
   tagValue,
   type,
-  units,
+  units
 }) => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('')
   const { data = [], status } = useFitnessLeaderboard(
     {
       activeOnly,
@@ -64,65 +64,65 @@ const FitnessLeaderboard = ({
       startDate,
       tagId,
       tagValue,
-      type,
+      type
     },
     {
       refetchInterval,
-      deserializeMethod,
+      deserializeMethod
     }
-  );
+  )
 
   const removeExcludedPages = (item) => {
-    const id = tagId ? item.name : item.id;
+    const id = tagId ? item.name : item.id
 
     const excluded = Array.isArray(excludePageIds)
       ? excludePageIds
-      : excludePageIds.split(",");
+      : excludePageIds.split(',')
 
-    return excluded.indexOf(id.toString()) === -1;
-  };
+    return excluded.indexOf(id.toString()) === -1
+  }
 
   const getMetric = (leader, label) => {
-    const { totals = {} } = leader;
-    const distance = (offset + leader.distance) * multiplier;
-    const locale = setLocaleFromCountry(country);
+    const { totals = {} } = leader
+    const distance = (offset + leader.distance) * multiplier
+    const locale = setLocaleFromCountry(country)
 
     switch (sortBy) {
-      case "activities":
-        return formatActivities((offset + totals.count) * multiplier);
-      case "duration":
+      case 'activities':
+        return formatActivities((offset + totals.count) * multiplier)
+      case 'duration':
         return formatDuration({
           amount: (offset + totals.seconds) * multiplier,
-          label,
-        });
-      case "elevation":
+          label
+        })
+      case 'elevation':
         return formatElevation({
           amount: (offset + totals.meters) * multiplier,
           label,
           locale,
           miles,
-          places,
-        });
+          places
+        })
       default:
         return units
           ? formatDistance({ amount: distance, miles, label, places })
-          : formatNumber({ amount: distance, places });
+          : formatNumber({ amount: distance, places })
     }
-  };
+  }
 
   const items = (
     excludePageIds ? data.filter(removeExcludedPages) : data
-  ).slice(0, limit);
+  ).slice(0, limit)
 
   return (
     <div>
       {filter && <Filter onChange={setQuery} {...filter} />}
-      {status === "loading" && <LeaderboardWrapper {...leaderboard} loading />}
-      {status === "error" && <LeaderboardWrapper {...leaderboard} error />}
-      {status === "success" && items.length === 0 && (
+      {status === 'loading' && <LeaderboardWrapper {...leaderboard} loading />}
+      {status === 'error' && <LeaderboardWrapper {...leaderboard} error />}
+      {status === 'success' && items.length === 0 && (
         <LeaderboardWrapper {...leaderboard} empty />
       )}
-      {status === "success" && (
+      {status === 'success' && (
         <Pagination max={pageSize} toPaginate={items}>
           {({
             currentPage,
@@ -131,7 +131,7 @@ const FitnessLeaderboard = ({
             next,
             canPrev,
             canNext,
-            pageOf,
+            pageOf
           }) => (
             <>
               <LeaderboardWrapper {...leaderboard}>
@@ -142,7 +142,7 @@ const FitnessLeaderboard = ({
                     subtitle={subtitleMethod(item)}
                     image={item.image}
                     amount={getMetric(item)}
-                    amountLabel={getMetric(item, "full")}
+                    amountLabel={getMetric(item, 'full')}
                     href={item.url}
                     rank={index + 1}
                     {...leaderboardItem}
@@ -151,16 +151,16 @@ const FitnessLeaderboard = ({
               </LeaderboardWrapper>
               {pageSize && isPaginated && (
                 <Section spacing={{ t: 0.5 }}>
-                  <Grid align="center" justify="center">
+                  <Grid align='center' justify='center'>
                     <PaginationLink
                       onClick={prev}
-                      direction="prev"
+                      direction='prev'
                       disabled={!canPrev}
                     />
                     {showPage && <RichText size={-1}>{pageOf}</RichText>}
                     <PaginationLink
                       onClick={next}
-                      direction="next"
+                      direction='next'
                       disabled={!canNext}
                     />
                   </Grid>
@@ -171,8 +171,8 @@ const FitnessLeaderboard = ({
         </Pagination>
       )}
     </div>
-  );
-};
+  )
+}
 
 FitnessLeaderboard.propTypes = {
   /**
@@ -188,7 +188,7 @@ FitnessLeaderboard.propTypes = {
   /**
    * The type of page to include in the leaderboard
    */
-  type: PropTypes.oneOf(["individual", "team", "group"]),
+  type: PropTypes.oneOf(['individual', 'team', 'group']),
 
   /**
    * The activity type of page to include in the leaderboard (walk, run, ride, hike, swim, wheelchair)
@@ -248,7 +248,7 @@ FitnessLeaderboard.propTypes = {
   /**
    * The type of measurement to sort by
    */
-  sortBy: PropTypes.oneOf(["distance", "duration", "elevation"]),
+  sortBy: PropTypes.oneOf(['distance', 'duration', 'elevation']),
 
   /**
    * Props to be passed to the Constructicon Leaderboard component
@@ -293,12 +293,12 @@ FitnessLeaderboard.propTypes = {
   /**
    * A function to
    */
-  subtitleMethod: PropTypes.func,
-};
+  subtitleMethod: PropTypes.func
+}
 
 FitnessLeaderboard.defaultProps = {
   activeOnly: true,
-  country: "gb",
+  country: 'gb',
   filter: {},
   limit: 10,
   multiplier: 1,
@@ -306,9 +306,9 @@ FitnessLeaderboard.defaultProps = {
   page: 1,
   places: 2,
   showPage: false,
-  sortBy: "distance",
-  subtitleMethod: (item) => item.subtitle,
-  units: true,
-};
+  sortBy: 'distance',
+  subtitleMethod: item => item.subtitle,
+  units: true
+}
 
-export default FitnessLeaderboard;
+export default FitnessLeaderboard

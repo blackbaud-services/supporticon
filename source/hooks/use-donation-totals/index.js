@@ -1,18 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
-import pickBy from "lodash/pickBy";
+import { useQuery } from 'react-query'
+import pickBy from 'lodash/pickBy'
 import {
   fetchDonationTotals,
-  deserializeDonationTotals,
-} from "../../api/donation-totals";
+  deserializeDonationTotals
+} from '../../api/donation-totals'
 
 export const useDonationTotals = (params, options = {}) => {
-  const { refetchInterval, staleTime = 30000 } = options;
+  const { refetchInterval, staleTime = 30000 } = options
 
-  return useQuery({
-    queryKey: ["donationTotals", pickBy(params)],
-    queryFn: () => fetchDonationTotals(params).then(deserializeDonationTotals),
-    options: { refetchInterval, staleTime },
-  });
-};
+  return useQuery(
+    ['donationTotals', pickBy(params)],
+    () => fetchDonationTotals(params).then(deserializeDonationTotals),
+    {
+      refetchInterval,
+      staleTime
+    }
+  )
+}
 
-export default useDonationTotals;
+export default useDonationTotals

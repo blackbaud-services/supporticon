@@ -1,21 +1,20 @@
-import pickBy from "lodash/pickBy";
-import { useQuery } from "@tanstack/react-query";
-import {
-  fetchLeaderboard,
-  deserializeLeaderboard,
-} from "../../api/leaderboard";
+import pickBy from 'lodash/pickBy'
+import { useQuery } from 'react-query'
+import { fetchLeaderboard, deserializeLeaderboard } from '../../api/leaderboard'
 
 export const useLeaderboard = (params, options) => {
-  const { deserializeMethod, refetchInterval, staleTime = 30000 } = options;
+  const { deserializeMethod, refetchInterval, staleTime = 30000 } = options
 
-  return useQuery({
-    queryKey: ["fundraisingLeaderboard", pickBy(params)],
-    queryFn: () =>
-      fetchLeaderboard(params).then((results) =>
-        results.map(deserializeMethod || deserializeLeaderboard)
-      ),
-    options: { refetchInterval, staleTime },
-  });
-};
+  return useQuery(
+    ['fundraisingLeaderboard', pickBy(params)],
+    () =>
+      fetchLeaderboard(params)
+        .then(results => results.map(deserializeMethod || deserializeLeaderboard)),
+    {
+      refetchInterval,
+      staleTime
+    }
+  )
+}
 
-export default useLeaderboard;
+export default useLeaderboard

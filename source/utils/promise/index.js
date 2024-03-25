@@ -1,15 +1,15 @@
-export const toPromise = (f) =>
+export const toPromise = f =>
   function () {
     return new Promise((resolve, reject) => {
-      const result = f.apply(null, Array.from(arguments));
+      const result = f.apply(null, Array.from(arguments))
       try {
-        return result.then(resolve, reject); // promise.
+        return result.then(resolve, reject) // promise.
       } catch (e) {
         if (e instanceof TypeError) {
-          resolve(result); // resolve naked value.
+          resolve(result) // resolve naked value.
         } else {
-          reject(e); // pass unhandled exception to caller.
+          reject(e) // pass unhandled exception to caller.
         }
       }
-    });
-  };
+    })
+  }
