@@ -1,44 +1,44 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import omit from "lodash/omit";
-import { getBaseURL } from "../../utils/client";
-import { fetchCurrentUser } from "../../api/me";
-import { submitCrossDomainForm } from "../../utils/cross-domain";
-import { decodeBase64String } from "../../utils/base64";
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import omit from 'lodash/omit'
+import { getBaseURL } from '../../utils/client'
+import { fetchCurrentUser } from '../../api/me'
+import { submitCrossDomainForm } from '../../utils/cross-domain'
+import { decodeBase64String } from '../../utils/base64'
 
-import Button from "constructicon/button";
-import Loading from "constructicon/loading";
+import Button from 'constructicon/button'
+import Loading from 'constructicon/loading'
 
 class SingleSignOnLink extends Component {
-  constructor(props) {
-    super(props);
-    this.submitForm = this.submitForm.bind(this);
-    this.rootRef = React.createRef();
+  constructor (props) {
+    super(props)
+    this.submitForm = this.submitForm.bind(this)
+    this.rootRef = React.createRef()
     this.state = {
       loading: false,
-      target: props.target,
-    };
-  }
-
-  componentDidMount() {
-    const { navigator } = window;
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-
-    // Detect FB mobile browser
-    if (ua.indexOf("FBAN") > -1 || ua.indexOf("FBAV") > -1) {
-      this.setState({ target: "_self" });
+      target: props.target
     }
   }
 
-  render() {
-    const { label, loadingProps, token, url, ...props } = this.props;
-    const { loading, target } = this.state;
-    const safeProps = omit(props, ["authType"]);
+  componentDidMount () {
+    const { navigator } = window
+    const ua = navigator.userAgent || navigator.vendor || window.opera
+
+    // Detect FB mobile browser
+    if (ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1) {
+      this.setState({ target: '_self' })
+    }
+  }
+
+  render () {
+    const { label, loadingProps, token, url, ...props } = this.props
+    const { loading, target } = this.state
+    const safeProps = omit(props, ['authType'])
 
     return (
       <div ref={this.rootRef}>
         <Button
-          tag="a"
+          tag='a'
           href={url}
           target={target}
           onClick={token && this.submitForm}
@@ -48,51 +48,51 @@ class SingleSignOnLink extends Component {
           {loading && <Loading {...loadingProps} />}
         </Button>
       </div>
-    );
+    )
   }
 
-  submitForm(event) {
-    const { authType, token, url, method } = this.props;
-    const { target } = this.state;
-    const root = this.rootRef.current;
-    const decoded = decodeBase64String(token).split(":");
+  submitForm (event) {
+    const { authType, token, url, method } = this.props
+    const { target } = this.state
+    const root = this.rootRef.current
+    const decoded = decodeBase64String(token).split(':')
 
-    event.preventDefault();
-    this.setState({ loading: true });
+    event.preventDefault()
+    this.setState({ loading: true })
 
-    window.addEventListener("message", ({ data }) => {
-      if (data === "cross-domain-cookie-auth") {
+    window.addEventListener('message', ({ data }) => {
+      if (data === 'cross-domain-cookie-auth') {
         return fetchCurrentUser({ authType, token })
           .then(() => {
             const formSubmission = setInterval(() => {
               try {
-                return root.querySelector("iframe").contentWindow.location
-                  .origin;
+                return root.querySelector('iframe').contentWindow.location
+                  .origin
               } catch (e) {
-                clearInterval(formSubmission);
-                return target === "_blank"
-                  ? window.open(url, "_blank")
-                  : window.location.assign(url);
+                clearInterval(formSubmission)
+                return target === '_blank'
+                  ? window.open(url, '_blank')
+                  : window.location.assign(url)
               }
-            }, 100);
+            }, 100)
           })
-          .catch((error) => {
-            return Promise.reject(error);
-          });
+          .catch(error => {
+            return Promise.reject(error)
+          })
       }
-    });
+    })
 
     return submitCrossDomainForm({
       parent: root,
       method,
-      message: "cross-domain-cookie-auth",
-      action: `${getBaseURL().replace("api", "www")}/signin/login`,
+      message: 'cross-domain-cookie-auth',
+      action: `${getBaseURL().replace('api', 'www')}/signin/login`,
       inputs: [
-        { name: "Email", value: decoded[0] },
-        { name: "Password", value: decoded[1] },
-        { name: "LoginForever", value: true },
-      ],
-    });
+        { name: 'Email', value: decoded[0] },
+        { name: 'Password', value: decoded[1] },
+        { name: 'LoginForever', value: true }
+      ]
+    })
   }
 }
 
@@ -115,7 +115,7 @@ SingleSignOnLink.propTypes = {
   /**
    * The target for the form or anchor
    */
-  target: PropTypes.oneOf(["_self", "_blank", "_parent", "_top"]),
+  target: PropTypes.oneOf(['_self', '_blank', '_parent', '_top']),
 
   /**
    * The method for the form action
@@ -125,14 +125,14 @@ SingleSignOnLink.propTypes = {
   /**
    * Props to be forwarded to the Loading dots
    */
-  loadingProps: PropTypes.object,
-};
+  loadingProps: PropTypes.object
+}
 
 SingleSignOnLink.defaultProps = {
-  authType: "Bearer",
-  label: "My Fundraising Page",
-  target: "_top",
-  method: "POST",
-};
+  authType: 'Bearer',
+  label: 'My Fundraising Page',
+  target: '_top',
+  method: 'POST'
+}
 
-export default SingleSignOnLink;
+export default SingleSignOnLink

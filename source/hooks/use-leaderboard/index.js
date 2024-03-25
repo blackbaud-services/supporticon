@@ -1,3 +1,4 @@
+
 import { pickBy, sortBy } from 'lodash'
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -6,11 +7,11 @@ import {
 } from "../../api/leaderboard";
 
 export const useLeaderboard = (params, options) => {
-  const { deserializeMethod, refetchInterval, staleTime = 30000 } = options;
+  const { deserializeMethod, refetchInterval, staleTime = 30000 } = options
 
-  return useQuery({
-    queryKey: ["fundraisingLeaderboard", pickBy(params)],
-    queryFn: () =>
+  return useQuery(
+    ['fundraisingLeaderboard', pickBy(params)],
+    () =>
       fetchLeaderboard(params)
         .then(results => results.map(deserializeMethod || deserializeLeaderboard))
         .then(results => {
@@ -18,9 +19,12 @@ export const useLeaderboard = (params, options) => {
             return sortBy(results, (item) => item.raised).reverse()
           }
           return results
-        }),
-    options: { refetchInterval, staleTime },
-  });
-};
+        })
+    {
+      refetchInterval,
+      staleTime
+    }
+  )
+}
 
-export default useLeaderboard;
+export default useLeaderboard

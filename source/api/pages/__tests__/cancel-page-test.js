@@ -1,28 +1,28 @@
-import { instance } from "../../../utils/client";
-import { cancelPage } from "..";
+import { instance } from '../../../utils/client'
+import { cancelPage } from '..'
 
-describe("Page | Cancel Page", () => {
+describe('Page | Cancel Page', () => {
   beforeEach(() => {
-    moxios.install(instance);
-  });
+    moxios.install(instance)
+  })
 
   afterEach(() => {
-    moxios.uninstall(instance);
-  });
+    moxios.uninstall(instance)
+  })
 
-  it("makes request to cancel page", (done) => {
+  it('makes request to cancel page', done => {
     cancelPage({
-      slug: "foobar",
-      token: "BEARER_TOKEN",
-    });
+      slug: 'foobar',
+      token: 'BEARER_TOKEN'
+    })
 
     moxios.wait(() => {
-      const request = moxios.requests.mostRecent();
-      expect(request.url).to.contain("/v1/fundraising/pages/foobar");
-      expect(request.config.headers["Authorization"]).to.eql(
-        "Bearer BEARER_TOKEN"
-      );
-      done();
-    });
-  });
-});
+      const request = moxios.requests.mostRecent()
+      expect(request.url).to.contain('/v1/fundraising/pages/foobar')
+      expect(request.config.headers['Authorization']).to.eql(
+        'Bearer BEARER_TOKEN'
+      )
+      done()
+    })
+  })
+})

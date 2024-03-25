@@ -8,6 +8,8 @@ Also provides some common data-driven components, using the [Constructicon](http
 
 - [Pipeline](https://app.circleci.com/pipelines/github/blackbaud-services/supporticon)
 - [NPM Package](https://www.npmjs.com/package/supporticon)
+- [Documentation](https://blackbaud-services.github.io/supporticon)
+- [Components](https://blackbaud-services.github.io/supporticon/components)
 
 ## Development
 
@@ -18,5 +20,11 @@ Also provides some common data-driven components, using the [Constructicon](http
 - `yarn test` to run tests (linting and unit tests)
 - `yarn test:lint` to run linting
 - `yarn test:unit` to run unit tests
+- `yarn book:prepare` to install doc dependencies
+- `yarn book:watch` to prep and serve the docs gitbook
+- `yarn book:build` will build the docs gitbook
+- `yarn styleguide:build` will build the styleguide
+- `yarn docs:build` builds the styleguide and gitbook
+- `yarn docs:deploy` deploys the docs (styleguide and gitbook)
 - `yarn playground:build` to build webpack for the local development server
 - `yarn playground:start` to start the local development server

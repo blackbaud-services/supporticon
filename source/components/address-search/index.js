@@ -1,59 +1,59 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
   deserializeAddress,
   getAddressDetails,
-  searchAddress,
-} from "../../api/address";
-import countries from "../../utils/countries";
+  searchAddress
+} from '../../api/address'
+import countries from '../../utils/countries'
 
-import Button from "constructicon/button";
-import InputSelect from "constructicon/input-select";
-import Grid from "constructicon/grid";
-import GridColumn from "constructicon/grid-column";
-import InputSearch from "constructicon/input-search";
-import Section from "constructicon/section";
+import Button from 'constructicon/button'
+import InputSelect from 'constructicon/input-select'
+import Grid from 'constructicon/grid'
+import GridColumn from 'constructicon/grid-column'
+import InputSearch from 'constructicon/input-search'
+import Section from 'constructicon/section'
 
 class AddressSearch extends Component {
-  constructor(props) {
-    super(props);
-    this.handleQuery = this.handleQuery.bind(this);
-    this.handleSelect = this.handleSelect.bind(this);
+  constructor (props) {
+    super(props)
+    this.handleQuery = this.handleQuery.bind(this)
+    this.handleSelect = this.handleSelect.bind(this)
     this.state = {
-      country: props.country || "",
+      country: props.country || '',
       results: [],
       status: null,
-      value: null,
-    };
-  }
-
-  handleQuery(q) {
-    if (q.length > 0) {
-      Promise.resolve()
-        .then(() => this.setState({ status: "fetching" }))
-        .then(() => searchAddress(q))
-        .then((results) => this.setState({ results, status: "fetched" }))
-        .catch((error) => {
-          this.setState({ status: "failed" });
-          return Promise.reject(error);
-        });
+      value: null
     }
   }
 
-  handleSelect(selected) {
-    this.setState({ value: selected && selected.label });
+  handleQuery (q) {
+    if (q.length > 0) {
+      Promise.resolve()
+        .then(() => this.setState({ status: 'fetching' }))
+        .then(() => searchAddress(q))
+        .then(results => this.setState({ results, status: 'fetched' }))
+        .catch(error => {
+          this.setState({ status: 'failed' })
+          return Promise.reject(error)
+        })
+    }
+  }
+
+  handleSelect (selected) {
+    this.setState({ value: selected && selected.label })
 
     if (selected && selected.id) {
       Promise.resolve()
         .then(() =>
           selected.AddressLine1 ? selected : getAddressDetails(selected.id)
         )
-        .then((address) => deserializeAddress(address))
-        .then((address) => this.props.onChange(address));
+        .then(address => deserializeAddress(address))
+        .then(address => this.props.onChange(address))
     }
   }
 
-  render() {
+  render () {
     const {
       error,
       inputProps,
@@ -61,9 +61,9 @@ class AddressSearch extends Component {
       validations,
       onCancel,
       onCancelLabel,
-      showEnterAddressButtonBelowInput,
-    } = this.props;
-    const { country, results, status, value } = this.state;
+      showEnterAddressButtonBelowInput
+    } = this.props
+    const { country, results, status, value } = this.state
 
     return (
       <>
@@ -71,19 +71,19 @@ class AddressSearch extends Component {
           {!this.props.country && (
             <GridColumn md={4}>
               <InputSelect
-                label="Country"
-                name="address-country"
-                onBlur={(country) => this.setState({ country })}
-                onChange={(country) => this.setState({ country })}
+                label='Country'
+                name='address-country'
+                onBlur={country => this.setState({ country })}
+                onChange={country => this.setState({ country })}
                 options={countries}
-                placeholder="Select Country"
+                placeholder='Select Country'
                 value={country}
               />
             </GridColumn>
           )}
           <GridColumn md={this.props.country ? 12 : 8}>
             <InputSearch
-              autoComplete="nope"
+              autoComplete='nope'
               error={error}
               invalid={!!error}
               label={this.renderLabel()}
@@ -92,7 +92,7 @@ class AddressSearch extends Component {
               results={results}
               showMore
               status={status}
-              placeholder="Search postcode"
+              placeholder='Search postcode'
               touched={touched}
               validations={validations}
               value={value}
@@ -102,9 +102,9 @@ class AddressSearch extends Component {
         </Grid>
         {onCancel && showEnterAddressButtonBelowInput && (
           <Button
-            background="transparent"
+            background='transparent'
             borderWidth={0}
-            foreground="inherit"
+            foreground='inherit'
             onClick={onCancel}
             size={-1.5}
             spacing={0}
@@ -113,34 +113,34 @@ class AddressSearch extends Component {
           </Button>
         )}
       </>
-    );
+    )
   }
 
-  renderLabel() {
+  renderLabel () {
     const {
       onCancel,
       onCancelLabel,
       label,
       required,
-      showEnterAddressButtonBelowInput,
-    } = this.props;
+      showEnterAddressButtonBelowInput
+    } = this.props
 
     return (
       <Grid spacing={{ x: 0.5 }}>
         <GridColumn xs={5}>
           <span>{label}</span>
           {required && (
-            <Section foreground="danger" spacing={0} tag="span">
+            <Section foreground='danger' spacing={0} tag='span'>
               *
             </Section>
           )}
         </GridColumn>
         {onCancel && !showEnterAddressButtonBelowInput && (
-          <GridColumn xs={7} xsAlign="right">
+          <GridColumn xs={7} xsAlign='right'>
             <Button
-              background="transparent"
+              background='transparent'
               borderWidth={0}
-              foreground="inherit"
+              foreground='inherit'
               onClick={onCancel}
               size={-1.5}
               spacing={0}
@@ -150,7 +150,7 @@ class AddressSearch extends Component {
           </GridColumn>
         )}
       </Grid>
-    );
+    )
   }
 }
 
@@ -158,7 +158,7 @@ AddressSearch.propTypes = {
   /**
    * Country for API queries
    */
-  country: PropTypes.oneOf(["au", "nz", "uk", "us", "ie"]),
+  country: PropTypes.oneOf(['au', 'nz', 'uk', 'us', 'ie']),
 
   /**
    * The props to pass to the input search component
@@ -183,12 +183,12 @@ AddressSearch.propTypes = {
   /**
    * The onChange function to call when a selection is made
    */
-  onChange: PropTypes.func.isRequired,
-};
+  onChange: PropTypes.func.isRequired
+}
 
 AddressSearch.defaultProps = {
-  label: "Address",
-  onCancelLabel: "Enter manually",
-};
+  label: 'Address',
+  onCancelLabel: 'Enter manually'
+}
 
-export default AddressSearch;
+export default AddressSearch

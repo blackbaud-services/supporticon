@@ -1,22 +1,18 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { useLeaderboard } from "../../hooks/use-leaderboard";
-import {
-  formatCurrency,
-  formatNumber,
-  setLocaleFromCountry,
-} from "../../utils/numbers";
-import { currencyCode } from "../../utils/currencies";
-import { formatMeasurementDomain } from "../../utils/tags";
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
+import { useLeaderboard } from '../../hooks/use-leaderboard'
+import { formatCurrency, formatNumber, setLocaleFromCountry } from '../../utils/numbers'
+import { currencyCode } from '../../utils/currencies'
+import { formatMeasurementDomain } from '../../utils/tags'
 
-import Filter from "constructicon/filter";
-import Grid from "constructicon/grid";
-import LeaderboardItem from "constructicon/leaderboard-item";
-import LeaderboardWrapper from "constructicon/leaderboard";
-import Pagination from "constructicon/pagination";
-import PaginationLink from "constructicon/pagination-link";
-import RichText from "constructicon/rich-text";
-import Section from "constructicon/section";
+import Filter from 'constructicon/filter'
+import Grid from 'constructicon/grid'
+import LeaderboardItem from 'constructicon/leaderboard-item'
+import LeaderboardWrapper from 'constructicon/leaderboard'
+import Pagination from 'constructicon/pagination'
+import PaginationLink from 'constructicon/pagination-link'
+import RichText from 'constructicon/rich-text'
+import Section from 'constructicon/section'
 
 const Leaderboard = ({
   allPages,
@@ -48,9 +44,9 @@ const Leaderboard = ({
   tagId,
   tagValue,
   type,
-  useOwnerImage,
+  useOwnerImage
 }) => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('')
   const { data = [], status } = useLeaderboard(
     {
       allPages,
@@ -70,27 +66,27 @@ const Leaderboard = ({
       startDate,
       tagId,
       tagValue,
-      type,
+      type
     },
     {
       refetchInterval,
-      deserializeMethod,
+      deserializeMethod
     }
-  );
+  )
 
   const leaderboardData = data
     .map((item, index) => ({ ...item, position: index + 1 }))
-    .slice(0, limit);
+    .slice(0, limit)
 
   return (
     <div>
       {filter && <Filter onChange={setQuery} {...filter} />}
-      {status === "loading" && <LeaderboardWrapper {...leaderboard} loading />}
-      {status === "error" && <LeaderboardWrapper {...leaderboard} error />}
-      {status === "success" && leaderboardData.length === 0 && (
+      {status === 'loading' && <LeaderboardWrapper {...leaderboard} loading />}
+      {status === 'error' && <LeaderboardWrapper {...leaderboard} error />}
+      {status === 'success' && leaderboardData.length === 0 && (
         <LeaderboardWrapper {...leaderboard} empty />
       )}
-      {status === "success" && (
+      {status === 'success' && (
         <Pagination max={pageSize} toPaginate={leaderboardData}>
           {({
             currentPage,
@@ -99,37 +95,31 @@ const Leaderboard = ({
             next,
             canPrev,
             canNext,
-            pageOf,
+            pageOf
           }) => (
             <>
               <LeaderboardWrapper {...leaderboard}>
                 {currentPage.map((leader, index) => {
-                  const metric =
-                    sortBy === "donations"
-                      ? leader.totalDonations
-                      : leader.raised;
-                  const amount = (offset + metric) * multiplier;
-                  const locale = setLocaleFromCountry(country);
-                  const showCurrency = currency && sortBy !== "donations";
+                  const metric = sortBy === 'donations'
+                    ? leader.totalDonations
+                    : leader.raised
+                  const amount = (offset + metric) * multiplier
+                  const locale = setLocaleFromCountry(country)
+                  const showCurrency = currency && sortBy !== 'donations'
 
                   return (
                     <LeaderboardItem
                       key={page.id || index}
                       title={leader.name}
                       subtitle={subtitleMethod(leader)}
-                      image={
-                        useOwnerImage
-                          ? leader.ownerImage || leader.image
-                          : leader.image
-                      }
+                      image={useOwnerImage ? leader.ownerImage || leader.image : leader.image}
                       amount={
                         showCurrency
                           ? formatCurrency({
                               amount,
-                              currencyCode:
-                                leader.currency || currencyCode(country),
+                              currencyCode: leader.currency || currencyCode(country),
                               locale,
-                              places,
+                              places
                             })
                           : formatNumber({ amount, locale, places })
                       }
@@ -137,21 +127,21 @@ const Leaderboard = ({
                       rank={leader.position}
                       {...leaderboardItem}
                     />
-                  );
+                  )
                 })}
               </LeaderboardWrapper>
               {pageSize && isPaginated && (
                 <Section spacing={{ t: 0.5 }}>
-                  <Grid align="center" justify="center">
+                  <Grid align='center' justify='center'>
                     <PaginationLink
                       onClick={prev}
-                      direction="prev"
+                      direction='prev'
                       disabled={!canPrev}
                     />
                     {showPage && <RichText size={-1}>{pageOf}</RichText>}
                     <PaginationLink
                       onClick={next}
-                      direction="next"
+                      direction='next'
                       disabled={!canNext}
                     />
                   </Grid>
@@ -162,8 +152,8 @@ const Leaderboard = ({
         </Pagination>
       )}
     </div>
-  );
-};
+  )
+}
 
 Leaderboard.propTypes = {
   /**
@@ -172,7 +162,7 @@ Leaderboard.propTypes = {
   campaign: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
-    PropTypes.array,
+    PropTypes.array
   ]),
 
   /**
@@ -181,7 +171,7 @@ Leaderboard.propTypes = {
   charity: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
-    PropTypes.array,
+    PropTypes.array
   ]),
 
   /**
@@ -190,29 +180,29 @@ Leaderboard.propTypes = {
   event: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
-    PropTypes.array,
+    PropTypes.array
   ]),
 
   /**
    * Country code
    */
   country: PropTypes.oneOf([
-    "au",
-    "ca",
-    "gb",
-    "hk",
-    "ie",
-    "nz",
-    "sg",
-    "uk",
-    "us",
-    "za",
+    'au',
+    'ca',
+    'gb',
+    'hk',
+    'ie',
+    'nz',
+    'sg',
+    'uk',
+    'us',
+    'za'
   ]),
 
   /**
    * The type of page to include in the leaderboard
    */
-  type: PropTypes.oneOf(["individual", "team", "group"]),
+  type: PropTypes.oneOf(['individual', 'team', 'group']),
 
   /**
    * Start date filter (ISO Format)
@@ -302,16 +292,16 @@ Leaderboard.propTypes = {
   /**
    * The type of measurement to sort by
    */
-  sortBy: PropTypes.oneOf(["raised", "donations"]),
+  sortBy: PropTypes.oneOf(['raised', 'donations']),
 
   /**
    * The field to show as a subtitle
    */
-  subtitleMethod: PropTypes.func,
-};
+  subtitleMethod: PropTypes.func
+}
 
 Leaderboard.defaultProps = {
-  country: "gb",
+  country: 'gb',
   currency: true,
   filter: {},
   limit: 10,
@@ -320,7 +310,7 @@ Leaderboard.defaultProps = {
   page: 1,
   places: 0,
   showPage: false,
-  subtitleMethod: (item) => item.subtitle,
-};
+  subtitleMethod: item => item.subtitle
+}
 
-export default Leaderboard;
+export default Leaderboard

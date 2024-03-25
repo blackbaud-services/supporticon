@@ -1,22 +1,22 @@
-import React from "react";
-import PropTypes from "prop-types";
-import withForm from "constructicon/with-form";
-import form from "./form";
-import { createTeam, deserializeTeam } from "../../api/teams";
-import { currencyCode as currencyFromCountry } from "../../utils/currencies";
+import React from 'react'
+import PropTypes from 'prop-types'
+import withForm from 'constructicon/with-form'
+import form from './form'
+import { createTeam, deserializeTeam } from '../../api/teams'
+import { currencyCode as currencyFromCountry } from '../../utils/currencies'
 
-import Form from "constructicon/form";
-import InputField from "constructicon/input-field";
+import Form from 'constructicon/form'
+import InputField from 'constructicon/input-field'
 
 class CreateTeamForm extends React.Component {
-  constructor() {
-    super();
-    this.handleCreateTeam = this.handleCreateTeam.bind(this);
-    this.state = { errors: [], status: null };
+  constructor () {
+    super()
+    this.handleCreateTeam = this.handleCreateTeam.bind(this)
+    this.state = { errors: [], status: null }
   }
 
-  handleCreateTeam(e) {
-    e.preventDefault();
+  handleCreateTeam (e) {
+    e.preventDefault()
 
     const {
       campaign,
@@ -26,11 +26,11 @@ class CreateTeamForm extends React.Component {
       pageId,
       pageSlug,
       token,
-      onSuccess,
-    } = this.props;
+      onSuccess
+    } = this.props
 
-    return form.submit().then((data) => {
-      this.setState({ status: "fetching" });
+    return form.submit().then(data => {
+      this.setState({ status: 'fetching' })
 
       const params = {
         campaignId: campaign,
@@ -38,35 +38,35 @@ class CreateTeamForm extends React.Component {
         page: pageId,
         targetCurrency: currencyCode || currencyFromCountry(country),
         token,
-        ...data,
-      };
+        ...data
+      }
 
       return Promise.resolve()
         .then(() => createTeam(params))
-        .then((team) => deserializeTeam(team))
-        .then((team) => {
-          this.setState({ status: "fetched" });
-          return onSuccess(team);
+        .then(team => deserializeTeam(team))
+        .then(team => {
+          this.setState({ status: 'fetched' })
+          return onSuccess(team)
         })
-        .catch((error) => {
+        .catch(error => {
           this.setState({
-            status: "failed",
-            errors: [{ message: "An error occurred creating your team." }],
-          });
-          return Promise.reject(error);
-        });
-    });
+            status: 'failed',
+            errors: [{ message: 'An error occurred creating your team.' }]
+          })
+          return Promise.reject(error)
+        })
+    })
   }
 
-  render() {
-    const { errors, status } = this.state;
-    const { form, formProps, inputProps } = this.props;
+  render () {
+    const { errors, status } = this.state
+    const { form, formProps, inputProps } = this.props
 
     return (
       <Form
-        isLoading={status === "fetching"}
+        isLoading={status === 'fetching'}
         noValidate
-        submit="Create Team"
+        submit='Create Team'
         errors={errors}
         onSubmit={this.handleCreateTeam}
         {...formProps}
@@ -75,7 +75,7 @@ class CreateTeamForm extends React.Component {
         <InputField {...form.fields.target} {...inputProps} />
         <InputField {...form.fields.story} {...inputProps} />
       </Form>
-    );
+    )
   }
 }
 
@@ -118,7 +118,7 @@ CreateTeamForm.propTypes = {
   /**
    * The country the team is being created in (sets the currency)
    */
-  country: PropTypes.string,
-};
+  country: PropTypes.string
+}
 
-export default withForm(form)(CreateTeamForm);
+export default withForm(form)(CreateTeamForm)

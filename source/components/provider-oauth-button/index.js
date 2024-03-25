@@ -1,142 +1,147 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import URL from "url-parse";
-import omit from "lodash/omit";
-import { base64EncodeParams, parseUrlParams } from "../../utils/params";
-import { toPromise } from "../../utils/promise";
-import { getBaseURL } from "../../utils/client";
-import { connectToken } from "../../api/authentication";
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import URL from 'url-parse'
+import omit from 'lodash/omit'
+import { base64EncodeParams, parseUrlParams } from '../../utils/params'
+import { toPromise } from '../../utils/promise'
+import { getBaseURL } from '../../utils/client'
+import { connectToken } from '../../api/authentication'
 import {
   getLocalStorageItem,
-  setLocalStorageItem,
-} from "constructicon/lib/localStorage";
+  setLocalStorageItem
+} from 'constructicon/lib/localStorage'
 
-import Button from "constructicon/button";
-import Icon from "constructicon/icon";
+import Button from 'constructicon/button'
+import Icon from 'constructicon/icon'
 
 class ProviderOauthButton extends Component {
-  constructor(props) {
-    super(props);
-    this.handleAuth = this.handleAuth.bind(this);
-    this.handleSuccess = this.handleSuccess.bind(this);
-    this.providerUrl = this.providerUrl.bind(this);
+  constructor (props) {
+    super(props)
+    this.handleAuth = this.handleAuth.bind(this)
+    this.handleSuccess = this.handleSuccess.bind(this)
+    this.providerUrl = this.providerUrl.bind(this)
 
     this.state = {
-      status: "empty",
-      success: false,
-    };
+      status: 'empty',
+      success: false
+    }
   }
 
-  componentWillUnmount() {
-    clearInterval(this.localStoragePoll);
-    clearInterval(this.isPopupClosed);
+  componentWillUnmount () {
+    clearInterval(this.localStoragePoll)
+    clearInterval(this.isPopupClosed)
   }
 
-  componentDidMount() {
-    const { onSuccess, popup, provider, redirectUri, useLocalStorage } =
-      this.props;
+  componentDidMount () {
+    const {
+      onSuccess,
+      popup,
+      provider,
+      redirectUri,
+      useLocalStorage
+    } = this.props
 
-    const data = parseUrlParams();
+    const data = parseUrlParams()
 
-    if (popup && typeof onSuccess === "function") {
+    if (popup && typeof onSuccess === 'function') {
       if (useLocalStorage) {
-        const key = `app-oauth-state-${provider}`;
+        const key = `app-oauth-state-${provider}`
 
         if (data.access_token || data.code) {
-          setLocalStorageItem(key, data);
-          window.opener && window.close();
+          setLocalStorageItem(key, data)
+          window.opener && window.close()
         } else {
-          setLocalStorageItem(key, {});
+          setLocalStorageItem(key, {})
 
           this.localStoragePoll = setInterval(() => {
-            const oauthState = getLocalStorageItem(key);
+            const oauthState = getLocalStorageItem(key)
             if (oauthState.access_token) {
-              clearInterval(this.localStoragePoll);
-              return this.handleSuccess(oauthState);
+              clearInterval(this.localStoragePoll)
+              return this.handleSuccess(oauthState)
             }
-          }, 1000);
+          }, 1000)
         }
       } else {
-        const { addEventListener } = window;
-        const validSourceOrigin = redirectUri && new URL(redirectUri).origin;
+        const { addEventListener } = window
+        const validSourceOrigin = redirectUri && new URL(redirectUri).origin
 
         addEventListener(
-          "message",
-          (event) => {
-            const data = event.data;
+          'message',
+          event => {
+            const data = event.data
             const isValid =
               event.origin === validSourceOrigin ||
-              data === "strava connected" ||
-              data === "fitbit connected";
+              data === 'strava connected' ||
+              data === 'fitbit connected'
 
             if (isValid && !this.state.success) {
-              return this.handleSuccess(data);
+              return this.handleSuccess(data)
             }
           },
           false
-        );
+        )
       }
     }
 
     if (data.access_token || data.code) {
-      return this.handleSuccess(data);
+      return this.handleSuccess(data)
     }
   }
 
-  handleSuccess(data) {
-    const { onSuccess, provider } = this.props;
+  handleSuccess (data) {
+    const { onSuccess, provider } = this.props
 
-    const handleAuthSuccess = (data) => {
+    const handleAuthSuccess = data => {
       return Promise.resolve()
-        .then(() => this.setState({ status: "fetching" }))
+        .then(() => this.setState({ status: 'fetching' }))
         .then(() => toPromise(onSuccess)(data))
-        .then(() => this.setState({ status: "fetched" }))
-        .catch(() => this.setState({ status: "empty", success: false }));
-    };
+        .then(() => this.setState({ status: 'fetched' }))
+        .catch(() => this.setState({ status: 'empty', success: false }))
+    }
 
-    if (["justgiving", "facebook"].indexOf(provider) > -1) {
+    if (['justgiving', 'facebook'].indexOf(provider) > -1) {
       Promise.resolve()
         .then(() => this.setState({ success: true }))
         .then(() => connectToken(data))
         .then(handleAuthSuccess)
-        .catch((error) => {
-          this.setState({ status: "empty" });
-          return Promise.reject(error);
-        });
+        .catch(error => {
+          this.setState({ status: 'empty' })
+          return Promise.reject(error)
+        })
     } else {
-      this.setState({ success: true });
-      return handleAuthSuccess(data);
+      this.setState({ success: true })
+      return handleAuthSuccess(data)
     }
   }
 
-  handleAuth() {
-    const { popupWindowFeatures, provider, onClose } = this.props;
-    const baseUrl = this.providerUrl();
+  handleAuth () {
+    const { popupWindowFeatures, provider, onClose } = this.props
+    const baseUrl = this.providerUrl()
 
     const popupWindow = window.open(
       baseUrl,
       `${provider}Auth`,
       popupWindowFeatures
-    );
+    )
 
-    this.setState({ status: "loading" });
+    this.setState({ status: 'loading' })
 
     this.isPopupClosed = setInterval(() => {
-      popupWindow.postMessage("ready", "*");
+      popupWindow.postMessage('ready', '*')
 
       if (popupWindow.closed) {
-        const { success } = this.state;
-        clearInterval(this.isPopupClosed);
-        this.setState({ status: success ? "loading" : "empty" });
+        const { success } = this.state
+        clearInterval(this.isPopupClosed)
+        this.setState({ status: success ? 'loading' : 'empty' })
 
-        if (typeof onClose === "function") {
-          return onClose(popupWindow);
+        if (typeof onClose === 'function') {
+          return onClose(popupWindow)
         }
       }
-    }, 500);
+    }, 500)
   }
 
-  providerUrl() {
+  providerUrl () {
     const {
       clientId,
       homeUrl,
@@ -144,88 +149,88 @@ class ProviderOauthButton extends Component {
       redirectUri,
       state,
       token,
-      authParams = {},
-    } = this.props;
+      authParams = {}
+    } = this.props
 
-    if (["justgiving", "facebook"].indexOf(provider) > -1) {
+    if (['justgiving', 'facebook'].indexOf(provider) > -1) {
       const params = {
         client_id: clientId,
         redirect_uri: redirectUri,
-        response_type: "code",
+        response_type: 'code',
         state: homeUrl && encodeURIComponent(`home=${homeUrl}`),
         acr_values:
-          provider === "facebook"
+          provider === 'facebook'
             ? `encodedOptions:${base64EncodeParams({ forceFacebook: true })}`
             : undefined,
-        ...authParams,
-      };
+        ...authParams
+      }
 
       const urlParams = Object.keys(params)
-        .map((key) => `${key}=${encodeURIComponent(params[key])}`)
-        .join("&");
+        .map(key => `${key}=${encodeURIComponent(params[key])}`)
+        .join('&')
 
-      const baseURL = getBaseURL().replace("api", "identity");
+      const baseURL = getBaseURL().replace('api', 'identity')
 
-      return `${baseURL}/connect/authorize?${urlParams}&scope=openid+profile+email+account+fundraise+offline_access`;
-    } else if (provider === "strava") {
-      const baseURL = "https://www.strava.com/oauth/authorize";
+      return `${baseURL}/connect/authorize?${urlParams}&scope=openid+profile+email+account+fundraise+offline_access`
+    } else if (provider === 'strava') {
+      const baseURL = 'https://www.strava.com/oauth/authorize'
 
       const params = {
         client_id: clientId,
         redirect_uri: redirectUri,
-        response_type: "code",
-        scope: "read,activity:read",
+        response_type: 'code',
+        scope: 'read,activity:read',
         state: state || token,
-        ...authParams,
-      };
+        ...authParams
+      }
 
       const urlParams = Object.keys(params)
-        .map((key) => `${key}=${encodeURIComponent(params[key])}`)
-        .join("&");
+        .map(key => `${key}=${encodeURIComponent(params[key])}`)
+        .join('&')
 
-      return `${baseURL}?${urlParams}`;
-    } else if (provider === "fitbit") {
-      const baseURL = "https://www.fitbit.com/oauth2/authorize";
+      return `${baseURL}?${urlParams}`
+    } else if (provider === 'fitbit') {
+      const baseURL = 'https://www.fitbit.com/oauth2/authorize'
 
       const params = {
         client_id: clientId,
         redirect_uri: redirectUri,
-        response_type: "code",
+        response_type: 'code',
         scope:
-          "activity heartrate location nutrition profile settings sleep social weight",
+          'activity heartrate location nutrition profile settings sleep social weight',
         state,
-        ...authParams,
-      };
+        ...authParams
+      }
 
       const urlParams = Object.keys(params)
-        .map((key) => `${key}=${encodeURIComponent(params[key])}`)
-        .join("&");
+        .map(key => `${key}=${encodeURIComponent(params[key])}`)
+        .join('&')
 
-      return `${baseURL}?${urlParams}`;
+      return `${baseURL}?${urlParams}`
     } else {
-      throw new Error(`JustGiving does not support ${provider} authentication`);
+      throw new Error(`JustGiving does not support ${provider} authentication`)
     }
   }
 
-  render() {
-    const { label, popup, provider, ...props } = this.props;
-    const { status } = this.state;
-    const isLoading = ["loading", "fetching"].indexOf(status) > -1;
+  render () {
+    const { label, popup, provider, ...props } = this.props
+    const { status } = this.state
+    const isLoading = ['loading', 'fetching'].indexOf(status) > -1
     const icon = isLoading
-      ? "loading"
-      : status === "fetched"
-      ? "check"
-      : provider;
+      ? 'loading'
+      : status === 'fetched'
+        ? 'check'
+        : provider
 
-    const baseUrl = this.providerUrl();
+    const baseUrl = this.providerUrl()
     const actionProps = popup
       ? {
-          onClick: (e) => this.handleAuth(),
+          onClick: e => this.handleAuth()
         }
       : {
           href: baseUrl,
-          tag: "a",
-        };
+          tag: 'a'
+        }
 
     return (
       <Button
@@ -234,27 +239,27 @@ class ProviderOauthButton extends Component {
         disabled={isLoading}
         {...actionProps}
         {...omit(props, [
-          "authParams",
-          "clientId",
-          "homeUrl",
-          "onClose",
-          "onSuccess",
-          "popupWindowFeatures",
-          "redirectUri",
-          "token",
-          "useLocalStorage",
+          'authParams',
+          'clientId',
+          'homeUrl',
+          'onClose',
+          'onSuccess',
+          'popupWindowFeatures',
+          'redirectUri',
+          'token',
+          'useLocalStorage'
         ])}
       >
         <Icon name={icon} spin={isLoading} size={1.5} />
         <span>
           {isLoading
-            ? status === "fetching"
-              ? "Fetching data..."
-              : "Connecting..."
+            ? status === 'fetching'
+                ? 'Fetching data...'
+                : 'Connecting...'
             : label}
         </span>
       </Button>
-    );
+    )
   }
 }
 
@@ -292,7 +297,7 @@ ProviderOauthButton.propTypes = {
   /**
    * The third-party provider to connect with
    */
-  provider: PropTypes.oneOf(["strava", "facebook", "fitbit", "justgiving"]),
+  provider: PropTypes.oneOf(['strava', 'facebook', 'fitbit', 'justgiving']),
 
   /**
    * A valid return_to url for the specified OAuthApplication
@@ -322,14 +327,14 @@ ProviderOauthButton.propTypes = {
   /**
    * URL Params to be passed to provider
    */
-  authParams: PropTypes.object,
-};
+  authParams: PropTypes.object
+}
 
 ProviderOauthButton.defaultProps = {
-  label: "Login with JustGiving",
+  label: 'Login with JustGiving',
   popup: true,
-  popupWindowFeatures: "width=600,height=900,status=1",
-  provider: "justgiving",
-};
+  popupWindowFeatures: 'width=600,height=900,status=1',
+  provider: 'justgiving'
+}
 
-export default ProviderOauthButton;
+export default ProviderOauthButton
