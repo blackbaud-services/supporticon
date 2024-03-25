@@ -1,4 +1,4 @@
-import pickBy from 'lodash/pickBy'
+import { pickBy, sortBy } from 'lodash'
 import { useQuery } from 'react-query'
 import { fetchLeaderboard, deserializeLeaderboard } from '../../api/leaderboard'
 
@@ -9,7 +9,13 @@ export const useLeaderboard = (params, options) => {
     ['fundraisingLeaderboard', pickBy(params)],
     () =>
       fetchLeaderboard(params)
-        .then(results => results.map(deserializeMethod || deserializeLeaderboard)),
+        .then(results => results.map(deserializeMethod || deserializeLeaderboard))
+        .then(results => {
+          if (params.sortBy === 'donations_received') {
+            return sortBy(results, (item) => item.raised).reverse()
+          }
+          return results
+        }),
     {
       refetchInterval,
       staleTime
