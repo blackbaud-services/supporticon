@@ -525,7 +525,7 @@ export const getPageShortName = (title, slug, forceSlug) => {
 }
 
 export const getPageIdBySlug = (slug) => {
- return get(`/v1/fundraising/pages/${slug}`).then(res => res.pageId)
+  return get(`/v1/fundraising/pages/${slug}`).then(res => res.pageId)
 }
 
 export const updatePage = (
