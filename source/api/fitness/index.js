@@ -20,7 +20,16 @@ export const fetchPageFitness = ({
   endDate
 }) => {
   const params = { limit, offset, start: startDate, end: endDate }
-  return get(`/v1/fitness/fundraising/${slug}`, params)
+  return get(`/v1/fitness/fundraising/${slug}`, params).then(res =>
+    servicesAPI.get(`/v1/justgiving/page/${slug}/fitnessTotal?startDate=${startDate}&endDate=${endDate}`).then(({ data }) => {
+      return {
+        ...res,
+        totalAmount: data.distance,
+        totalAmountElevation: data.elevation,
+        totalAmountTaken: data.duration
+      }
+    })
+  )
 }
 
 export const connectFitness = ({
