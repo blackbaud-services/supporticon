@@ -1,51 +1,51 @@
-import { uploadImage } from '..'
-import { imagesAPI, servicesAPI } from '../../../utils/client'
+import { uploadImage } from "..";
+import { imagesAPI, servicesAPI } from "../../../utils/client";
 
-describe('Uploading images', () => {
+describe("Uploading images", () => {
   beforeEach(() => {
-    moxios.install(imagesAPI)
-    moxios.install(servicesAPI)
-  })
+    moxios.install(imagesAPI);
+    moxios.install(servicesAPI);
+  });
 
   afterEach(() => {
-    moxios.uninstall(imagesAPI)
-    moxios.uninstall(servicesAPI)
-  })
+    moxios.uninstall(imagesAPI);
+    moxios.uninstall(servicesAPI);
+  });
 
-  it('uses the correct url for external images', done => {
-    uploadImage('https://example.com/image.jpg')
+  it("uses the correct url for external images", (done) => {
+    uploadImage("https://example.com/image.jpg");
 
     moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
-      expect(request.url).to.eql('/v1/justgiving/images')
-      expect(request.config.method).to.eql('post')
-      done()
-    })
-  })
+      const request = moxios.requests.mostRecent();
+      expect(request.url).to.eql("/v1/justgiving/images");
+      expect(request.config.method).to.eql("post");
+      done();
+    });
+  });
 
-  it('uses the correct url for base64 URLs', done => {
+  it("uses the correct url for base64 URLs", (done) => {
     uploadImage(
-      'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
-    )
+      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    );
 
     moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
-      expect(request.config.baseURL).to.eql('https://images.justgiving.com')
-      expect(request.url).to.eql('/image')
-      expect(request.config.method).to.eql('post')
-      done()
-    })
-  })
+      const request = moxios.requests.mostRecent();
+      expect(request.config.baseURL).to.eql("https://images.justgiving.com");
+      expect(request.url).to.eql("/image");
+      expect(request.config.method).to.eql("post");
+      done();
+    });
+  });
 
-  it('uses the correct url for files', done => {
-    uploadImage({ name: 'image.jpg', size: 123 })
+  it("uses the correct url for files", (done) => {
+    uploadImage({ name: "image.jpg", size: 123 });
 
     moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
-      expect(request.config.baseURL).to.eql('https://images.justgiving.com')
-      expect(request.url).to.eql('/image')
-      expect(request.config.method).to.eql('post')
-      done()
-    })
-  })
-})
+      const request = moxios.requests.mostRecent();
+      expect(request.config.baseURL).to.eql("https://images.justgiving.com");
+      expect(request.url).to.eql("/image");
+      expect(request.config.method).to.eql("post");
+      done();
+    });
+  });
+});

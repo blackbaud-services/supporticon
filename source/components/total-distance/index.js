@@ -1,12 +1,12 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { useFitnessTotals } from '../../hooks/use-fitness-totals'
-import { formatDistance } from '../../utils/fitness'
-import { formatNumber } from '../../utils/numbers'
+import React from "react";
+import PropTypes from "prop-types";
+import { useFitnessTotals } from "../../hooks/use-fitness-totals";
+import { formatDistance } from "../../utils/fitness";
+import { formatNumber } from "../../utils/numbers";
 
-import Icon from 'constructicon/icon'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
+import Icon from "constructicon/icon";
+import Loading from "constructicon/loading";
+import Metric from "constructicon/metric";
 
 const TotalDistance = ({
   activity,
@@ -24,41 +24,44 @@ const TotalDistance = ({
   startDate,
   tagId,
   tagValue,
-  units
+  units,
 }) => {
-  const { data, status } = useFitnessTotals({
-    campaign,
-    charity,
-    endDate,
-    startDate,
-    tagId,
-    tagValue
-  }, { refetchInterval })
+  const { data, status } = useFitnessTotals(
+    {
+      campaign,
+      charity,
+      endDate,
+      startDate,
+      tagId,
+      tagValue,
+    },
+    { refetchInterval }
+  );
 
-  if (status === 'error') return <Icon name='warning' />
+  if (status === "error") return <Icon name="warning" />;
 
-  if (status === 'success') {
-    const formatAmount = label => {
-      const amount = (offset + data.distance) * multiplier
+  if (status === "success") {
+    const formatAmount = (label) => {
+      const amount = (offset + data.distance) * multiplier;
 
       return units
         ? formatDistance({ amount, label, miles, places })
-        : formatNumber({ amount, places })
-    }
+        : formatNumber({ amount, places });
+    };
 
     return (
       <Metric
         icon={icon}
         label={label}
         amount={formatAmount()}
-        amountLabel={formatAmount('full')}
+        amountLabel={formatAmount("full")}
         {...metric}
       />
-    )
+    );
   }
 
-  return <Loading />
-}
+  return <Loading />;
+};
 
 TotalDistance.propTypes = {
   /**
@@ -121,7 +124,7 @@ TotalDistance.propTypes = {
   icon: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
-    PropTypes.element
+    PropTypes.element,
   ]),
 
   /**
@@ -142,16 +145,16 @@ TotalDistance.propTypes = {
   /**
    * The tag value to filter by
    */
-  tagValue: PropTypes.string
-}
+  tagValue: PropTypes.string,
+};
 
 TotalDistance.defaultProps = {
-  label: 'Total Distance',
+  label: "Total Distance",
   miles: false,
   multiplier: 1,
   offset: 0,
   places: 2,
-  units: true
-}
+  units: true,
+};
 
-export default TotalDistance
+export default TotalDistance;

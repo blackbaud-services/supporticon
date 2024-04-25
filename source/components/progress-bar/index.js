@@ -1,19 +1,19 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import dayjs from 'dayjs'
-import { useDonationTotals } from '../../hooks/use-donation-totals'
+import React from "react";
+import PropTypes from "prop-types";
+import dayjs from "dayjs";
+import { useDonationTotals } from "../../hooks/use-donation-totals";
 import {
   formatCurrency,
   formatNumber,
-  setLocaleFromCountry
-} from '../../utils/numbers'
+  setLocaleFromCountry,
+} from "../../utils/numbers";
 
-import Grid from 'constructicon/grid'
-import GridColumn from 'constructicon/grid-column'
-import Heading from 'constructicon/heading'
-import Loading from 'constructicon/loading'
-import Metric from 'constructicon/metric'
-import Progress from 'constructicon/progress-bar'
+import Grid from "constructicon/grid";
+import GridColumn from "constructicon/grid-column";
+import Heading from "constructicon/heading";
+import Loading from "constructicon/loading";
+import Metric from "constructicon/metric";
+import Progress from "constructicon/progress-bar";
 
 const ProgressBar = ({
   campaign,
@@ -37,53 +37,64 @@ const ProgressBar = ({
   startDate,
   target,
   targetLabel,
-  useDonationCount
+  useDonationCount,
 }) => {
-  const { data, status } = useDonationTotals({
-    campaign,
-    charity,
-    donationRef,
-    country,
-    endDate,
-    event,
-    includeOffline: !excludeOffline,
-    startDate
-  }, { refetchInterval })
+  const { data, status } = useDonationTotals(
+    {
+      campaign,
+      charity,
+      donationRef,
+      country,
+      endDate,
+      event,
+      includeOffline: !excludeOffline,
+      startDate,
+    },
+    { refetchInterval }
+  );
 
-  const calculateDaysRemaining = eventDate => {
-    const today = dayjs()
-    const eventDateObj = dayjs(eventDate)
-    const daysDiff = Math.ceil(eventDateObj.diff(today, 'days', true)) // we want to round up
-    return Math.max(0, daysDiff)
-  }
+  const calculateDaysRemaining = (eventDate) => {
+    const today = dayjs();
+    const eventDateObj = dayjs(eventDate);
+    const daysDiff = Math.ceil(eventDateObj.diff(today, "days", true)); // we want to round up
+    return Math.max(0, daysDiff);
+  };
 
   const calculatePercentage = () => {
-    const amount = useDonationCount ? data.donations : data.raised
-    return Math.min(100, Math.floor(((amount + offset) / target) * 100))
-  }
+    const amount = useDonationCount ? data.donations : data.raised;
+    return Math.min(100, Math.floor(((amount + offset) / target) * 100));
+  };
 
-  const locale = setLocaleFromCountry(country)
+  const locale = setLocaleFromCountry(country);
 
-  if (status === 'success') {
-    const progress = calculatePercentage()
+  if (status === "success") {
+    const progress = calculatePercentage();
 
     return (
       <Grid spacing={0.25} {...grid}>
         <GridColumn xs={6}>
           <Metric
-            align='left'
+            align="left"
             label={raisedLabel}
             amount={
               useDonationCount
-                ? formatNumber({ amount: data.donations + offset, locale, places })
-                : formatCurrency({ amount: data.raised + offset, locale, places })
+                ? formatNumber({
+                    amount: data.donations + offset,
+                    locale,
+                    places,
+                  })
+                : formatCurrency({
+                    amount: data.raised + offset,
+                    locale,
+                    places,
+                  })
             }
             {...metric}
           />
         </GridColumn>
-        <GridColumn xs={6} xsAlign='right'>
+        <GridColumn xs={6} xsAlign="right">
           <Metric
-            align='right'
+            align="right"
             label={targetLabel}
             amount={
               useDonationCount
@@ -103,27 +114,27 @@ const ProgressBar = ({
         <GridColumn xs={6}>
           {fundedLabel && (
             <>
-              <Heading size={0} tag='strong' {...heading}>
+              <Heading size={0} tag="strong" {...heading}>
                 {progress}%
-              </Heading>{' '}
+              </Heading>{" "}
               {fundedLabel}
             </>
           )}
         </GridColumn>
         {remainingLabel && eventDate && (
-          <GridColumn xs={6} xsAlign='right'>
-            <Heading size={0} tag='strong' {...heading}>
+          <GridColumn xs={6} xsAlign="right">
+            <Heading size={0} tag="strong" {...heading}>
               {calculateDaysRemaining(eventDate)}
-            </Heading>{' '}
+            </Heading>{" "}
             {remainingLabel}
           </GridColumn>
         )}
       </Grid>
-    )
+    );
   }
 
-  return <Loading />
-}
+  return <Loading />;
+};
 
 ProgressBar.propTypes = {
   /**
@@ -132,7 +143,7 @@ ProgressBar.propTypes = {
   campaign: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
-    PropTypes.object
+    PropTypes.object,
   ]),
 
   /**
@@ -141,7 +152,7 @@ ProgressBar.propTypes = {
   charity: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,
-    PropTypes.object
+    PropTypes.object,
   ]),
 
   /**
@@ -155,23 +166,23 @@ ProgressBar.propTypes = {
   event: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
 
   /**
    * Country code for API
    */
   country: PropTypes.oneOf([
-    'au',
-    'ca',
-    'gb',
-    'hk',
-    'ie',
-    'nz',
-    'sg',
-    'uk',
-    'us',
-    'za'
+    "au",
+    "ca",
+    "gb",
+    "hk",
+    "ie",
+    "nz",
+    "sg",
+    "uk",
+    "us",
+    "za",
   ]),
 
   /**
@@ -252,14 +263,14 @@ ProgressBar.propTypes = {
   /**
    * use number of donations instead of amount raised
    */
-  useDonationCount: PropTypes.bool
-}
+  useDonationCount: PropTypes.bool,
+};
 
 ProgressBar.defaultProps = {
-  country: 'gb',
+  country: "gb",
   excludeOffline: false,
   offset: 0,
-  places: 0
-}
+  places: 0,
+};
 
-export default ProgressBar
+export default ProgressBar;
