@@ -12,7 +12,6 @@ workflows:
           branches:
             ignore:
               - master
-              - gh-pages
 
   deploy:
     jobs:
@@ -40,20 +39,6 @@ commands:
           name: Lint 🛠
           command: yarn test
 
-  docs:
-    steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "db:88:4b:34:dd:32:8c:2c:7e:95:9d:f8:db:5e:d7:28"
-      - run:
-          name: Setup git user
-          command: |
-            git config user.email "ci-build@blackbaud.com"
-            git config user.name "ci-build"
-      - run:
-          name: Publish Docs 📄
-          command: yarn docs:build && yarn docs:deploy
-
   publish:
     steps:
       - npm-publisher/publish-from-package-version:
@@ -71,14 +56,14 @@ commands:
 jobs:
   test:
     docker:
-      - image: circleci/node:14
+      - image: cimg/node:18.17.0
     steps:
       - install
       - lint
 
   deploy:
     docker:
-      - image: circleci/node:14
+      - image: cimg/node:18.17.0
     steps:
       - install
       - lint

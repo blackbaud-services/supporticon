@@ -1,87 +1,87 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import withForm from 'constructicon/with-form'
-import form from './form'
-import { getErrorMessage } from '../../utils/errors'
+import React from "react";
+import PropTypes from "prop-types";
+import withForm from "constructicon/with-form";
+import form from "./form";
+import { getErrorMessage } from "../../utils/errors";
 import {
   getConnectUrl,
   listenForPostMessage,
-  showPopup
-} from '../../utils/oauth'
-import { parseUrlParams } from '../../utils/params'
-import { getCurrentUrl, getIsMobile } from '../../utils/window'
+  showPopup,
+} from "../../utils/oauth";
+import { parseUrlParams } from "../../utils/params";
+import { getCurrentUrl, getIsMobile } from "../../utils/window";
 import {
   checkAccountAvailability,
-  connectToken
-} from '../../api/authentication'
+  connectToken,
+} from "../../api/authentication";
 
-import Button from 'constructicon/button'
-import ButtonGroup from 'constructicon/button-group'
-import Form from 'constructicon/form'
-import Grid from 'constructicon/grid'
-import GridColumn from 'constructicon/grid-column'
-import Icon from 'constructicon/icon'
-import InputField from 'constructicon/input-field'
-import JGLogo from './jg-logo'
-import Section from 'constructicon/section'
+import Button from "constructicon/button";
+import ButtonGroup from "constructicon/button-group";
+import Form from "constructicon/form";
+import Grid from "constructicon/grid";
+import GridColumn from "constructicon/grid-column";
+import Icon from "constructicon/icon";
+import InputField from "constructicon/input-field";
+import JGLogo from "./jg-logo";
+import Section from "constructicon/section";
 
 class JGConnectForm extends React.Component {
-  constructor (props) {
-    super(props)
-    this.handleClose = this.handleClose.bind(this)
-    this.handleSuccess = this.handleSuccess.bind(this)
-    this.showOAuth = this.showOAuth.bind(this)
+  constructor(props) {
+    super(props);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleSuccess = this.handleSuccess.bind(this);
+    this.showOAuth = this.showOAuth.bind(this);
 
     this.state = {
       errors: [],
-      status: 'empty',
+      status: "empty",
       confirming: false,
-      method: 'signup',
-      showButtons: props.showButtons
-    }
+      method: "signup",
+      showButtons: props.showButtons,
+    };
   }
 
-  componentDidMount () {
-    const { redirectUri } = this.props
-    const data = parseUrlParams()
+  componentDidMount() {
+    const { redirectUri } = this.props;
+    const data = parseUrlParams();
 
-    listenForPostMessage({ redirectUri, onSuccess: this.handleSuccess })
+    listenForPostMessage({ redirectUri, onSuccess: this.handleSuccess });
 
     if (data.access_token || data.code) {
-      return this.handleSuccess(data)
+      return this.handleSuccess(data);
     }
   }
 
-  handleClose () {
-    this.setState({ status: 'empty' })
+  handleClose() {
+    this.setState({ status: "empty" });
   }
 
-  handleSuccess (data) {
-    const { onSuccess } = this.props
-    const { confirming } = this.state
+  handleSuccess(data) {
+    const { onSuccess } = this.props;
+    const { confirming } = this.state;
 
     if (!confirming) {
       Promise.resolve()
         .then(() => this.setState({ confirming: true }))
         .then(() => connectToken(data))
-        .then(data => onSuccess(data))
-        .catch(error => {
-          const errors = [{ message: getErrorMessage(error) }]
-          this.setState({ errors, status: 'failed', confirming: false })
-        })
+        .then((data) => onSuccess(data))
+        .catch((error) => {
+          const errors = [{ message: getErrorMessage(error) }];
+          this.setState({ errors, status: "failed", confirming: false });
+        });
     }
   }
 
-  showOAuth (forceSignUp, email) {
-    const { clientId, homeUrl, oauthParams, popup, redirectUri } = this.props
-    const isMobile = getIsMobile()
+  showOAuth(forceSignUp, email) {
+    const { clientId, homeUrl, oauthParams, popup, redirectUri } = this.props;
+    const isMobile = getIsMobile();
 
     return Promise.resolve()
       .then(() =>
         this.setState({
           errors: [],
-          method: forceSignUp ? 'signup' : 'login',
-          status: 'fetching'
+          method: forceSignUp ? "signup" : "login",
+          status: "fetching",
         })
       )
       .then(() =>
@@ -91,31 +91,30 @@ class JGConnectForm extends React.Component {
           forceSignUp,
           homeUrl,
           redirectUri,
-          oauthParams
+          oauthParams,
         })
       )
-      .then(
-        url =>
-          popup && !isMobile
-            ? showPopup({ url, onClose: this.handleClose })
-            : (window.location.href = url)
+      .then((url) =>
+        popup && !isMobile
+          ? showPopup({ url, onClose: this.handleClose })
+          : (window.location.href = url)
       )
-      .catch(error => {
-        const errors = [{ message: getErrorMessage(error) }]
-        this.setState({ errors, status: 'failed' })
-      })
+      .catch((error) => {
+        const errors = [{ message: getErrorMessage(error) }];
+        this.setState({ errors, status: "failed" });
+      });
   }
 
-  render () {
-    const { buttonProps, formComponent, inputField, form, label } = this.props
-    const { confirming, errors, method, showButtons, status } = this.state
-    const isLoading = confirming || status === 'fetching'
-    const isTouched = showButtons !== this.props.showButtons
+  render() {
+    const { buttonProps, formComponent, inputField, form, label } = this.props;
+    const { confirming, errors, method, showButtons, status } = this.state;
+    const isLoading = confirming || status === "fetching";
+    const isTouched = showButtons !== this.props.showButtons;
 
     if (showButtons) {
       return (
         <div>
-          <Section tag='h3' spacing={{ b: 0.5 }}>
+          <Section tag="h3" spacing={{ b: 0.5 }}>
             {label || (
               <span>
                 Do you have an existing <JGLogo /> account?
@@ -125,32 +124,32 @@ class JGConnectForm extends React.Component {
           <ButtonGroup>
             <Button
               disabled={isLoading}
-              background='justgiving'
-              foreground='light'
+              background="justgiving"
+              foreground="light"
               onClick={() => this.showOAuth(false)}
               {...buttonProps}
             >
               <span>Yes, I do</span>
-              {isLoading && method === 'login' && <Icon name='loading' spin />}
+              {isLoading && method === "login" && <Icon name="loading" spin />}
             </Button>
             <Button
               disabled={isLoading}
-              background='justgiving'
-              foreground='light'
+              background="justgiving"
+              foreground="light"
               onClick={() => this.showOAuth(true)}
               {...buttonProps}
             >
               <span>No, I don't</span>
-              {isLoading && method === 'signup' && <Icon name='loading' spin />}
+              {isLoading && method === "signup" && <Icon name="loading" spin />}
             </Button>
           </ButtonGroup>
-          <Section tag='p' spacing={{ t: 0.5 }}>
+          <Section tag="p" spacing={{ t: 0.5 }}>
             <button onClick={() => this.setState({ showButtons: false })}>
               I'm not sure
             </button>
           </Section>
         </div>
-      )
+      );
     }
 
     return (
@@ -158,25 +157,25 @@ class JGConnectForm extends React.Component {
         errors={errors}
         isLoading={isLoading}
         noValidate
-        onSubmit={e => {
-          e.preventDefault()
+        onSubmit={(e) => {
+          e.preventDefault();
 
-          form.submit().then(values =>
+          form.submit().then((values) =>
             Promise.resolve()
-              .then(() => this.setState({ status: 'fetching', errors: [] }))
+              .then(() => this.setState({ status: "fetching", errors: [] }))
               .then(() => checkAccountAvailability(values.email))
-              .then(hasAccount => this.showOAuth(!hasAccount, values.email))
-          )
+              .then((hasAccount) => this.showOAuth(!hasAccount, values.email))
+          );
         }}
-        submit=''
-        autoComplete='off'
+        submit=""
+        autoComplete="off"
         {...formComponent}
       >
-        <Section tag='h3' spacing={{ b: 0.5 }}>
-          <label htmlFor='email'>
+        <Section tag="h3" spacing={{ b: 0.5 }}>
+          <label htmlFor="email">
             {label || (
               <span>
-                Enter your email below to check if you have an existing{' '}
+                Enter your email below to check if you have an existing{" "}
                 <JGLogo /> account
               </span>
             )}
@@ -193,16 +192,18 @@ class JGConnectForm extends React.Component {
           <GridColumn md={3}>
             <Button
               block
-              background='justgiving'
+              background="justgiving"
               disabled={isLoading}
-              foreground='light'
-              type='submit'
+              foreground="light"
+              type="submit"
               {...buttonProps}
             >
               <span>Next</span>
-              {isLoading
-                ? <Icon name='loading' spin />
-                : <Icon name='chevron' />}
+              {isLoading ? (
+                <Icon name="loading" spin />
+              ) : (
+                <Icon name="chevron" />
+              )}
             </Button>
           </GridColumn>
           {isTouched && (
@@ -214,7 +215,7 @@ class JGConnectForm extends React.Component {
           )}
         </Grid>
       </Form>
-    )
+    );
   }
 }
 
@@ -272,14 +273,14 @@ JGConnectForm.propTypes = {
   /**
    * Show Yes/No buttons instead of an email check form
    */
-  showButtons: PropTypes.bool
-}
+  showButtons: PropTypes.bool,
+};
 
 JGConnectForm.defaultProps = {
-  clientId: '44f34c65',
+  clientId: "44f34c65",
   popup: true,
   homeUrl: getCurrentUrl(),
-  redirectUri: 'https://oauth.blackbaud-sites.com/'
-}
+  redirectUri: "https://oauth.blackbaud-sites.com/",
+};
 
-export default withForm(form)(JGConnectForm)
+export default withForm(form)(JGConnectForm);
