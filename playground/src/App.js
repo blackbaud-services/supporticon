@@ -15,8 +15,6 @@ import React from 'react'
 // } from '../../source/utils/client'
 // import InputSlug from '../../source/components/input-slug'
 // import DataProvider from '../../source/utils/data'
-import AddressSearch from '../../source/components/address-search'
-import CharitySearch from '../../source/components/charity-search'
 
 const App = () => {
   return (
@@ -26,13 +24,6 @@ const App = () => {
         Welcome to the Supporticon playground! Add a component in App.js to get
         started.
       </span>
-      <AddressSearch
-        country='UK'
-        onChange={(item) => {
-          console.log('item', item)
-        }}
-      />
-      <CharitySearch />
       {/* <DataProvider> */}
       {/* Your component here... */}
       {/* </DataProvider> */}

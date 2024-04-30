@@ -84,6 +84,13 @@ class CreateFitnessForm extends Component {
 
     const { status, errors } = this.state;
 
+    const showNonLengthsFormFields = form.fields.unit.value !== 'lengths'
+
+    const handleChangeDistance = (e, field) => {
+      if (!!form.fields.poolLength.value) form.fields.distance.value = e * form.fields.poolLength.value
+      field.onChange(e)
+    }
+
     return (
       <Form
         errors={errors}
@@ -99,12 +106,14 @@ class CreateFitnessForm extends Component {
           {includeUnit ? (
             <GridColumn>
               <Grid spacing={{ x: 0.25 }}>
-                <GridColumn xs={7} sm={7.5} md={8} lg={9}>
-                  <InputField {...form.fields.distance} {...inputField} />
-                </GridColumn>
                 <GridColumn xs={5} sm={4.5} md={4} lg={3}>
                   <InputSelect {...form.fields.unit} {...inputField} />
                 </GridColumn>
+                {showNonLengthsFormFields &&
+                  <GridColumn xs={7} sm={7.5} md={8} lg={9}>
+                    <InputField {...form.fields.distance} {...inputField} />
+                  </GridColumn>
+                }
               </Grid>
             </GridColumn>
           ) : (
@@ -113,35 +122,55 @@ class CreateFitnessForm extends Component {
             </GridColumn>
           )}
 
-          {includeDuration && (
-            <GridColumn lg={includeElevation ? 6 : 12}>
+          {(!includeUnit || showNonLengthsFormFields) && (
+            <>
+              {includeDuration && (
+                <GridColumn lg={includeElevation ? 6 : 12}>
+                  <Grid spacing={{ x: 0.25 }}>
+                    <GridColumn xs={6} sm={6.5} md={7} lg={8}>
+                      <InputField {...form.fields.duration} {...inputField} />
+                    </GridColumn>
+                    <GridColumn xs={6} sm={5.5} md={5} lg={4}>
+                      <InputSelect {...form.fields.durationUnit} {...inputField} />
+                    </GridColumn>
+                  </Grid>
+                </GridColumn>
+              )}
+
+              {includeElevation && (
+                <GridColumn lg={includeDuration ? 6 : 12}>
+                  <Grid spacing={{ x: 0.25 }}>
+                    <GridColumn xs={7} sm={7.5} md={8} lg={9}>
+                      <InputField {...form.fields.elevation} {...inputField} />
+                    </GridColumn>
+                    <GridColumn xs={5} sm={4.5} md={4} lg={3}>
+                      <InputSelect {...form.fields.elevationUnit} {...inputField} />
+                    </GridColumn>
+                  </Grid>
+                </GridColumn>
+              )}
+
+              {includeType && (
+                <GridColumn lg={includeDate ? 6 : 12}>
+                  <InputSelect {...form.fields.type} {...inputField} />
+                </GridColumn>
+              )}
+            </>
+          )}
+
+          {!showNonLengthsFormFields && (
+            <GridColumn lg={12}>
               <Grid spacing={{ x: 0.25 }}>
                 <GridColumn xs={6} sm={6.5} md={7} lg={8}>
-                  <InputField {...form.fields.duration} {...inputField} />
+                  <InputField {...form.fields.poolLength} {...inputField} />
                 </GridColumn>
                 <GridColumn xs={6} sm={5.5} md={5} lg={4}>
-                  <InputSelect {...form.fields.durationUnit} {...inputField} />
+                  <InputField {...form.fields.numberOfLengths} {...inputField} onChange={(value)=>handleChangeDistance(value, form.fields.numberOfLengths)}/>
                 </GridColumn>
-              </Grid>
-            </GridColumn>
-          )}
-
-          {includeElevation && (
-            <GridColumn lg={includeDuration ? 6 : 12}>
-              <Grid spacing={{ x: 0.25 }}>
-                <GridColumn xs={7} sm={7.5} md={8} lg={9}>
-                  <InputField {...form.fields.elevation} {...inputField} />
+                <GridColumn xs={6} sm={5.5} md={5} lg={4}>
+                  <InputField {...form.fields.distance} {...inputField}/>
                 </GridColumn>
-                <GridColumn xs={5} sm={4.5} md={4} lg={3}>
-                  <InputSelect {...form.fields.elevationUnit} {...inputField} />
-                </GridColumn>
-              </Grid>
-            </GridColumn>
-          )}
-
-          {includeType && (
-            <GridColumn lg={includeDate ? 6 : 12}>
-              <InputSelect {...form.fields.type} {...inputField} />
+              </Grid> 
             </GridColumn>
           )}
 
@@ -172,116 +201,121 @@ class CreateFitnessForm extends Component {
   }
 }
 
-CreateFitnessForm.propTypes = {
-  /**
-   * The ID for a valid page (pageGuid for JG)
-   */
-  pageId: PropTypes.string.isRequired,
+// CreateFitnessForm.propTypes = {
+//   /**
+//    * The ID for a valid page (pageGuid for JG)
+//    */
+//   pageId: PropTypes.string.isRequired,
 
-  /**
-   * The user guid
-   */
-  userId: PropTypes.string.isRequired,
+//   /**
+//    * The user guid
+//    */
+//   userId: PropTypes.string.isRequired,
 
-  /**
-   * Units of measurement (Metric or Imperial)
-   */
-  uom: PropTypes.oneOf(["km", "mi"]),
+//   /**
+//    * Units of measurement (Metric or Imperial)
+//    */
+//   uom: PropTypes.oneOf(["km", "mi"]),
 
-  /**
-   * Disable form submission when invalid
-   */
-  disableInvalidForm: PropTypes.bool,
+//   /**
+//    * Disable form submission when invalid
+//    */
+//   disableInvalidForm: PropTypes.bool,
 
-  /**
-   * The label for required distance value
-   */
-  distanceLabel: PropTypes.string,
+//   /**
+//    * The label for required distance value
+//    */
+//   distanceLabel: PropTypes.string,
 
-  /**
-   * Props to be passed to the Form component
-   */
-  formComponent: PropTypes.object,
+//   /**
+//    * Props to be passed to the Form component
+//    */
+//   formComponent: PropTypes.object,
 
-  /**
-   * Props to be passed to the InputField components
-   */
-  inputField: PropTypes.object,
+//   /**
+//    * Props to be passed to the InputField components
+//    */
+//   inputField: PropTypes.object,
 
-  /**
-   * The onSuccess event handler
-   */
-  onSuccess: PropTypes.func.isRequired,
+//   /**
+//    * The onSuccess event handler
+//    */
+//   onSuccess: PropTypes.func.isRequired,
 
-  /**
-   * The label for the form submit button
-   */
-  submit: PropTypes.string,
+//   /**
+//    * The label for the form submit button
+//    */
+//   submit: PropTypes.string,
 
-  /**
-   * The logged in users' auth token
-   */
-  token: PropTypes.string.isRequired,
+//   /**
+//    * The logged in users' auth token
+//    */
+//   token: PropTypes.string.isRequired,
 
-  /**
-   * The initial selected fitness activity type
-   */
-  type: PropTypes.oneOf(["walk", "run", "ride", "swim", "hike", "wheelchair"]),
+//   /**
+//    * The initial selected fitness activity type
+//    */
+//   type: PropTypes.oneOf(["walk", "run", "ride", "swim", "hike", "wheelchair"]),
 
-  /**
-   * The available fitness activity types
-   */
-  types: PropTypes.array,
+//   /**
+//    * The available fitness activity types
+//    */
+//   // types: PropTypes.array,
 
-  /**
-   * Include elevation in fitness activity
-   */
-  includeElevation: PropTypes.bool,
+//   /**
+//    * Include elevation in fitness activity
+//    */
+//   includeElevation: PropTypes.bool,
 
-  /**
-   * Include duration in fitness activity
-   */
-  includeDuration: PropTypes.bool,
+//   /**
+//    * Include duration in fitness activity
+//    */
+//   includeDuration: PropTypes.bool,
 
-  /**
-   * Include date in fitness activity
-   */
-  includeDate: PropTypes.bool,
+//   /**
+//    * Include date in fitness activity
+//    */
+//   includeDate: PropTypes.bool,
 
-  /**
-   * Include title
-   */
-  includeTitle: PropTypes.bool,
+//   /**
+//    * Include title
+//    */
+//   includeTitle: PropTypes.bool,
 
-  /**
-   * Include description/message
-   */
-  includeDescription: PropTypes.bool,
+//   /**
+//    * Include description/message
+//    */
+//   includeDescription: PropTypes.bool,
 
-  /**
-   * Include distance type
-   */
-  includeType: PropTypes.bool,
+//   /**
+//    * Include distance type
+//    */
+//   includeType: PropTypes.bool,
 
-  /**
-   * Include distance units
-   */
-  includeUnit: PropTypes.bool,
+//   /**
+//    * Include distance units
+//    */
+//   includeUnit: PropTypes.bool,
 
-  /**
-   * Only allow fitness on or after this date
-   */
-  startDate: PropTypes.string,
+//   /**
+//    * Only allow fitness on or after this date
+//    */
+//   startDate: PropTypes.string,
 
-  /**
-   * Only allow fitness on or before this date
-   */
-  endDate: PropTypes.string,
-};
+//   /**
+//    * Only allow fitness on or before this date
+//    */
+//   endDate: PropTypes.string,
+
+//   /**
+//    * Selected metrics to record fitness
+//    */
+//     type: PropTypes.array(),
+// };
 
 CreateFitnessForm.defaultProps = {
   disableInvalidForm: false,
-  distanceLabel: "Distance",
+  distanceLabel: "What distance would you like to log?",
   includeDescription: true,
   includeDate: true,
   includeElevation: true,
@@ -293,6 +327,7 @@ CreateFitnessForm.defaultProps = {
   type: "walk",
   types: ["walk", "run", "ride", "swim", "wheelchair"],
   uom: "km",
+  availableMetrics: []
 };
 
 const form = (props) => {
@@ -364,9 +399,15 @@ const form = (props) => {
         ...(props.includeUnit && {
           unit: {
             type: "select",
-            label: "​",
-            initial: props.uom,
-            options: ["km", "mi"].map((value) => ({ value, label: value })),
+            label: "What distance would you like to log?​",
+            required: true,
+            validators: [
+              validators.required(
+                `Please select a distance`
+              ),
+            ],
+            initial: props.availableMetrics[0],
+            options: [...props.availableMetrics].map((value) => ({ value, label: value })),
           },
         }),
         ...(props.includeDuration && {
@@ -400,6 +441,18 @@ const form = (props) => {
             options: ["m", "ft"].map((value) => ({ value, label: value })),
           },
         }),
+        poolLength: {
+          type: "number",
+          label: "What is the length of your pool? (in metres)",
+          initial: 25,
+          min: 0,
+        },
+        numberOfLengths: {
+          type: "number",
+          label: "How many lengths did you swim?",
+          initial: 0,
+          min: 0
+        }
       }
     ),
   };
