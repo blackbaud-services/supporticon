@@ -87,7 +87,8 @@ class CreateFitnessForm extends Component {
     const showNonLengthsFormFields = form.fields.unit.value !== 'lengths'
 
     const handleChangeDistance = (e, field) => {
-      if (!!form.fields.poolLength.value) form.fields.distance.value = e * form.fields.poolLength.value
+      if (field.name === 'numberOfLengths' && !!form.fields.poolLength.value) form.fields.distance.value = e * form.fields.poolLength.value
+      if (field.name === 'poolLength' && !!form.fields.numberOfLengths) form.fields.distance.value = e * form.fields.numberOfLengths.value
       field.onChange(e)
     }
 
@@ -162,7 +163,7 @@ class CreateFitnessForm extends Component {
             <GridColumn lg={12}>
               <Grid spacing={{ x: 0.25 }}>
                 <GridColumn xs={6} sm={6.5} md={7} lg={8}>
-                  <InputField {...form.fields.poolLength} {...inputField} />
+                  <InputField {...form.fields.poolLength} {...inputField} onChange={(value)=>handleChangeDistance(value, form.fields.poolLength)}/>
                 </GridColumn>
                 <GridColumn xs={6} sm={5.5} md={5} lg={4}>
                   <InputField {...form.fields.numberOfLengths} {...inputField} onChange={(value)=>handleChangeDistance(value, form.fields.numberOfLengths)}/>
@@ -201,117 +202,107 @@ class CreateFitnessForm extends Component {
   }
 }
 
-// CreateFitnessForm.propTypes = {
-//   /**
-//    * The ID for a valid page (pageGuid for JG)
-//    */
-//   pageId: PropTypes.string.isRequired,
+CreateFitnessForm.propTypes = {
+  /**
+   * The ID for a valid page (pageGuid for JG)
+   */
+  pageId: PropTypes.string.isRequired,
 
-//   /**
-//    * The user guid
-//    */
-//   userId: PropTypes.string.isRequired,
+  /**
+   * The user guid
+   */
+  userId: PropTypes.string.isRequired,
 
-//   /**
-//    * Units of measurement (Metric or Imperial)
-//    */
-//   uom: PropTypes.oneOf(["km", "mi"]),
+  /**
+   * Units of measurement (Metric or Imperial)
+   */
+  uom: PropTypes.oneOf(["km", "mi"]),
 
-//   /**
-//    * Disable form submission when invalid
-//    */
-//   disableInvalidForm: PropTypes.bool,
+  /**
+   * Disable form submission when invalid
+   */
+  disableInvalidForm: PropTypes.bool,
 
-//   /**
-//    * The label for required distance value
-//    */
-//   distanceLabel: PropTypes.string,
+  /**
+   * The label for required distance value
+   */
+  distanceLabel: PropTypes.string,
 
-//   /**
-//    * Props to be passed to the Form component
-//    */
-//   formComponent: PropTypes.object,
+  /**
+   * Props to be passed to the Form component
+   */
+  formComponent: PropTypes.object,
 
-//   /**
-//    * Props to be passed to the InputField components
-//    */
-//   inputField: PropTypes.object,
+  /**
+   * Props to be passed to the InputField components
+   */
+  inputField: PropTypes.object,
 
-//   /**
-//    * The onSuccess event handler
-//    */
-//   onSuccess: PropTypes.func.isRequired,
+  /**
+   * The onSuccess event handler
+   */
+  onSuccess: PropTypes.func.isRequired,
 
-//   /**
-//    * The label for the form submit button
-//    */
-//   submit: PropTypes.string,
+  /**
+   * The label for the form submit button
+   */
+  submit: PropTypes.string,
 
-//   /**
-//    * The logged in users' auth token
-//    */
-//   token: PropTypes.string.isRequired,
+  /**
+   * The logged in users' auth token
+   */
+  token: PropTypes.string.isRequired,
 
-//   /**
-//    * The initial selected fitness activity type
-//    */
-//   type: PropTypes.oneOf(["walk", "run", "ride", "swim", "hike", "wheelchair"]),
+  /**
+   * The initial selected fitness activity type
+   */
+  type: PropTypes.oneOf(["walk", "run", "ride", "swim", "hike", "wheelchair"]),
 
-//   /**
-//    * The available fitness activity types
-//    */
-//   // types: PropTypes.array,
+  /**
+   * Include elevation in fitness activity
+   */
+  includeElevation: PropTypes.bool,
 
-//   /**
-//    * Include elevation in fitness activity
-//    */
-//   includeElevation: PropTypes.bool,
+  /**
+   * Include duration in fitness activity
+   */
+  includeDuration: PropTypes.bool,
 
-//   /**
-//    * Include duration in fitness activity
-//    */
-//   includeDuration: PropTypes.bool,
+  /**
+   * Include date in fitness activity
+   */
+  includeDate: PropTypes.bool,
 
-//   /**
-//    * Include date in fitness activity
-//    */
-//   includeDate: PropTypes.bool,
+  /**
+   * Include title
+   */
+  includeTitle: PropTypes.bool,
 
-//   /**
-//    * Include title
-//    */
-//   includeTitle: PropTypes.bool,
+  /**
+   * Include description/message
+   */
+  includeDescription: PropTypes.bool,
 
-//   /**
-//    * Include description/message
-//    */
-//   includeDescription: PropTypes.bool,
+  /**
+   * Include distance type
+   */
+  includeType: PropTypes.bool,
 
-//   /**
-//    * Include distance type
-//    */
-//   includeType: PropTypes.bool,
+  /**
+   * Include distance units
+   */
+  includeUnit: PropTypes.bool,
 
-//   /**
-//    * Include distance units
-//    */
-//   includeUnit: PropTypes.bool,
+  /**
+   * Only allow fitness on or after this date
+   */
+  startDate: PropTypes.string,
 
-//   /**
-//    * Only allow fitness on or after this date
-//    */
-//   startDate: PropTypes.string,
-
-//   /**
-//    * Only allow fitness on or before this date
-//    */
-//   endDate: PropTypes.string,
-
-//   /**
-//    * Selected metrics to record fitness
-//    */
-//     type: PropTypes.array(),
-// };
+  /**
+   * Only allow fitness on or before this date
+   */
+  endDate: PropTypes.string,
+};
 
 CreateFitnessForm.defaultProps = {
   disableInvalidForm: false,
