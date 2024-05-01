@@ -109,7 +109,7 @@ class CreateFitnessForm extends Component {
           {includeUnit ? (
             <GridColumn>
               <Grid spacing={{ x: 0.25 }}>
-                <GridColumn xs={5} sm={4.5} md={4} lg={3}>
+                <GridColumn xs={7} sm={7.5} md={8} lg={9}>
                   <InputSelect {...form.fields.unit} {...inputField} />
                 </GridColumn>
                 {showNonLengthsFormFields && (
@@ -170,7 +170,7 @@ class CreateFitnessForm extends Component {
           {!showNonLengthsFormFields && (
             <GridColumn lg={12}>
               <Grid spacing={{ x: 0.25 }}>
-                <GridColumn xs={6} sm={6.5} md={7} lg={8}>
+                <GridColumn xs={7} sm={7.5} md={8} lg={9}>
                   <InputField
                     {...form.fields.poolLength}
                     {...inputField}
@@ -179,7 +179,7 @@ class CreateFitnessForm extends Component {
                     }
                   />
                 </GridColumn>
-                <GridColumn xs={6} sm={5.5} md={5} lg={4}>
+                <GridColumn xs={7} sm={7.5} md={8} lg={9}>
                   <InputField
                     {...form.fields.numberOfLengths}
                     {...inputField}
