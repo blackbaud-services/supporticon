@@ -1,4 +1,4 @@
-import { get, servicesAPI } from "../../utils/client";
+import client, { get, servicesAPI } from "../../utils/client";
 import {
   getUID,
   required,
@@ -99,3 +99,8 @@ export const fetchPagesTotals = (params = required()) => {
       ).then((data) => data.totalResults);
   }
 };
+
+export const fetchTeamsToFilter = (campaignGuid) =>
+  client
+    .get(`/v1/campaigns/${campaignGuid}/teams`)
+    .then((response) => response.results);
