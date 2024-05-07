@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import withForm from "constructicon/with-form";
 import * as validators from "constructicon/lib/validators";
 import { createFitnessActivity } from "../../api/fitness-activities";
+import { createPageTags } from "../../api/pages";
 
 import Form from "constructicon/form";
 import Grid from "constructicon/grid";
@@ -27,9 +28,9 @@ class CreateFitnessForm extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    const { pageSlug, pageId, form, onSuccess, token, userId } = this.props;
+    const { pageSlug, pageId, form, onSuccess, token, userId, defaultPoolLength } = this.props;
 
-    return form.submit().then((data) => {
+    return form.submit().then(async (data) => {
       this.setState({ errors: [], status: "fetching" });
 
       const dataPayload = merge(data, {
@@ -42,6 +43,18 @@ class CreateFitnessForm extends Component {
           : data.startedAt,
         type: data.type,
       });
+
+      if (data.unit === "lengths" && data.poolLength !== defaultPoolLength) {
+        await createPageTags({
+          slug: pageSlug, tagValues: [{
+            tagDefinition: {
+              id: "defaultPoolLength",
+              label: "defaultPoolLength",
+            },
+            value: data.poolLength,
+          }]
+        })
+      }
 
       return Promise.resolve()
         .then(() => createFitnessActivity(dataPayload))
@@ -322,6 +335,11 @@ CreateFitnessForm.propTypes = {
    * Only allow fitness on or before this date
    */
   endDate: PropTypes.string,
+
+  /**
+   * Default pool length
+   */
+  defaultPoolLength: PropTypes.number
 };
 
 CreateFitnessForm.defaultProps = {
@@ -339,6 +357,7 @@ CreateFitnessForm.defaultProps = {
   types: ["walk", "run", "ride", "swim", "wheelchair"],
   uom: "km",
   availableMetrics: [],
+  defaultPoolLength: 25,
 };
 
 const form = (props) => {
@@ -454,7 +473,7 @@ const form = (props) => {
         poolLength: {
           type: "number",
           label: "What is the length of your pool? (in metres)",
-          initial: 25,
+          initial: props.defaultPoolLength || 25,
           min: 0,
         },
         numberOfLengths: {
