@@ -28,7 +28,15 @@ class CreateFitnessForm extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    const { pageSlug, pageId, form, onSuccess, token, userId, defaultPoolLength } = this.props;
+    const {
+      pageSlug,
+      pageId,
+      form,
+      onSuccess,
+      token,
+      userId,
+      defaultPoolLength,
+    } = this.props;
 
     return form.submit().then(async (data) => {
       this.setState({ errors: [], status: "fetching" });
@@ -46,14 +54,17 @@ class CreateFitnessForm extends Component {
 
       if (data.unit === "lengths" && data.poolLength !== defaultPoolLength) {
         await createPageTags({
-          slug: pageSlug, tagValues: [{
-            tagDefinition: {
-              id: "defaultPoolLength",
-              label: "defaultPoolLength",
+          slug: pageSlug,
+          tagValues: [
+            {
+              tagDefinition: {
+                id: "defaultPoolLength",
+                label: "defaultPoolLength",
+              },
+              value: data.poolLength,
             },
-            value: data.poolLength,
-          }]
-        })
+          ],
+        });
       }
 
       return Promise.resolve()
@@ -339,7 +350,7 @@ CreateFitnessForm.propTypes = {
   /**
    * Default pool length
    */
-  defaultPoolLength: PropTypes.number
+  defaultPoolLength: PropTypes.number,
 };
 
 CreateFitnessForm.defaultProps = {
