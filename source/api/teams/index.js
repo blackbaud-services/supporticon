@@ -496,3 +496,29 @@ export const updateTeam = (
 
   return client.put(`/v1/teamsv2/${id}`, payload, { headers });
 };
+
+export const fetchTeamsToFilter = (campaignGuid, endCursor, results = []) => {
+  return fetchTeamsByCampaign(campaignGuid, endCursor).then((data) => {
+    const updatedResults = [...results, ...data.results];
+    if (data.pageInfo.hasNextPage) {
+      return fetchTeamsToFilter(
+        campaignGuid,
+        data.pageInfo.endCursor,
+        updatedResults
+      );
+    } else {
+      return updatedResults;
+    }
+  });
+};
+
+const fetchTeamsByCampaign = (campaignGuid, endCursor) => {
+  const payload = {
+    nextPageToken: endCursor,
+  };
+
+  return client
+    .get(`/v1/campaigns/${campaignGuid}/teams`, payload)
+    .then((res) => ({ results: res.results, pageInfo: res.pagination }))
+    .catch((err) => console.error(err));
+};
