@@ -167,21 +167,25 @@ class CreateFitnessForm extends Component {
                 </GridColumn>
               )}
 
-              {(includeElevation && !form?.fields?.type?.value.includes('swim')) && (
-                <GridColumn lg={includeDuration ? 6 : 12}>
-                  <Grid spacing={{ x: 0.25 }}>
-                    <GridColumn xs={7} sm={7.5} md={8} lg={9}>
-                      <InputField {...form.fields.elevation} {...inputField} />
-                    </GridColumn>
-                    <GridColumn xs={5} sm={4.5} md={4} lg={3}>
-                      <InputSelect
-                        {...form.fields.elevationUnit}
-                        {...inputField}
-                      />
-                    </GridColumn>
-                  </Grid>
-                </GridColumn>
-              )}
+              {includeElevation &&
+                !form?.fields?.type?.value.includes("swim") && (
+                  <GridColumn lg={includeDuration ? 6 : 12}>
+                    <Grid spacing={{ x: 0.25 }}>
+                      <GridColumn xs={7} sm={7.5} md={8} lg={9}>
+                        <InputField
+                          {...form.fields.elevation}
+                          {...inputField}
+                        />
+                      </GridColumn>
+                      <GridColumn xs={5} sm={4.5} md={4} lg={3}>
+                        <InputSelect
+                          {...form.fields.elevationUnit}
+                          {...inputField}
+                        />
+                      </GridColumn>
+                    </Grid>
+                  </GridColumn>
+                )}
 
               {includeType && (
                 <GridColumn lg={includeDate ? 6 : 12}>
