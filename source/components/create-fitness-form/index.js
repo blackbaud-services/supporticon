@@ -167,7 +167,7 @@ class CreateFitnessForm extends Component {
                 </GridColumn>
               )}
 
-              {includeElevation && (
+              {(includeElevation && !form?.fields?.type?.value.includes('swim')) && (
                 <GridColumn lg={includeDuration ? 6 : 12}>
                   <Grid spacing={{ x: 0.25 }}>
                     <GridColumn xs={7} sm={7.5} md={8} lg={9}>
