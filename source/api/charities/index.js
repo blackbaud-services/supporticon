@@ -1,5 +1,11 @@
 import { get } from "../../utils/client";
-import { getUID, required, paramsSerializer, isURL } from "../../utils/params";
+import {
+  getUID,
+  required,
+  paramsSerializer,
+  isURL,
+  getUIDForOnepageCampaign,
+} from "../../utils/params";
 import { baseUrl } from "../../utils/justgiving";
 
 export const fetchCharity = (id = required()) => get(`/v1/charity/${id}`);
@@ -13,7 +19,8 @@ export const searchCharities = (params = required()) => {
       field: "charityNameSuggest",
       includeFuzzySearch: true,
       maxResults: params.limit,
-      campaignGuid: campaign,
+      campaignGuid:
+        !!campaign && "?campaignGuid=" + getUIDForOnepageCampaign(campaign),
     };
 
     return get(
