@@ -1,6 +1,6 @@
 {
   "name": "supporticon",
-  "version": "11.4.2",
+  "version": "11.5.0",
   "description": "A libary to handle fetching data from JustGiving",
   "main": "index.js",
   "scripts": {
