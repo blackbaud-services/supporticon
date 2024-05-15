@@ -118,15 +118,16 @@ export const fetchDonationTotals = (params = required()) => {
             campaignGuids,
             params.country && currencyCode(params.country)
           )
-        : client.get(
-            "/donationsleaderboards/v1/totals",
-            {
-              campaignGuids,
-              currencyCode: currencyCode(params.country),
-            },
-            {},
-            { paramsSerializer }
-          );
+        : client
+            .get(
+              `/v1/campaign/byguid/${campaignGuids}`,
+              {
+                currencyCode: currencyCode(params.country),
+              },
+              {},
+              { paramsSerializer }
+            )
+            .then(deserializeCampaignDonationTotals);
   }
 };
 
@@ -149,4 +150,17 @@ export const deserializeDonationTotals = (totals) => ({
     get(totals, "donationSummary.totalNumberOfDonations") ||
     get(totals, "totals.donationCount") ||
     0,
+});
+
+const deserializeCampaignDonationTotals = ({ Currency, DonationSummary }) => ({
+  currency: {
+    code: Currency.CurrencyCode,
+    symbol: Currency.CurrencySymbol,
+  },
+  totals: {
+    donationCount: DonationSummary.TotalNumberOfDonations,
+    donationTotalAmount: DonationSummary.TotalAmount,
+    offlineAmount: DonationSummary.offlineAmount,
+    giftAidTotalAmount: DonationSummary.TotalGiftAid,
+  },
 });
