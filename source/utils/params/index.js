@@ -36,7 +36,7 @@ export const getUIDForOnepageCampaign = (data) => {
     case "object":
       return Array.isArray(data) ? data.join("&campaignGuid=") : data.uid;
     default:
-      return data;
+      return data.split(",").join("&campaignGuid=");
   }
 };
 
