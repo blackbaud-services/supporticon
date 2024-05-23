@@ -199,63 +199,6 @@ export const fetchCampaignGraphqlLeaderboard = (params) => {
     .then((results) => removeExcludedPages(results, params.excludePageIds));
 };
 
-export const fetchLegacyLeaderboard = (params) => {
-  const isTeam = params.type === "team";
-  const maxPerRequest = 20;
-  const { results = [], ...otherParams } = params;
-
-  return get(
-    "/donationsleaderboards/v1/leaderboard",
-    {
-      ...otherParams,
-      currencyCode: currencyCode(params.country),
-    },
-    {
-      mappings: {
-        campaign: "campaignGuids",
-        charity: "charityIds",
-        excludePageIds: "excludePageGuids",
-        limit: "take",
-        page: "offset",
-        type: "groupBy",
-      },
-      transforms: {
-        campaign: splitOnDelimiter,
-        charity: splitOnDelimiter,
-        excludePageIds: splitOnDelimiter,
-        limit: (val) => Math.min(maxPerRequest, val || 10),
-        page: (val) =>
-          String(
-            val ? Math.min(maxPerRequest, params.limit || 10) * (val - 1) : 0
-          ),
-        type: (val) => (isTeam ? "TeamGuid" : "PageGuid"),
-      },
-    },
-    { paramsSerializer }
-  )
-    .then((response) => {
-      const { currentPage, lastRowOnPage, pageCount } = response.meta;
-      const updatedResults = [...results, ...response.results];
-
-      if (currentPage >= pageCount || lastRowOnPage >= params.limit) {
-        return updatedResults;
-      }
-
-      return fetchLegacyLeaderboard({
-        ...params,
-        results: updatedResults,
-        page: currentPage + 1,
-      });
-    })
-    .then((results) =>
-      results.filter((result) => (isTeam ? result.team : result.page))
-    )
-    .then((results) => mapLeaderboardResults(results, isTeam))
-    .then((results) => removeExcludedPages(results, params.excludePageIds))
-    .then((results) => results.filter((item) => item.status !== "Cancelled"))
-    .then((results) => orderBy(results, ["donationAmount"], ["desc"]));
-};
-
 const removeExcludedPages = (results = [], pageIds) => {
   if (!pageIds) return results;
 

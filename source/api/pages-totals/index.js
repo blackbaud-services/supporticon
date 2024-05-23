@@ -75,27 +75,9 @@ export const fetchPagesTotals = (params = required()) => {
         ).then((total) => lodashSum(total));
       }
     default:
-      return get(
-        "/donationsleaderboards/v1/leaderboard",
-        {
-          ...params,
-          currencyCode: currencyCode(params.country),
-        },
-        {
-          mappings: {
-            campaign: "campaignGuids",
-            charity: "charityIds",
-            page: "pageGuids",
-            excludePageIds: "excludePageGuids",
-            limit: "take",
-          },
-          transforms: {
-            campaign: splitOnDelimiter,
-            charity: splitOnDelimiter,
-            excludePageIds: splitOnDelimiter,
-          },
-        },
-        { paramsSerializer }
-      ).then((data) => data.totalResults);
+      console.log("Charity level reporting has been deprecated");
+      return new Promise((resolve) =>
+        resolve("Charity level reporting has been deprecated")
+      );
   }
 };

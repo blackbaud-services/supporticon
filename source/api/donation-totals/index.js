@@ -100,33 +100,16 @@ export const fetchDonationTotals = (params = required()) => {
         ...totals,
       }));
     case "charity":
-      return client.get(
-        "/donationsleaderboards/v1/totals",
-        {
-          campaignGuids,
-          charityIds: Array.isArray(params.charity)
-            ? params.charity.map(getUID)
-            : getUID(params.charity),
-          currencyCode: currencyCode(params.country),
-        },
-        {},
-        { paramsSerializer }
+      console.log("Charity level reporting has been deprecated");
+      return new Promise((resolve) =>
+        resolve("Charity level reporting has been deprecated")
       );
     default:
-      return params.includeOffline
-        ? fetchAllCampaignTotals(
-            campaignGuids,
-            params.country && currencyCode(params.country)
-          )
-        : client.get(
-            "/donationsleaderboards/v1/totals",
-            {
-              campaignGuids,
-              currencyCode: currencyCode(params.country),
-            },
-            {},
-            { paramsSerializer }
-          );
+      return fetchAllCampaignTotals(
+        campaignGuids,
+        params.country && currencyCode(params.country),
+        params.includeOffline
+      );
   }
 };
 
@@ -139,8 +122,9 @@ export const deserializeDonationTotals = (totals) => ({
     get(totals, "meta.totalAmount") ||
     get(totals, "donationSummary.totalAmount") ||
     get(totals, "totals.donationTotalAmount") ||
+    get(totals, "DonationSummary.TotalAmount") ||
     0,
-  offline: totals.offlineAmount || totals.raisedAmountOfflineInGBP || 0,
+  offline: totals.offline || totals.offlineAmount || totals.raisedAmountOfflineInGBP || get(totals, "donationSummary.offlineAmount") || get(totals, "DonationSummary.offlineAmount") || 0,
   donations:
     totals.donations ||
     totals.totalResults ||
@@ -148,5 +132,6 @@ export const deserializeDonationTotals = (totals) => ({
     totals.NumberOfDonations ||
     get(totals, "donationSummary.totalNumberOfDonations") ||
     get(totals, "totals.donationCount") ||
+    get(totals, "DonationSummary.TotalNumberOfDonations") ||
     0,
 });

@@ -65,32 +65,23 @@ describe("Donation Totals", () => {
     it("uses the correct url to fetch totals for multiple campaigns", (done) => {
       fetchDonationTotals({ campaign: ["1234", "5678"] });
       moxios.wait(() => {
-        const request = moxios.requests.mostRecent();
-        expect(request.url).to.equal(
-          "/donationsleaderboards/v1/totals?campaignGuids=1234&campaignGuids=5678&currencyCode=GBP"
-        );
+        const requestUrls = moxios.requests.__items.map(request => request.url)
+        expect(requestUrls).to.contain('/v1/justgiving/campaigns/1234')
+        expect(requestUrls).to.contain('/v1/justgiving/campaigns/5678')
         done();
       });
     });
 
     it("uses the correct url to fetch totals for a charity", (done) => {
-      fetchDonationTotals({ charity: 1234 });
-      moxios.wait(() => {
-        const request = moxios.requests.mostRecent();
-        expect(request.url).to.include(
-          "/donationsleaderboards/v1/totals?charityIds=1234"
-        );
+      fetchDonationTotals({ charity: 1234 }).then((res) => {
+        expect(res).to.equal("Charity level reporting has been deprecated");
         done();
       });
     });
 
     it("uses the correct url to fetch totals for a charity within a campaign", (done) => {
-      fetchDonationTotals({ campaign: 1234, charity: 5678 });
-      moxios.wait(() => {
-        const request = moxios.requests.mostRecent();
-        expect(request.url).to.include(
-          "/donationsleaderboards/v1/totals?campaignGuids=1234&charityIds=5678"
-        );
+      fetchDonationTotals({ campaign: 1234, charity: 5678 }).then((res) => {
+        expect(res).to.equal("Charity level reporting has been deprecated");
         done();
       });
     });
