@@ -65,9 +65,11 @@ describe("Donation Totals", () => {
     it("uses the correct url to fetch totals for multiple campaigns", (done) => {
       fetchDonationTotals({ campaign: ["1234", "5678"] });
       moxios.wait(() => {
-        const requestUrls = moxios.requests.__items.map(request => request.url)
-        expect(requestUrls).to.contain('/v1/justgiving/campaigns/1234')
-        expect(requestUrls).to.contain('/v1/justgiving/campaigns/5678')
+        const requestUrls = moxios.requests.__items.map(
+          (request) => request.url
+        );
+        expect(requestUrls).to.contain("/v1/justgiving/campaigns/1234");
+        expect(requestUrls).to.contain("/v1/justgiving/campaigns/5678");
         done();
       });
     });
