@@ -37,12 +37,7 @@ const fetchCampaign = ({ campaign }) => {
 };
 
 const fetchCampaignTeams = (id) =>
-  servicesAPI
-    .get("/v1/justgiving/proxy/campaigns/v1/teams/search", {
-      params: { CampaignGuid: id },
-      paramsSerializer,
-    })
-    .then((response) => response.data.totalResults);
+  client.get(`/v1/campaigns/${id}/teams`).then((data) => data.totalResults);
 
 export const fetchPagesTotals = (params = required()) => {
   if (params.tagId && params.tagValue) {
