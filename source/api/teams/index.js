@@ -167,7 +167,7 @@ export const fetchTeam = (id = required(), options) => {
 
 const getPaginatedMembers = (team) => {
   return new Promise((resolve) => {
-    if (team.membership.members.length < team.membership.numberOfMembers) {
+    if (team.membership.members?.length < team.membership.numberOfMembers) {
       return client
         .get(
           `/v1/teamsv3/${replace(team.shortName, "team/", "")}?nextPageKey=${
@@ -207,7 +207,7 @@ export const fetchTeamBySlug = (slug, options = {}) => {
       return team;
     })
     .then((team) => {
-      if (options.includePages) {
+      if (options.includePages && team.membership.members?.length) {
         return getPaginatedMembers(team).then((updatedTeam) => {
           if (options.includeFullPages) {
             const ids = updatedTeam.membership.members.map(
