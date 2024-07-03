@@ -270,23 +270,25 @@ class CreatePageForm extends Component {
         autoComplete="off"
         {...formComponent}
       >
-        {this.getAutoRenderedFields(form.fields).filter(f => !f.hidden).map((field) => {
-          const Tag = renderInput(field.type);
+        {this.getAutoRenderedFields(form.fields)
+          .filter((f) => !f.hidden)
+          .map((field) => {
+            const Tag = renderInput(field.type);
 
-          switch (field.name) {
-            case "charityId":
-              return (
-                <CharitySearch
-                  key={field.name}
-                  campaign={campaignId}
-                  onChange={(charity) => field.onChange(charity.id)}
-                  inputProps={{ ...field, ...inputField }}
-                />
-              );
-            default:
-              return <Tag key={field.name} {...field} {...inputField} />;
-          }
-        })}
+            switch (field.name) {
+              case "charityId":
+                return (
+                  <CharitySearch
+                    key={field.name}
+                    campaign={campaignId}
+                    onChange={(charity) => field.onChange(charity.id)}
+                    inputProps={{ ...field, ...inputField }}
+                  />
+                );
+              default:
+                return <Tag key={field.name} {...field} {...inputField} />;
+            }
+          })}
 
         {includeAddress && this.renderAddress()}
       </Form>
