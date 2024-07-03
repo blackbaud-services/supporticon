@@ -5,3 +5,4 @@ npm-supporticon
 styleguide
 npm-debug.log
 /.vscode/
+.DS_Store
