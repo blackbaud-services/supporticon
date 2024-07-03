@@ -270,7 +270,7 @@ class CreatePageForm extends Component {
         autoComplete="off"
         {...formComponent}
       >
-        {this.getAutoRenderedFields(form.fields).map((field) => {
+        {this.getAutoRenderedFields(form.fields).filter(f => !f.hidden).map((field) => {
           const Tag = renderInput(field.type);
 
           switch (field.name) {
