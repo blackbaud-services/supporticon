@@ -2,7 +2,7 @@ import flatten from "lodash/flatten";
 import get from "lodash/get";
 import kebabCase from "lodash/kebabCase";
 import orderBy from "lodash/orderBy";
-import * as client from "../client";
+import { servicesAPI } from "../client"
 import { required } from "../params";
 import { getPrimaryUnit, measurementDomains } from "../tags";
 import { hash } from "spark-md5";
@@ -51,7 +51,7 @@ export const fetchLeaderboardDefinition = ({
 }) => {
   const definitionId = genId({ id, measurementDomain, name, tagId, type });
 
-  return client
+  return servicesAPI
     .get(`/v1/tags/leaderboard/definition/${definitionId}`)
     .then((data) => data.definition);
 };
@@ -95,7 +95,7 @@ export const createLeaderboardDefinition = ({
     },
   };
 
-  return client
+  return servicesAPI
     .post(`/v1/tags/leaderboard/definition/${definitionId}`, payload, headers)
     .then((data) => ({ ...data.definition, updated: true }))
     .catch(({ data = {} }) => {
@@ -134,10 +134,7 @@ export const deleteLeaderboardDefinition = ({
     },
   };
 
-  return client.destroy(
-    `/v1/tags/leaderboard/definition/${definitionId}`,
-    headers
-  );
+  return servicesAPI.delete(`/v1/tags/leaderboard/definition/${definitionId}`, headers);
 };
 
 export const deleteLeaderboardDefinitions = (params) =>
@@ -236,7 +233,7 @@ export const fetchLeaderboard = ({
     }
   `;
 
-  return client.servicesAPI
+  return servicesAPI
     .post("/v1/justgiving/graphql", { query })
     .then((response) => response.data)
     .then((result) => get(result, "data.leaderboard.totals", []))
