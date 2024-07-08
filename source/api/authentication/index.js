@@ -1,11 +1,5 @@
 import merge from "lodash/merge";
-import {
-  get,
-  put,
-  post,
-  jgIdentityClient,
-  servicesAPI,
-} from "../../utils/client";
+import { jgIdentityClient, servicesAPI } from "../../utils/client";
 import { required } from "../../utils/params";
 import { encodeBase64String } from "../../utils/base64";
 
@@ -36,14 +30,12 @@ export const signIn = ({
   if (authType === "Basic") {
     const token = encodeBase64String(`${email}:${password}`);
 
-    return get(
+    return servicesAPI.get(
       "/v1/account",
-      {},
-      {},
       {
         headers: {
           Authorization: `Basic ${token}`,
-        },
+        }
       }
     ).then((data) => ({
       address: data.address,
@@ -86,8 +78,8 @@ export const signUp = ({
     };
 
     const request = address
-      ? put("/v1/account", payload)
-      : post("/v1/account/lite", payload);
+      ? servicesAPI.put("/v1/account", payload)
+      : servicesAPI.post("/v1/account/lite", payload);
 
     return request.then((data) => ({
       address,
@@ -128,7 +120,7 @@ export const signUp = ({
 };
 
 export const checkAccountAvailability = (email) => {
-  return get(`/v1/account/${email}`)
+  return servicesAPI.get(`/v1/account/${email}`)
     .then(() => true)
     .catch(() => false);
 };
