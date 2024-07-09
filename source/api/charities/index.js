@@ -1,4 +1,4 @@
-import { get } from "../../utils/client";
+import { servicesAPI } from "../../utils/client";
 import {
   getUID,
   required,
@@ -8,42 +8,37 @@ import {
 } from "../../utils/params";
 import { baseUrl } from "../../utils/justgiving";
 
-export const fetchCharity = (id = required()) => get(`/v1/charity/${id}`);
+export const fetchCharity = (id = required()) => servicesAPI.get(`/v1/charity/${id}`).then(({ data }) => data);
 
 export const searchCharities = (params = required()) => {
   const campaign = getUID(params.campaign);
 
   if (campaign) {
-    const finalParams = {
+    const finalParams = paramsSerializer({
       ...params,
       field: "charityNameSuggest",
       includeFuzzySearch: true,
       maxResults: params.limit,
       campaignGuid:
-        !!campaign && "?campaignGuid=" + getUIDForOnepageCampaign(campaign),
-    };
+        !!campaign && getUIDForOnepageCampaign(campaign),
+    });
 
-    return get(
-      "/v1/campaign/autocomplete",
-      finalParams,
-      {},
-      { paramsSerializer }
-    );
+    return servicesAPI.get(`/v1/charity/campaign?${finalParams}`).then(({ data }) => data);
   } else {
-    const finalParams = {
+    const finalParams = paramsSerializer({
       ...params,
       country: params.country === "uk" ? "gb" : params.country,
       filterCountry: !!params.country,
       i: "Charity",
-    };
+    });
 
-    return get("/v1/onesearch", finalParams).then(
-      (response) =>
-        (response.GroupedResults &&
-          response.GroupedResults.length &&
-          response.GroupedResults[0].Results) ||
+    return servicesAPI.get(`/v1/charity/search?${finalParams}`).then(
+      ({ data }) =>
+        (data.GroupedResults &&
+          data.GroupedResults.length &&
+          data.GroupedResults[0].Results) ||
         []
-    );
+    )
   }
 };
 
