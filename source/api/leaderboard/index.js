@@ -3,7 +3,7 @@ import lodashGet from "lodash/get";
 import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
 import flatMap from "lodash/flatMap";
-import { get, servicesAPI } from "../../utils/client";
+import { servicesAPI } from "../../utils/client";
 import { apiImageUrl, baseUrl, imageUrl } from "../../utils/justgiving";
 import {
   getUID,
@@ -92,14 +92,16 @@ export const fetchEventLeaderboard = (params) => {
     args.charityIds = params.charity;
   }
 
-  return get("/v1/events/leaderboard", args, {}, { paramsSerializer })
-    .then((response) =>
-      response.pages.map((page) => ({
+  const serialisedArgs = paramsSerializer(args)
+
+  return servicesAPI.get(`/v1/event/leaderboard?${serialisedArgs}`)
+    .then(({ data }) =>
+      data.pages.map((page) => ({
         ...page,
         raisedAmount: page.amount,
-        eventName: response.eventName,
-        currencyCode: response.currency,
-        currencySymbol: currencySymbol(response.currency),
+        eventName: data.eventName,
+        currencyCode: data.currency,
+        currencySymbol: currencySymbol(data.currency),
       }))
     )
     .then((results) => removeExcludedPages(results, params.excludePageIds));
