@@ -1,5 +1,5 @@
 import capitalize from "lodash/capitalize";
-import { get, servicesAPI } from "../../utils/client";
+import { servicesAPI } from "../../utils/client";
 import { encodeBase64String } from "../../utils/base64";
 import { required } from "../../utils/params";
 
@@ -20,14 +20,14 @@ export const fetchPageFitness = ({
   endDate,
 }) => {
   const params = { limit, offset, start: startDate, end: endDate };
-  return get(`/v1/fitness/fundraising/${slug}`, params).then((res) =>
+  return servicesAPI.get(`/v1/fitness/page/${slug}`, params).then((res) =>
     servicesAPI
       .get(
         `/v1/justgiving/page/${slug}/fitnessTotal?startDate=${startDate}&endDate=${endDate}`
       )
       .then(({ data }) => {
         return {
-          ...res,
+          ...res.data,
           totalAmount: data.distance,
           totalAmountElevation: data.elevation,
           totalAmountTaken: data.duration,

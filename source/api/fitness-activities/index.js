@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import lodashGet from "lodash/get";
-import { post, destroy, servicesAPI } from "../../utils/client";
+import { servicesAPI } from "../../utils/client";
 import { required } from "../../utils/params";
 import { convertToMeters, convertToSeconds } from "../../utils/units";
 import { extractData } from "../../utils/graphql";
@@ -309,7 +309,7 @@ export const createFitnessActivity = ({
     type,
   };
 
-  return post("/v1/fitness", params, { headers });
+  return servicesAPI.post('/v1/fitness/activity', params, { headers })
 };
 
 export const deleteFitnessActivity = ({
@@ -345,6 +345,4 @@ export const deleteLegacyFitnessActivity = ({
   page = required(),
   token = required(),
 }) =>
-  destroy(`/v1/fitness/fundraising/${page}/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  servicesAPI.delete(`/v1/fitness/page/${page}/activity/${id}`, { headers: { Authorization: `Bearer ${token}` } })
