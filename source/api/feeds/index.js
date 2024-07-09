@@ -1,5 +1,5 @@
-import { get, servicesAPI } from "../../utils/client";
-import { getUID } from "../../utils/params";
+import { servicesAPI } from "../../utils/client";
+import { getUID, paramsSerializer } from "../../utils/params";
 import jsonDate from "../../utils/jsonDate";
 
 export const fetchDonationFeed = ({
@@ -47,19 +47,17 @@ export const fetchDonations = ({ event, charity, campaign, page }) =>
     .then((response) => response.data);
 
 const fetchDonationFeedByRef = (ref) =>
-  get(`v1/donation/ref/${ref}`, { pageSize: 500 }).then(
-    (data) => data.donations
-  );
+  servicesAPI.get(`/v1/feed/donation/ref/${ref}`).then(({ data }) => data.donations)
 
 const fetchDonationsByShortName = (
   pageShortName,
   donations = [],
   pageNum = 1
 ) =>
-  get(`v1/fundraising/pages/${pageShortName}/donations`, {
+  servicesAPI.get(`/v1/feed/donation/page/${pageShortName}?${paramsSerializer({
     pageSize: 150,
     pageNum,
-  }).then((data) => {
+  })}`).then(({ data }) => {
     const updatedResults = [...donations, ...data.donations];
 
     return pageNum >= Math.min(data.pagination.totalPages, 10)
