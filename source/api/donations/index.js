@@ -1,11 +1,11 @@
 import { formatNumber } from "../../utils/numbers";
 import jsonDate from "../../utils/jsonDate";
 import { stringify } from "querystringify";
-import { get } from "../../utils/client";
+import { servicesAPI } from "../../utils/client";
 import { required } from "../../utils/params";
 import { baseUrl } from "../../utils/justgiving";
 
-export const fetchDonation = (id = required()) => get(`/v1/donation/${id}`);
+export const fetchDonation = (id = required()) => servicesAPI.get(`/v1/donation/${id}`).then(({ data }) => data)
 
 export const deserializeDonation = (donation) => ({
   amount: parseFloat(donation.donorLocalAmount || donation.amount),
