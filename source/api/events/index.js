@@ -1,4 +1,4 @@
-import { get, post } from "../../utils/client";
+import { servicesAPI } from "../../utils/client";
 import { required } from "../../utils/params";
 import jsonDate from "../../utils/jsonDate";
 import dayjs from "dayjs";
@@ -12,7 +12,7 @@ export const deserializeEvent = (event) => {
   };
 };
 
-export const fetchEvent = ({ id = required() }) => get(`/v1/event/${id}`);
+export const fetchEvent = ({ id = required() }) => servicesAPI.get(`/v1/event/${id}`).then(({ data }) => data);
 
 export const createEvent = ({
   completionDate = required(),
@@ -24,8 +24,8 @@ export const createEvent = ({
   location,
   name = required(),
   startDate = required(),
-}) =>
-  post("/v1/event", {
+}) => {
+  return servicesAPI.post('/v1/event', {
     completionDate: dayjs(completionDate).format("YYYY-MM-DD"),
     charityId,
     description,
@@ -35,7 +35,7 @@ export const createEvent = ({
     location,
     name,
     startDate: dayjs(startDate).format("YYYY-MM-DD"),
-  });
+  }).then(({ data }) => data)
+}
 
-export const fetchEventTotalRaised = ({ id = required() }) =>
-  get(`v1/event/${id}/pages`).then((data) => data.totalRaised);
+export const fetchEventTotalRaised = ({ id = required() }) => servicesAPI.get(`v1/event/${id}/total`).then(({ data }) => data.totalRaised);
