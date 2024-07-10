@@ -55,6 +55,7 @@ class CreateFitnessForm extends Component {
       if (data.unit === "lengths" && data.poolLength !== defaultPoolLength) {
         await createPageTags({
           slug: pageSlug,
+          token,
           tagValues: [
             {
               tagDefinition: {
