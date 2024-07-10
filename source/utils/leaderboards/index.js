@@ -65,6 +65,7 @@ export const fetchLeaderboardDefinitions = (params) =>
 
 export const createLeaderboardDefinition = ({
   id = required(),
+  token = required(),
   conditions = [],
   label = "Page Campaign Link",
   measurementDomain = "any:distance",
@@ -88,8 +89,14 @@ export const createLeaderboardDefinition = ({
     },
   };
 
+  const headers = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
   return client
-    .post(`/v1/tags/leaderboard/definition/${definitionId}`, payload)
+    .post(`/v1/tags/leaderboard/definition/${definitionId}`, payload, headers)
     .then((data) => ({ ...data.definition, updated: true }))
     .catch(({ data = {} }) => {
       const errorMessage = data.errorMessage;
@@ -114,14 +121,20 @@ export const createLeaderboardDefinitions = (params) =>
 
 export const deleteLeaderboardDefinition = ({
   id = required(),
+  token = required(),
   measurementDomain = "any:distance",
   name,
   tagId,
   type = "campaign",
 }) => {
   const definitionId = genId({ id, measurementDomain, name, tagId, type });
+  const headers = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
 
-  return client.destroy(`/v1/tags/leaderboard/definition/${definitionId}`);
+  return client.destroy(`/v1/tags/leaderboard/definition/${definitionId}`, headers);
 };
 
 export const deleteLeaderboardDefinitions = (params) =>
