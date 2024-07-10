@@ -1,4 +1,4 @@
-import { get, put, jgIdentityClient } from "../../utils/client";
+import { jgIdentityClient, servicesAPI } from "../../utils/client";
 import { required } from "../../utils/params";
 
 const countryCode = (country) => {
@@ -66,16 +66,9 @@ export const fetchCurrentUser = ({
   authType = "Bearer",
 }) => {
   if (authType === "Basic" || token.length > 32) {
-    return get(
-      "/v1/account",
-      {},
-      {},
-      {
-        headers: {
-          Authorization: [authType, token].join(" "),
-        },
-      }
-    );
+    return servicesAPI
+      .get("/v1/account", { headers: { Authorization: [authType, token].join(" ") }})
+      .then(({ data }) => data)
   } else {
     return jgIdentityClient
       .get("/connect/userinfo", {
@@ -96,7 +89,7 @@ export const updateCurrentUser = ({
   lastName,
   address = {},
 }) =>
-  put(
+  servicesAPI.put(
     `/v1/account/${uuid}`,
     {
       firstName,
