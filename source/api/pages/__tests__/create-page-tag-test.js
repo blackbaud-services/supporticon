@@ -16,6 +16,7 @@ describe("Create Page", () => {
       label: "State",
       id: "state",
       value: "Queensland",
+      token: "Bearer ey12345",
       aggregation: [
         {
           segment: "page:campaign:1234-5678-abcd-0123",

@@ -93,7 +93,7 @@ export const createLeaderboardDefinition = ({
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  }
+  };
 
   return client
     .post(`/v1/tags/leaderboard/definition/${definitionId}`, payload, headers)
@@ -132,9 +132,12 @@ export const deleteLeaderboardDefinition = ({
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  }
+  };
 
-  return client.destroy(`/v1/tags/leaderboard/definition/${definitionId}`, headers);
+  return client.destroy(
+    `/v1/tags/leaderboard/definition/${definitionId}`,
+    headers
+  );
 };
 
 export const deleteLeaderboardDefinitions = (params) =>

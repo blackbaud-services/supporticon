@@ -384,22 +384,25 @@ export const createPageTagUnclaimedPages = async ({
   label = required(),
   slug = required(),
   value = required(),
-  aggregation = []
-}) => 
+  aggregation = [],
+}) =>
   servicesAPI
-  .post("/v1/justgiving/iam/login", { email: process.env.HOLDER_USER_EMAIL, password: process.env.HOLDER_USER_PASSWORD })
-  .then(res => {
-    const token = `Bearer ${res.data.access_token}`
-    return createPageTag({
-      id,
-      label, 
-      slug, 
-      value,
-      token,
-      aggregation
+    .post("/v1/justgiving/iam/login", {
+      email: process.env.HOLDER_USER_EMAIL,
+      password: process.env.HOLDER_USER_PASSWORD,
     })
-  })
-  .catch((error) => Promise.reject(error.message))
+    .then((res) => {
+      const token = `Bearer ${res.data.access_token}`;
+      return createPageTag({
+        id,
+        label,
+        slug,
+        value,
+        token,
+        aggregation,
+      });
+    })
+    .catch((error) => Promise.reject(error.message));
 
 export const createPageTag = ({
   id = required(),
@@ -433,24 +436,27 @@ export const createPageTag = ({
 
 export const createPageTagsUnclaimedPages = async ({
   slug = required(),
-  tagValues = required()
-}) => 
+  tagValues = required(),
+}) =>
   servicesAPI
-  .post("/v1/justgiving/iam/login", { email: 'holdinguser@justgiving.com', password: '' })
-  .then(res => {
-    const token = `Bearer ${res.data.access_token}`
-    return createPageTags({
-      slug, 
-      tagValues,
-      token
+    .post("/v1/justgiving/iam/login", {
+      email: process.env.HOLDER_USER_EMAIL,
+      password: process.env.HOLDER_USER_PASSWORD,
     })
-  })
-  .catch((error) => Promise.reject(error.message))
+    .then((res) => {
+      const token = `Bearer ${res.data.access_token}`;
+      return createPageTags({
+        slug,
+        tagValues,
+        token,
+      });
+    })
+    .catch((error) => Promise.reject(error.message));
 
 export const createPageTags = ({
   slug = required(),
   tagValues = required(),
-  token = required()
+  token = required(),
 }) => {
   const request = () =>
     post(
