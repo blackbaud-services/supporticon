@@ -1,5 +1,5 @@
 import { servicesAPI } from "../../utils/client";
-import { getUID, paramsSerializer } from "../../utils/params";
+import { getUID } from "../../utils/params";
 import jsonDate from "../../utils/jsonDate";
 
 export const fetchDonationFeed = ({
@@ -54,10 +54,7 @@ const fetchDonationsByShortName = (
   donations = [],
   pageNum = 1
 ) =>
-  servicesAPI.get(`/v1/feed/donation/page/${pageShortName}?${paramsSerializer({
-    pageSize: 150,
-    pageNum,
-  })}`).then(({ data }) => {
+  servicesAPI.get(`/v1/feed/donation/page/${pageShortName}`, { params: { pageSize: 150, pageNum } }).then(({ data }) => {
     const updatedResults = [...donations, ...data.donations];
 
     return pageNum >= Math.min(data.pagination.totalPages, 10)

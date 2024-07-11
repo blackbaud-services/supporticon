@@ -1,6 +1,6 @@
 import get from "lodash/get";
 import { fetchPages } from "../pages";
-import { getUID, paramsSerializer, required } from "../../utils/params";
+import { getUID, required } from "../../utils/params";
 import { baseUrl, imageUrl } from "../../utils/justgiving";
 import { fetchLeaderboard } from "../../utils/leaderboards";
 import { getMonetaryValue } from "../../utils/totals";
@@ -47,15 +47,15 @@ export const fetchFitnessLeaderboard = ({
   }
 
   if (useLegacy || type === "teams") {
-    const params = paramsSerializer({
+    const params = {
       campaignGuid: campaign,
       limit: Math.max(limit, 200),
       offset: offset || 0,
       start: startDate,
       end: endDate,
-    });
+    };
 
-    return servicesAPI.get(`/v1/fitness/campaign?${params}`)
+    return servicesAPI.get('/v1/fitness/campaign', { params })
       .then(({ data }) => data)
       .then((result) => (type === "team" ? result.teams : result.pages))
       .then((items) => items.slice(0, limit || 100))
