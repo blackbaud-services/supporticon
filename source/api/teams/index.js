@@ -93,19 +93,13 @@ export const deserializeTeamPage = (page) => {
 };
 
 export const searchTeams = ({ campaign, endCursor, limit }) => {
-  const options = {
-    headers: {
-      "x-api-key": client.instance.defaults.headers["x-api-key"],
-    },
-  };
-
-  const payload = {
+  const params = {
     take: limit,
     nextPageToken: endCursor,
   };
 
-  return client
-    .get(`/v1/campaigns/${campaign}/teams`, payload, options)
+  return client.servicesAPI.get(`/v1/campaign/${campaign}/teams`, { params })
+    .then(({ data }) => data)
     .then((res) => {
       const formattedTeams = res.results.map((team) => ({
         ...team,
@@ -168,12 +162,9 @@ export const fetchTeam = (id = required(), options) => {
 const getPaginatedMembers = (team) => {
   return new Promise((resolve) => {
     if (team.membership.members?.length < team.membership.numberOfMembers) {
-      return client
-        .get(
-          `/v1/teamsv3/${replace(team.shortName, "team/", "")}?nextPageKey=${
-            team.pagination.endCursor
-          }`
-        )
+      return client.servicesAPI
+        .get(`/v1/team/${replace(team.shortName, "team/", "")}`, { params: { nextPageKey: team.pagination.endCursor } })
+        .then(({ data }) => data)
         .then((res) => {
           const updatedTeam = {
             ...team,
@@ -195,8 +186,9 @@ const getPaginatedMembers = (team) => {
 };
 
 export const fetchTeamBySlug = (slug, options = {}) => {
-  return client
-    .get(`/v1/teamsv3/${replace(slug, "team/", "")}`)
+  return client.servicesAPI
+    .get(`/v1/team/${replace(slug, "team/", "")}`)
+    .then(({ data }) => data)
     .then((team) => {
       if (options.includeFitness) {
         return fetchTeamFitness(team.teamGuid, options.fitnessParams).then(
@@ -238,7 +230,7 @@ export const fetchTeamFitness = (slug, options = {}) => {
     end: options.endDate,
   };
 
-  return client.get(`v1/fitness/teams/${slug}`, params);
+  return client.servicesAPI.get(`v1/fitness/team/${slug}`, { params }).then(({ data }) => data);
 };
 
 export const fetchTeamPages = (slug, options = {}) => {
@@ -338,19 +330,12 @@ export const fetchTeamPages = (slug, options = {}) => {
 };
 
 export const checkTeamSlugAvailable = (slug = required()) => {
-  const options = {
-    headers: {
-      "x-api-key": client.instance.defaults.headers["x-api-key"],
-    },
-  };
-
-  return client
-    .head(`/v1/teams/${slug}`, options)
+  return client.servicesAPI.get(`/v1/team/${slug}/suggest`)
     .then((res) => {
       if (res.status === 200) return appendIdToSlug(slug);
     })
-    .catch((err) => {
-      if (err.status === 404) return slug;
+    .catch(() => {
+      return slug;
     });
 };
 
@@ -403,12 +388,13 @@ export const createTeam = (params) => {
 
   return checkTeamSlugAvailable(payload.TeamShortName, { authType, token })
     .then((cleanShortName) =>
-      client.put(
-        "/v1/teams",
+      client.servicesAPI.put(
+      "/v1/team",
         { ...payload, TeamShortName: cleanShortName },
         options
       )
     )
+    .then(({ data }) => data)
     .then((res) =>
       res.errorMessage ? Promise.reject(new Error(res.errorMessage)) : res
     )
@@ -494,7 +480,7 @@ export const updateTeam = (
     targetAmount: target,
   };
 
-  return client.put(`/v1/teamsv2/${id}`, payload, { headers });
+  return client.servicesAPI.put(`/v1/team/${id}`, payload, { headers }).then(({ data }) => data);
 };
 
 export const fetchTeamsToFilter = (campaignGuid, endCursor, results = []) => {
@@ -517,8 +503,9 @@ const fetchTeamsByCampaign = (campaignGuid, endCursor) => {
     nextPageToken: endCursor,
   };
 
-  return client
-    .get(`/v1/campaigns/${campaignGuid}/teams`, payload)
+  return client.servicesAPI
+    .get(`/v1/campaign/${campaignGuid}/teams`, payload)
+    .then(({ data }) => data)
     .then((res) => ({ results: res.results, pageInfo: res.pagination }))
     .catch((err) => console.error(err));
 };
