@@ -1,20 +1,16 @@
-import client, { get, servicesAPI } from "../../utils/client";
+import { servicesAPI } from "../../utils/client";
 import {
   getUID,
   required,
   dataSource,
-  paramsSerializer,
-  splitOnDelimiter,
 } from "../../utils/params";
 import { currencyCode } from "../../utils/currencies";
 import { fetchPagesByTag } from "../pages";
 import lodashGet from "lodash/get";
 import lodashSum from "lodash/sum";
 
-const fetchEvent = (id) =>
-  get(`/v1/event/${id}/pages`).then(
-    (response) => response.totalFundraisingPages
-  );
+export const fetchEvent = (id) =>
+  servicesAPI.get(`/v1/event/${id}/total`).then(({ data }) => data.totalFundraisingPages)
 
 const fetchCampaign = ({ campaign }) => {
   const query = `
@@ -37,7 +33,7 @@ const fetchCampaign = ({ campaign }) => {
 };
 
 const fetchCampaignTeams = (id) =>
-  client.get(`/v1/campaigns/${id}/teams`).then((data) => data.totalResults);
+  servicesAPI.get(`/v1/campaign/${id}/teams`).then(({ data }) => data.totalResults);
 
 export const fetchPagesTotals = (params = required()) => {
   if (params.tagId && params.tagValue) {
