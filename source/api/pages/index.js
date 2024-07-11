@@ -6,7 +6,7 @@ import lodashGet from "lodash/get";
 import lodashFilter from "lodash/filter";
 import slugify from "slugify";
 import { v4 as uuid } from "uuid";
-import { destroy, get, post, put, servicesAPI } from "../../utils/client";
+import { servicesAPI } from "../../utils/client";
 import { apiUrl, apiImageUrl, baseUrl, imageUrl } from "../../utils/justgiving";
 import {
   getUID,
@@ -586,18 +586,15 @@ export const createPage = ({
 export const getPageShortName = (title, slug, forceSlug) => {
   const preferredName = slug || slugify(title, { lower: true, strict: true });
 
-  const params = {
-    preferredName: preferredName.substring(0, 45),
-  };
+  return servicesAPI.get(`/v1/page/suggest?preferredName=${preferredName}`).then(({ data }) => data)
+    .then((result) => {
+      const firstResult = first(result.Names);
+      if (forceSlug) {
+        return firstResult === slug ? firstResult : false;
+      }
 
-  return get("/v1/fundraising/pages/suggest", params).then((result) => {
-    const firstResult = first(result.Names);
-    if (forceSlug) {
-      return firstResult === slug ? firstResult : false;
-    }
-
-    return firstResult || uuid();
-  });
+      return firstResult || uuid();
+    });
 };
 
 export const getPageIdBySlug = (slug) => {
