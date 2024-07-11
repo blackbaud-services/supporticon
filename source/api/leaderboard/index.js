@@ -9,9 +9,7 @@ import {
   getUID,
   required,
   dataSource,
-  isEmpty,
-  paramsSerializer,
-  splitOnDelimiter,
+  isEmpty
 } from "../../utils/params";
 import { currencySymbol, currencyCode } from "../../utils/currencies";
 import { fetchLeaderboard as getGraphQLeaderboard } from "../../utils/leaderboards";
@@ -92,9 +90,7 @@ export const fetchEventLeaderboard = (params) => {
     args.charityIds = params.charity;
   }
 
-  const serialisedArgs = paramsSerializer(args)
-
-  return servicesAPI.get(`/v1/event/leaderboard?${serialisedArgs}`)
+  return servicesAPI.get('/v1/event/leaderboard', { params: args })
     .then(({ data }) =>
       data.pages.map((page) => ({
         ...page,

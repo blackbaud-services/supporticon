@@ -171,16 +171,8 @@ export const fetchPages = (params = required()) => {
   } = params;
 
   if (userPages && token) {
-    return get(
-      "/v1/fundraising/pages",
-      {},
-      {},
-      {
-        headers: {
-          Authorization: [authType, token].join(" "),
-        },
-      }
-    );
+    return servicesAPI.get('/v1/pages', { headers: { Authorization: [authType, token].join(" ") } })
+      .then(({ data }) => data)
   }
 
   if (allPages && ids) {
@@ -204,10 +196,8 @@ export const fetchPages = (params = required()) => {
   }
 
   if (allPages && event) {
-    const mappings = { limit: "pageSize" };
-
-    return get(`/v1/event/${getUID(event)}/pages`, args, { mappings })
-      .then((response) => response.fundraisingPages)
+    return servicesAPI.get(`/v1/pages/event/${getUID(event)}`)
+      .then(({ data }) => data.fundraisingPages)
       .then((pages) =>
         pages.map((page) => ({
           ...page,
@@ -216,18 +206,18 @@ export const fetchPages = (params = required()) => {
       );
   }
 
-  return get(
-    `/v1/onesearch${
-      !!campaign && "?campaignGuid=" + getUIDForOnepageCampaign(campaign)
-    }`,
-    {
-      charityId: getUID(charity),
-      eventId: getUID(event),
-      i: "Fundraiser",
-      ...args,
-      q: `${args.q}*`,
-    }
-  ).then(
+  const oneSearchParams = {
+    campaignGuid: getUIDForOnepageCampaign(campaign),
+    charityId: getUID(charity),
+    eventId: getUID(event),
+    i: "Fundraiser",
+    ...args,
+    q: `${args.q}*`,
+  }
+
+    return servicesAPI.get('/v1/pages/onesearch', { params: oneSearchParams })
+    .then(({ data }) => data)
+    .then(
     (response) =>
       (response.GroupedResults &&
         response.GroupedResults.length &&
@@ -237,11 +227,11 @@ export const fetchPages = (params = required()) => {
 };
 
 export const fetchPage = (page = required(), slug, options = {}) => {
-  const endpoint = slug ? "pages" : isNaN(page) ? "pages" : "pagebyid";
+  const endpoint = slug || isNaN(page) ? "page" : "page/id"
 
   const fetchers = [
     new Promise((resolve) =>
-      get(`/v1/fundraising/${endpoint}/${page}`).then((page) =>
+      servicesAPI.get(`/v1/${endpoint}/${page}`).then(({ data: page }) =>
         options.includeFitness
           ? fetchPageFitness(page, options.fitnessParams).then((fitness) =>
               resolve({ ...page, fitness })
@@ -294,7 +284,8 @@ export const fetchUserPages = ({
       ? pages
       : pages.filter((page) => isInArray(eventIds, page.eventId));
 
-  return get("/v1/fundraising/pages", {}, {}, { headers })
+  return servicesAPI.get('/v1/pages', { headers })
+    .then(({ data }) => data)
     .then(filterByCampaign)
     .then(filterByCharity)
     .then(filterByEvent);
@@ -306,12 +297,13 @@ export const fetchPagesByTag = ({
   limit = 100,
   offset = 0,
 }) =>
-  get(
-    `v1/tags/search?tagsQuery=tags.${tagId}=${tagValue}&maxValue=${limit}&offset=${offset}`
-  );
+  servicesAPI.get(
+    `v1/pages/tag?tagsQuery=tags.${tagId}=${tagValue}&maxValue=${limit}&offset=${offset}`
+  ).then(({ data }) => data);
 
 export const fetchPageTags = (page) => {
-  return get(`v1/tags/${page}`);
+  return servicesAPI.get(`/v1/page/tags/${page}`)
+    .then(({ data }) => data)
 };
 
 const fetchPageFitness = (
@@ -322,7 +314,9 @@ const fetchPageFitness = (
 
   if (useLegacy) {
     const params = { limit, offset, start: startDate, end: endDate };
-    return get(`/v1/fitness/fundraising/${slug}`, params).then((res) =>
+    return servicesAPI.get(`/v1/fitness/page/${slug}`, params)
+    .then(({ data }) => data)
+    .then((res) =>
       servicesAPI
         .get(
           `/v1/justgiving/page/${slug}/fitnessTotal?startDate=${startDate}&endDate=${endDate}`
@@ -346,7 +340,8 @@ const fetchPageFitness = (
 };
 
 export const fetchPageDonationCount = (page = required()) => {
-  return get(`/v1/fundraising/pages/${page}/donations`).then(
+  return servicesAPI.get(`/v1/page/${page}/donations`).then(({ data }) => data)
+  .then(
     (data) => data.pagination.totalResults
   );
 };
@@ -355,17 +350,17 @@ export const fetchPageDonations = (
   pageShortName,
   donations = [],
   pageNum = 1
-) =>
-  get(`v1/fundraising/pages/${pageShortName}/donations`, {
-    pageSize: 150,
-    pageNum,
-  }).then((data) => {
+) => {
+  const params = { pageSize: 150, pageNum }
+  return servicesAPI.get(`/v1/page/${pageShortName}/donations`, { params }).then(({ data }) => data)
+    .then((data) => {
     const updatedResults = [...donations, ...data.donations];
 
     return pageNum >= Math.min(data.pagination.totalPages, 10)
       ? updatedResults
       : fetchPageDonations(pageShortName, updatedResults, pageNum + 1);
   });
+}
 
 const truncate = (string, length = 50) => {
   if (string) {
@@ -413,8 +408,8 @@ export const createPageTag = ({
   aggregation = [],
 }) => {
   const request = () =>
-    post(
-      `/v1/tags/${slug}`,
+    servicesAPI.post(
+      `/v1/page/${slug}/tag`,
       {
         aggregation,
         id,
@@ -425,11 +420,8 @@ export const createPageTag = ({
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
-      {
-        timeout: 5000,
       }
-    );
+    ).then(({ data }) => data);
 
   return request().catch(() => request()); // Retry if request fails
 };
@@ -459,8 +451,8 @@ export const createPageTags = ({
   token = required(),
 }) => {
   const request = () =>
-    post(
-      `/v1/tags/${slug}/multiple`,
+    servicesAPI.post(
+      `/v1/page/${slug}/tags`,
       {
         tagValues,
       },
@@ -468,11 +460,8 @@ export const createPageTags = ({
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
-      {
-        timeout: 5000,
       }
-    );
+    ).then(({ data }) => data);
 
   return request().catch(() => request()); // Retry if request fails
 };
@@ -529,8 +518,8 @@ export const createPage = ({
       return false;
     }
 
-    return put(
-      "/v1/fundraising/pages",
+    return servicesAPI.put(
+      "/v1/page",
       {
         ...(eventId
           ? {
@@ -577,7 +566,7 @@ export const createPage = ({
         },
       }
     )
-      .then((result) => fetchPage(result.pageId))
+      .then(({ data }) => fetchPage(data.pageId))
       .then((page) => {
         createDefaultPageTags(
           deserializePage(page),
@@ -612,7 +601,7 @@ export const getPageShortName = (title, slug, forceSlug) => {
 };
 
 export const getPageIdBySlug = (slug) => {
-  return get(`/v1/fundraising/pages/${slug}`).then((res) => res.pageId);
+  return servicesAPI.get(`/v1/page/${slug}`).then(({ data }) => data.pageId);
 };
 
 export const updatePage = (
@@ -635,42 +624,26 @@ export const updatePage = (
   return Promise.all(
     [
       attribution &&
-        put(
-          `/v1/fundraising/pages/${slug}/attribution`,
-          { attribution },
-          config
-        ),
+        servicesAPI.put(`/v1/page/${slug}/attribution`, { attribution }, config)
+          .then(({ data }) => data),
       image &&
-        put(
-          `/v1/fundraising/pages/${slug}/images`,
-          { url: image, isDefault: true },
-          config
-        ),
+        servicesAPI.put(`/v1/page/${slug}/images`, { url: image, isDefault: true }, config)
+          .then(({ data }) => data),
       name &&
-        put(
-          `/v1/fundraising/pages/${slug}/pagetitle`,
-          { pageTitle: name.replace(/’/g, "'").replace(pageNameRegex, "") },
-          config
-        ),
+        servicesAPI.put(`/v1/page/${slug}/pagetitle`, { pageTitle: name.replace(/’/g, "'").replace(pageNameRegex, "") }, config)
+          .then(({ data }) => data),
       offline &&
-        put(
-          `/v1/fundraising/pages/${slug}/offline`,
-          { amount: offline },
-          config
-        ),
+        servicesAPI.put(`/v1/page/${slug}/offline`, { amount: offline }, config)
+          .then(({ data }) => data),
       story &&
-        put(`/v1/fundraising/pages/${slug}/pagestory`, { story }, config),
+        servicesAPI.put(`/v1/page/${slug}/pagestory`, { story }, config)
+          .then(({ data }) => data),
       target &&
-        put(`/v1/fundraising/pages/${slug}/target`, { amount: target }, config),
+        servicesAPI.put(`/v1/page/${slug}/target`, { amount: target }, config)
+          .then(({ data }) => data),
       (summaryWhat || summaryWhy) &&
-        put(
-          `/v1/fundraising/pages/${slug}/summary`,
-          {
-            pageSummaryWhat: summaryWhat,
-            pageSummaryWhy: summaryWhy,
-          },
-          config
-        ),
+        servicesAPI.put(`/v1/page/${slug}/summary`, { pageSummaryWhat: summaryWhat, pageSummaryWhy: summaryWhy, }, config)
+          .then(({ data }) => data),
     ].filter((promise) => promise)
   );
 };
@@ -682,5 +655,5 @@ export const cancelPage = ({
 }) => {
   const headers = { Authorization: [authType, token].join(" ") };
 
-  return destroy(`/v1/fundraising/pages/${slug}`, { headers });
+  return servicesAPI.delete(`/v1/page/${slug}`, { headers }).then(({ data }) => data)
 };

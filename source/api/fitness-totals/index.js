@@ -1,5 +1,5 @@
 import { servicesAPI } from "../../utils/client";
-import { isEmpty, paramsSerializer, required } from "../../utils/params";
+import { isEmpty, required } from "../../utils/params";
 import { fetchTotals, deserializeTotals } from "../../utils/totals";
 
 export const fetchFitnessSummary = (campaign = required(), types) =>
@@ -44,16 +44,16 @@ export function fetchFitnessTotals({
       }));
   }
 
-  const params = paramsSerializer({
+  const params = {
     campaignGuid: campaign,
     limit,
     offset,
     start: startDate,
     end: endDate,
-  });
+  };
 
   return servicesAPI
-    .get(`/v1/fitness/campaign?${params}`)
+    .get('/v1/fitness/campaign', { params })
     .then(({ data }) => data)
     .then((result) => ({
       distance: result.totalAmount,

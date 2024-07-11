@@ -2,7 +2,6 @@ import { servicesAPI } from "../../utils/client";
 import {
   getUID,
   required,
-  paramsSerializer,
   isURL,
   getUIDForOnepageCampaign,
 } from "../../utils/params";
@@ -14,25 +13,25 @@ export const searchCharities = (params = required()) => {
   const campaign = getUID(params.campaign);
 
   if (campaign) {
-    const finalParams = paramsSerializer({
+    const finalParams = {
       ...params,
       field: "charityNameSuggest",
       includeFuzzySearch: true,
       maxResults: params.limit,
       campaignGuid:
         !!campaign && getUIDForOnepageCampaign(campaign),
-    });
+    };
 
-    return servicesAPI.get(`/v1/charity/campaign?${finalParams}`).then(({ data }) => data);
+    return servicesAPI.get('/v1/charity/campaign', { params: finalParams }).then(({ data }) => data);
   } else {
-    const finalParams = paramsSerializer({
+    const finalParams = {
       ...params,
       country: params.country === "uk" ? "gb" : params.country,
       filterCountry: !!params.country,
       i: "Charity",
-    });
+    };
 
-    return servicesAPI.get(`/v1/charity/search?${finalParams}`).then(
+    return servicesAPI.get('/v1/charity/search', { params: finalParams }).then(
       ({ data }) =>
         (data.GroupedResults &&
           data.GroupedResults.length &&
