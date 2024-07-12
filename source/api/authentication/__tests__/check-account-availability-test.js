@@ -1,13 +1,15 @@
 import { checkAccountAvailability } from "..";
-import { instance } from "../../../utils/client";
+import { instance, servicesAPI } from "../../../utils/client";
 
 describe("Authentication | Check Account Availability", () => {
   beforeEach(() => {
     moxios.install(instance);
+    moxios.install(servicesAPI);
   });
 
   afterEach(() => {
     moxios.uninstall(instance);
+    moxios.uninstall(servicesAPI);
   });
 
   it("makes request to consumer API", (done) => {

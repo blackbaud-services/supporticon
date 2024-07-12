@@ -1,13 +1,15 @@
-import { instance } from "../../../utils/client";
+import { instance, servicesAPI } from "../../../utils/client";
 import { createPageTag } from "..";
 
 describe("Create Page", () => {
   beforeEach(() => {
     moxios.install(instance);
+    moxios.install(servicesAPI);
   });
 
   afterEach(() => {
     moxios.uninstall(instance);
+    moxios.uninstall(servicesAPI);
   });
 
   it("uses the correct url to fetch pages", (done) => {
@@ -27,7 +29,7 @@ describe("Create Page", () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
-      expect(request.url).to.contain("/v1/tags/my-page");
+      expect(request.url).to.contain("/v1/page/my-page/tag");
       done();
     });
   });

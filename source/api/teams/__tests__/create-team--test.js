@@ -35,16 +35,16 @@ describe("Create a Team", () => {
       });
 
       expect(shortNameRequest.config.baseURL).to.eql(
-        "https://api.justgiving.com"
+        "https://api.blackbaud.services"
       );
-      expect(shortNameRequest.url).to.contain("/v1/teams/my-jg-test-team");
+      expect(shortNameRequest.url).to.contain("/v1/team/my-jg-test-team/suggest");
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
         const data = JSON.parse(request.config.data);
 
-        expect(request.config.baseURL).to.eql("https://api.justgiving.com");
-        expect(request.url).to.contain("/v1/teams");
+        expect(request.config.baseURL).to.eql("https://api.blackbaud.services");
+        expect(request.url).to.contain("/v1/team");
         expect(request.config.headers["Authorization"]).to.eql(
           "Bearer 012345abcdef"
         );

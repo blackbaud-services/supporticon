@@ -1,13 +1,15 @@
-import { instance } from "../../../utils/client";
+import { instance, servicesAPI } from "../../../utils/client";
 import { createPage } from "..";
 
 describe("Create Page", () => {
   beforeEach(() => {
     moxios.install(instance);
+    moxios.install(servicesAPI);
   });
 
   afterEach(() => {
     moxios.uninstall(instance);
+    moxios.uninstall(servicesAPI);
   });
 
   it("hits the justgiving api with the correct url and data", (done) => {
@@ -28,12 +30,12 @@ describe("Create Page", () => {
       });
 
       expect(shortNameRequest.url).to.eql(
-        "/v1/fundraising/pages/suggest?preferredName=super-supporter"
+        "/v1/page/suggest?preferredName=super-supporter"
       );
 
       moxios.wait(() => {
-        const request = moxios.requests.mostRecent();
-        expect(request.url).to.eql("/v1/fundraising/pages");
+        const request = moxios.requests.at(1);
+        expect(request.url).to.eql("/v1/page");
         expect(request.config.headers["Authorization"]).to.eql(
           "Bearer 012345abcdef"
         );

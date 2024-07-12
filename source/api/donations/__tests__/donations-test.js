@@ -1,13 +1,15 @@
-import { instance } from "../../../utils/client";
+import { instance, servicesAPI } from "../../../utils/client";
 import { fetchDonation, replyToDonation } from "..";
 
 describe("Donations", () => {
   beforeEach(() => {
     moxios.install(instance);
+    moxios.install(servicesAPI);
   });
 
   afterEach(() => {
     moxios.uninstall(instance);
+    moxios.uninstall(servicesAPI);
   });
 
   describe("Fetch JG Donation", () => {

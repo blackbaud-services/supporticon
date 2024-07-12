@@ -21,7 +21,7 @@ describe("Fetch Pages Totals", () => {
     fetchPagesTotals({ event: 12345 });
     moxios.wait(function () {
       const request = moxios.requests.mostRecent();
-      expect(request.url).to.equal("/v1/event/12345/pages");
+      expect(request.url).to.equal("/v1/event/12345/total");
       done();
     });
   });
@@ -39,7 +39,7 @@ describe("Fetch Pages Totals", () => {
     fetchPagesTotals({ tagId: "tag", tagValue: "value" });
     moxios.wait(function () {
       const request = moxios.requests.mostRecent();
-      expect(request.url).to.include("v1/tags/search");
+      expect(request.url).to.include("v1/pages/tag");
       done();
     });
   });

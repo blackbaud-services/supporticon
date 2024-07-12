@@ -1,5 +1,5 @@
 import axios from "axios";
-import { required } from "../params";
+import { paramsSerializer, required } from "../params";
 import map from "../map";
 
 const defaults = {
@@ -72,6 +72,7 @@ export const servicesAPI = axios.create({
   baseURL: isStaging()
     ? "https://api-staging.blackbaud.services"
     : "https://api.blackbaud.services",
+  paramsSerializer: params => paramsSerializer(params)
 });
 
 export const updateServicesAPIClient = () => {

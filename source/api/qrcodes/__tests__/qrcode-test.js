@@ -1,13 +1,15 @@
 import { createQrCode } from "..";
-import { instance } from "../../../utils/client";
+import { instance, servicesAPI } from "../../../utils/client";
 
 describe("Create QR Code", () => {
   beforeEach(() => {
     moxios.install(instance);
+    moxios.install(servicesAPI);
   });
 
   afterEach(() => {
     moxios.uninstall(instance);
+    moxios.uninstall(servicesAPI);
   });
 
   it("uses the correct url", (done) => {
@@ -17,7 +19,7 @@ describe("Create QR Code", () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
-      expect(request.url).to.include("/v1/qrcodes/create");
+      expect(request.url).to.include("/v1/qrcode/create");
       expect(request.url).to.include("1234");
       done();
     });

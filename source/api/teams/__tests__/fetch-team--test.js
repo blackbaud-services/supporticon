@@ -17,7 +17,7 @@ describe("Fetch Teams", () => {
       fetchTeams({ campaign: "abc123" });
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
-        expect(request.url).to.contain("/v1/campaigns/abc123/teams");
+        expect(request.url).to.contain("/v1/campaign/abc123/teams");
         done();
       });
     });

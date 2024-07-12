@@ -1,13 +1,15 @@
-import { instance } from "../../../utils/client";
+import { instance, servicesAPI } from "../../../utils/client";
 import { updatePage } from "..";
 
 describe("Page | Update Page", () => {
   beforeEach(() => {
     moxios.install(instance);
+    moxios.install(servicesAPI);
   });
 
   afterEach(() => {
     moxios.uninstall(instance);
+    moxios.uninstall(servicesAPI);
   });
 
   it("updates the page story correct url and data", (done) => {
@@ -18,7 +20,7 @@ describe("Page | Update Page", () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
-      expect(request.url).to.contain("/v1/fundraising/pages");
+      expect(request.url).to.contain("/v1/page/fundraising-page/pagestory");
       expect(request.url).to.contain("fundraising-page");
       expect(request.config.headers["Authorization"]).to.eql(
         "Bearer 012345abcdef"
@@ -35,7 +37,7 @@ describe("Page | Update Page", () => {
 
     moxios.wait(() => {
       const request = moxios.requests.mostRecent();
-      expect(request.url).to.contain("/v1/fundraising/pages");
+      expect(request.url).to.contain("/v1/page/fundraising-page/summary");
       expect(request.url).to.contain("fundraising-page");
       expect(request.config.headers["Authorization"]).to.eql(
         "Bearer 012345abcdef"
@@ -59,11 +61,11 @@ describe("Page | Update Page", () => {
         moxios.requests.at(moxios.requests.count() - 1).url,
       ];
 
-      expect(requests).to.include("/v1/fundraising/pages/page-slug/pagestory");
+      expect(requests).to.include("/v1/page/page-slug/pagestory");
       expect(requests).to.include(
-        "/v1/fundraising/pages/page-slug/attribution"
+        "/v1/page/page-slug/attribution"
       );
-      expect(requests).to.include("/v1/fundraising/pages/page-slug/images");
+      expect(requests).to.include("/v1/page/page-slug/images");
       done();
     });
   });
