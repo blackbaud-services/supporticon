@@ -5,7 +5,8 @@ import { servicesAPI } from "../../utils/client";
 import { required } from "../../utils/params";
 import { baseUrl } from "../../utils/justgiving";
 
-export const fetchDonation = (id = required()) => servicesAPI.get(`/v1/donation/${id}`).then(({ data }) => data)
+export const fetchDonation = (id = required()) =>
+  servicesAPI.get(`/v1/donation/${id}`).then(({ data }) => data);
 
 export const deserializeDonation = (donation) => ({
   amount: parseFloat(donation.donorLocalAmount || donation.amount),

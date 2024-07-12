@@ -30,20 +30,19 @@ export const signIn = ({
   if (authType === "Basic") {
     const token = encodeBase64String(`${email}:${password}`);
 
-    return servicesAPI.get(
-      "/v1/account",
-      {
+    return servicesAPI
+      .get("/v1/account", {
         headers: {
           Authorization: `Basic ${token}`,
-        }
-      }
-    ).then((data) => ({
-      address: data.address,
-      email: data.email,
-      name: [data.firstName, data.lastName].join(" "),
-      token,
-      userId: data.userId,
-    }));
+        },
+      })
+      .then((data) => ({
+        address: data.address,
+        email: data.email,
+        name: [data.firstName, data.lastName].join(" "),
+        token,
+        userId: data.userId,
+      }));
   }
 
   return servicesAPI
@@ -120,7 +119,8 @@ export const signUp = ({
 };
 
 export const checkAccountAvailability = (email) => {
-  return servicesAPI.get(`/v1/account/${email}`)
+  return servicesAPI
+    .get(`/v1/account/${email}`)
     .then(() => true)
     .catch(() => false);
 };

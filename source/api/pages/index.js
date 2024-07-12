@@ -171,8 +171,11 @@ export const fetchPages = (params = required()) => {
   } = params;
 
   if (userPages && token) {
-    return servicesAPI.get('/v1/pages', { headers: { Authorization: [authType, token].join(" ") } })
-      .then(({ data }) => data)
+    return servicesAPI
+      .get("/v1/pages", {
+        headers: { Authorization: [authType, token].join(" ") },
+      })
+      .then(({ data }) => data);
   }
 
   if (allPages && ids) {
@@ -196,7 +199,8 @@ export const fetchPages = (params = required()) => {
   }
 
   if (allPages && event) {
-    return servicesAPI.get(`/v1/pages/event/${getUID(event)}`)
+    return servicesAPI
+      .get(`/v1/pages/event/${getUID(event)}`)
       .then(({ data }) => data.fundraisingPages)
       .then((pages) =>
         pages.map((page) => ({
@@ -213,31 +217,34 @@ export const fetchPages = (params = required()) => {
     i: "Fundraiser",
     ...args,
     q: `${args.q}*`,
-  }
+  };
 
-    return servicesAPI.get('/v1/pages/onesearch', { params: oneSearchParams })
+  return servicesAPI
+    .get("/v1/pages/onesearch", { params: oneSearchParams })
     .then(({ data }) => data)
     .then(
-    (response) =>
-      (response.GroupedResults &&
-        response.GroupedResults.length &&
-        response.GroupedResults[0].Results) ||
-      []
-  );
+      (response) =>
+        (response.GroupedResults &&
+          response.GroupedResults.length &&
+          response.GroupedResults[0].Results) ||
+        []
+    );
 };
 
 export const fetchPage = (page = required(), slug, options = {}) => {
-  const endpoint = slug || isNaN(page) ? "page" : "page/id"
+  const endpoint = slug || isNaN(page) ? "page" : "page/id";
 
   const fetchers = [
     new Promise((resolve) =>
-      servicesAPI.get(`/v1/${endpoint}/${page}`).then(({ data: page }) =>
-        options.includeFitness
-          ? fetchPageFitness(page, options.fitnessParams).then((fitness) =>
-              resolve({ ...page, fitness })
-            )
-          : resolve(page)
-      )
+      servicesAPI
+        .get(`/v1/${endpoint}/${page}`)
+        .then(({ data: page }) =>
+          options.includeFitness
+            ? fetchPageFitness(page, options.fitnessParams).then((fitness) =>
+                resolve({ ...page, fitness })
+              )
+            : resolve(page)
+        )
     ),
     options.includeTags && fetchPageTags(page),
   ];
@@ -284,7 +291,8 @@ export const fetchUserPages = ({
       ? pages
       : pages.filter((page) => isInArray(eventIds, page.eventId));
 
-  return servicesAPI.get('/v1/pages', { headers })
+  return servicesAPI
+    .get("/v1/pages", { headers })
     .then(({ data }) => data)
     .then(filterByCampaign)
     .then(filterByCharity)
@@ -297,13 +305,14 @@ export const fetchPagesByTag = ({
   limit = 100,
   offset = 0,
 }) =>
-  servicesAPI.get(
-    `v1/pages/tag?tagsQuery=tags.${tagId}=${tagValue}&maxValue=${limit}&offset=${offset}`
-  ).then(({ data }) => data);
+  servicesAPI
+    .get(
+      `v1/pages/tag?tagsQuery=tags.${tagId}=${tagValue}&maxValue=${limit}&offset=${offset}`
+    )
+    .then(({ data }) => data);
 
 export const fetchPageTags = (page) => {
-  return servicesAPI.get(`/v1/page/tags/${page}`)
-    .then(({ data }) => data)
+  return servicesAPI.get(`/v1/page/tags/${page}`).then(({ data }) => data);
 };
 
 const fetchPageFitness = (
@@ -314,22 +323,23 @@ const fetchPageFitness = (
 
   if (useLegacy) {
     const params = { limit, offset, start: startDate, end: endDate };
-    return servicesAPI.get(`/v1/fitness/page/${slug}`, params)
-    .then(({ data }) => data)
-    .then((res) =>
-      servicesAPI
-        .get(
-          `/v1/justgiving/page/${slug}/fitnessTotal?startDate=${startDate}&endDate=${endDate}`
-        )
-        .then(({ data }) => {
-          return {
-            ...res,
-            totalAmount: data.distance,
-            totalAmountElevation: data.elevation,
-            totalAmountTaken: data.duration,
-          };
-        })
-    );
+    return servicesAPI
+      .get(`/v1/fitness/page/${slug}`, params)
+      .then(({ data }) => data)
+      .then((res) =>
+        servicesAPI
+          .get(
+            `/v1/justgiving/page/${slug}/fitnessTotal?startDate=${startDate}&endDate=${endDate}`
+          )
+          .then(({ data }) => {
+            return {
+              ...res,
+              totalAmount: data.distance,
+              totalAmountElevation: data.elevation,
+              totalAmountTaken: data.duration,
+            };
+          })
+      );
   }
 
   return fetchTotals({
@@ -340,10 +350,10 @@ const fetchPageFitness = (
 };
 
 export const fetchPageDonationCount = (page = required()) => {
-  return servicesAPI.get(`/v1/page/${page}/donations`).then(({ data }) => data)
-  .then(
-    (data) => data.pagination.totalResults
-  );
+  return servicesAPI
+    .get(`/v1/page/${page}/donations`)
+    .then(({ data }) => data)
+    .then((data) => data.pagination.totalResults);
 };
 
 export const fetchPageDonations = (
@@ -351,16 +361,18 @@ export const fetchPageDonations = (
   donations = [],
   pageNum = 1
 ) => {
-  const params = { pageSize: 150, pageNum }
-  return servicesAPI.get(`/v1/page/${pageShortName}/donations`, { params }).then(({ data }) => data)
+  const params = { pageSize: 150, pageNum };
+  return servicesAPI
+    .get(`/v1/page/${pageShortName}/donations`, { params })
+    .then(({ data }) => data)
     .then((data) => {
-    const updatedResults = [...donations, ...data.donations];
+      const updatedResults = [...donations, ...data.donations];
 
-    return pageNum >= Math.min(data.pagination.totalPages, 10)
-      ? updatedResults
-      : fetchPageDonations(pageShortName, updatedResults, pageNum + 1);
-  });
-}
+      return pageNum >= Math.min(data.pagination.totalPages, 10)
+        ? updatedResults
+        : fetchPageDonations(pageShortName, updatedResults, pageNum + 1);
+    });
+};
 
 const truncate = (string, length = 50) => {
   if (string) {
@@ -408,9 +420,8 @@ export const createPageTag = ({
   aggregation = [],
 }) => {
   const request = () =>
-    servicesAPI.post(
-      `/v1/page/${slug}/tag`,
-      {
+    servicesAPI
+      .post(`/v1/page/${slug}/tag`, {
         aggregation,
         id,
         label,
@@ -451,9 +462,8 @@ export const createPageTags = ({
   token = required(),
 }) => {
   const request = () =>
-    servicesAPI.post(
-      `/v1/page/${slug}/tags`,
-      {
+    servicesAPI
+      .post(`/v1/page/${slug}/tags`, {
         tagValues,
       },
       {
@@ -518,54 +528,55 @@ export const createPage = ({
       return false;
     }
 
-    return servicesAPI.put(
-      "/v1/page",
-      {
-        ...(eventId
-          ? {
-              eventId,
-            }
-          : {
-              activityType,
-              eventDate,
-              eventName: eventName || pageTitle,
-            }),
-        attribution,
-        campaignGuid: campaignGuid || campaignId,
-        causeId,
-        charityFunded,
-        charityId,
-        charityOptIn,
-        companyAppealId,
-        consistentErrorResponses,
-        currency,
-        customCodes,
-        expiryDate,
-        images: images.length
-          ? images
-          : image
-          ? [{ url: image, isDefault: true }]
-          : undefined,
-        isGiftAidable: giftAid,
-        pageShortName,
-        pageStory: story,
-        pageSummaryWhat: summaryWhat,
-        pageSummaryWhy: truncate(summaryWhy),
-        pageTitle,
-        reference,
-        rememberedPersonReference,
-        tags,
-        targetAmount: target,
-        teamId,
-        theme,
-        videos,
-      },
-      {
-        headers: {
-          Authorization: [authType, token].join(" "),
+    return servicesAPI
+      .put(
+        "/v1/page",
+        {
+          ...(eventId
+            ? {
+                eventId,
+              }
+            : {
+                activityType,
+                eventDate,
+                eventName: eventName || pageTitle,
+              }),
+          attribution,
+          campaignGuid: campaignGuid || campaignId,
+          causeId,
+          charityFunded,
+          charityId,
+          charityOptIn,
+          companyAppealId,
+          consistentErrorResponses,
+          currency,
+          customCodes,
+          expiryDate,
+          images: images.length
+            ? images
+            : image
+            ? [{ url: image, isDefault: true }]
+            : undefined,
+          isGiftAidable: giftAid,
+          pageShortName,
+          pageStory: story,
+          pageSummaryWhat: summaryWhat,
+          pageSummaryWhy: truncate(summaryWhy),
+          pageTitle,
+          reference,
+          rememberedPersonReference,
+          tags,
+          targetAmount: target,
+          teamId,
+          theme,
+          videos,
         },
-      }
-    )
+        {
+          headers: {
+            Authorization: [authType, token].join(" "),
+          },
+        }
+      )
       .then(({ data }) => fetchPage(data.pageId))
       .then((page) => {
         createDefaultPageTags(
@@ -586,7 +597,9 @@ export const createPage = ({
 export const getPageShortName = (title, slug, forceSlug) => {
   const preferredName = slug || slugify(title, { lower: true, strict: true });
 
-  return servicesAPI.get(`/v1/page/suggest?preferredName=${preferredName}`).then(({ data }) => data)
+  return servicesAPI
+    .get(`/v1/page/suggest?preferredName=${preferredName}`)
+    .then(({ data }) => data)
     .then((result) => {
       const firstResult = first(result.Names);
       if (forceSlug) {
@@ -621,25 +634,44 @@ export const updatePage = (
   return Promise.all(
     [
       attribution &&
-        servicesAPI.put(`/v1/page/${slug}/attribution`, { attribution }, config)
+        servicesAPI
+          .put(`/v1/page/${slug}/attribution`, { attribution }, config)
           .then(({ data }) => data),
       image &&
-        servicesAPI.put(`/v1/page/${slug}/images`, { url: image, isDefault: true }, config)
+        servicesAPI
+          .put(
+            `/v1/page/${slug}/images`,
+            { url: image, isDefault: true },
+            config
+          )
           .then(({ data }) => data),
       name &&
-        servicesAPI.put(`/v1/page/${slug}/pagetitle`, { pageTitle: name.replace(/’/g, "'").replace(pageNameRegex, "") }, config)
+        servicesAPI
+          .put(
+            `/v1/page/${slug}/pagetitle`,
+            { pageTitle: name.replace(/’/g, "'").replace(pageNameRegex, "") },
+            config
+          )
           .then(({ data }) => data),
       offline &&
-        servicesAPI.put(`/v1/page/${slug}/offline`, { amount: offline }, config)
+        servicesAPI
+          .put(`/v1/page/${slug}/offline`, { amount: offline }, config)
           .then(({ data }) => data),
       story &&
-        servicesAPI.put(`/v1/page/${slug}/pagestory`, { story }, config)
+        servicesAPI
+          .put(`/v1/page/${slug}/pagestory`, { story }, config)
           .then(({ data }) => data),
       target &&
-        servicesAPI.put(`/v1/page/${slug}/target`, { amount: target }, config)
+        servicesAPI
+          .put(`/v1/page/${slug}/target`, { amount: target }, config)
           .then(({ data }) => data),
       (summaryWhat || summaryWhy) &&
-        servicesAPI.put(`/v1/page/${slug}/summary`, { pageSummaryWhat: summaryWhat, pageSummaryWhy: summaryWhy, }, config)
+        servicesAPI
+          .put(
+            `/v1/page/${slug}/summary`,
+            { pageSummaryWhat: summaryWhat, pageSummaryWhy: summaryWhy },
+            config
+          )
           .then(({ data }) => data),
     ].filter((promise) => promise)
   );
@@ -652,5 +684,7 @@ export const cancelPage = ({
 }) => {
   const headers = { Authorization: [authType, token].join(" ") };
 
-  return servicesAPI.delete(`/v1/page/${slug}`, { headers }).then(({ data }) => data)
+  return servicesAPI
+    .delete(`/v1/page/${slug}`, { headers })
+    .then(({ data }) => data);
 };

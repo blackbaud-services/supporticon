@@ -67,8 +67,10 @@ export const fetchCurrentUser = ({
 }) => {
   if (authType === "Basic" || token.length > 32) {
     return servicesAPI
-      .get("/v1/account", { headers: { Authorization: [authType, token].join(" ") }})
-      .then(({ data }) => data)
+      .get("/v1/account", {
+        headers: { Authorization: [authType, token].join(" ") },
+      })
+      .then(({ data }) => data);
   } else {
     return jgIdentityClient
       .get("/connect/userinfo", {

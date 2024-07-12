@@ -2,7 +2,7 @@ import flatten from "lodash/flatten";
 import get from "lodash/get";
 import kebabCase from "lodash/kebabCase";
 import orderBy from "lodash/orderBy";
-import { servicesAPI } from "../client"
+import { servicesAPI } from "../client";
 import { required } from "../params";
 import { getPrimaryUnit, measurementDomains } from "../tags";
 import { hash } from "spark-md5";

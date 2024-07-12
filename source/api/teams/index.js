@@ -98,7 +98,8 @@ export const searchTeams = ({ campaign, endCursor, limit }) => {
     nextPageToken: endCursor,
   };
 
-  return client.servicesAPI.get(`/v1/campaign/${campaign}/teams`, { params })
+  return client.servicesAPI
+    .get(`/v1/campaign/${campaign}/teams`, { params })
     .then(({ data }) => data)
     .then((res) => {
       const formattedTeams = res.results.map((team) => ({
@@ -163,7 +164,9 @@ const getPaginatedMembers = (team) => {
   return new Promise((resolve) => {
     if (team.membership.members?.length < team.membership.numberOfMembers) {
       return client.servicesAPI
-        .get(`/v1/team/${replace(team.shortName, "team/", "")}`, { params: { nextPageKey: team.pagination.endCursor } })
+        .get(`/v1/team/${replace(team.shortName, "team/", "")}`, {
+          params: { nextPageKey: team.pagination.endCursor },
+        })
         .then(({ data }) => data)
         .then((res) => {
           const updatedTeam = {
@@ -230,7 +233,9 @@ export const fetchTeamFitness = (slug, options = {}) => {
     end: options.endDate,
   };
 
-  return client.servicesAPI.get(`v1/fitness/team/${slug}`, { params }).then(({ data }) => data);
+  return client.servicesAPI
+    .get(`v1/fitness/team/${slug}`, { params })
+    .then(({ data }) => data);
 };
 
 export const fetchTeamPages = (slug, options = {}) => {
@@ -330,7 +335,8 @@ export const fetchTeamPages = (slug, options = {}) => {
 };
 
 export const checkTeamSlugAvailable = (slug = required()) => {
-  return client.servicesAPI.get(`/v1/team/${slug}/suggest`)
+  return client.servicesAPI
+    .get(`/v1/team/${slug}/suggest`)
     .then((res) => {
       if (res.status === 200) return appendIdToSlug(slug);
     })
@@ -389,7 +395,7 @@ export const createTeam = (params) => {
   return checkTeamSlugAvailable(payload.TeamShortName, { authType, token })
     .then((cleanShortName) =>
       client.servicesAPI.put(
-      "/v1/team",
+        "/v1/team",
         { ...payload, TeamShortName: cleanShortName },
         options
       )
@@ -480,7 +486,9 @@ export const updateTeam = (
     targetAmount: target,
   };
 
-  return client.servicesAPI.put(`/v1/team/${id}`, payload, { headers }).then(({ data }) => data);
+  return client.servicesAPI
+    .put(`/v1/team/${id}`, payload, { headers })
+    .then(({ data }) => data);
 };
 
 export const fetchTeamsToFilter = (campaignGuid, endCursor, results = []) => {

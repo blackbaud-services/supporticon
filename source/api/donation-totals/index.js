@@ -1,10 +1,6 @@
 import { servicesAPI } from "../../utils/client";
 import get from "lodash/get";
-import {
-  getUID,
-  required,
-  dataSource
-} from "../../utils/params";
+import { getUID, required, dataSource } from "../../utils/params";
 import { fetchDonations } from "../feeds";
 import { currencyCode } from "../../utils/currencies";
 import { fetchTotals, deserializeTotals } from "../../utils/totals";
@@ -73,17 +69,23 @@ export const fetchDonationTotals = (params = required()) => {
 
   switch (dataSource(params)) {
     case "donationRef":
-      const query = { currencyCode: currencyCode(params.country) }
+      const query = { currencyCode: currencyCode(params.country) };
 
-      return servicesAPI.get(`/v1/donationtotal/ref/${params.donationRef}`, { params: query }).then(({ data }) => data);
+      return servicesAPI
+        .get(`/v1/donationtotal/ref/${params.donationRef}`, { params: query })
+        .then(({ data }) => data);
     case "event":
       if (params.charity && params.charity.length) {
         // no support for donations count for event & charity combination
-        return servicesAPI.get('/v1/donationTotal/event', { params: eventArgs }).then(({ data }) => data)
+        return servicesAPI
+          .get("/v1/donationTotal/event", { params: eventArgs })
+          .then(({ data }) => data);
       }
       return Promise.all([
         fetchDonations(params),
-        servicesAPI.get('/v1/donationTotal/event', { params: eventArgs }).then(({ data }) => data)
+        servicesAPI
+          .get("/v1/donationTotal/event", { params: eventArgs })
+          .then(({ data }) => data),
       ]).then(([feed, totals]) => ({
         ...feed.meta,
         ...totals,

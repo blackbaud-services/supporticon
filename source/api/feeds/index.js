@@ -47,20 +47,26 @@ export const fetchDonations = ({ event, charity, campaign, page }) =>
     .then((response) => response.data);
 
 const fetchDonationFeedByRef = (ref) =>
-  servicesAPI.get(`/v1/feed/donation/ref/${ref}`).then(({ data }) => data.donations)
+  servicesAPI
+    .get(`/v1/feed/donation/ref/${ref}`)
+    .then(({ data }) => data.donations);
 
 const fetchDonationsByShortName = (
   pageShortName,
   donations = [],
   pageNum = 1
 ) =>
-  servicesAPI.get(`/v1/feed/donation/page/${pageShortName}`, { params: { pageSize: 150, pageNum } }).then(({ data }) => {
-    const updatedResults = [...donations, ...data.donations];
+  servicesAPI
+    .get(`/v1/feed/donation/page/${pageShortName}`, {
+      params: { pageSize: 150, pageNum },
+    })
+    .then(({ data }) => {
+      const updatedResults = [...donations, ...data.donations];
 
-    return pageNum >= Math.min(data.pagination.totalPages, 10)
-      ? updatedResults
-      : fetchDonationsByShortName(pageShortName, updatedResults, pageNum + 1);
-  });
+      return pageNum >= Math.min(data.pagination.totalPages, 10)
+        ? updatedResults
+        : fetchDonationsByShortName(pageShortName, updatedResults, pageNum + 1);
+    });
 
 export const deserializeDonation = (donation) => {
   const isFromDonationsAPI = !!donation.donationId;

@@ -53,7 +53,7 @@ export function fetchFitnessTotals({
   };
 
   return servicesAPI
-    .get('/v1/fitness/campaign', { params })
+    .get("/v1/fitness/campaign", { params })
     .then(({ data }) => data)
     .then((result) => ({
       distance: result.totalAmount,

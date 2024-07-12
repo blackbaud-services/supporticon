@@ -7,7 +7,8 @@ import {
 } from "../../utils/params";
 import { baseUrl } from "../../utils/justgiving";
 
-export const fetchCharity = (id = required()) => servicesAPI.get(`/v1/charity/${id}`).then(({ data }) => data);
+export const fetchCharity = (id = required()) =>
+  servicesAPI.get(`/v1/charity/${id}`).then(({ data }) => data);
 
 export const searchCharities = (params = required()) => {
   const campaign = getUID(params.campaign);
@@ -18,11 +19,12 @@ export const searchCharities = (params = required()) => {
       field: "charityNameSuggest",
       includeFuzzySearch: true,
       maxResults: params.limit,
-      campaignGuid:
-        !!campaign && getUIDForOnepageCampaign(campaign),
+      campaignGuid: !!campaign && getUIDForOnepageCampaign(campaign),
     };
 
-    return servicesAPI.get('/v1/charity/campaign', { params: finalParams }).then(({ data }) => data);
+    return servicesAPI
+      .get("/v1/charity/campaign", { params: finalParams })
+      .then(({ data }) => data);
   } else {
     const finalParams = {
       ...params,
@@ -31,13 +33,15 @@ export const searchCharities = (params = required()) => {
       i: "Charity",
     };
 
-    return servicesAPI.get('/v1/charity/search', { params: finalParams }).then(
-      ({ data }) =>
-        (data.GroupedResults &&
-          data.GroupedResults.length &&
-          data.GroupedResults[0].Results) ||
-        []
-    )
+    return servicesAPI
+      .get("/v1/charity/search", { params: finalParams })
+      .then(
+        ({ data }) =>
+          (data.GroupedResults &&
+            data.GroupedResults.length &&
+            data.GroupedResults[0].Results) ||
+          []
+      );
   }
 };
 
