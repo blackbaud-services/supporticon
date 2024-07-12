@@ -29,7 +29,7 @@ describe("Donation Totals", () => {
         );
 
         expect(secondRequest.url).to.equal(
-          "/v1/events/leaderboard?eventid=12345&currency=GBP"
+          "/v1/donationTotal/event?eventid=12345&currency=GBP"
         );
         done();
       });
@@ -40,7 +40,7 @@ describe("Donation Totals", () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
         expect(request.url).to.equal(
-          "/v1/events/leaderboard?eventid=12345&currency=EUR"
+          "/v1/donationTotal/event?eventid=12345&currency=EUR"
         );
         done();
       });

@@ -1,13 +1,15 @@
-import { instance } from "../../../utils/client";
+import { instance, servicesAPI } from "../../../utils/client";
 import { fetchEvent } from "..";
 
 describe("Fetch Event", () => {
   beforeEach(() => {
-    return moxios.install(instance);
+    moxios.install(instance);
+    moxios.install(servicesAPI);
   });
 
   afterEach(() => {
     moxios.uninstall(instance);
+    moxios.uninstall(servicesAPI);
   });
 
   it("throws if event is requested", () => {

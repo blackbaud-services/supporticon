@@ -55,7 +55,7 @@ describe("Fetch Leaderboards", () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent();
       expect(request.url).to.equal(
-        "/v1/events/leaderboard?eventid=12345&currency=GBP"
+        "/v1/event/leaderboard?eventid=12345&currency=GBP"
       );
       done();
     });
@@ -66,7 +66,7 @@ describe("Fetch Leaderboards", () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent();
       expect(request.url).to.equal(
-        "/v1/events/leaderboard?eventid=12345&currency=AUD"
+        "/v1/event/leaderboard?eventid=12345&currency=AUD"
       );
       done();
     });
@@ -77,7 +77,7 @@ describe("Fetch Leaderboards", () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent();
       expect(request.url).to.equal(
-        "/v1/events/leaderboard?eventid=12345&eventid=54321&currency=GBP"
+        "/v1/event/leaderboard?eventid=12345&eventid=54321&currency=GBP"
       );
       done();
     });
@@ -88,7 +88,7 @@ describe("Fetch Leaderboards", () => {
     moxios.wait(function () {
       const request = moxios.requests.mostRecent();
       expect(request.url).to.equal(
-        "/v1/events/leaderboard?eventid=12345&currency=GBP&maxResults=50"
+        "/v1/event/leaderboard?eventid=12345&currency=GBP&maxResults=50"
       );
       done();
     });

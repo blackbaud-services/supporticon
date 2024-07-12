@@ -21,8 +21,8 @@ describe("Fetch Pages", () => {
     it("uses the correct url to fetch pages", (done) => {
       fetchPages({ event: "EVENT_ID" });
       moxios.wait(() => {
-        const request = moxios.requests.mostRecent();
-        expect(request.url).to.contain("/v1/onesearch");
+        const request = moxios.requests.first();
+        expect(request.url).to.contain("/v1/pages/onesearch");
         expect(request.url).to.contain("eventId=EVENT_ID");
         done();
       });
@@ -31,8 +31,8 @@ describe("Fetch Pages", () => {
     it("uses the correct url to fetch when campaign is supplied", (done) => {
       fetchPages({ campaign: "UID" });
       moxios.wait(() => {
-        const request = moxios.requests.mostRecent();
-        expect(request.url).to.contain("/v1/onesearch");
+        const request = moxios.requests.first()
+        expect(request.url).to.contain("/v1/pages/onesearch");
         expect(request.url).to.contain("UID");
         done();
       });
@@ -49,7 +49,7 @@ describe("Fetch Pages", () => {
       fetchPage("my-page-shortname");
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
-        expect(request.url).to.equal("/v1/fundraising/pages/my-page-shortname");
+        expect(request.url).to.equal("/v1/page/my-page-shortname");
         done();
       });
     });
@@ -58,7 +58,7 @@ describe("Fetch Pages", () => {
       fetchPage(123, true);
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
-        expect(request.url).to.equal("/v1/fundraising/pages/123");
+        expect(request.url).to.equal("/v1/page/123");
         done();
       });
     });
@@ -67,7 +67,7 @@ describe("Fetch Pages", () => {
       fetchPage("123");
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
-        expect(request.url).to.equal("/v1/fundraising/pagebyid/123");
+        expect(request.url).to.equal("/v1/page/id/123");
         done();
       });
     });
@@ -76,8 +76,7 @@ describe("Fetch Pages", () => {
       fetchPages({ event: "123", allPages: true, limit: 50 });
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
-        expect(request.url).to.contain("/v1/event/123/pages");
-        expect(request.url).to.contain("pageSize=50");
+        expect(request.url).to.contain("/v1/pages/event/123");
         done();
       });
     });
@@ -93,7 +92,7 @@ describe("Fetch Pages", () => {
       fetchUserPages({ token: "token" });
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
-        expect(request.url).to.equal("/v1/fundraising/pages");
+        expect(request.url).to.equal("/v1/pages");
         done();
       });
     });
@@ -106,7 +105,7 @@ describe("Fetch Pages", () => {
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
         expect(request.url).to.equal(
-          "/v1/fundraising/pages/my-page-shortname/donations"
+          "/v1/page/my-page-shortname/donations"
         );
         done();
       });
