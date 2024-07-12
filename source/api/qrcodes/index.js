@@ -5,5 +5,7 @@ export const createQrCode = (
   linkUrl = required(),
   logoUrl = "https://images.justgiving.com/image/justgiving-logo.png"
 ) => {
-  return servicesAPI.get('/v1/qrcode/create', { params: { linkUrl, logoUrl }}).then(({ data }) => data)
+  return servicesAPI
+    .get("/v1/qrcode/create", { params: { linkUrl, logoUrl } })
+    .then(({ data }) => data);
 };

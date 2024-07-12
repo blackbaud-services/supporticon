@@ -55,7 +55,8 @@ export const fetchFitnessLeaderboard = ({
       end: endDate,
     };
 
-    return servicesAPI.get('/v1/fitness/campaign', { params })
+    return servicesAPI
+      .get("/v1/fitness/campaign", { params })
       .then(({ data }) => data)
       .then((result) => (type === "team" ? result.teams : result.pages))
       .then((items) => items.slice(0, limit || 100))

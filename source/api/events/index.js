@@ -12,7 +12,8 @@ export const deserializeEvent = (event) => {
   };
 };
 
-export const fetchEvent = ({ id = required() }) => servicesAPI.get(`/v1/event/${id}`).then(({ data }) => data);
+export const fetchEvent = ({ id = required() }) =>
+  servicesAPI.get(`/v1/event/${id}`).then(({ data }) => data);
 
 export const createEvent = ({
   completionDate = required(),
@@ -25,17 +26,20 @@ export const createEvent = ({
   name = required(),
   startDate = required(),
 }) => {
-  return servicesAPI.post('/v1/event', {
-    completionDate: dayjs(completionDate).format("YYYY-MM-DD"),
-    charityId,
-    description,
-    eventType,
-    expiryDate: dayjs(expiryDate).format("YYYY-MM-DD"),
-    isConsumerCreated,
-    location,
-    name,
-    startDate: dayjs(startDate).format("YYYY-MM-DD"),
-  }).then(({ data }) => data)
-}
+  return servicesAPI
+    .post("/v1/event", {
+      completionDate: dayjs(completionDate).format("YYYY-MM-DD"),
+      charityId,
+      description,
+      eventType,
+      expiryDate: dayjs(expiryDate).format("YYYY-MM-DD"),
+      isConsumerCreated,
+      location,
+      name,
+      startDate: dayjs(startDate).format("YYYY-MM-DD"),
+    })
+    .then(({ data }) => data);
+};
 
-export const fetchEventTotalRaised = ({ id = required() }) => servicesAPI.get(`v1/event/${id}/total`).then(({ data }) => data.totalRaised);
+export const fetchEventTotalRaised = ({ id = required() }) =>
+  servicesAPI.get(`v1/event/${id}/total`).then(({ data }) => data.totalRaised);

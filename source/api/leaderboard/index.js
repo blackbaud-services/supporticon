@@ -5,12 +5,7 @@ import uniqBy from "lodash/uniqBy";
 import flatMap from "lodash/flatMap";
 import { servicesAPI } from "../../utils/client";
 import { apiImageUrl, baseUrl, imageUrl } from "../../utils/justgiving";
-import {
-  getUID,
-  required,
-  dataSource,
-  isEmpty
-} from "../../utils/params";
+import { getUID, required, dataSource, isEmpty } from "../../utils/params";
 import { currencySymbol, currencyCode } from "../../utils/currencies";
 import { fetchLeaderboard as getGraphQLeaderboard } from "../../utils/leaderboards";
 import { getMonetaryValue } from "../../utils/totals";
@@ -90,7 +85,8 @@ export const fetchEventLeaderboard = (params) => {
     args.charityIds = params.charity;
   }
 
-  return servicesAPI.get('/v1/event/leaderboard', { params: args })
+  return servicesAPI
+    .get("/v1/event/leaderboard", { params: args })
     .then(({ data }) =>
       data.pages.map((page) => ({
         ...page,

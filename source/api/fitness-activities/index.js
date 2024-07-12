@@ -309,7 +309,7 @@ export const createFitnessActivity = ({
     type,
   };
 
-  return servicesAPI.post('/v1/fitness/activity', params, { headers })
+  return servicesAPI.post("/v1/fitness/activity", params, { headers });
 };
 
 export const deleteFitnessActivity = ({
@@ -345,4 +345,6 @@ export const deleteLegacyFitnessActivity = ({
   page = required(),
   token = required(),
 }) =>
-  servicesAPI.delete(`/v1/fitness/page/${page}/activity/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+  servicesAPI.delete(`/v1/fitness/page/${page}/activity/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
