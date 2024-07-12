@@ -31,7 +31,7 @@ describe("Fetch Pages", () => {
     it("uses the correct url to fetch when campaign is supplied", (done) => {
       fetchPages({ campaign: "UID" });
       moxios.wait(() => {
-        const request = moxios.requests.first()
+        const request = moxios.requests.first();
         expect(request.url).to.contain("/v1/pages/onesearch");
         expect(request.url).to.contain("UID");
         done();
@@ -104,9 +104,7 @@ describe("Fetch Pages", () => {
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
-        expect(request.url).to.equal(
-          "/v1/page/my-page-shortname/donations"
-        );
+        expect(request.url).to.equal("/v1/page/my-page-shortname/donations");
         done();
       });
     });

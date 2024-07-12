@@ -62,9 +62,7 @@ describe("Page | Update Page", () => {
       ];
 
       expect(requests).to.include("/v1/page/page-slug/pagestory");
-      expect(requests).to.include(
-        "/v1/page/page-slug/attribution"
-      );
+      expect(requests).to.include("/v1/page/page-slug/attribution");
       expect(requests).to.include("/v1/page/page-slug/images");
       done();
     });
