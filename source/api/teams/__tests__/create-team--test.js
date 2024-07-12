@@ -37,7 +37,9 @@ describe("Create a Team", () => {
       expect(shortNameRequest.config.baseURL).to.eql(
         "https://api.blackbaud.services"
       );
-      expect(shortNameRequest.url).to.contain("/v1/team/my-jg-test-team/suggest");
+      expect(shortNameRequest.url).to.contain(
+        "/v1/team/my-jg-test-team/suggest"
+      );
 
       moxios.wait(() => {
         const request = moxios.requests.mostRecent();
