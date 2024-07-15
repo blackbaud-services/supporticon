@@ -422,18 +422,21 @@ export const createPageTag = ({
 }) => {
   const request = () =>
     servicesAPI
-      .post(`/v1/page/${slug}/tag`, {
-        aggregation,
-        id,
-        label,
-        value,
-      },
-      {
-        headers: {
-          Authorization: [authType, token].join(" ")
+      .post(
+        `/v1/page/${slug}/tag`,
+        {
+          aggregation,
+          id,
+          label,
+          value,
         },
-      }
-    ).then(({ data }) => data);
+        {
+          headers: {
+            Authorization: [authType, token].join(" "),
+          },
+        }
+      )
+      .then(({ data }) => data);
 
   return request().catch(() => request()); // Retry if request fails
 };
@@ -465,15 +468,18 @@ export const createPageTags = ({
 }) => {
   const request = () =>
     servicesAPI
-      .post(`/v1/page/${slug}/tags`, {
-        tagValues,
-      },
-      {
-        headers: {
-          Authorization: [authType, token].join(" ")
+      .post(
+        `/v1/page/${slug}/tags`,
+        {
+          tagValues,
         },
-      }
-    ).then(({ data }) => data);
+        {
+          headers: {
+            Authorization: [authType, token].join(" "),
+          },
+        }
+      )
+      .then(({ data }) => data);
 
   return request().catch(() => request()); // Retry if request fails
 };

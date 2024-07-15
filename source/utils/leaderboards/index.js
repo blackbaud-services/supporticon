@@ -134,7 +134,10 @@ export const deleteLeaderboardDefinition = ({
     },
   };
 
-  return servicesAPI.delete(`/v1/tags/leaderboard/definition/${definitionId}`, headers);
+  return servicesAPI.delete(
+    `/v1/tags/leaderboard/definition/${definitionId}`,
+    headers
+  );
 };
 
 export const deleteLeaderboardDefinitions = (params) =>
