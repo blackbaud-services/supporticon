@@ -72,7 +72,7 @@ export const servicesAPI = axios.create({
   baseURL: isStaging()
     ? "https://api-staging.blackbaud.services"
     : "https://api.blackbaud.services",
-  paramsSerializer: params => paramsSerializer(params)
+  paramsSerializer: (params) => paramsSerializer(params),
 });
 
 export const updateServicesAPIClient = () => {
