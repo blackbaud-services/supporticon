@@ -416,7 +416,7 @@ export const createPageTag = ({
   label = required(),
   slug = required(),
   value = required(),
-  token = required(),
+  token,
   authType = "Bearer",
   aggregation = [],
 }) => {
@@ -463,7 +463,7 @@ export const createPageTagsUnclaimedPages = async ({
 export const createPageTags = ({
   slug = required(),
   tagValues = required(),
-  token = required(),
+  token,
   authType = "Bearer",
 }) => {
   const request = () =>
