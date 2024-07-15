@@ -417,6 +417,7 @@ export const createPageTag = ({
   slug = required(),
   value = required(),
   token = required(),
+  authType = "Bearer",
   aggregation = [],
 }) => {
   const request = () =>
@@ -429,7 +430,7 @@ export const createPageTag = ({
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: [authType, token].join(" ")
         },
       }
     ).then(({ data }) => data);
@@ -460,6 +461,7 @@ export const createPageTags = ({
   slug = required(),
   tagValues = required(),
   token = required(),
+  authType = "Bearer",
 }) => {
   const request = () =>
     servicesAPI
@@ -468,7 +470,7 @@ export const createPageTags = ({
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: [authType, token].join(" ")
         },
       }
     ).then(({ data }) => data);
