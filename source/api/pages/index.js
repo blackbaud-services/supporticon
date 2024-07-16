@@ -392,24 +392,22 @@ export const createPageTagUnclaimedPages = async ({
   slug = required(),
   value = required(),
   aggregation = [],
-}) =>
-  servicesAPI
-    .post("/v1/justgiving/iam/login", {
-      email: process.env.HOLDER_USER_EMAIL,
-      password: process.env.HOLDER_USER_PASSWORD,
-    })
-    .then((res) => {
-      const token = `Bearer ${res.data.access_token}`;
-      return createPageTag({
-        id,
-        label,
-        slug,
-        value,
-        token,
-        aggregation,
-      });
-    })
-    .catch((error) => Promise.reject(error.message));
+}) => {
+  const request = () =>
+    servicesAPI
+      .post(
+        `/v1/page/${slug}/tag`,
+        {
+          aggregation,
+          id,
+          label,
+          value,
+        }
+      )
+      .then(({ data }) => data);
+
+  return request().catch(() => request()); // Retry if request fails
+}
 
 export const createPageTag = ({
   id = required(),
@@ -444,21 +442,19 @@ export const createPageTag = ({
 export const createPageTagsUnclaimedPages = async ({
   slug = required(),
   tagValues = required(),
-}) =>
-  servicesAPI
-    .post("/v1/justgiving/iam/login", {
-      email: process.env.HOLDER_USER_EMAIL,
-      password: process.env.HOLDER_USER_PASSWORD,
-    })
-    .then((res) => {
-      const token = `Bearer ${res.data.access_token}`;
-      return createPageTags({
-        slug,
-        tagValues,
-        token,
-      });
-    })
-    .catch((error) => Promise.reject(error.message));
+}) => {
+  const request = () =>
+    servicesAPI
+      .post(
+        `/v1/page/${slug}/tags`,
+        {
+          tagValues,
+        }
+      )
+      .then(({ data }) => data);
+
+  return request().catch(() => request()); // Retry if request fails
+}
 
 export const createPageTags = ({
   slug = required(),
