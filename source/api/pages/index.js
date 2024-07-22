@@ -170,10 +170,14 @@ export const fetchPages = (params = required()) => {
     ...args
   } = params;
 
+  const headers = token
+    ? { headers: { Authorization: [authType, token].join(" ") } }
+    : null;
+
   if (userPages && token) {
     return servicesAPI
       .get("/v1/pages", {
-        headers: { Authorization: [authType, token].join(" ") },
+        headers,
       })
       .then(({ data }) => data);
   }
@@ -415,6 +419,10 @@ export const createPageTag = ({
   authType = "Bearer",
   aggregation = [],
 }) => {
+  const headers = token
+    ? { headers: { Authorization: [authType, token].join(" ") } }
+    : null;
+
   const request = () =>
     servicesAPI
       .post(
@@ -425,11 +433,7 @@ export const createPageTag = ({
           label,
           value,
         },
-        {
-          headers: {
-            Authorization: [authType, token].join(" "),
-          },
-        }
+        headers
       )
       .then(({ data }) => data);
 
@@ -456,6 +460,9 @@ export const createPageTags = ({
   token,
   authType = "Bearer",
 }) => {
+  const headers = token
+    ? { headers: { Authorization: [authType, token].join(" ") } }
+    : null;
   const request = () =>
     servicesAPI
       .post(
@@ -463,11 +470,7 @@ export const createPageTags = ({
         {
           tagValues,
         },
-        {
-          headers: {
-            Authorization: [authType, token].join(" "),
-          },
-        }
+        headers
       )
       .then(({ data }) => data);
 
@@ -627,7 +630,9 @@ export const updatePage = (
     target,
   }
 ) => {
-  const config = { headers: { Authorization: [authType, token].join(" ") } };
+  const config = token
+    ? { headers: { Authorization: [authType, token].join(" ") } }
+    : null;
 
   return Promise.all(
     [
