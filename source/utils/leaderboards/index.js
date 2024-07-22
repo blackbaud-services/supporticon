@@ -65,7 +65,7 @@ export const fetchLeaderboardDefinitions = (params) =>
 
 export const createLeaderboardDefinition = ({
   id = required(),
-  token = required(),
+  token,
   conditions = [],
   label = "Page Campaign Link",
   measurementDomain = "any:distance",
@@ -89,11 +89,11 @@ export const createLeaderboardDefinition = ({
     },
   };
 
-  const headers = {
+  const headers = token ? {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  };
+  } : null;
 
   return servicesAPI
     .post(`/v1/tags/leaderboard/definition/${definitionId}`, payload, headers)
