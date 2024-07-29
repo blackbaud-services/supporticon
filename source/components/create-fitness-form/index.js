@@ -109,7 +109,7 @@ class CreateFitnessForm extends Component {
 
     const { status, errors } = this.state;
 
-    const showNonLengthsFormFields = form.fields.unit.value !== "lengths";
+    const showNonLengthsFormFields = form.fields.unit?.value !== "lengths";
 
     const handleChangeDistance = (e, field) => {
       if (field.name === "numberOfLengths" && !!form.fields.poolLength.value)
