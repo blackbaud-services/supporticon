@@ -1,9 +1,9 @@
 {
   "scanSettings": {
-    "configMode": "AUTO",
+    "configMode": "LOCAL",
     "configExternalURL": "",
     "projectToken": "",
-    "baseBranches": []
+    "baseBranches": ["master"]
   },
   "scanSettingsSAST": {
     "enableScan": false,
@@ -13,7 +13,7 @@
     "snippetSize": 10
   },
   "checkRunSettings": {
-    "vulnerableCheckRunConclusionLevel": "failure",
+    "vulnerableCheckRunConclusionLevel": "none",
     "displayMode": "diff",
     "useMendCheckNames": true
   },
