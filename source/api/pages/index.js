@@ -399,7 +399,7 @@ export const createPageTagUnclaimedPages = async ({
 }) => {
   const request = () =>
     servicesAPI
-      .post(`/v1/page/${slug}/tag`, {
+      .post(`/v1/page/${slug}/unclaimedPageTag`, {
         aggregation,
         id,
         label,
@@ -446,7 +446,7 @@ export const createPageTagsUnclaimedPages = async ({
 }) => {
   const request = () =>
     servicesAPI
-      .post(`/v1/page/${slug}/tags`, {
+      .post(`/v1/page/${slug}/unclaimedPageTags`, {
         tagValues,
       })
       .then(({ data }) => data);
