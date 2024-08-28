@@ -151,6 +151,7 @@ export const deleteLeaderboardDefinitions = (params) =>
 
 export const fetchLeaderboard = ({
   id = required(),
+  leaderboardDefinitionId,
   activityType = "fundraising",
   limit = 10,
   sortBy = "donations_received",
@@ -178,13 +179,19 @@ export const fetchLeaderboard = ({
       );
   }
 
-  const leaderboardId = genId({
-    id,
-    measurementDomain: [activityType, sortBy].join(":"),
-    name: tagValue,
-    tagId,
-    type,
-  });
+  let leaderboardId
+
+  if (leaderboardDefinitionId) {
+    leaderboardId = leaderboardDefinitionId
+  } else {
+    leaderboardId = genId({
+      id,
+      measurementDomain: [activityType, sortBy].join(":"),
+      name: tagValue,
+      tagId,
+      type,
+    });
+  }
 
   const query = `
     {
