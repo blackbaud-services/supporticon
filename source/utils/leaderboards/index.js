@@ -179,10 +179,10 @@ export const fetchLeaderboard = ({
       );
   }
 
-  let leaderboardId
+  let leaderboardId;
 
   if (leaderboardDefinitionId) {
-    leaderboardId = leaderboardDefinitionId
+    leaderboardId = leaderboardDefinitionId;
   } else {
     leaderboardId = genId({
       id,
