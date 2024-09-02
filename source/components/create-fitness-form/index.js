@@ -155,10 +155,10 @@ class CreateFitnessForm extends Component {
               {includeDuration && (
                 <GridColumn lg={includeElevation ? 6 : 12}>
                   <Grid spacing={{ x: 0.25 }}>
-                    <GridColumn xs={6} sm={6.5} md={7} lg={8}>
+                    <GridColumn xs={6} sm={6.5} md={7} lg={7}>
                       <InputField {...form.fields.duration} {...inputField} />
                     </GridColumn>
-                    <GridColumn xs={6} sm={5.5} md={5} lg={4}>
+                    <GridColumn xs={6} sm={5.5} md={5} lg={5}>
                       <InputSelect
                         {...form.fields.durationUnit}
                         {...inputField}
@@ -172,13 +172,13 @@ class CreateFitnessForm extends Component {
                 !form?.fields?.type?.value.includes("swim") && (
                   <GridColumn lg={includeDuration ? 6 : 12}>
                     <Grid spacing={{ x: 0.25 }}>
-                      <GridColumn xs={7} sm={7.5} md={8} lg={9}>
+                      <GridColumn xs={7} sm={7.5} md={7} lg={7}>
                         <InputField
                           {...form.fields.elevation}
                           {...inputField}
                         />
                       </GridColumn>
-                      <GridColumn xs={5} sm={4.5} md={4} lg={3}>
+                      <GridColumn xs={5} sm={4.5} md={5} lg={5}>
                         <InputSelect
                           {...form.fields.elevationUnit}
                           {...inputField}
