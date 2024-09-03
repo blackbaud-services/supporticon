@@ -391,7 +391,7 @@ const form = (props) => {
             validators.required(
               `Please enter a ${props.distanceLabel.toLowerCase()}`
             ),
-            validators.greaterThan(),
+            validators.greaterThan(0, "Distance must be greater than 0"),
           ],
         },
         type: {
