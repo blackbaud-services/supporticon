@@ -390,7 +390,7 @@ const form = (props) => {
             validators.required(
               `Please enter a ${props.distanceLabel.toLowerCase()}`
             ),
-            (val) => val && val === "0" && "Please enter a distance",
+            validators.greaterThan(0, "Distance must be greater than 0"),
           ],
         },
         type: {
