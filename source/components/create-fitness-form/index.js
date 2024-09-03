@@ -385,13 +385,12 @@ const form = (props) => {
           inputmode: "decimal",
           label: props.distanceLabel,
           initial: "0",
-          min: 0,
           required: true,
           validators: [
             validators.required(
               `Please enter a ${props.distanceLabel.toLowerCase()}`
             ),
-            validators.greaterThan(0, "Distance must be greater than 0"),
+            (val) => val && val === "0" && "Please enter a distance",
           ],
         },
         type: {
