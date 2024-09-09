@@ -13,7 +13,6 @@
     "format": "prettier 'source/**/*.js' --write",
     "precommit": "yarn lint-staged",
     "deploy:prepare": "npm run build && cp -R dist ./npm-supporticon && cp package.json ./npm-supporticon && cp README.md ./npm-supporticon",
-    "announce": "./bin/announce",
     "validate:typescript": "tsc --pretty --noEmit",
     "playground:start": "yarn webpack serve",
     "playground:build": "yarn webpack",
