@@ -239,7 +239,7 @@ export const fetchPage = (page = required(), slug, options = {}) => {
   const endpoint = slug || isNaN(page) ? "page" : "page/id";
 
   const fetchers = [
-    new Promise((resolve) =>
+    new Promise((resolve, reject) =>
       servicesAPI
         .get(`/v1/${endpoint}/${page}`)
         .then(({ data: page }) =>
@@ -249,6 +249,7 @@ export const fetchPage = (page = required(), slug, options = {}) => {
               )
             : resolve(page)
         )
+        .catch((err) => reject(err))
     ),
     options.includeTags && fetchPageTags(page),
   ];
@@ -578,7 +579,7 @@ export const createPage = ({
           },
         }
       )
-      .then(({ data }) => fetchPage(data.pageId))
+      .then(({ data }) => handleFetchPageAfterPageCreation(data))
       .then((page) => {
         createDefaultPageTags(
           deserializePage(page),
@@ -591,6 +592,26 @@ export const createPage = ({
         });
 
         return page;
+      });
+  });
+};
+
+const handleFetchPageAfterPageCreation = async (data, attempt = 1) => {
+  return new Promise((resolve, reject) => {
+    return fetchPage(data.pageId)
+      .then((page) => resolve(page))
+      .catch((_err) => {
+        if (attempt > 120) {
+          return reject();
+        }
+
+        handleFetchPageAfterPageCreation(data, attempt + 1)
+          .then((response) => {
+            return resolve(response);
+          })
+          .catch((err) => {
+            return reject(err);
+          });
       });
   });
 };

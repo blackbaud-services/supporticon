@@ -54,4 +54,54 @@ describe("Create Page", () => {
     const test = () => createPage({ bogus: "data" });
     expect(test).to.throw;
   });
+
+  it("it retries getting the full fundraising page information if the API doesn;t return it for whatever reason", (done) => {
+    createPage({
+      token: "012345abcdef",
+      charityId: "1234",
+      slug: "super-supporter",
+      title: "Super Supporter",
+      charityOptIn: true,
+    });
+
+    moxios.wait(() => {
+      const shortNameRequest = moxios.requests.mostRecent();
+      shortNameRequest.respondWith({
+        status: 200,
+        response: { Names: ["super-supporter-2"] },
+      });
+
+      moxios.wait(() => {
+        const createFrpRequest = moxios.requests.at(1);
+        createFrpRequest.respondWith({
+          status: 200,
+          response: { pageId: 12345 },
+        });
+
+        moxios.wait(async () => {
+          const firstGetPageRequest = moxios.requests.at(2);
+          await firstGetPageRequest.respondWith({
+            status: 404,
+          });
+
+          moxios.wait(async () => {
+            const secondGetPageRequests = moxios.requests.at(3);
+            expect(secondGetPageRequests.url).to.eql("/v1/page/id/12345");
+            await secondGetPageRequests.respondWith({
+              status: 500,
+            });
+
+            moxios.wait(async () => {
+              const thirdGetPageRequests = moxios.requests.at(4);
+              expect(thirdGetPageRequests.url).to.eql("/v1/page/id/12345");
+              await thirdGetPageRequests.respondWith({
+                status: 200,
+              });
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
 });
