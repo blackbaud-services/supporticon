@@ -44,7 +44,12 @@ export const fetchDonations = ({ event, charity, campaign, page }) =>
         fundraisingPageId: mapValue(page),
       },
     })
-    .then((response) => response.data);
+    .then((response) => ({
+      meta: response.data.meta,
+      results: response.data.results.filter(
+        (donation) => donation.status !== "invalid"
+      ),
+    }));
 
 const fetchDonationFeedByRef = (ref) =>
   servicesAPI
