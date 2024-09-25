@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import dayjs from "dayjs";
 import { useFitnessLeaderboard } from "../../hooks/use-fitness-leaderboard";
 import { formatNumber, setLocaleFromCountry } from "../../utils/numbers";
 import { formatMeasurementDomain } from "../../utils/tags";
@@ -35,6 +36,7 @@ const FitnessLeaderboard = ({
   miles,
   multiplier,
   offset,
+  overrideData,
   page,
   pageSize,
   places,
@@ -110,19 +112,31 @@ const FitnessLeaderboard = ({
     }
   };
 
+  const leaderboardData = overrideData?.enabled
+    ? overrideData.data || []
+    : data;
+  const leaderboardStatus = overrideData?.enabled
+    ? overrideData.status
+    : status;
   const items = (
-    excludePageIds ? data.filter(removeExcludedPages) : data
+    excludePageIds
+      ? leaderboardData.filter(removeExcludedPages)
+      : leaderboardData
   ).slice(0, limit);
 
   return (
     <div>
       {filter && <Filter onChange={setQuery} {...filter} />}
-      {status === "loading" && <LeaderboardWrapper {...leaderboard} loading />}
-      {status === "error" && <LeaderboardWrapper {...leaderboard} error />}
-      {status === "success" && items.length === 0 && (
+      {leaderboardStatus === "loading" && (
+        <LeaderboardWrapper {...leaderboard} loading />
+      )}
+      {leaderboardStatus === "error" && (
+        <LeaderboardWrapper {...leaderboard} error />
+      )}
+      {leaderboardStatus === "success" && items.length === 0 && (
         <LeaderboardWrapper {...leaderboard} empty />
       )}
-      {status === "success" && (
+      {leaderboardStatus === "success" && (
         <Pagination max={pageSize} toPaginate={items}>
           {({
             currentPage,
@@ -165,6 +179,14 @@ const FitnessLeaderboard = ({
                     />
                   </Grid>
                 </Section>
+              )}
+              {overrideData?.lastUpdated && (
+                <RichText size={-2}>
+                  Last Updated:{" "}
+                  {dayjs(overrideData.lastUpdated).format(
+                    "MMMM D, YYYY [at] h:mm A"
+                  )}
+                </RichText>
               )}
             </>
           )}
