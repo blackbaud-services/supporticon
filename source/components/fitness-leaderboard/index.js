@@ -122,7 +122,9 @@ const FitnessLeaderboard = ({
     excludePageIds
       ? leaderboardData.filter(removeExcludedPages)
       : leaderboardData
-  ).slice(0, limit);
+  )
+    .map((item, index) => ({ ...item, position: index + 1 }))
+    .slice(0, limit);
 
   return (
     <div>
@@ -158,7 +160,7 @@ const FitnessLeaderboard = ({
                     amount={getMetric(item)}
                     amountLabel={getMetric(item, "full")}
                     href={item.url}
-                    rank={index + 1}
+                    rank={item.position}
                     {...leaderboardItem}
                   />
                 ))}
